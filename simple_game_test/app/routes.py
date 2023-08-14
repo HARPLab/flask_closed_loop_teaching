@@ -14,15 +14,17 @@ from generate_rules import generate_rule, generate_hard_rule_constrained
 from environment import Environment
 from learner import Learner
 
-# import sys, os
-# sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
 # from .augmented_taxi.policy_summarization import particle_filter as pf
 # from .augmented_taxi.main import run_scripts
 
-
-from app.backend_test import send_signal, jsons
+from app.backend_test import send_signal
 from app import socketio
 from flask_socketio import join_room, leave_room
+
+with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') as f:
+    jsons = json.load(f)
 
 # rule_str = None
 # TODO need a proper solution instead of global variables, i.e. per-user environment
@@ -555,7 +557,7 @@ def index():
 
     completed = True if current_user.study_completed == 1 else False
 
-    current_user.loop_condition = "debug"
+    current_user.loop_condition = "cl"
     domains = ["at", "ct", "sb"] 
     # rand.shuffle(domains)
     current_user.domain_1 = domains[0]
@@ -649,7 +651,6 @@ def sandbox():
         preamble = ''' <h1>Free play</h1> <hr/> 
         <h3>Feel free to play around in the game below and get used to the controls. </h3> <h4>You can click the continue button whenever you feel ready to move on.</h4><br>
         <h4>If you accidentally take a wrong action, you may reset the simulation and start over.</h4><h4>A subset of the following keys will be available to control Chip in each game:</h4><br>
-
         '''
         # params = {
         #     'agent': {'x': 4, 'y': 3, 'has_passenger': 0},
@@ -714,6 +715,7 @@ def next_domain():
     current_user.interaction_type = "demo"
     current_user.iteration = -1
     current_user.subiteration = 0
+    current_user.control_stack = []
     print(current_user.curr_progress)
 
     if current_user.curr_progress == "post practice":
@@ -920,6 +922,53 @@ def settings(data):
     print(loop_cond)
     print(domain)
     print(it)
+
+    trial = Trial(
+        user_id = current_user.id,
+        duration_ms = data["user input"]["simulation_rt"],
+        domain = domain,
+        interaction_type = it,
+        iteration = iter,
+        subiteration = subiter,
+        likert = data["survey"],
+        moves = data["user input"]["moves"],
+        coordinates = data["user input"]["agent_history_nonoffset"],
+        is_opt_response = data["user input"]["opt_response"],
+        percent_seen = -1, #TODO: later?
+        mdp_parameters = data["user input"]["mdp_parameters"],
+        human_model = None #TODO: later?
+    )
+    db.session.add(trial)
+
+    # if data["survey "]
+
+    # need some cases
+    # if survey completed, then push to the stack
+    # if movement is prev, 
+        # if key in ctrl stack, then get the prev idx
+        # if not, then get the -1 idx item
+    # if movement is next,
+        # search ctrl stack for the current key,  
+
+    key = [it, iter, subiter]
+
+    if data["movement"] == "prev":
+        old_idx = current_user.control_stack.index(key)
+        new_idx = old_idx - 1
+        current_user.interaction_type = current_user.control_stack[new_idx][0]
+        current_user.iteration = current_user.control_stack[new_idx][1]
+        current_user.subiteration = current_user.control_stack[new_idx][2]
+        current_user.curr_trial_idx = new_idx
+    elif data["movement"] == "next":
+        
+
+
+        if key not in current_user.control_stack:
+            current_user.stack_push(key)
+            seen = "false"
+        current_user.curr_trial_idx = current_user.control_stack.index(key)
+        print(current_user.control_stack)
+
     arr = progression[loop_cond][domain]
     idx = 0
     if (it == "remedial test") or (it == "remedial feedback"):
@@ -976,20 +1025,48 @@ def settings(data):
     # it, iter, and subiter are the old versions
     # current_user.{interaction_type, iteration, subiteration} are the new versions
 
-    #TODO: set up dummy function for taxi call
-    temp = ""
-    if "test" in current_user.interaction_type:
-        temp = "1"
+    if domain == "at":
+        domain_key = "augmented_taxi2"
+    elif domain == "ct":
+        domain_key = "colored_tiles"
     else:
-        temp = "0"
+        domain_key = "skateboard2"
 
-    # set up likert scale
+    #TODO: set up dummy function for taxi call
+    if loop_cond == "cl":
+        if current_user.interaction_type == "final test":
+            # todo: randomize the order of the tests and also potentially account for train_test_set (currently only using the first set)
+            if current_user.iteration < 2:
+                response["params"] = jsons[domain_key][current_user.interaction_type]["low"][0][current_user.iteration]
+            elif current_user.iteration < 4:
+                response["params"] = jsons[domain_key][current_user.interaction_type]["medium"][0][current_user.iteration - 2]
+            else:
+                response["params"] = jsons[domain_key][current_user.interaction_type]["high"][0][current_user.iteration - 4]
+        else:
+            response["params"] = jsons[domain_key][current_user.interaction_type][str(current_user.iteration)]
+            # check if it's already been seen. if so, and interaction type is test, then change the tag to be -2
+    else:
+        if "test" in current_user.interaction_type:
+            response["params"] = jsons[domain_key]["final test"]["low"][0][0]
+        else:
+            response["params"] = jsons[domain_key]["demo"]["0"]
+
+    key = [current_user.interaction_type, 
+            current_user.iteration,
+            current_user.subiteration]
+    seen = "true"
+    if key not in current_user.control_stack:
+        current_user.stack_push(key)
+        seen = "false"
+    current_user.curr_trial_idx = current_user.control_stack.index(key)
+    print(current_user.control_stack)
     
-    response["params"] = jsons[domain][temp]
+    # response["params"] = jsons[domain][temp]
     debug_string = f"domain={domain}, interaction type={current_user.interaction_type}, iteration={current_user.iteration}, subiteration={current_user.subiteration}"
     response["debug string"] = debug_string
     response["last test"] = last_test
     response["interaction type"] = current_user.interaction_type
+    response["seen"] = seen
     # response["domain"] = domain
     # response["interaction type"] = current_user.interaction_type
     # response["iteration"] = current_user.iteration
@@ -1084,22 +1161,32 @@ def pass_trajectories():
     print(final_data)
     return json.dumps(send_signal(final_data["opt_response"]))
 
-@socketio.on('my event')
-def handle_message(data):
-    print('received message: ' + data['data'])
+@socketio.on('join room')
+def handle_message():
+    # print('received message: ' + data['data'])
     # session_id = request.sid
     # print('session_id is: ' + session_id)
     print(request.sid)
-    socketio.emit('ping event', {'test': 'sending to client'}, to=request.sid)
-    current_user.set_test_column(812)
-    db.session.commit()
-    curr_room = ""
-    if len(current_user.username) % 2 == 0:
-        curr_room = "room1"
+    if current_user.username[0] == "a":
+        current_user.group = "room1"
     else:
-        curr_room = "room2"
-    join_room(curr_room)
-    socketio.emit('join event', {"test":current_user.username + "just joined!"}, to=curr_room)
+        current_user.group = "room2"
+    # socketio.emit('ping event', {'test': 'sending to client'}, to=request.sid)
+    # current_user.set_test_column(812)
+    
+    # curr_room = ""
+    # if len(current_user.username) % 2 == 0:
+    #     curr_room = "room1"
+    # else:
+    #     curr_room = "room2"
+    join_room(current_user.group)
+    db.session.commit()
+    # socketio.emit('join event', {"test":current_user.username + "just joined!"}, to=curr_room)
+
+@socketio.on("group comm")
+def group_comm(data):
+    data["user"] = current_user.username
+    socketio.emit("incoming group data", data, to=current_user.group, include_self=False)
 
 @app.route("/intro", methods=["GET", "POST"])
 @login_required
@@ -1531,6 +1618,7 @@ def login():
 
         if user is None:
             user = User(username=form.username.data)
+            user.control_stack = []
             user.set_num_trials_completed(0)
             user.set_completion(0)
             user.set_attention_check(-1)

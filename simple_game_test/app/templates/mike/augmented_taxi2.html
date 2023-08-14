@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
     <link rel="stylesheet" href="/static/css/jspsych.css" type="text/css" />
     <style type="text/css">
-    .likert ul
+        .likert ul
     {
         list-style-type: none;
         margin: 0;
@@ -25,6 +25,9 @@
         text-align: left;
         list-style-type: none;
         padding:10px;
+    }
+    input[type="radio"] {
+        margin-right: 5px;
     }
 
     .table-info
@@ -120,11 +123,9 @@
             if (data["last test"]) {
                 localStorage.setItem("last test", "true");
             }
-            console.log(mdp_parameters);
-            console.log("Interaction: ");
-            console.log(interaction_type);
-            change_text(interaction_type);
-            run_page(mdp_parameters);
+            console.log(window.mdp_parameters);
+                        change_text(interaction_type);
+            run_page(window.mdp_parameters);
         });
         
         // Assign html for interaction type
@@ -166,6 +167,12 @@
         // }
         // );
 
+        function prev() {
+            localStorage.setItem("movement", "prev");
+            window.location.href="/ct";
+        }
+
+
         function next() {
             // reset()
             localStorage.setItem("survey completed", "false");
@@ -199,6 +206,11 @@
 
         addEventListener("input", (event) => {
             localStorage.setItem("survey completed", "true");
+            // localStorage.setItem("survey completed", "true");
+            let radioValue = $("input[name='info']:checked").val();
+            if(radioValue) {
+                localStorage.setItem("survey", radioValue);
+            }
             $("#next").replaceWith(`<button type="button" id="next" 
                     onclick="next()"
                     value="next" class="btn btn-primary btn-lg continue">
