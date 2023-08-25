@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, TrialForm, DemoForm, ConsentForm, AttentionCheckForm, FinalForm, TrainingForm, FeedbackSurveyForm, NoFeedbackSurveyForm, InformativenessForm
-from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey
+from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey, Domain
 from app.params import *
 from utils import rules_to_str, str_to_rules
 import numpy as np
@@ -16,11 +16,11 @@ from learner import Learner
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
-from .augmented_taxi.policy_summarization.flask_user_study_utils import normalize_trajectories, obtain_constraint
-from .augmented_taxi.policy_summarization.BEC import obtain_remedial_demonstrations
-from .augmented_taxi import params
-from .augmented_taxi.policy_summarization import BEC_helpers
-from .augmented_taxi.policy_summarization import particle_filter as pf
+# from .augmented_taxi.policy_summarization.flask_user_study_utils import normalize_trajectories, obtain_constraint
+# from .augmented_taxi.policy_summarization.BEC import obtain_remedial_demonstrations
+# from .augmented_taxi import params
+# from .augmented_taxi.policy_summarization import BEC_helpers
+# from .augmented_taxi.policy_summarization import particle_filter as pf
 
 from app.backend_test import send_signal
 from app import socketio
@@ -582,7 +582,7 @@ def index():
 
     completed = True if current_user.study_completed == 1 else False
 
-    current_user.loop_condition = "cl"
+    current_user.loop_condition = "debug"
     domains = ["at", "ct", "sb"]
     # domains = ["ct", "sb", "at"]
     # domains = ["sb", "at", "ct"]
@@ -823,32 +823,41 @@ def settings(data):
     progression = {
         "debug": {
             "at": [["demo", -1], ["demo", 0], ["demo", 1],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1]],
             "ct": [["demo", -1], ["demo", 0], ["demo", 1],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1]],
             "sb": [["demo", -1], ["demo", 0], ["demo", 1],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1]]
         },
         "open": {
             "at": [["demo", -1], ["demo", 0], ["demo", 1], ["demo", 2], ["demo", 3], ["demo", 4],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]],
             "ct": [["demo", -1], ["demo", 0], ["demo", 1], ["demo", 2], ["demo", 3], ["demo", 4],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]],
             "sb": [["demo", -1], ["demo", 0], ["demo", 1], ["demo", 2], ["demo", 3], ["demo", 4], ["demo", 5], ["demo", 6],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]]
         },
         "pl": {
             "at": [["demo", -1], ["demo", 0], ["demo", 1], ["diagnostic test", 0], ["diagnostic feedback", 0],
                    ["demo", 2], ["demo", 3], ["diagnostic test", 1], ["diagnostic feedback", 1], ["diagnostic test", 2], ["diagnostic feedback", 2],
                    ["demo", 4], ["diagnostic test", 3], ["diagnostic feedback", 3],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]],
             "ct": [["demo", -1], ["demo", 0], ["demo", 1], ["diagnostic test", 0], ["diagnostic feedback", 0], ["diagnostic test", 1], ["diagnostic feedback", 1],
                    ["demo", 2], ["demo", 3], ["diagnostic test", 2], ["diagnostic feedback", 2], ["diagnostic test", 3], ["diagnostic feedback", 3],
                    ["demo", 4], ["diagnostic test", 4], ["diagnostic feedback", 4],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]],
             "sb": [["demo", -1], ["demo", 0], ["demo", 1], ["diagnostic test", 0], ["diagnostic feedback", 0], ["diagnostic test", 1], ["diagnostic feedback", 1],
                    ["demo", 2], ["demo", 3], ["diagnostic test", 2], ["diagnostic feedback", 2], ["diagnostic test", 3], ["diagnostic feedback", 3],
                    ["demo", 4], ["demo", 5], ["demo", 6], ["diagnostic test", 4], ["diagnostic feedback", 4], ["diagnostic test", 5], ["diagnostic feedback", 5], ["diagnostic test", 6], ["diagnostic feedback", 6],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]]
         },
         "cl": {
@@ -875,6 +884,7 @@ def settings(data):
                    ["remedial test", 3, 1], ["remedial feedback", 3, 1],
                    ["remedial test", 3, 2], ["remedial feedback", 3, 2],
                    ["remedial test", 3, 3], ["remedial feedback", 3, 3],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]],
             "ct": [["demo", -1], ["demo", 0], ["demo", 1],
                    ["diagnostic test", 0], ["diagnostic feedback", 0], ["remedial demo", 0],
@@ -904,6 +914,7 @@ def settings(data):
                    ["remedial test", 4, 1], ["remedial feedback", 4, 1],
                    ["remedial test", 4, 2], ["remedial feedback", 4, 2],
                    ["remedial test", 4, 3], ["remedial feedback", 4, 3],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]],
             "sb": [["demo", -1], ["demo", 0], ["demo", 1],
                    ["diagnostic test", 0], ["diagnostic feedback", 0], ["remedial demo", 0],
@@ -943,13 +954,35 @@ def settings(data):
                    ["remedial test", 6, 1], ["remedial feedback", 6, 1],
                    ["remedial test", 6, 2], ["remedial feedback", 6, 2],
                    ["remedial test", 6, 3], ["remedial feedback", 6, 3],
+                   ["survey", 0],
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]]
         }
     }
     print(loop_cond)
     print(domain)
 
-    if iter != -1:
+    if it == "survey":
+        dom = Domain(
+            user_id = current_user.id,
+            domain_name = domain,
+            attn1 = int(data["attn1"]),
+            attn2 = int(data["attn2"]),
+            attn3 = int(data["attn3"]),
+            use1 = int(data["use1"]),
+            use2 = int(data["use2"]),
+            use3 = int(data["use3"]),
+            short_answer = data["short answer"]
+        )
+        db.session.add(dom)
+        print(data["attn1"])
+        print(data["attn2"])
+        print(data["attn3"])
+        print(data["use1"])
+        print(data["use2"])
+        print(data["use3"])
+        print(data["short answer"])
+
+    elif iter != -1:
         trial = Trial(
             user_id = current_user.id,
             domain = domain,
@@ -980,7 +1013,7 @@ def settings(data):
     key = [it, iter, subiter]
     last_test = False
 
-    if key not in current_user.control_stack:
+    if key not in current_user.control_stack and it != "survey":
         current_user.stack_push(key)
 
     if data["movement"] == "prev":
@@ -1123,34 +1156,35 @@ def settings(data):
                 params.step_cost_flag, type=type, n_human_models_precomputed=params.BEC['n_human_models_precomputed'], web_based=True)
 
                 response["params"] = remedial_mdp_dict
-            else:
+            elif current_user.interaction_type != "survey":
                 response["params"] = jsons[domain_key][current_user.interaction_type][str(current_user.iteration)]
         else:
             if "test" in current_user.interaction_type:
                 response["params"] = jsons[domain_key]["final test"]["low"][0][0]
-            else:
+            elif current_user.interaction_type != "survey":
                 response["params"] = jsons[domain_key]["demo"]["0"]
 
 
     already_completed = "false"
-    num_times_completed = db.session.query(Trial).filter_by(user_id=current_user.id,
-                                                        domain=domain,
-                                                        interaction_type=current_user.interaction_type,
-                                                        iteration=current_user.iteration,
-                                                        subiteration=current_user.subiteration).count()
-    num_times_unfinished = db.session.query(Trial).filter_by(user_id=current_user.id,
-                                                        domain=domain,
-                                                        interaction_type=current_user.interaction_type,
-                                                        iteration=current_user.iteration,
-                                                        subiteration=current_user.subiteration,
-                                                        likert=-1).count()
-    num_times_finished = num_times_completed - num_times_unfinished
-    if num_times_finished > 0:
-        already_completed = "true"
-        response["params"]["tag"] = -1
+    if current_user.interaction_type != "survey":
+        num_times_completed = db.session.query(Trial).filter_by(user_id=current_user.id,
+                                                            domain=domain,
+                                                            interaction_type=current_user.interaction_type,
+                                                            iteration=current_user.iteration,
+                                                            subiteration=current_user.subiteration).count()
+        num_times_unfinished = db.session.query(Trial).filter_by(user_id=current_user.id,
+                                                            domain=domain,
+                                                            interaction_type=current_user.interaction_type,
+                                                            iteration=current_user.iteration,
+                                                            subiteration=current_user.subiteration,
+                                                            likert=-1).count()
+        num_times_finished = num_times_completed - num_times_unfinished
+        if num_times_finished > 0:
+            already_completed = "true"
+            response["params"]["tag"] = -1
 
     go_prev = "true"
-    if (current_user.iteration == 0 and current_user.interaction_type == "demo") or ("test" in current_user.interaction_type and already_completed == "false"):
+    if (current_user.iteration == 0 and current_user.interaction_type == "demo") or ("test" in current_user.interaction_type and already_completed == "false") or (current_user.interaction_type == "survey"):
         go_prev = "false"
 
     debug_string = f"domain={domain}, interaction type={current_user.interaction_type}, iteration={current_user.iteration}, subiteration={current_user.subiteration}"
