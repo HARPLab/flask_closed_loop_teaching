@@ -131,6 +131,11 @@ def load_user(id):
 #     bonus_value = db.Column(db.String(256))
 #     feedback_strings = db.Column(db.PickleType)
 
+class Groups(db.Model):
+    group_id = db.Column(db.Integer, primary_key=True)
+    user_ids = db.Column(MutableList.as_mutable(db.PickleType),
+                                    default=[])
+
 class Trial(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
