@@ -36,5 +36,7 @@ if rows == 0:
 	for condition in IN_PERSON_CONDITIONS:
 		trials = condition
 		db.session.add(models.InPersonCondition(trials=trials, trial_1=condition[0], trial_2=condition[1], trial_3=condition[2], trial_4=condition[3], trial_5=condition[4], count=0))
-
+db.session.query(models.Groups).delete()
+group = models.Groups(user_ids=[])
+db.session.add(group)
 db.session.commit()

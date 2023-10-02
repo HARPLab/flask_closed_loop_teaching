@@ -50,7 +50,7 @@ class User(UserMixin, db.Model):
     control_stack = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
     curr_trial_idx = db.Column(db.Integer)
-    group = db.Column(db.String(50))
+    group = db.Column(db.Integer)
 
     def __repr__(self):
         return "<User {}>".format(self.username)
@@ -132,9 +132,17 @@ def load_user(id):
 #     feedback_strings = db.Column(db.PickleType)
 
 class Groups(db.Model):
-    group_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     user_ids = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
+    status = db.Column(db.String(10))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    current_round = db.Column(db.Integer)
+
+    
+    def groups_push(self, value):
+        self.user_ids.append(value)
+        return self.user_ids
 
 class Trial(db.Model):
     id = db.Column(db.Integer, primary_key=True)

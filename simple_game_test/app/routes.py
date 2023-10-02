@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, TrialForm, DemoForm, ConsentForm, AttentionCheckForm, FinalForm, TrainingForm, FeedbackSurveyForm, NoFeedbackSurveyForm, InformativenessForm
-from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey, Domain
+from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey, Domain, Groups
 from app.params import *
 from utils import rules_to_str, str_to_rules
 import numpy as np
@@ -516,6 +516,46 @@ def post_practice():
             "For example, note the '???' in the Energy Change column below. <table class=\"center\"><tr><th>Action</th><th>Sample sequence</th><th>Energy change</th></tr><tr><td>Any action that you take (e.g. moving right)</td><td><img src = 'static/img/right1.png' width=\"150\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/right2.png' width=\"150\" height=auto /><td>???</td></tr></table> <br>" +
             "<h3>Instead, you will have to <u>figure that out</u> and subsequently the best strategy for completing the task while minimizing Chip's energy loss <u>by observing Chip's demonstrations!</u></h3><br>")
     return render_template("mike/post_practice.html", preamble=preamble)
+
+@app.route("/waiting_room", methods=["GET", "POST"])
+@login_required
+def waiting_room():
+    preamble = ("<h3>Please wait while we find more group members for you!</h3")
+    return render_template("mike/waiting_room.html", preamble=preamble)
+
+@socketio.on("handle groups")
+def handle_groups():
+    """
+    handles adding members to groups. executed upon client-side call to "handle 
+    groups" in mike/augmented_taxi2_introduction.html. emits the status of the 
+    group (1 member, 2 members, 3 members) back to all group members, received
+    in the same at_intro file.
+
+    data in: none
+    data emitted: group status
+    side effects: alters Groups database with added member in appropriate row   
+    """ 
+    old_groups = db.session.query(Groups).all()
+    old_groups_list = [[g.id, g.user_ids] for g in old_groups]
+    to_edit = -1
+    group_to_join = []
+    for id, user_ids in old_groups_list:
+        if len(user_ids) < 3:
+            to_edit = id
+            group_to_join = user_ids
+            break
+    if to_edit < 0:
+        group = Groups(user_ids=[current_user.username])
+        db.session.add(group)
+    else:
+        group_to_join.append(current_user.username)
+        db.session.query(Groups).filter(Groups.id == to_edit).update({'user_ids': group_to_join})
+
+    db.session.commit()
+    new_groups = db.session.query(Groups).all()
+    print([[g.id, g.user_ids] for g in new_groups])
+
+    return
 
 @socketio.on("next domain")
 def next_domain():
