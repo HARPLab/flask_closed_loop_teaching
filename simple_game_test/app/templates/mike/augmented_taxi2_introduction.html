@@ -1,5 +1,6 @@
 {% extends "base.html" %}{% block content %}
-<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+  integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
 <!-- <div class="loader"></div>
 <h3 id="waiting"></h3> -->
@@ -12,94 +13,94 @@
   <div id="instructions_section">
     <hr />
 
-        <h2>Welcome to a new game!</h2> <br>
-        <h3> Here are a few configurations that you may see in this section.</h3>
+    <h2>Welcome to a new game!</h2> <br>
+    <h3> Here are a few configurations that you may see in this section.</h3>
 
-        <img src = 'static/img/augmented_taxi.png' width="250" height=auto/>
-        <img src = 'static/img/augmented_taxi2_2.png' width="250" height=auto hspace="20" vspace="20"/>
-        <img src = 'static/img/augmented_taxi2_3.png' width="250" height=auto/>
-        <br>
-        <br>
+    <img src='static/img/augmented_taxi.png' width="250" height=auto />
+    <img src='static/img/augmented_taxi2_2.png' width="250" height=auto hspace="20" vspace="20" />
+    <img src='static/img/augmented_taxi2_3.png' width="250" height=auto />
+    <br>
+    <br>
 
-        <h3>In this game, the task is the following:</h3>
+    <h3>In this game, the task is the following:</h3>
 
-        <table class="center">
-          <tr>
-            <th>Task</th>
-            <th>Sample sequence</th>
-          </tr>
-          <tr>
-            <td>Dropping off the circle at the purple square</td>
-            <td><img src = 'static/img/augmented_taxi_dropoff1.png' width="75" height=auto />
-            <img src = 'static/img/arrow.png' width="30" height=auto />
-            <img src = 'static/img/augmented_taxi_dropoff2.png' width="75" height=auto />
-            </td>
-          </tr>
-        </table>
+    <table class="center">
+      <tr>
+        <th>Task</th>
+        <th>Sample sequence</th>
+      </tr>
+      <tr>
+        <td>Dropping off the circle at the purple square</td>
+        <td><img src='static/img/augmented_taxi_dropoff1.png' width="75" height=auto />
+          <img src='static/img/arrow.png' width="30" height=auto />
+          <img src='static/img/augmented_taxi_dropoff2.png' width="75" height=auto />
+        </td>
+      </tr>
+    </table>
 
-        <br>
-        <br>
+    <br>
+    <br>
 
-        <h3>In this game, the following actions affect Chip's energy differently:</h3>
+    <h3>In this game, the following actions affect Chip's energy differently:</h3>
 
-        <table class="center">
-          <tr>
-            <th>Actions</th>
-            <th>Sample sequence(s)</th>
-              <th>Energy change</th>
-          </tr>
-          <tr>
-              <td>Moving <u>out of</u> a yellow square (into yellow <u>or</u> white square)</td>
-            <td>
-                <img src = 'static/img/augmented_taxi2_toll1.png' width=auto height="125" />
-                <img src = 'static/img/arrow.png' width="30" height=auto />
-                <img src = 'static/img/augmented_taxi2_toll2.png' width=auto height="125" />
-            </td>
-              <td>???</td>
-          </tr>
-          <tr>
-            <td>Moving through the green hexagon</td>
-            <td><img src = 'static/img/augmented_taxi2_battery1.png' width="75" height=auto />
-            <img src = 'static/img/arrow.png' width="30" height=auto />
-            <img src = 'static/img/augmented_taxi2_battery2.png' width="75" height=auto />
-            <img src = 'static/img/arrow.png' width="30" height=auto />
-            <img src = 'static/img/augmented_taxi2_battery3.png' width="75" height=auto />
-            </td>
-              <td>???</td>
-          </tr>
-          <tr>
-            <td>Any action that you take (e.g. moving right, picking up, etc)</td>
-            <td>
-                <img src = 'static/img/right1.png' width="150" height=auto />
-            <img src = 'static/img/arrow.png' width="30" height=auto />
-            <img src = 'static/img/right2.png' width="150" height=auto />
-            </td>
-              <td>???</td>
-          </tr>
-        </table>
+    <table class="center">
+      <tr>
+        <th>Actions</th>
+        <th>Sample sequence(s)</th>
+        <th>Energy change</th>
+      </tr>
+      <tr>
+        <td>Moving <u>out of</u> a yellow square (into yellow <u>or</u> white square)</td>
+        <td>
+          <img src='static/img/augmented_taxi2_toll1.png' width=auto height="125" />
+          <img src='static/img/arrow.png' width="30" height=auto />
+          <img src='static/img/augmented_taxi2_toll2.png' width=auto height="125" />
+        </td>
+        <td>???</td>
+      </tr>
+      <tr>
+        <td>Moving through the green hexagon</td>
+        <td><img src='static/img/augmented_taxi2_battery1.png' width="75" height=auto />
+          <img src='static/img/arrow.png' width="30" height=auto />
+          <img src='static/img/augmented_taxi2_battery2.png' width="75" height=auto />
+          <img src='static/img/arrow.png' width="30" height=auto />
+          <img src='static/img/augmented_taxi2_battery3.png' width="75" height=auto />
+        </td>
+        <td>???</td>
+      </tr>
+      <tr>
+        <td>Any action that you take (e.g. moving right, picking up, etc)</td>
+        <td>
+          <img src='static/img/right1.png' width="150" height=auto />
+          <img src='static/img/arrow.png' width="30" height=auto />
+          <img src='static/img/right2.png' width="150" height=auto />
+        </td>
+        <td>???</td>
+      </tr>
+    </table>
 
-        <br><br>
-        <h3>Chip will now provide a few demonstrations of the best strategy for this game.</h3>
+    <br><br>
+    <h3>Chip will now provide a few demonstrations of the best strategy for this game.</h3>
 
     <hr />
 
 
     <div class="instructionsnav">
       <div class="row justify-content-between">
-          <div class="col-xs-3">
-            <!-- <button type="button" id="prev" onclick="window.location.href='/post_practice'" value="previous" class="btn btn-primary btn-lg continue">
+        <div class="col-xs-3">
+          <!-- <button type="button" id="prev" onclick="window.location.href='/post_practice'" value="previous" class="btn btn-primary btn-lg continue">
                   Previous <span class="glyphicon glyphicon-arrow-left"></span>
                   </button> -->
-          </div>
-          <div class="col-xs-3">
-            <button type="button" id="next" 
-            onclick="window.location.href='/at'" value="next" class="btn btn-primary btn-lg continue">
+        </div>
+        <div class="col-xs-3">
+          <button type="button" id="next" onclick="window.location.href='/at'" value="next"
+            class="btn btn-primary btn-lg continue">
             Next <span class="glyphicon glyphicon-arrow-right"></span>
-            </button>
-          </div>
+          </button>
+        </div>
       </div>
+    </div>
   </div>
-</div>
 </div>
 
 <script>
