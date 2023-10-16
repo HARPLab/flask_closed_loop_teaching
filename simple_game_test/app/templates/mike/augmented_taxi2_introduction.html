@@ -1,8 +1,15 @@
 {% extends "base.html" %}{% block content %}
 <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
-<div class="loader"></div>
+<!-- <div class="loader"></div>
+<h3 id="waiting"></h3> -->
 <div id="container-instructions" class="text-center">
+  <div id="waiting_section">
+    <div class="loader"></div>
+    <h3 id="waiting"></h3>
+  </div>
+
+  <div id="instructions_section">
     <hr />
 
         <h2>Welcome to a new game!</h2> <br>
@@ -80,9 +87,9 @@
     <div class="instructionsnav">
       <div class="row justify-content-between">
           <div class="col-xs-3">
-            <button type="button" id="prev" onclick="window.location.href='/post_practice'" value="previous" class="btn btn-primary btn-lg continue">
+            <!-- <button type="button" id="prev" onclick="window.location.href='/post_practice'" value="previous" class="btn btn-primary btn-lg continue">
                   Previous <span class="glyphicon glyphicon-arrow-left"></span>
-                  </button>
+                  </button> -->
           </div>
           <div class="col-xs-3">
             <button type="button" id="next" 
@@ -92,13 +99,27 @@
           </div>
       </div>
   </div>
-
+</div>
 </div>
 
 <script>
+  $("#instructions_section").hide()
   let socket = io();
   socket.on("connect", function () {
-    socket.emit("handle groups");
+    socket.emit("join group");
+  });
+  socket.on("group joined", function (data) {
+    let num_members = data["num members"];
+    console.log(num_members);
+    if (num_members === 3) {
+      $("#waiting_section").hide()
+      $("#instructions_section").show()
+    }
+    else {
+      let display_text = "Waiting on " + (3 - num_members) + " more groupmates... thank you for your patience! The game will begin when your group has 3 members.";
+      console.log(display_text);
+      $("#waiting").html(display_text);
+    }
   });
 </script>
 {% endblock %}

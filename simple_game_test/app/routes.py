@@ -523,39 +523,130 @@ def waiting_room():
     preamble = ("<h3>Please wait while we find more group members for you!</h3")
     return render_template("mike/waiting_room.html", preamble=preamble)
 
-@socketio.on("handle groups")
-def handle_groups():
+@socketio.on("join group")
+def join_group():
     """
-    handles adding members to groups. executed upon client-side call to "handle 
-    groups" in mike/augmented_taxi2_introduction.html. emits the status of the 
+    handles adding members to groups. executed upon client-side call to "join 
+    group" in mike/augmented_taxi2_introduction.html. emits the status of the 
     group (1 member, 2 members, 3 members) back to all group members, received
-    in the same at_intro file.
+    in the same at_intro file, endpoint named "group joined".
 
     data in: none
-    data emitted: group status
+    data emitted: num_members
     side effects: alters Groups database with added member in appropriate row   
     """ 
-    old_groups = db.session.query(Groups).all()
-    old_groups_list = [[g.id, g.user_ids] for g in old_groups]
-    to_edit = -1
-    group_to_join = []
-    for id, user_ids in old_groups_list:
-        if len(user_ids) < 3:
-            to_edit = id
-            group_to_join = user_ids
-            break
-    if to_edit < 0:
-        group = Groups(user_ids=[current_user.username])
-        db.session.add(group)
-    else:
-        group_to_join.append(current_user.username)
-        db.session.query(Groups).filter(Groups.id == to_edit).update({'user_ids': group_to_join})
+
+    # get last entry in groups table
+    # the initial entry is an empty list as initialized in app/__init__.py
+    old_group = db.session.query(Groups).order_by(Groups.id.desc()).first()
+    print(old_group)
+    num_members = len(old_group.user_ids) 
+    print(num_members)
+    if not current_user.group: # if no group yet, join one
+        if num_members < 3:
+            old_group.groups_push(current_user.username)
+            current_user.group = old_group.id
+            num_members += 1
+        else:
+            new_group = Groups(user_ids=[current_user.username])
+            db.session.add(new_group)
+            current_user.group = old_group.id + 1
+            num_members = 1
+    else: # if rejoining, get added to the same room
+        rejoined_group = db.session.query(Groups).filter_by(id=current_user.group).first()
+        num_members = len(rejoined_group.user_ids)
 
     db.session.commit()
+
+    # make sure that when people leave and rejoin they check the time elapsed and 
+    # if it's not too long, then put them back in a group
+    # they shouldn't be able to go back once they're in the waiting room
+
+    # test 
     new_groups = db.session.query(Groups).all()
     print([[g.id, g.user_ids] for g in new_groups])
 
+    room = (current_user.group) 
+    print(room)
+    join_room(room)
+
+    # if room is None then it gets sent to everyone 
+    socketio.emit("group joined", {"num members":num_members}, to=room)
     return
+
+@socketio.on("leave group")
+def leave_group():
+    """
+    handles leaving groups. executed upon client-side call to "leave 
+    group" in mike/augmented_taxi2_introduction.html or mike/augmented_taxi2.html.
+    emits the code for the group member which dropped, back to the other two 
+    group members, at endpoint "member left".
+
+    data in: none
+    data emitted: member_code
+    side effects: TBD   
+    """ 
+
+    # get last entry in groups table
+    # the initial entry is an empty list as initialized in app/__init__.py
+    old_group = db.session.query(Groups).order_by(Groups.id.desc()).first()
+    print(old_group)
+    num_members = len(old_group.user_ids) 
+    print(num_members)
+    if not current_user.group: # if no group yet, join one
+        if num_members < 3:
+            old_group.groups_push(current_user.username)
+            current_user.group = old_group.id
+            num_members += 1
+        else:
+            new_group = Groups(user_ids=[current_user.username])
+            db.session.add(new_group)
+            current_user.group = old_group.id + 1
+            num_members = 1
+    else: # if rejoining, get added to the same room
+        rejoined_group = db.session.query(Groups).filter_by(id=current_user.group).first()
+        num_members = len(rejoined_group.user_ids)
+
+    db.session.commit()
+
+    # make sure that when people leave and rejoin they check the time elapsed and 
+    # if it's not too long, then put them back in a group
+    # they shouldn't be able to go back once they're in the waiting room
+
+    # test 
+    new_groups = db.session.query(Groups).all()
+    print([[g.id, g.user_ids] for g in new_groups])
+
+    room = (current_user.group) 
+    print(room)
+    join_room(room)
+
+    # if room is None then it gets sent to everyone 
+    socketio.emit("group left", {"num members":num_members}, to=room)
+    return
+
+
+@socketio.on('join room')
+def handle_message():
+    # print('received message: ' + data['data'])
+    # session_id = request.sid
+    # print('session_id is: ' + session_id)
+    print(request.sid)
+    if current_user.username[0] == "a":
+        current_user.group = "room1"
+    else:
+        current_user.group = "room2"
+    # socketio.emit('ping event', {'test': 'sending to client'}, to=request.sid)
+    # current_user.set_test_column(812)
+
+    # curr_room = ""
+    # if len(current_user.username) % 2 == 0:
+    #     curr_room = "room1"
+    # else:
+    #     curr_room = "room2"
+    join_room(current_user.group)
+    db.session.commit()
+    # socketio.emit('join event', {"test":current_user.username + "just joined!"}, to=curr_room)
 
 @socketio.on("next domain")
 def next_domain():
@@ -1040,27 +1131,7 @@ def pass_trajectories():
     print(final_data)
     return json.dumps(send_signal(final_data["opt_response"]))
 
-@socketio.on('join room')
-def handle_message():
-    # print('received message: ' + data['data'])
-    # session_id = request.sid
-    # print('session_id is: ' + session_id)
-    print(request.sid)
-    if current_user.username[0] == "a":
-        current_user.group = "room1"
-    else:
-        current_user.group = "room2"
-    # socketio.emit('ping event', {'test': 'sending to client'}, to=request.sid)
-    # current_user.set_test_column(812)
 
-    # curr_room = ""
-    # if len(current_user.username) % 2 == 0:
-    #     curr_room = "room1"
-    # else:
-    #     curr_room = "room2"
-    join_room(current_user.group)
-    db.session.commit()
-    # socketio.emit('join event', {"test":current_user.username + "just joined!"}, to=curr_room)
 
 @socketio.on("group comm")
 def group_comm(data):
