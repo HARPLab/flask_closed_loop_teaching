@@ -51,6 +51,7 @@ class User(UserMixin, db.Model):
                                     default=[])
     curr_trial_idx = db.Column(db.Integer)
     group = db.Column(db.Integer)
+    group_code = db.Column(db.String(1))
 
     def __repr__(self):
         return "<User {}>".format(self.username)
@@ -138,6 +139,8 @@ class Groups(db.Model):
     status = db.Column(db.String(10))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     current_round = db.Column(db.Integer)
+    round_data = db.Column(MutableList.as_mutable(db.PickleType),
+                                    default=[])
 
     
     def groups_push(self, value):

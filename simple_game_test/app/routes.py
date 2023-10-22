@@ -546,6 +546,12 @@ def join_group():
         if num_members < 3:
             old_group.groups_push(current_user.username)
             current_user.group = old_group.id
+            if num_members == 0:
+                current_user.group_code = "A"
+            elif num_members == 1:
+                current_user.group_code = "B"
+            elif num_members == 2:
+                current_user.group_code = "C"
             num_members += 1
         else:
             new_group = Groups(user_ids=[current_user.username])
