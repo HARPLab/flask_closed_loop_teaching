@@ -536,31 +536,27 @@ def join_group():
     side effects: alters Groups database with added member in appropriate row   
     """ 
 
+    ret = {}
     # get last entry in groups table
     # the initial entry is an empty list as initialized in app/__init__.py
     old_group = db.session.query(Groups).order_by(Groups.id.desc()).first()
     print(old_group)
-    num_members = len(old_group.user_ids) 
+    num_members = old_group.num_members
     print(num_members)
     if not current_user.group: # if no group yet, join one
         if num_members < 3:
-            old_group.groups_push(current_user.username)
+            current_user.group_code = old_group.groups_push(current_user.username)
             current_user.group = old_group.id
-            if num_members == 0:
-                current_user.group_code = "A"
-            elif num_members == 1:
-                current_user.group_code = "B"
-            elif num_members == 2:
-                current_user.group_code = "C"
             num_members += 1
         else:
-            new_group = Groups(user_ids=[current_user.username])
+            new_group = Groups()
+            current_user.group_code = new_group.groups_push(current_user.username)
             db.session.add(new_group)
             current_user.group = old_group.id + 1
             num_members = 1
     else: # if rejoining, get added to the same room
         rejoined_group = db.session.query(Groups).filter_by(id=current_user.group).first()
-        num_members = len(rejoined_group.user_ids)
+        num_members = rejoined_group.num_members
 
     db.session.commit()
 
@@ -570,14 +566,19 @@ def join_group():
 
     # test 
     new_groups = db.session.query(Groups).all()
-    print([[g.id, g.user_ids] for g in new_groups])
+    print([[g.id, g.member_A, g.member_B, g.member_C] for g in new_groups])
 
     room = (current_user.group) 
     print(room)
     join_room(room)
 
     # if room is None then it gets sent to everyone 
-    socketio.emit("group joined", {"num members":num_members}, to=room)
+    socketio.emit("group joined", {"num members":num_members, }, to=room)
+    return
+
+@socketio.on("leave group temp")
+def leave_group_temp():
+    socketio.emit("member left temp", {"member code": current_user.group_code}, to=current_user.group)
     return
 
 @socketio.on("leave group")
@@ -592,43 +593,12 @@ def leave_group():
     data emitted: member_code
     side effects: TBD   
     """ 
+    if (current_user.group_code == "A"):
 
-    # get last entry in groups table
-    # the initial entry is an empty list as initialized in app/__init__.py
-    old_group = db.session.query(Groups).order_by(Groups.id.desc()).first()
-    print(old_group)
-    num_members = len(old_group.user_ids) 
-    print(num_members)
-    if not current_user.group: # if no group yet, join one
-        if num_members < 3:
-            old_group.groups_push(current_user.username)
-            current_user.group = old_group.id
-            num_members += 1
-        else:
-            new_group = Groups(user_ids=[current_user.username])
-            db.session.add(new_group)
-            current_user.group = old_group.id + 1
-            num_members = 1
-    else: # if rejoining, get added to the same room
-        rejoined_group = db.session.query(Groups).filter_by(id=current_user.group).first()
-        num_members = len(rejoined_group.user_ids)
-
+        db.session.query(Groups).filter_by(id=current_user.group).first().groups_remove(current_user.username)
     db.session.commit()
 
-    # make sure that when people leave and rejoin they check the time elapsed and 
-    # if it's not too long, then put them back in a group
-    # they shouldn't be able to go back once they're in the waiting room
-
-    # test 
-    new_groups = db.session.query(Groups).all()
-    print([[g.id, g.user_ids] for g in new_groups])
-
-    room = (current_user.group) 
-    print(room)
-    join_room(room)
-
-    # if room is None then it gets sent to everyone 
-    socketio.emit("group left", {"num members":num_members}, to=room)
+    socketio.emit("member left", {"member code": current_user.group_code}, to=current_user.group)
     return
 
 

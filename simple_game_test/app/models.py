@@ -142,10 +142,43 @@ class Groups(db.Model):
     round_data = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
 
+    member_A = db.Column(db.String(50), default="")
+    member_B = db.Column(db.String(50), default="")
+    member_C = db.Column(db.String(50), default="")
+    num_members = db.Column(db.Integer, default=0)
     
     def groups_push(self, value):
-        self.user_ids.append(value)
-        return self.user_ids
+        ret = ""
+        if not self.member_A:
+            self.member_A = value
+            ret = "A"
+        elif not self.member_B:
+            self.member_B = value
+            ret = "B"
+        elif not self.member_C:
+            self.member_C = value
+            ret = "C"
+
+        self.num_members += 1
+        return ret
+
+    def groups_remove(self, value):
+        ret = ""
+        if self.member_A == value:
+            self.member_A = ""
+            ret = "A"
+        elif self.member_B == value:
+            self.member_B = ""
+            ret = "B"
+        elif self.member_C == value:
+            self.member_C = ""
+            ret = "C"
+
+        self.num_members -= 1
+        return ret
+    
+    def get_group(self):
+        return {"A":bool(self.member_A), "B":bool(self.member_B), "C":bool(self.member_C)}
 
 class Trial(db.Model):
     id = db.Column(db.Integer, primary_key=True)

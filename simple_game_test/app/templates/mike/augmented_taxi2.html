@@ -85,7 +85,7 @@
         <div id = "info_main"></div>
     </div>
     <h2 id="debug"></h2><br><br><br>
-    <div class="row justify-content-around">
+    <div id="game_container" class="row justify-content-around">
         <canvas id="game" width="850" height="500"></canvas>
         <div id="table_controlinfo"></div>
     </div>
@@ -117,31 +117,31 @@
     </div>
 
   <script>
-      // hide the game instructions and preamble and show a loading screen while waiting to receive the necessary game data
-      document.getElementById('instructions').style.display = 'none';
-      document.getElementById('preamble').style.display = 'none';
+    //   // hide the game instructions and preamble and show a loading screen while waiting to receive the necessary game data
+    //   document.getElementById('instructions').style.display = 'none';
+    //   document.getElementById('preamble').style.display = 'none';
 
-      const roomIdentifier = "uniqueRoomIdentifier";  // Replace with the actual room identifier
-      const websocket = new WebSocket(`ws://localhost:8765/${roomIdentifier}`); // todo: will likely have to replace with a nonlocal host
+    //   const roomIdentifier = "uniqueRoomIdentifier";  // Replace with the actual room identifier
+    //   const websocket = new WebSocket(`ws://localhost:8765/${roomIdentifier}`); // todo: will likely have to replace with a nonlocal host
 
-      websocket.onopen = function(event) {
-          console.log('Connected to server');
-      };
+    //   websocket.onopen = function(event) {
+    //       console.log('Connected to server');
+    //   };
 
-      const loadingText = document.getElementById('loading-text');
-      websocket.onmessage = function(event) {
-          const data = event.data;
-          if (data === "Progress updates complete") {
-              console.log('Progress updates complete');
-              websocket.close(); // Close the WebSocket connection
-          } else {
-              var progress = parseInt(data);
-              if (isNaN(progress)) {
-                  progress = 0
-              }
-              loadingText.innerHTML = `Loading the next instruction... (${progress}% completed)`
-          }
-      };
+    //   const loadingText = document.getElementById('loading-text');
+    //   websocket.onmessage = function(event) {
+    //       const data = event.data;
+    //       if (data === "Progress updates complete") {
+    //           console.log('Progress updates complete');
+    //           websocket.close(); // Close the WebSocket connection
+    //       } else {
+    //           var progress = parseInt(data);
+    //           if (isNaN(progress)) {
+    //               progress = 0
+    //           }
+    //           loadingText.innerHTML = `Loading the next instruction... (${progress}% completed)`
+    //       }
+    //   };
 
       var socket = io();
 

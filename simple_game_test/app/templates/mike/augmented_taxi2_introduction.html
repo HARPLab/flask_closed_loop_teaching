@@ -165,11 +165,21 @@ margin-right: 10px;
 <script>
   $("#instructions_section").hide()
   let socket = io();
+  let member_statuses = {"A":"0", "B":"0", "C":"0"};
   socket.on("connect", function () {
     socket.emit("join group");
   });
   socket.on("group joined", function (data) {
     let num_members = data["num members"];
+    members = Object.keys(member_statuses);
+    members.forEach((member) => {
+      if (data[member]) {
+        member_statuses[member] = "1";
+      }
+      else {
+        member_statuses[member] = "0";
+      }
+    });
     console.log(num_members);
     if (num_members === 3) {
       $("#waiting_section").hide()
@@ -182,6 +192,24 @@ margin-right: 10px;
     }
   });
 
+  socket.on("member left temp", (data) => {
+    let member_left = data["member code"];
+    setTimeout(
+      () => {
+        if (member_statuses[member_left] === "0") {
+          console.log(member_left + " left for good :(");
+        }
+        else {
+          
+        }
+      },
+      500
+    );
+  });
+
+  addEventListener("beforeunload", (event) => {
+    socket.emit("leave group temp");
+  });
   // on before unload -- call group leave
   //setTimeout();
 </script>
