@@ -684,6 +684,41 @@ def sb_intro():
 def sb():
     return render_template("mike/skateboard2.html")
 
+def retrieve_group_usernames() -> list[str]:
+    """
+    retrieves group usernames given current user
+
+    data in: none 
+    data out: list[str] of 3 groupmates (including current user)
+    side effects: none
+    """
+
+    curr_group_num = current_user.group
+
+    # run query on Groups database
+    curr_group = db.session.query(Groups).filter_by(id=curr_group_num).first()
+
+    return [curr_group.member_A, curr_group.member_B, curr_group.member_C]
+
+def retrieve_next_round() -> dict:
+    """
+    retrieves necessary environment variables for displaying the next round to
+    the client based on database entries. gets called on the condition that 
+    player group_code == A, since we don't want to do computation more than once
+
+    data in: none (retrieves test moves from database)
+    data out: environment variables for next round
+    side effects: none  
+    """ 
+    group_usernames = retrieve_group_usernames()
+
+    ret = {}
+
+    for un in group_usernames:
+        continue
+
+    return ret
+
 # takes in state, including user input etc
 # and returns params for next state
 @socketio.on("settings")
