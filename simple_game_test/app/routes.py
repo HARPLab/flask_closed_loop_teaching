@@ -712,11 +712,13 @@ def retrieve_next_round() -> dict:
     """ 
     group_usernames = retrieve_group_usernames()
 
-    ret = {}
+    pkg = {}
 
     for un in group_usernames:
         continue
-
+        # pkg[un] = db.session.query(Trial).filter_by(user_id=un, interaction_type="test", )
+    
+    ret = send_signal(pkg) # change this, just a demo with a test file
     return ret
 
 # takes in state, including user input etc
