@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, TrialForm, DemoForm, ConsentForm, AttentionCheckForm, FinalForm, TrainingForm, FeedbackSurveyForm, NoFeedbackSurveyForm, InformativenessForm
-from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey, Domain, Groups
+from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey, Domain, Group, Round
 from app.params import *
 from utils import rules_to_str, str_to_rules
 import numpy as np
@@ -539,7 +539,7 @@ def join_group():
     ret = {}
     # get last entry in groups table
     # the initial entry is an empty list as initialized in app/__init__.py
-    old_group = db.session.query(Groups).order_by(Groups.id.desc()).first()
+    old_group = db.session.query(Group).order_by(Group.id.desc()).first()
     print(old_group)
     num_members = old_group.num_members
     print(num_members)
@@ -549,13 +549,13 @@ def join_group():
             current_user.group = old_group.id
             num_members += 1
         else:
-            new_group = Groups()
+            new_group = Group()
             current_user.group_code = new_group.groups_push(current_user.username)
             db.session.add(new_group)
             current_user.group = old_group.id + 1
             num_members = 1
     else: # if rejoining, get added to the same room
-        rejoined_group = db.session.query(Groups).filter_by(id=current_user.group).first()
+        rejoined_group = db.session.query(Group).filter_by(id=current_user.group).first()
         num_members = rejoined_group.num_members
 
     db.session.commit()
@@ -565,7 +565,7 @@ def join_group():
     # they shouldn't be able to go back once they're in the waiting room
 
     # test 
-    new_groups = db.session.query(Groups).all()
+    new_groups = db.session.query(Group).all()
     print([[g.id, g.member_A, g.member_B, g.member_C] for g in new_groups])
 
     room = (current_user.group) 
@@ -595,7 +595,7 @@ def leave_group():
     """ 
     if (current_user.group_code == "A"):
 
-        db.session.query(Groups).filter_by(id=current_user.group).first().groups_remove(current_user.username)
+        db.session.query(Group).filter_by(id=current_user.group).first().groups_remove(current_user.username)
     db.session.commit()
 
     socketio.emit("member left", {"member code": current_user.group_code}, to=current_user.group)
@@ -696,7 +696,7 @@ def retrieve_group_usernames() -> list[str]:
     curr_group_num = current_user.group
 
     # run query on Groups database
-    curr_group = db.session.query(Groups).filter_by(id=curr_group_num).first()
+    curr_group = db.session.query(Group).filter_by(id=curr_group_num).first()
 
     return [curr_group.member_A, curr_group.member_B, curr_group.member_C]
 
@@ -710,9 +710,23 @@ def retrieve_next_round() -> dict:
     data out: environment variables for next round
     side effects: none  
     """ 
+    group = current_user.group
     group_usernames = retrieve_group_usernames()
-
-    pkg = {}
+    
+    pkg = {"group_union": None, 
+           "group_intersection": None,
+           "model_A": None,
+           "model_B": None,
+           "model_C": None,
+           '''the below entries have values of 2-d list type, 
+           with the first entry in the list being the sequence of moves
+           submitted to the first test'''
+           "moves_A": None,
+           "moves_B": None,
+           "moves_C": None}
+    
+    
+    pkg["group_union"] = db.session.query(Round).filter_by(id=group)
 
     for un in group_usernames:
         continue

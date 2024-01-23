@@ -132,7 +132,17 @@ def load_user(id):
 #     bonus_value = db.Column(db.String(256))
 #     feedback_strings = db.Column(db.PickleType)
 
-class Groups(db.Model):
+class Round(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    group_id = db.Column(db.Integer)
+    group_union = db.Column(db.PickleType)
+    group_intersection = db.Column(db.PickleType)
+    member_A_model = db.Column(db.PickleType)
+    member_B_model = db.Column(db.PickleType)
+    member_C_model = db.Column(db.PickleType)
+    round_info = db.Column(db.PickleType)
+
+class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_ids = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
@@ -187,8 +197,13 @@ class Trial(db.Model):
     duration_ms = db.Column(db.Float)
     domain = db.Column(db.String(2))
     interaction_type = db.Column(db.String(20))
+
+    # new defining numbers, can reference round and iteration to 
+    # retrieve the corresponding environment variables in the Round db
+    round = db.Column(db.Integer)
     iteration = db.Column(db.Integer)
-    subiteration = db.Column(db.Integer)
+
+    # subiteration = db.Column(db.Integer)
     likert = db.Column(db.Integer)
     moves = db.Column(db.PickleType)
     coordinates = db.Column(db.PickleType)
