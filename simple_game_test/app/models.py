@@ -45,7 +45,15 @@ class User(UserMixin, db.Model):
     domain_3 = db.Column(db.String(2))
     interaction_type = db.Column(db.String(20))
     iteration = db.Column(db.Integer)
-    subiteration = db.Column(db.Integer)
+    # subiteration = db.Column(db.Integer)
+
+    # refers to the corresponding number in the round database
+    # the round database will have a primary key
+    # but it'll also have a column for group number
+    # and round number in that group
+    # the round attribute for the user will refer to that round number
+    # you can find this by querying the round w/ group number
+    round = db.Column(db.Integer, default=0)
 
     control_stack = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
@@ -135,6 +143,7 @@ def load_user(id):
 class Round(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     group_id = db.Column(db.Integer)
+    round_num = db.Column(db.Integer)
     group_union = db.Column(db.PickleType)
     group_intersection = db.Column(db.PickleType)
     member_A_model = db.Column(db.PickleType)
@@ -200,6 +209,7 @@ class Trial(db.Model):
 
     # new defining numbers, can reference round and iteration to 
     # retrieve the corresponding environment variables in the Round db
+    group = db.Column(db.Integer)
     round = db.Column(db.Integer)
     iteration = db.Column(db.Integer)
 

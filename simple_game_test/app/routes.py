@@ -711,6 +711,7 @@ def retrieve_next_round() -> dict:
     side effects: none  
     """ 
     group = current_user.group
+    round = current_user.round
     group_usernames = retrieve_group_usernames()
     
     pkg = {"group_union": None, 
@@ -725,10 +726,15 @@ def retrieve_next_round() -> dict:
            "moves_B": None,
            "moves_C": None}
     
-    
-    pkg["group_union"] = db.session.query(Round).filter_by(id=group)
+    prev_models = db.session.query(Round).filter_by(group_id=group, round_num=round).first()
+    pkg["group_union"] = prev_models.group_union
+    pkg["group_intersection"] = prev_models.group_intersection
+    pkg["model_A"] = prev_models.member_A_model
+    pkg["model_B"] = prev_models.member_B_model
+    pkg["model_C"] = prev_models.member_C_model
 
     for un in group_usernames:
+        
         continue
         # pkg[un] = db.session.query(Trial).filter_by(user_id=un, interaction_type="test", )
     
