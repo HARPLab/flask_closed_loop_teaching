@@ -150,6 +150,7 @@ class Round(db.Model):
     member_B_model = db.Column(db.PickleType)
     member_C_model = db.Column(db.PickleType)
     round_info = db.Column(db.PickleType)
+    last_round = db.Column(db.Boolean)
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)

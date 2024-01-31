@@ -629,8 +629,8 @@ def next_domain():
     print("yassss")
     current_user.interaction_type = "demo"
     current_user.iteration = -1
-    current_user.subiteration = 0
-    current_user.control_stack = []
+    current_user.subiteration = 0 # don't care about this
+    current_user.control_stack = [] # or this
     print(current_user.curr_progress)
 
     if current_user.curr_progress == "post practice":
@@ -742,9 +742,18 @@ def retrieve_next_round() -> dict:
             curr_moves.append(trial.moves)
         pkg[keys[i]] = curr_moves
     
+    # currently, just return a list of env variable dicts 
     ret = send_signal(pkg) # change this, just a demo with a test file
 
-    new_round = Round()
+    new_round = Round(group_id=group, round_num=round+1, 
+                      group_union=None,
+                      group_intersection=None,
+                      member_A_model=None,
+                      member_B_model=None,
+                      member_C_model=None,
+                      round_info=ret)
+    db.session.add(new_round)
+    db.session.commit()
     #probably don't need to increment round in here, it might just be easier to do this 
     #on specific 
     return ret
@@ -1116,6 +1125,7 @@ def settings(data):
             if "test" in current_user.interaction_type:
                 response["params"] = jsons[domain_key]["final test"]["low"][0][0]
             elif current_user.interaction_type != "survey":
+                # this is just schmutz
                 response["params"] = jsons[domain_key]["demo"]["0"]
 
 
