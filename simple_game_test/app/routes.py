@@ -573,7 +573,7 @@ def join_group():
     join_room(room)
 
     # if room is None then it gets sent to everyone 
-    socketio.emit("group joined", {"num members":num_members, }, to=room)
+    socketio.emit("group joined", {"num members":num_members}, to=room)
     return
 
 @socketio.on("leave group temp")
@@ -733,12 +733,20 @@ def retrieve_next_round() -> dict:
     pkg["model_B"] = prev_models.member_B_model
     pkg["model_C"] = prev_models.member_C_model
 
-    for un in group_usernames:
-        
-        continue
-        # pkg[un] = db.session.query(Trial).filter_by(user_id=un, interaction_type="test", )
+    keys = ["moves_A", "moves_B", "moves_C"]
+
+    for i, un in enumerate(group_usernames):
+        curr_moves = list()
+        trials = db.session.query(Trial).filter_by(user_id=un, interaction_type="test", round=round)
+        for trial in trials:
+            curr_moves.append(trial.moves)
+        pkg[keys[i]] = curr_moves
     
     ret = send_signal(pkg) # change this, just a demo with a test file
+
+    new_round = Round()
+    #probably don't need to increment round in here, it might just be easier to do this 
+    #on specific 
     return ret
 
 # takes in state, including user input etc
