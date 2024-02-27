@@ -223,7 +223,7 @@ class Trial(db.Model):
     percent_seen = db.Column(db.Float)
     mdp_parameters = db.Column(db.PickleType)
     human_model = db.Column(db.PickleType) # don't need this
-    is_first_time = db.Column(db.Boolean)
+    is_first_time = db.Column(db.Boolean, default=True)
 
 class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
