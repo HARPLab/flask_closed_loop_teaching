@@ -21,7 +21,7 @@ socketio = SocketIO(app)
 
 from app import routes, models
 
-
+# testing to see if source control is working
 # comment lines below when creating the database. uncomment lines below when running the app
 from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 
