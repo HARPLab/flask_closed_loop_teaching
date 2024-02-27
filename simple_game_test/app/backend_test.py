@@ -8,9 +8,13 @@ with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') 
 
 def send_signal(passed_test): 
     num_demos = random.randint(1,3)
-    num_tests = random.randint(1,3)
-    demo = jsons["augmented_taxi2"]["demo"]["0"]
-    test = jsons["augmented_taxi2"]["diagnostic test"]["0"]
-    res = [demo]*num_demos
-    res.extend([test]*num_tests)
+    num_tests = random.randint(1,2)
+    res = []
+    for d in range(num_demos):
+        # print(blah)
+        params = jsons["augmented_taxi2"]["demo"][str(random.randint(0, 4))]
+        res.append({"interaction type": "demo", "params": params})
+    for t in range(num_tests):
+        params = jsons["augmented_taxi2"]["diagnostic test"][str(random.randint(0, 3))]
+        res.append({"interaction type": "test", "params": params})
     return res

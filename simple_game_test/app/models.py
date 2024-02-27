@@ -45,7 +45,7 @@ class User(UserMixin, db.Model):
     domain_3 = db.Column(db.String(2))
     interaction_type = db.Column(db.String(20))
     iteration = db.Column(db.Integer)
-    # subiteration = db.Column(db.Integer)
+    subiteration = db.Column(db.Integer)
 
     # refers to the corresponding number in the round database
     # the round database will have a primary key
@@ -54,6 +54,7 @@ class User(UserMixin, db.Model):
     # the round attribute for the user will refer to that round number
     # you can find this by querying the round w/ group number
     round = db.Column(db.Integer, default=0)
+    last_iter_in_round = db.Column(db.Boolean, default=True)
 
     control_stack = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
@@ -150,7 +151,7 @@ class Round(db.Model):
     member_B_model = db.Column(db.PickleType)
     member_C_model = db.Column(db.PickleType)
     round_info = db.Column(db.PickleType)
-    last_round = db.Column(db.Boolean)
+    last_round = db.Column(db.Boolean) # only know this after the last round is completed
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -214,14 +215,15 @@ class Trial(db.Model):
     round = db.Column(db.Integer)
     iteration = db.Column(db.Integer)
 
-    # subiteration = db.Column(db.Integer)
+    subiteration = db.Column(db.Integer) # don't need this
     likert = db.Column(db.Integer)
     moves = db.Column(db.PickleType)
     coordinates = db.Column(db.PickleType)
     is_opt_response = db.Column(db.Boolean)
     percent_seen = db.Column(db.Float)
     mdp_parameters = db.Column(db.PickleType)
-    human_model = db.Column(db.PickleType)
+    human_model = db.Column(db.PickleType) # don't need this
+    is_first_time = db.Column(db.Boolean)
 
 class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True)

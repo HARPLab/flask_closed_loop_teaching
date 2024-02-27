@@ -160,6 +160,10 @@
             socket.emit("settings", data);
         });
         socket.on("settings configured", function (data) {
+
+            if (data["last in round"] === "true") {
+                socket.emit("rejoin group");
+            }
             localStorage.setItem("movement", "false");
             localStorage.setItem("user input", "{}");
             // localStorage.setItem("game completed", "false");
@@ -302,7 +306,7 @@
         function next() {
             localStorage.setItem("movement", "next");
             //localStorage.setItem("survey completed", "false");
-            if (localStorage.getItem("last test") === "true") {
+            if (false) {
                 localStorage.setItem("last test", "false");
                 socket.emit("next domain");
                 socket.on("next domain is", function(data) {
