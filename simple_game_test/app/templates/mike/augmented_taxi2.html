@@ -655,6 +655,7 @@
     function drawAgentHistory()
     {
         context.save();
+        console.log(agent_history);
         for (j = 0; j < agent_history.length; j++) {
             context.beginPath();
             if (j == 0) {
@@ -1084,7 +1085,7 @@
 
       function dropoff(version) {
         if (version == "agent"){
-            condition_goal = ((Math.floor(spaceship.grid_loc.x) == goal.grid_loc.x) && (spaceship.grid_loc.y == goal.grid_loc.y));
+            var condition_goal = ((Math.floor(spaceship.grid_loc.x) == goal.grid_loc.x) && (spaceship.grid_loc.y == goal.grid_loc.y));
 
             if (passenger.picked){
                 window.moves.push("dropoff");
@@ -1163,10 +1164,12 @@
 
       function keyPressed(event)
       {
+        event.preventDefault();
         if (mdp_parameters.tag == -2) {
             //training case, agent & human
 
                 if (event.keyCode == 32) {
+                    
                     //space bar pressed, advance demo
 
                     var next_action_agent = mdp_parameters.normalized_opt_actions[idx];
