@@ -322,14 +322,19 @@
                 });
             }
             else {
-                window.location.href='/at';
-            //     let data = {};
-            // // data["domain"] = localStorage.getItem("domain");
-            // // data["interaction type"] = localStorage.getItem("interaction type");
-            // // data["iteration"] = Number(localStorage.getItem("iteration"));
-            // // data["subiteration"] = Number(localStorage.getItem("subiteration"));
-            // data["user input"] = JSON.parse(localStorage.getItem("user input"));
-            // socket.emit("settings", data);
+                // window.location.href='/at';
+                let data = {};
+            data["survey"] = localStorage.getItem("survey")
+            data["user input"] = JSON.parse(localStorage.getItem("user input"));
+            data["movement"] = localStorage.getItem("movement");
+            data["attn1"] = localStorage.getItem("attn1");
+            data["attn2"] = localStorage.getItem("attn2");
+            data["attn3"] = localStorage.getItem("attn3");
+            data["use1"] = localStorage.getItem("use1");
+            data["use2"] = localStorage.getItem("use2");
+            data["use3"] = localStorage.getItem("use3");
+            data["short answer"] = localStorage.getItem("short answer");   
+            socket.emit("settings", data);
             }
 
         }
@@ -506,7 +511,7 @@
 
     function build_grid(){
         //create a grid
-        temp = [];
+        var temp = [];
         for (i = 0; i < mdp_parameters.height; i++) {
             temp.push([0]);
         }
@@ -543,14 +548,14 @@
             passenger.grid_loc.human_y = (mdp_parameters.height - mdp_parameters.passengers[0].y) + offset_y;
         }
         //set destination
-        destination_grid = build_grid();
+        var destination_grid = build_grid();
         goal.grid_loc.x = mdp_parameters.passengers[0].dest_x;
         goal.grid_loc.y = mdp_parameters.height - mdp_parameters.passengers[0].dest_y + 1;
         destination_grid[mdp_parameters.height - mdp_parameters.passengers[0].dest_y][mdp_parameters.passengers[0].dest_x-1] = 1;
         map_layout.destination = destination_grid;
 
         //set walls
-        color_locs = build_grid();
+        var color_locs = build_grid();
         for (i = 0; i < mdp_parameters.walls.length; i++) {
             color_locs[mdp_parameters.height - mdp_parameters.walls[i].y][mdp_parameters.walls[i].x-1] = 1;
         }
@@ -786,7 +791,7 @@
         var end_time = performance.now();
 
         // record whether the user got the optimal trajectory or not
-        same_traj = false;
+        var same_traj = false;
         for (var j = 0; j < mdp_parameters.all_opt_actions.length; j++) {
             opt_moves = mdp_parameters.all_opt_actions[j]
             if (moves.length == opt_moves.length) {
@@ -835,9 +840,9 @@
 
       function draw()
       {
-          if (!start_time_set) {
-              start_time = performance.now();
-              start_time_set = true
+          if (!window.start_time_set) {
+              window.start_time = performance.now();
+              window.start_time_set = true
           }
           if (!map_layout.set){
             set_grids();
@@ -892,7 +897,7 @@
         drawPassenger(passenger.grid_loc.x,passenger.grid_loc.y,"normal");
 
         // todo: update this to also consider whether the passenger.dropped_human is true as well if mdp_parameter.tag == -2
-          game_completed = false
+          var game_completed = false
           if (mdp_parameters.tag == -2) {
               if (passenger.dropped && passenger.dropped_human) game_completed = true;
           } else if (passenger.dropped) game_completed = true;
@@ -938,8 +943,8 @@
       }
 
       function left(version) {
-        agent_on_hotswap_station = checkHotswap("agent");
-        human_on_hotswap_station = checkHotswap("human");
+        var agent_on_hotswap_station = checkHotswap("agent");
+        var human_on_hotswap_station = checkHotswap("human");
 
         if (version == "agent"){
             if (spaceship.grid_loc.x > offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-1-offset_x] != 1){
@@ -969,8 +974,8 @@
       }
 
       function right(version) {
-        agent_on_hotswap_station = checkHotswap("agent");
-        human_on_hotswap_station = checkHotswap("human");
+        var agent_on_hotswap_station = checkHotswap("agent");
+        var human_on_hotswap_station = checkHotswap("human");
 
         if (version == "agent"){
             if (spaceship.grid_loc.x < mdp_parameters.width-1+offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x+1-offset_x] != 1){
@@ -999,8 +1004,8 @@
       }
 
       function up(version) {
-        agent_on_hotswap_station = checkHotswap("agent");
-        human_on_hotswap_station = checkHotswap("human");
+        var agent_on_hotswap_station = checkHotswap("agent");
+        var human_on_hotswap_station = checkHotswap("human");
 
         if (version == "agent"){
             if (spaceship.grid_loc.y > offset_y && map_layout.color_blocks[spaceship.grid_loc.y-1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
@@ -1030,8 +1035,8 @@
       }
 
       function down(version) {
-        agent_on_hotswap_station = checkHotswap("agent");
-        human_on_hotswap_station = checkHotswap("human");
+        var agent_on_hotswap_station = checkHotswap("agent");
+        var human_on_hotswap_station = checkHotswap("human");
 
         if (version == "agent"){
             if (spaceship.grid_loc.y < mdp_parameters.height-1+offset_y && map_layout.color_blocks[spaceship.grid_loc.y+1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
@@ -1093,7 +1098,7 @@
             }
         }
         else{
-            condition_goal = ((Math.floor(spaceship.grid_loc.human_x) == goal.grid_loc.x) && (spaceship.grid_loc.human_y == goal.grid_loc.y));
+            var condition_goal = ((Math.floor(spaceship.grid_loc.human_x) == goal.grid_loc.x) && (spaceship.grid_loc.human_y == goal.grid_loc.y));
 
             if (passenger.picked_human){
                 passenger.picked_human = false;
@@ -1107,7 +1112,7 @@
       }
 
       function reset() {
-        moves = [];
+        window.moves = [];
         map_layout.set = false;
         passenger.picked = false;
         passenger.picked_human = false;
@@ -1304,7 +1309,7 @@
         }
     }
 
-    // reset();
+    reset();
     // document.addEventListener('keydown', _.debounce(keyPressed, 200))
     document.addEventListener('keydown', keyPressed)
     start_screen();
