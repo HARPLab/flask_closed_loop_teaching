@@ -7,17 +7,168 @@
     <script src="/static/lib/underscore-min.js" type="text/javascript"> </script>
     <script src="/static/lib/backbone-min.js" type="text/javascript"> </script>
     <script src="/static/lib/d3.v3.min.js" type="text/javascript"> </script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+
 
     <link rel="stylesheet" href="/static/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
     <link rel="stylesheet" href="/static/css/jspsych.css" type="text/css" />
+    <style type="text/css">
 
+    .pre_info{
+        float: center;
+        text-align: center;
+    }
+
+    </style>
   </head>
   <body>
-    <canvas id="game" width="750" height="550"></canvas>
-    <br></br>
+    <div class="container-fluid" style="padding-left: 5%; padding-right: 5%">
+    <div id="container-instructions" class="text-center">
+        <div id="preamble" class="pre_info">
+            <h1>Participant gameplay</h1> <hr/>
+            <div id = "info_main"></div>
+        </div>
+        <h2 id="debug"></h2><br><br><br>
+        <div class="row justify-content-around">
+            <canvas id="game" width="750" height="550"></canvas>
+            <div id="table_controlinfo"></div>
+        </div>
+        <div id="survey">
+        <!-- <h3> Did this sequence improve your understanding of the game strategy?</h3>
+        <ul class="likert">
+            <li> Not helpful/informative at all </li>
+            <li><input type="radio" name="info" value="1" /></li>
+            <li><input type="radio" name="info" value="2" /></li>
+            <li><input type="radio" name="info" value="3" /></li>
+            <li><input type="radio" name="info" value="4" /></li>
+            <li><input type="radio" name="info" value="5" /></li>
+            <li> Very helpful/informative </li>
+        </ul>
+        <br></br> -->
+    </div>
+    <hr>
+    <br>
+    
+    <div class="instructionsnav">
+        <div class="row justify-content-around">
+          <div class="col-xs-3">
+            <button type="button" id="prev" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+            </button>
+          </div>
+          <div class="col-xs-3">
+                <button type="button" id="next" disabled
+            onclick="next()"
+            value="next" class="btn btn-primary btn-lg continue">
+            Next <span class="glyphicon glyphicon-arrow-right"></span>
+            </button>
+          </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    </div>
+    </div>
 
     <script>
+        var socket = io();
+        socket.on("connect", function () {
+            // if (localStorage.getItem("progress") === "sandbox_1") {
+            //     socket.emit("sandbox settings", { version: 1 });
+            // }
+            // else if (localStorage.getItem("progress") === "sandbox_2") {
+            //     socket.emit("sandbox settings", { version: 2 });
+            //     $("button").replaceWith(`<button type="button" disabled id="next" 
+            //         onclick="make_sandbox()"
+            //         value="next" class="btn btn-primary btn-lg continue">
+            //         Next <span class="glyphicon glyphicon-arrow-right"></span>
+            //         </button>` );
+            // }
+            let data = {};
+            // data["domain"] = localStorage.getItem("domain");
+            // data["interaction type"] = localStorage.getItem("interaction type");
+            // data["iteration"] = Number(localStorage.getItem("iteration"));
+            // data["subiteration"] = Number(localStorage.getItem("subiteration"));
+            data["user input"] = JSON.parse(localStorage.getItem("user input"));
+            data["movement"] = localStorage.getItem("movement");
+            socket.emit("settings", data);
+        });
+
+        socket.on("settings configured", function (data) {
+            mdp_parameters = data["params"]; 
+            interaction_type = data["interaction type"]; // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, final test
+
+            $("#debug").html(data["debug string"]);
+            if (data["last test"]) {
+                localStorage.setItem("last test", "true");
+            }
+            console.log(mdp_parameters);
+            console.log("Interaction: ");
+            console.log(interaction_type);
+            change_text(interaction_type);
+            run_page(mdp_parameters);
+        });
+
+        // Assign html for interaction type 
+        function change_text(interaction_type){  
+        console.log("changing text")
+        if (interaction_type == "diagnostic test" || interaction_type == "remedial test" || interaction_type == "final test") {
+            $("#table_controlinfo").replaceWith(`<div><br><br><br><br>
+        <table width="500">
+            <tr><th>Key</th><th>Action</th></tr>
+            <tr><td>up/down/left/right arrow keys</td><td>corresponding movement</td></tr>
+            <tr><td>p</td><td>pick up</td></tr>
+            <tr><td>d</td><td>drop</td></tr>
+            <tr><td>r</td><td>reset simulation</td></tr>
+        </table>
+        <br></div>`);
+            $("#info_main").replaceWith('<h3>Now its your turn to play six games! Please demonstrate how you would complete this games task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br> <h3>Please answer the question below on the confidence of your gameplay <b>after</b> providing your demonstration.</h3>');
+            }
+        else {
+            $("#table_controlinfo").replaceWith(`<div><br><br><br>
+        <table width="500">
+            <tr><th>Key</th><th>Action</th></tr>
+            <tr><td>space bar</td><td>next movement</td></tr>
+            <tr><td>p</td><td>pick up</td></tr>
+            <tr><td>d</td><td>drop</td></tr>
+            <tr><td>r</td><td>reset simulation</td></tr>
+        </table>
+        <br></div>`);
+            $("#info_main").replaceWith('<h3> Look at the demonstration on how you should complete this games task while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
+        }
+        }
+
+        function next() {
+            if (localStorage.getItem("last test") === "true") {
+                localStorage.setItem("last test", "false");
+                socket.emit("next domain");
+                socket.on("next domain is", function(data) {
+                    console.log("I have received next domain");
+                    let url = "";
+                    if (data["domain"].length === 2){
+                        url = "/".concat(data["domain"], "_intro");
+                    }
+                    else {
+                        url = "final_survey";
+                    }
+                    window.location.href=url;
+                });
+            }
+            else {
+                window.location.href='/sb';
+            }
+        }
+
+        addEventListener("input", (event) => {
+            localStorage.setItem("survey completed", "true");
+            $("#next").replaceWith(`<button type="button" id="next" 
+                    onclick="next()"
+                    value="next" class="btn btn-primary btn-lg continue">
+                    Next <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>` );
+        });
+
+    function run_page(mdp_parameters) {
     var canvas = document.getElementById("game");
     var context = canvas.getContext("2d");
 
@@ -34,41 +185,57 @@
     var offset_x = 1.25;
     var offset_y = 0.75;
 
-    var mdp_parameters = window.parent.mdp_parameters;
+    // var mdp_parameters = window.parent.mdp_parameters;
 
-    var watched_vid_arr = window.parent.watched_vid_arr;
-    var current_page = window.parent.current_page;
+    // var watched_vid_arr = window.parent.watched_vid_arr;
+    // var current_page = window.parent.current_page;
 
     var text_color = "#394d7e";
 
     var map_layout = {};
 
-var spaceship =
-      {
-          color: "#628dbe",
-          width: 65,
-          height: 130,
-          grid_loc:
-          {
-              x: 0,
-              y: 0
-          },
-          taxi_set: false
-      }
+    var spaceship =
+    {
+        color: "#628dbe",
+        color_light: "#7cb8fc",
+        width: 65,
+        height: 130,
+        grid_loc:
+        {
+        x: 0,
+            y: 0,
+            human_x: 0,
+            human_y: 0
+        },
+        taxi_set: false
+    }
 
-      var passenger =
-      {
-          color: "#C88B66",
-          width: 350,
-          height: 350,
-          grid_loc:
-          {
-              x: 0,
-              y: 0
-          },
-          picked: false,
-          dropped: false
-      }
+    var passenger =
+    {
+        color: "#C88B66",
+        color_light: "#fcae7e",
+        width: 350,
+        height: 350,
+        grid_loc:
+        {
+            x: 0,
+            y: 0,
+            human_x: 0,
+            human_y: 0
+        },
+        picked: false,
+        picked_human: false,
+        dropped: false
+    }
+
+    var goal = 
+    {
+        grid_loc:
+        {
+            x: 0,
+            y: 0 
+        }
+    }
 
       function build_grid(){
         //create a grid
@@ -85,10 +252,12 @@ var spaceship =
       }
 
     function set_grids()
-      {
+    {
           //set location of taxi
           spaceship.grid_loc.x =  (mdp_parameters.agent.x-1) + offset_x;
           spaceship.grid_loc.y =  (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
+          spaceship.grid_loc.human_x =  (mdp_parameters.agent.x-1) + offset_x + agent_human_spacer;
+          spaceship.grid_loc.human_y =  (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
           agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y])
           spaceship.taxi_set = true;
         //set location of passenger
@@ -96,10 +265,14 @@ var spaceship =
             passenger.picked = true;
             passenger.grid_loc.x = (mdp_parameters.agent.x-1) + offset_x;
             passenger.grid_loc.y = (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
+            passenger.grid_loc.human_x = (mdp_parameters.agent.x-1) + offset_x + agent_human_spacer;
+            passenger.grid_loc.human_y = (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
         }
         else{
             passenger.grid_loc.x = (mdp_parameters.skateboard[0].x-1) + offset_x;
             passenger.grid_loc.y = (mdp_parameters.height - mdp_parameters.skateboard[0].y) + offset_y;
+            passenger.grid_loc.human_x = (mdp_parameters.skateboard[0].x-1) + offset_x + agent_human_spacer;
+            passenger.grid_loc.human_y = (mdp_parameters.height - mdp_parameters.skateboard[0].y) + offset_y;
         }
         //set destination
         destination_grid = build_grid();
@@ -122,48 +295,64 @@ var spaceship =
 
       function drawTaxi()
       {
-          if (spaceship.taxi_set == false){
-            taxiSet();
-          }
-          context.save();
-          context.beginPath();
-          context.translate(100*(spaceship.grid_loc.x) + 50, 100*(spaceship.grid_loc.y) + 150);
-
-              context.lineTo(-spaceship.width * 0.5 , -spaceship.height * 0.5);
-              context.lineTo(0, -spaceship.height);
-              context.lineTo(-spaceship.width * -0.5, -spaceship.height * 0.5);
-
-          context.fillStyle = spaceship.color;
-          context.fill();
-          context.closePath();
-          context.restore();
+        if (spaceship.taxi_set == false){
+        taxiSet();
+        }
+        context.save();
+        context.beginPath();
+        context.translate(100*(x) + 50 + translate_draw, 100*(y) + 150);
+            context.lineTo(-spaceship.width * 0.5 , -spaceship.height * 0.5);
+            context.lineTo(0, -spaceship.height);
+            context.lineTo(-spaceship.width * -0.5, -spaceship.height * 0.5);
+        if (color == "light"){
+            context.fillStyle = spaceship.color_light;
+        }
+        else {
+            context.fillStyle = spaceship.color;
+        }
+        context.fill();
+        context.closePath();
+        context.restore();
       }
 
       function drawPassenger()
       {
-          context.save();
-          context.beginPath();
-          var i = 0;
-          var j = 0;
-
-          if (!passenger.picked){
+          if (mdp_parameters.skateboard.length > 0) {
+            context.save();
             context.beginPath();
-            context.rect(passenger.grid_loc.x*100 + 25, passenger.grid_loc.y*100 + 45, 50, 8);
-            context.fillStyle = passenger.color;
-            context.fill();
-            context.closePath();
-
-          }
-          else{
-            context.beginPath();
-            context.rect(passenger.grid_loc.x*100 + 25, passenger.grid_loc.y*100 + 77, 50, 8);
-            context.fillStyle = passenger.color;
-            context.fill();
-            context.closePath();
-          }
-
-          context.restore();
-      }
+            var i = 0;
+            var j = 0;
+            if (color == "light"){
+                context.fillStyle = passenger.color_light;
+                condition = !passenger.picked_human;
+                if (!passenger.picked_human){
+                    context.rect(x*100 + 25 + translate_draw, y*100 + 45, 50, 8);
+                    context.fill();
+                    context.closePath();
+                }
+                else{
+                    context.rect(x*100 + 25 + translate_draw, y*100 + 77, 50, 8);
+                    context.fill();
+                    context.closePath();
+                }
+            context.restore();
+                }
+            else {
+                context.fillStyle = passenger.color;
+                condition = !passenger.picked;
+                if (!passenger.picked){
+                    context.rect(x*100 + 25 + translate_draw, y*100 + 45, 50, 8);
+                    context.fill();
+                    context.closePath();
+                }
+                else{
+                    context.rect(x*100 + 25 + translate_draw, y*100 + 77, 50, 8);
+                    context.fill();
+                    context.closePath();
+                }
+            context.restore();
+        }
+      }}
 
     function drawAgentHistory()
     {
@@ -273,8 +462,15 @@ var spaceship =
         // Begin drawing
         drawMap();
         drawDestination();
-        drawTaxi();
-        drawPassenger();
+        if (mdp_parameters.tag  == -2){
+            drawTaxi(spaceship.grid_loc.human_x,spaceship.grid_loc.human_y,"light");
+            drawPassenger(passenger.grid_loc.human_x,passenger.grid_loc.human_y,"light");
+        }
+        if (mdp_parameters.tag  == -1){
+            drawAgentHistory();
+        }
+        drawTaxi(spaceship.grid_loc.x,spaceship.grid_loc.y,"normal");
+        drawPassenger(passenger.grid_loc.x,passenger.grid_loc.y,"normal");
     }
 
     function record_data(){
@@ -321,10 +517,12 @@ var spaceship =
         var event = new CustomEvent("game-completed", { "detail": "Demonstration has now ended." });
         document.dispatchEvent(event);
 
+        localStorage.setItem("user input", final_data);
+
         data_sent = true
     }
 
-      function draw()
+    function draw()
       {
           if (!start_time_set) {
               start_time = performance.now();
@@ -365,128 +563,251 @@ var spaceship =
                 context.closePath();
           }
 
-          context.beginPath();
-          // Begin drawing
-          drawMap();
-          drawDestination();
-          drawAgentHistory()
-          drawTaxi();
-          drawPassenger();
+        context.beginPath();
+        // Begin drawing
+        drawMap();
+        drawDestination();
+        if (mdp_parameters.tag  == -2){
+            drawTaxi(spaceship.grid_loc.human_x,spaceship.grid_loc.human_y,"light");
+            drawPassenger(passenger.grid_loc.human_x,passenger.grid_loc.human_y,"light");
+        }
+        if (mdp_parameters.tag  == -1){
+            drawAgentHistory();
+        }
+        drawTaxi(spaceship.grid_loc.x,spaceship.grid_loc.y,"normal");
+        drawPassenger(passenger.grid_loc.x,passenger.grid_loc.y,"normal");
 
-        if(map_layout.destination[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-offset_x] == 1) {
+        if((map_layout.destination[spaceship.grid_loc.y-offset_y][Math.floor(spaceship.grid_loc.x.grid_loc.x-offset_x)] == 1) && (map_layout.destination[spaceship.grid_loc.human_y-offset_y][Math.floor(spaceship.grid_loc.human_x-offset_x)] == 1)){
             context.font = "bold 28px Arial";
             context.fillStyle = text_color;
             context.textAlign = "center";
             context.fillText("Game completed!", (mdp_parameters.width * 100) / 2 + offset_x * 100, (mdp_parameters.height * 100) / 2 + offset_y * 100 + 250);
-            watched_vid_arr[current_page] = true;
+            // watched_vid_arr[current_page] = true;
             if (data_sent == false) {
                 record_data()
             }
+
+            $("#survey").replaceWith(`<h3> This sequence improved my understanding of the game strategy.</h3>
+                <div class="likert">
+                <label><input name="l" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                <label><input name="l" type="radio" value="2"/><span>Disagree</span></label>
+                <label><input name="l" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                <label><input name="l" type="radio" value="4"/><span>Agree</span></label>
+                <label><input name="l" type="radio" value="5"/><span>Strongly Agree</span></label>
+                </div>
+                <br></br>` );
         }
       }
 
-function onGoal()
-{
-    if (map_layout.destination[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-offset_x] == 1) {
-        return true
-    }
-    else {
-        return false
-    }
-}
-
-    function left() {
-        if (onGoal()){
-            return;
-        }
-        if (spaceship.grid_loc.x > offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-1-offset_x] != 1){
-            if (passenger.picked) {
-                // don't allow the skateboard to go on the path
-                if (map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-1-offset_x] == 2) {
-                    return;
-                }
+    function onGoal(version){
+        if (version=="agent"){
+            if (map_layout.destination[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-offset_x] == 1) {
+                console.log("agent here");
+                return true
             }
-            spaceship.grid_loc.x -= 1;
-            moves.push("left");
-            if (passenger.picked){
-                passenger.grid_loc.x -= 1;
+            else {
+                return false
+            }
+        }
+        else{
+            if (map_layout.destination[spaceship.grid_loc.human_y-offset_y][spaceship.grid_loc.human_x-offset_x-agent_human_spacer] == 1) {
+                console.log("human here");
+                return true
+            }
+            else {
+                return false
             }
         }
     }
 
-    function right() {
-        if (onGoal()){
-            return;
-        }
-        if (spaceship.grid_loc.x < mdp_parameters.width-1+offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x+1-offset_x] != 1){
-            if (passenger.picked) {
-                // don't allow the skateboard to go on the path
-                if (map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x+1-offset_x] == 2) {
-                    return;
-                }
-            }
-            spaceship.grid_loc.x += 1;
-            moves.push("right");
-            if (passenger.picked){
-                passenger.grid_loc.x += 1;
-            }
-        }
-    }
-
-    function up() {
-        if (onGoal()){
-            return;
-        }
-        if (spaceship.grid_loc.y > offset_y && map_layout.color_blocks[spaceship.grid_loc.y-1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
-            if (passenger.picked) {
-                // don't allow the skateboard to go on the path
-                if (map_layout.color_blocks[spaceship.grid_loc.y-1-offset_y][spaceship.grid_loc.x-offset_x] == 2) {
-                    return;
-                }
-            }
-            spaceship.grid_loc.y -= 1;
-            moves.push("up");
-            if (passenger.picked){
-                passenger.grid_loc.y -= 1;
-            }
-        }
-    }
-
-    function down() {
-        if (onGoal()){
-            return;
-        }
-        if (spaceship.grid_loc.y < mdp_parameters.height-1+offset_y && map_layout.color_blocks[spaceship.grid_loc.y+1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
-            if (passenger.picked) {
-            if(map_layout.color_blocks[spaceship.grid_loc.y+1-offset_y][spaceship.grid_loc.x-offset_x] == 2) {
+    function left(version) {
+        if (version == "agent"){
+            if (onGoal("agent")){
                 return;
             }
+            if (spaceship.grid_loc.x > offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-1-offset_x] != 1){
+                if (passenger.picked) {
+                    // don't allow the skateboard to go on the path
+                    if (map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-1-offset_x] == 2) {
+                        return;
+                    }
+                    }   
+                spaceship.grid_loc.x -= 1;
+                moves.push("left");
+                if (passenger.picked){
+                    passenger.grid_loc.x -= 1;
+                }
             }
-            spaceship.grid_loc.y += 1;
-            moves.push("down");
-            if (passenger.picked){
-                passenger.grid_loc.y += 1;
+        }
+        else{
+            if (onGoal("human")){
+                    return;
+            }
+            if (spaceship.grid_loc.human_x > offset_x && map_layout.color_blocks[spaceship.grid_loc.human_y-offset_y][spaceship.grid_loc.human_x-1-offset_x] != 1){
+                if (passenger.picked_human) {
+                    // don't allow the skateboard to go on the path
+                    if (map_layout.color_blocks[spaceship.grid_loc.human_y-offset_y][spaceship.grid_loc.human_x-1-offset_x] == 2) {
+                        return;
+                    }
+                    }   
+                spaceship.grid_loc.human_x -= 1;
+                if (passenger.picked_human){
+                    passenger.grid_loc.human_x -= 1;
+                }
             }
         }
     }
 
-    function pickup() {
-        if (onGoal()){
+    function right(version) {
+        if (version == "agent"){
+            if (onGoal("agent")){
+                return;
+            }
+            if (spaceship.grid_loc.x < mdp_parameters.width-1+offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x+1-offset_x] != 1){
+                if (passenger.picked) {
+                    // don't allow the skateboard to go on the path
+                    if (map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x+1-offset_x] == 2) {
+                        return;
+                    }
+                    }   
+                spaceship.grid_loc.x += 1;
+                moves.push("right");
+                if (passenger.picked){
+                    passenger.grid_loc.x += 1;
+                }
+            }
+        }
+        else{
+            if (onGoal("human")){
+                    return;
+            }
+            if (spaceship.grid_loc.human_x < mdp_parameters.width-1+offset_x && map_layout.color_blocks[spaceship.grid_loc.human_y-offset_y][spaceship.grid_loc.human_x+1-offset_x] != 1){
+                if (passenger.picked_human) {
+                    // don't allow the skateboard to go on the path
+                    if (map_layout.color_blocks[spaceship.grid_loc.human_y-offset_y][spaceship.grid_loc.human_x+1-offset_x] == 2) {
+                        return;
+                    }
+                    }   
+                spaceship.grid_loc.human_x += 1;
+                if (passenger.picked_human){
+                    passenger.grid_loc.human_x += 1;
+                }
+            }
+        }
+    }
+
+    function up(version) {
+        if (version == "agent"){
+            if (onGoal("agent")){
+                return;
+            }
+            if (spaceship.grid_loc.y > offset_y && map_layout.color_blocks[spaceship.grid_loc.y-1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
+                if (passenger.picked) {
+                    // don't allow the skateboard to go on the path
+                    if (map_layout.color_blocks[spaceship.grid_loc.y-1-offset_y][spaceship.grid_loc.x-offset_x] == 2) {
+                        return;
+                    }
+                    }   
+                spaceship.grid_loc.y -= 1;
+                moves.push("up");
+                if (passenger.picked){
+                    passenger.grid_loc.y -= 1;
+                }
+            }
+        }
+        else{
+            if (spaceship.grid_loc.human_y > offset_y && map_layout.color_blocks[spaceship.grid_loc.human_y-1-offset_y][spaceship.grid_loc.human_x-offset_x] != 1){
+                if (onGoal("human")){
+                    return;
+                }
+                if (passenger.picked_human) {
+                    // don't allow the skateboard to go on the path
+                    if (map_layout.color_blocks[spaceship.grid_loc.human_y-1-offset_y][spaceship.grid_loc.human_x-offset_x] == 2) {
+                        return;
+                    }
+                    }   
+                spaceship.grid_loc.human_y -= 1;
+                if (passenger.picked_human){
+                    passenger.grid_loc.human_y -= 1;
+                }
+            }
+        }
+    }
+
+    function down(version) {
+        if (version == "agent"){
+            if (onGoal("agent")){
+                return;
+            }
+            if (spaceship.grid_loc.y < mdp_parameters.height-1+offset_y && map_layout.color_blocks[spaceship.grid_loc.y+1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
+                if (passenger.picked) {
+                    // don't allow the skateboard to go on the path
+                    if (map_layout.color_blocks[spaceship.grid_loc.y+1-offset_y][spaceship.grid_loc.x-offset_x] == 2) {
+                        return;
+                    }
+                    }   
+                spaceship.grid_loc.y += 1;
+                moves.push("up");
+                if (passenger.picked){
+                    passenger.grid_loc.y += 1;
+                }
+            }
+        }
+        else{
+            if (spaceship.grid_loc.human_y < mdp_parameters.height-1+offset_y && map_layout.color_blocks[spaceship.grid_loc.human_y+1-offset_y][spaceship.grid_loc.human_x-offset_x] != 1){
+                if (passenger.picked_human) {
+                    // don't allow the skateboard to go on the path
+                    if (map_layout.color_blocks[spaceship.grid_loc.human_y+1-offset_y][spaceship.grid_loc.human_x-offset_x] == 2) {
+                        return;
+                    }
+                    }   
+                spaceship.grid_loc.human_y += 1;
+                if (passenger.picked_human){
+                    passenger.grid_loc.human_y += 1;
+                }
+            }
+        }
+    }
+
+    function pickup(version) {
+        
+        if (onGoal(version)){
             return;
         }
-        if (spaceship.grid_loc.x == passenger.grid_loc.x && spaceship.grid_loc.y == passenger.grid_loc.y && passenger.picked == false){
-            passenger.picked = true;
-            moves.push("pickup");
-        }
+        if (version == "agent"){
+            if (spaceship.grid_loc.x == passenger.grid_loc.x && spaceship.grid_loc.y == passenger.grid_loc.y && passenger.picked == false){
+                moves.push("pickup");
+                passenger.picked = true;
+        }}
+        else{
+            console.log("here")
+            if (Math.floor(spaceship.grid_loc.human_x) == Math.floor(passenger.grid_loc.human_x) && spaceship.grid_loc.human_y == passenger.grid_loc.human_y && passenger.picked_human == false){
+                passenger.picked_human = true;
+        }}
     }
 
     function dropoff() {
         if (onGoal()){
             return;
         }
-        if (passenger.picked == true) {
-            moves.push("dropoff");
+        if (version == "agent"){
+            x = spaceship.grid_loc.x;
+            y = spaceship.grid_loc.y;
+        }
+        else{
+            x = spaceship.grid_loc.human_x;
+            y = spaceship.grid_loc.human_y;
+        }
+        condition_goal = ((Math.floor(x) == goal.grid_loc.x) && (y == goal.grid_loc.y));
+        if (passenger.picked){
+            window.moves.push("dropoff");
             passenger.picked = false;
+            passenger.picked_human = false;
+            if (condition_goal){
+                passenger.dropped = true;
+                console.log(moves);
+                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+            }
         }
     }
 
@@ -505,34 +826,110 @@ function onGoal()
         agent_history = [];
     }
 
-    var idx = 0;
+    function no_op(){
+        return;
+      }
+
+      var idx = 0;
+      if (mdp_parameters.tag == -2) {
+          var translate_draw = 10;
+      }
+      else {
+          var translate_draw = 0;
+      }
+
+      var agent_human_spacer = -0.2;
 
     function keyPressed(event)
     {
-        if (mdp_parameters.tag == - 1) {
-            //training case, just pushing move from opt_actions           
+        if (mdp_parameters.tag == -2) {
+            //training case, agent & human          
             if (event.keyCode == 32) {
                 //space bar pressed, advance demo
-                var next_action = mdp_parameters.opt_actions[idx];
+                var next_action_agent = mdp_parameters.normalized_opt_actions[idx];
+                var next_action_human = mdp_parameters.normalized_human_actions[idx];
+                console.log("agent:" + next_action_agent);
+                console.log("human:" + next_action_human);
                 idx++;
-                switch(next_action) {
+                switch(next_action_human) {
                     case "left":
-                        left();
+                        left("human");
                         break;
                     case "right":
-                        right();
+                        right("human");
                         break;
                     case "up":
-                        up();
+                        up("human");
                         break;
                     case "down":
-                        down();
+                        down("human");
                         break;
                     case "pickup":
-                        pickup();
+                        pickup("human");
                         break;
                     case "dropoff":
-                        dropoff();
+                        dropoff("human");
+                        break;
+                    case "no-op":
+                        no_op();
+                        break;
+                }
+                switch(next_action_agent) {
+                    case "left":
+                        left("agent");
+                        break;
+                    case "right":
+                        right("agent");
+                        break;
+                    case "up":
+                        up("agent");
+                        break;
+                    case "down":
+                        down("agent");
+                        break;
+                    case "pickup":
+                        pickup("agent");
+                        break;
+                    case "dropoff":
+                        dropoff("agent");
+                        break;
+                    case "no-op":
+                        no_op();
+                        break;
+                }
+                //agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                requestAnimationFrame(draw);
+            }
+            else if (event.keyCode == 82) {
+                idx = 0;
+                reset();
+                requestAnimationFrame(draw);
+            }
+        } 
+        else if (mdp_parameters.tag == -1){
+            //training case, just agent         
+            if (event.keyCode == 32) {
+                //space bar pressed, advance demo
+                var next_action_agent = mdp_parameters.normalized_opt_actions[idx];
+                idx++;
+                switch(next_action_agent) {
+                    case "left":
+                        left("agent");
+                        break;
+                    case "right":
+                        right("agent");
+                        break;
+                    case "up":
+                        up("agent");
+                        break;
+                    case "down":
+                        down("agent");
+                        break;
+                    case "pickup":
+                        pickup("agent");
+                        break;
+                    case "dropoff":
+                        dropoff("agent");
                         break;
                 }
                 agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
@@ -544,7 +941,6 @@ function onGoal()
                 requestAnimationFrame(draw);
             }
         } 
-
         else {
             //testing case
             // prevent arrow keys from simultaneously moving the window
@@ -555,43 +951,43 @@ function onGoal()
             {
                 case 37:
                     // Left Arrow key
-                    left();
+                    left("agent");
                     break;
                 case 39:
                     // Right Arrow key
-                    right();
+                    right("agent");
                     break;
                 case 38:
                     // Up Arrow key
-                    up();
+                    up("agent");
                     break;
                 case 40:
                     // down Arrow key
-                    down();
+                    down("agent");
                     break;
                 case 80:
                     //p key
-                    pickup();
+                    pickup("agent");
                     break;
                 case 68:
                     //d key
-                    dropoff();
+                    dropoff("agent");
                     break;
                 case 82:
                     //r key
-                    reset();
+                    reset("agent");
                     break;
             }
             if (event.keyCode != 82) agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
             requestAnimationFrame(draw);
       }
     }
-
-    document.addEventListener('keydown', _.debounce(keyPressed, 200))
+    // document.addEventListener('keydown', _.debounce(keyPressed, 200)) // prevent quick key presses
+    document.addEventListener('keydown', keyPressed);
     start_screen();
     canvas.addEventListener('click', draw);
     context.restore();
-
+    }
     </script>
   </body>
 </html>

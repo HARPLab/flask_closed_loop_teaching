@@ -3,6 +3,7 @@ from app import db, login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func
+from sqlalchemy.ext.mutable import MutableList
 import random
 import string
 
@@ -46,10 +47,28 @@ class User(UserMixin, db.Model):
     iteration = db.Column(db.Integer)
     subiteration = db.Column(db.Integer)
 
+    # refers to the corresponding number in the round database
+    # the round database will have a primary key
+    # but it'll also have a column for group number
+    # and round number in that group
+    # the round attribute for the user will refer to that round number
+    # you can find this by querying the round w/ group number
+    round = db.Column(db.Integer, default=0)
+    last_iter_in_round = db.Column(db.Boolean, default=True)
+
+    control_stack = db.Column(MutableList.as_mutable(db.PickleType),
+                                    default=[])
+    curr_trial_idx = db.Column(db.Integer)
+    group = db.Column(db.Integer)
+    group_code = db.Column(db.String(1))
 
     def __repr__(self):
         return "<User {}>".format(self.username)
     
+    def stack_push(self, value):
+        self.control_stack.append(value)
+        return self.control_stack
+
     def set_curr_progress(self, value):
         self.curr_progress = value
         return value
@@ -102,25 +121,122 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+# class Trial(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+#     user_id = db.Column(db.String(64))
+#     trial_num = db.Column(db.Integer)
+#     duration_ms = db.Column(db.Float)
+#     rule_str = db.Column(db.String(256))
+#     fb_type = db.Column(db.String(32))
+#     cards_played = db.Column(db.PickleType)
+#     n_cards = db.Column(db.Integer)
+#     n_cards_to_learn_rule = db.Column(db.Integer)
+#     card_select_times = db.Column(db.PickleType)
+#     n_hypotheses_remaining = db.Column(db.PickleType)
+#     n_failed_terminations = db.Column(db.Integer)
+#     terminate_confidences = db.Column(db.PickleType)
+#     feedback_confidences = db.Column(db.PickleType)
+#     terminate_record = db.Column(db.PickleType)
+#     bonus_value = db.Column(db.String(256))
+#     feedback_strings = db.Column(db.PickleType)
+
+class Round(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    group_id = db.Column(db.Integer)
+    round_num = db.Column(db.Integer)
+    group_union = db.Column(db.PickleType)
+    group_intersection = db.Column(db.PickleType)
+    member_A_model = db.Column(db.PickleType)
+    member_B_model = db.Column(db.PickleType)
+    member_C_model = db.Column(db.PickleType)
+    round_info = db.Column(db.PickleType)
+    last_round = db.Column(db.Boolean) # only know this after the last round is completed
+
+class Group(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_ids = db.Column(MutableList.as_mutable(db.PickleType),
+                                    default=[])
+    status = db.Column(db.String(10))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    current_round = db.Column(db.Integer)
+    round_data = db.Column(MutableList.as_mutable(db.PickleType),
+                                    default=[])
+
+    member_A = db.Column(db.String(50), default="")
+    member_B = db.Column(db.String(50), default="")
+    member_C = db.Column(db.String(50), default="")
+    num_members = db.Column(db.Integer, default=0)
+    
+    def groups_push(self, value):
+        ret = ""
+        if not self.member_A:
+            self.member_A = value
+            ret = "A"
+        elif not self.member_B:
+            self.member_B = value
+            ret = "B"
+        elif not self.member_C:
+            self.member_C = value
+            ret = "C"
+
+        self.num_members += 1
+        return ret
+
+    def groups_remove(self, value):
+        ret = ""
+        if self.member_A == value:
+            self.member_A = ""
+            ret = "A"
+        elif self.member_B == value:
+            self.member_B = ""
+            ret = "B"
+        elif self.member_C == value:
+            self.member_C = ""
+            ret = "C"
+
+        self.num_members -= 1
+        return ret
+    
+    def get_group(self):
+        return {"A":bool(self.member_A), "B":bool(self.member_B), "C":bool(self.member_C)}
+
 class Trial(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.String(64))
-    trial_num = db.Column(db.Integer)
     duration_ms = db.Column(db.Float)
-    rule_str = db.Column(db.String(256))
-    fb_type = db.Column(db.String(32))
-    cards_played = db.Column(db.PickleType)
-    n_cards = db.Column(db.Integer)
-    n_cards_to_learn_rule = db.Column(db.Integer)
-    card_select_times = db.Column(db.PickleType)
-    n_hypotheses_remaining = db.Column(db.PickleType)
-    n_failed_terminations = db.Column(db.Integer)
-    terminate_confidences = db.Column(db.PickleType)
-    feedback_confidences = db.Column(db.PickleType)
-    terminate_record = db.Column(db.PickleType)
-    bonus_value = db.Column(db.String(256))
-    feedback_strings = db.Column(db.PickleType)
+    domain = db.Column(db.String(2))
+    interaction_type = db.Column(db.String(20))
+
+    # new defining numbers, can reference round and iteration to 
+    # retrieve the corresponding environment variables in the Round db
+    group = db.Column(db.Integer)
+    round = db.Column(db.Integer)
+    iteration = db.Column(db.Integer)
+
+    subiteration = db.Column(db.Integer) # don't need this
+    likert = db.Column(db.Integer)
+    moves = db.Column(db.PickleType)
+    coordinates = db.Column(db.PickleType)
+    is_opt_response = db.Column(db.Boolean)
+    percent_seen = db.Column(db.Float)
+    mdp_parameters = db.Column(db.PickleType)
+    human_model = db.Column(db.PickleType) # don't need this
+    is_first_time = db.Column(db.Boolean, default=True)
+
+class Domain(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.String(64))
+    domain_name = db.Column(db.String(2))
+    attn1 = db.Column(db.Integer)
+    attn2 = db.Column(db.Integer)
+    attn3 = db.Column(db.Integer)
+    use1 = db.Column(db.Integer)
+    use2 = db.Column(db.Integer)
+    use3 = db.Column(db.Integer)
+    short_answer = db.Column(db.PickleType)
 
 class Demo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
