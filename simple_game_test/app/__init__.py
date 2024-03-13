@@ -21,7 +21,6 @@ socketio = SocketIO(app)
 
 from app import routes, models
 
-
 # comment lines below when creating the database. uncomment lines below when running the app
 from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 
@@ -36,5 +35,11 @@ if rows == 0:
 	for condition in IN_PERSON_CONDITIONS:
 		trials = condition
 		db.session.add(models.InPersonCondition(trials=trials, trial_1=condition[0], trial_2=condition[1], trial_3=condition[2], trial_4=condition[3], trial_5=condition[4], count=0))
+
+# remove the 3 lines below when starting the second round of trials
+db.session.query(models.Round).delete()
+db.session.query(models.Group).delete()
+group = models.Group(user_ids=[])
+db.session.add(group)
 
 db.session.commit()
