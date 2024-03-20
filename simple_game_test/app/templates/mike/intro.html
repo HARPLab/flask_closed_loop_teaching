@@ -1,19 +1,19 @@
-{% extends "base.html" %}{% block content %}
+<link rel="stylesheet" href="../../static/css/style.css" type="text/css" />
 
-<div id="container-instructions" class="text-center">
+<div id="container-instructions">
 
 	<h2>Introduction</h2>
 
 	<hr />
 
-	<div>
+	<div class="instructions well">
         <h3>
             Thank you for agreeing to participate in our study!
         </h3>
 
         <br>
 
-        <div>
+        <div align="justify">
 
         <p>This study must be completed on a desktop or laptop on a supported browser (Chrome, Firefox, or Safari).</p>
 
@@ -27,24 +27,26 @@
         <p>Let's begin the study with a brief overview! </p>
 
             <br>
-        <p>**Note: We recommend maximizing this window and viewing the study in full screen for the best experience! </p>
-    </div>
+<p>**Note: We recommend maximizing this window and viewing the study in full screen for the best experience! </p>
 </div>
+	</div>
 
 	<hr />
 
 
     <div class="instructionsnav">
-        <div class="row justify-content-between">
-            <div class="col-xs-3">
-            	<button type="button" id="prev" onclick="window.location.href='/'" value="previous" class="btn btn-primary btn-lg continue">
-                    Previous <span class="glyphicon glyphicon-arrow-left"></span>
-                    </button>
+        <div class="row">
+            <div class="col-xs-2">
+            	<!-- no previous button on first screen -->
             </div>
-            <div class="col-xs-3">
-                <button type="button" id="next" onclick="window.location.href='/overview'" value="next" class="btn btn-primary btn-lg continue">
-                    Next <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>
+            <div class="col-xs-8">
+            </div>
+            <div class="col-xs-2">
+                <button type="button" id="next" value="next" 
+                onclick="window.location.href='/overview'"
+                class="btn btn-primary btn-lg continue">
+                Next <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>
             </div>
         </div>
     </div>
@@ -53,5 +55,3 @@
 
 <script>
 </script>
-
-{% endblock %}
