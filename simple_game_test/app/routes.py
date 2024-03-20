@@ -5,14 +5,14 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, TrialForm, DemoForm, ConsentForm, AttentionCheckForm, FinalForm, TrainingForm, FeedbackSurveyForm, NoFeedbackSurveyForm, InformativenessForm
 from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey, Domain, Group, Round
 from app.params import *
-from utils import rules_to_str, str_to_rules
-import numpy as np
-import random as rand
+# from utils import rules_to_str, str_to_rules
+# import numpy as np
+# import random as rand
 import json
-from datetime import datetime
-from generate_rules import generate_rule, generate_hard_rule_constrained
-from environment import Environment
-from learner import Learner
+# from datetime import datetime
+# from generate_rules import generate_rule, generate_hard_rule_constrained
+# from environment import Environment
+# from learner import Learner
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
@@ -26,7 +26,7 @@ from app.backend_test import send_signal
 from app import socketio
 from flask_socketio import join_room, leave_room
 import pickle
-from multiprocessing import Pool
+# from multiprocessing import Pool
 
 with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') as f:
     jsons = json.load(f)
@@ -34,13 +34,19 @@ with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') 
 # rule_str = None
 # TODO need a proper solution instead of global variables, i.e. per-user environment
 # https://stackoverflow.com/questions/27611216/how-to-pass-a-variable-between-flask-pages
+    
+# pallavi's study
+'''
 learners = {}
 MODE = 'hard'
+'''
 IS_IN_PERSON = False
-
+'''
 CARD_ID_TO_FEATURES = [
     [color, fill, shape, number] for color in ['red', 'green', 'purple'] for fill in ['hollow', 'striped', 'solid'] for shape in ['diamond', 'ellipse', 'squiggle'] for number in ['one', 'two', 'three']
 ]
+'''
+
 
 # todo: Mike uncomment for remedial demos and tests
 # # background variables needed for remedial demonstrations and tests
@@ -65,6 +71,8 @@ CARD_ID_TO_FEATURES = [
 
 # HOW TO PREVENT RULE / STATE CHANGE ON RELOAD???
 
+# pallavi's study
+'''
 @app.route("/test", methods=["GET", "POST"])
 @login_required
 def test():
@@ -167,11 +175,6 @@ def get_feedback():
     print(f'User {current_user.username} got feedback: {fb_str}')
     return {'fb_str': fb_str}
 
-def jsonStrToList(str):
-    if len(str) > 2:
-        return [int(val) for val in str[1:-1].split(',')]
-    else:
-        return []
 
 @app.route("/trial_completed", methods=["GET", "POST"])
 def trial_completed():
@@ -324,8 +327,15 @@ def training(page):
             compensation_info = "At the conclusion of the study, you will be compensated for your time."
         url = "/training/" + page + ".html"
         return render_template(url, title="Training", form=form, study_format=study_format, compensation_info=compensation_info)
+'''
 
-
+# shenai: I think I wrote this function
+def jsonStrToList(str):
+    if len(str) > 2:
+        return [int(val) for val in str[1:-1].split(',')]
+    else:
+        return []
+    
 @app.route("/", methods=["GET", "POST"])
 # @app.route("/index", methods=["GET", "POST"])
 @login_required
@@ -1318,7 +1328,7 @@ def consent():
         procedure = "This study may take up to 30 minutes."
     return render_template("consent.html", title="Consent", form=form, procedure=procedure)
 
-
+'''
 @app.route("/survey", methods=["GET", "POST"])
 @login_required
 def survey():
@@ -1423,7 +1433,7 @@ def survey():
                             methods=["GET", "POST"],
                             form=form,
                             round=round)
-
+'''
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -1458,7 +1468,7 @@ def login():
 
     return render_template("login.html", title="Sign In", form=form)
 
-
+'''
 @app.route("/logout")
 def logout():
     # Clear this variable -- for some reason was not clearing on its own.
@@ -1466,4 +1476,4 @@ def logout():
     logout_user()
     return {"url":url_for("index")}
     # return redirect(url_for("index"))
-
+'''
