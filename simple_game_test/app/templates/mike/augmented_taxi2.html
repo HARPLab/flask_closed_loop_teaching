@@ -146,6 +146,7 @@
       var socket = io();
 
       socket.on("connect", function () {
+        
             let data = {};
             data["survey"] = localStorage.getItem("survey")
             data["user input"] = JSON.parse(localStorage.getItem("user input"));
@@ -322,7 +323,11 @@
                 });
             }
             else {
+        
+
                 // window.location.href='/at';
+            console.log("printing agent history nonoffset");
+            console.log(window.agent_history_nonoffset);
                 let data = {};
             data["survey"] = localStorage.getItem("survey")
             data["user input"] = JSON.parse(localStorage.getItem("user input"));
@@ -531,6 +536,8 @@
           spaceship.grid_loc.human_x =  (mdp_parameters.agent.x-1) + offset_x + agent_human_spacer;
           spaceship.grid_loc.human_y =  (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
           window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y])
+          console.log("pushed to agent history in setup");
+          console.log([spaceship.grid_loc.x, spaceship.grid_loc.y]);
           window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
           spaceship.taxi_set = true;
         //set location of passenger
@@ -651,18 +658,18 @@
         }
         context.restore();
       }
-
+      // debug this function
     function drawAgentHistory()
     {
         context.save();
-        console.log(agent_history);
-        for (j = 0; j < agent_history.length; j++) {
+        console.log(window.agent_history);
+        for (j = 0; j < window.agent_history.length; j++) {
             context.beginPath();
             if (j == 0) {
-                context.rect(agent_history[j][0]*100 + 37, agent_history[j][1]*100 + 48, 25, 4);
+                context.rect(window.agent_history[j][0]*100 + 37, window.agent_history[j][1]*100 + 48, 25, 4);
                 context.fillStyle = '#677387';
             }
-            context.arc(agent_history[j][0]*100 + 50, agent_history[j][1]*100 + 50, 6, 0, 2 * Math.PI);
+            context.arc(window.agent_history[j][0]*100 + 50, window.agent_history[j][1]*100 + 50, 6, 0, 2 * Math.PI);
             context.fillStyle = '#677387';
             context.fill();
             context.closePath();
@@ -905,6 +912,7 @@
 
         if(game_completed)
         {
+            document.removeEventListener('keydown', keyPressed);
             context.font = "bold 28px Arial";
             context.fillStyle = text_color;
             context.textAlign = "center";
@@ -1113,6 +1121,7 @@
       }
 
       function reset() {
+        document.removeEventListener('keydown', keyPressed);
         window.moves = [];
         map_layout.set = false;
         passenger.picked = false;
@@ -1153,7 +1162,7 @@
             window.onscroll = function() {};
         }
 
-      var idx = 0;
+      window.idx = 0;
       var agent_human_spacer = -0.2;
       if (mdp_parameters.tag == -2) {
           var translate_draw = 10;
@@ -1172,11 +1181,11 @@
                     
                     //space bar pressed, advance demo
 
-                    var next_action_agent = mdp_parameters.normalized_opt_actions[idx];
-                    var next_action_human = mdp_parameters.normalized_human_actions[idx];
+                    var next_action_agent = mdp_parameters.normalized_opt_actions[window.idx];
+                    var next_action_human = mdp_parameters.normalized_human_actions[window.idx];
                     console.log("agent:" + next_action_agent);
                     console.log("human:" + next_action_human);
-                    idx++;
+                    window.idx++;
                     switch (next_action_human) {
                         case "left":
                             left("human");
@@ -1227,7 +1236,7 @@
                     requestAnimationFrame(draw);
                 }
              if (event.keyCode == 82) {
-                    idx = 0;
+                    window.idx = 0;
                     reset();
                     requestAnimationFrame(draw);
                 }
@@ -1236,9 +1245,10 @@
                     //training case, just agent
                     if (event.keyCode == 32) {
                         //space bar pressed, advance demo
-                        var next_action_agent = mdp_parameters.opt_actions[idx];
+                        var next_action_agent = mdp_parameters.opt_actions[window.idx];
+                        console.log(window.idx);
                         console.log(next_action_agent);
-                        idx++;
+                        window.idx++;
                         switch (next_action_agent) {
                             case "left":
                                 left("agent");
@@ -1259,10 +1269,13 @@
                                 dropoff("agent");
                                 break;
                         }
+                        
                         window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                        console.log("pushed to agent history in training");
+                        console.log([spaceship.grid_loc.x, spaceship.grid_loc.y]);
                         requestAnimationFrame(draw);
                     } else if (event.keyCode == 82) {
-                        idx = 0;
+                        window.idx = 0;
                         reset();
                         requestAnimationFrame(draw);
                     }
@@ -1306,6 +1319,8 @@
                 }
                 if (event.keyCode != 82) {
                     window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                    console.log("pushed to agent in testing case");
+                    console.log([spaceship.grid_loc.x, spaceship.grid_loc.y]);
                 }
                 requestAnimationFrame(draw);
             }
@@ -1313,8 +1328,10 @@
     }
 
     reset();
+    
+
     // document.addEventListener('keydown', _.debounce(keyPressed, 200))
-    document.addEventListener('keydown', keyPressed)
+    document.addEventListener('keydown', keyPressed);
     start_screen();
     canvas.addEventListener('click', draw);
     context.restore();
