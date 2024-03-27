@@ -167,6 +167,13 @@ class Group(db.Model):
     member_B = db.Column(db.String(50), default="")
     member_C = db.Column(db.String(50), default="")
     num_members = db.Column(db.Integer, default=0)
+
+    A_EOR = db.Column(db.Boolean, default=False)
+    B_EOR = db.Column(db.Boolean, default=False)
+    C_EOR = db.Column(db.Boolean, default=False)
+
+    def groups_all_EOR(self):
+        return (self.A_EOR and self.B_EOR and self.C_EOR)
     
     def groups_push(self, value):
         ret = ""

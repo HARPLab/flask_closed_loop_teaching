@@ -159,12 +159,17 @@
             data["use3"] = localStorage.getItem("use3");
             data["short answer"] = localStorage.getItem("short answer");   
             socket.emit("settings", data);
+            socket.emit("join group v2");
         });
         socket.on("settings configured", function (data) {
-
+            
             if (data["last in round"] === "true") {
-                socket.emit("rejoin group");
+                window.last_in_round = true;
             }
+            else {
+                window.last_in_round = false;
+            }
+            
             localStorage.setItem("movement", "false");
             localStorage.setItem("user input", "{}");
             // localStorage.setItem("game completed", "false");
@@ -197,6 +202,10 @@
             change_text(window.interaction_type);
             run_page(window.mdp_parameters);
         });
+    
+    socket.on("all reached EOR", function (){
+        console.log("all reached EOR");
+    });
 
         // Assign html for interaction type
         function change_text(interaction_type){
@@ -917,6 +926,10 @@
             context.fillStyle = text_color;
             context.textAlign = "center";
             context.fillText("Game completed!", (mdp_parameters.width*100)/2+offset_x*100, (mdp_parameters.height*100)/2+offset_y*100+200);
+            
+            if (window.last_in_round) {
+                socket.emit("reached EOR");
+            }
 
             //requestAnimationFrame(draw);
 
@@ -1077,8 +1090,8 @@
         if (version == "agent"){
             if (Math.floor(spaceship.grid_loc.x) == Math.floor(passenger.grid_loc.x) && spaceship.grid_loc.y == passenger.grid_loc.y && passenger.picked == false){
                 moves.push("pickup");
-                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
                 passenger.picked = true;
+                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
         }}
         else{
             console.log("here")

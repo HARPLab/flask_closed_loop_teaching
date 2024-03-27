@@ -329,6 +329,11 @@ def join_group():
     socketio.emit("group joined", {"num members":num_members}, to=room)
     return
 
+@socketio.on("join group v2")
+def join_group_v2():
+    join_room(current_user.group)
+    return
+
 @socketio.on("leave group temp")
 def leave_group_temp():
     socketio.emit("member left temp", {"member code": current_user.group_code}, to=current_user.group)
@@ -524,6 +529,21 @@ def retrieve_next_round() -> dict:
     #probably don't need to increment round in here, it might just be easier to do this 
     #on specific 
     return ret
+
+@socketio.on("reached EOR")
+def send_EOR(data):
+    curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
+    if current_user.group_code == "A":
+        curr_group.A_EOR = True
+    elif current_user.group_code == "B":
+        curr_group.B_EOR = True
+    elif current_user.group_code == "C":
+        curr_group.C_EOR = True
+    db.session.commit()
+    if (curr_group.groups_all_EOR()):
+        socketio.emit("all reached EOR", to=current_user.group)
+    return
+
 
 # takes in state, including user input etc
 # and returns params for next state
