@@ -161,10 +161,14 @@
             socket.emit("settings", data);
             socket.emit("join group v2");
         });
+    socket.on("member joined again", function (data) {
+        console.log(data["user code"] + " joined");
+    });
         socket.on("settings configured", function (data) {
             
-            if (data["last in round"] === "true") {
+            if (data["last test"]) {
                 window.last_in_round = true;
+                console.log("reached last test in round");
             }
             else {
                 window.last_in_round = false;
@@ -190,9 +194,9 @@
                     </button>` );
             }
             $("#debug").html(data["debug string"]);
-            if (data["last test"]) {
-                localStorage.setItem("last test", "true");
-            }
+            // if (data["last test"]) {
+            //     localStorage.setItem("last test", "true");
+            // }
             // hide the loading screen and show the game content
             document.getElementById('center-container').style.display = 'none';
             document.getElementById('instructions').style.display = 'block';
@@ -921,6 +925,7 @@
 
         if(game_completed)
         {
+            canvas.removeEventListener('click', draw);
             document.removeEventListener('keydown', keyPressed);
             context.font = "bold 28px Arial";
             context.fillStyle = text_color;
@@ -929,6 +934,7 @@
             
             if (window.last_in_round) {
                 socket.emit("reached EOR");
+                console.log("I finished my last test in the round!");
             }
 
             //requestAnimationFrame(draw);
@@ -1134,7 +1140,7 @@
       }
 
       function reset() {
-        document.removeEventListener('keydown', keyPressed);
+        // document.removeEventListener('keydown', keyPressed);
         window.moves = [];
         map_layout.set = false;
         passenger.picked = false;

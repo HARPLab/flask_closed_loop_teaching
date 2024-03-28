@@ -332,6 +332,7 @@ def join_group():
 @socketio.on("join group v2")
 def join_group_v2():
     join_room(current_user.group)
+    socketio.emit("member joined again", {"user code": current_user.group_code}, to=current_user.group)
     return
 
 @socketio.on("leave group temp")
@@ -531,15 +532,27 @@ def retrieve_next_round() -> dict:
     return ret
 
 @socketio.on("reached EOR")
-def send_EOR(data):
+def send_EOR():
     curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
     if current_user.group_code == "A":
         curr_group.A_EOR = True
+        print("A reached EOR here")
     elif current_user.group_code == "B":
         curr_group.B_EOR = True
+        print("B reached EOR here")
     elif current_user.group_code == "C":
         curr_group.C_EOR = True
+        print("C reached EOR here")
     db.session.commit()
+
+    # debug
+    if curr_group.A_EOR:
+        print("A reached EOR")
+    if curr_group.B_EOR:
+        print("B reached EOR")
+    if curr_group.C_EOR:
+        print("C reached EOR")
+    
     if (curr_group.groups_all_EOR()):
         socketio.emit("all reached EOR", to=current_user.group)
     return
