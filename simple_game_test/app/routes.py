@@ -519,7 +519,7 @@ def retrieve_next_round() -> dict:
 
     curr_group.A_EOR = False
     curr_group.B_EOR = False
-    curr_group.B_EOR = False
+    curr_group.C_EOR = False
 
 
     new_round = Round(group_id=group, round_num=round, 

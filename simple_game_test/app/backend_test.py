@@ -7,8 +7,8 @@ with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') 
     jsons = json.load(f)
 
 def send_signal(passed_test): 
-    num_demos = random.randint(1,3)
-    num_tests = random.randint(1,2)
+    num_demos = 1 #random.randint(1,3)
+    num_tests = 1 #random.randint(1,2)
     res = []
     for d in range(num_demos):
         # print(blah)
