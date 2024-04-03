@@ -91,6 +91,7 @@
     </div>
     <div id="score"></div>
     <div id="survey"></div>
+    <div id="wait">Please wait until all members of your team have finished this round before progressing.</div>
     <hr>
     <br>
     </div>
@@ -198,6 +199,7 @@
             //     localStorage.setItem("last test", "true");
             // }
             // hide the loading screen and show the game content
+            document.getElementById('wait').style.display = 'none';
             document.getElementById('center-container').style.display = 'none';
             document.getElementById('instructions').style.display = 'block';
             document.getElementById('preamble').style.display = 'block';
@@ -209,6 +211,9 @@
     
     socket.on("all reached EOR", function (){
         console.log("all reached EOR");
+        document.getElementById('wait').style.display = 'none';
+        window.last_in_round = false;
+
     });
 
         // Assign html for interaction type
@@ -935,6 +940,8 @@
             if (window.last_in_round) {
                 socket.emit("reached EOR");
                 console.log("I finished my last test in the round!");
+                document.getElementById('wait').style.display = 'block';
+
             }
 
             //requestAnimationFrame(draw);

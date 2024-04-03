@@ -514,6 +514,13 @@ def retrieve_next_round() -> dict:
     
     # currently, just return a list of env variable dicts 
     ret = send_signal(pkg) # change this, just a demo with a test file
+    
+    curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
+
+    curr_group.A_EOR = False
+    curr_group.B_EOR = False
+    curr_group.B_EOR = False
+
 
     new_round = Round(group_id=group, round_num=round, 
                       group_union=None,
