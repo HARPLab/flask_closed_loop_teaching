@@ -194,6 +194,14 @@
                     Next <span class="glyphicon glyphicon-arrow-right"></span>
                     </button>` );
             }
+            else {
+                $("#next").replaceWith(`<button type="button" id="next" disabled
+            onclick="next()"
+            value="next" class="btn btn-primary btn-lg continue">
+            Next <span class="glyphicon glyphicon-arrow-right"></span>
+            </button>` );
+            $("#survey").html(``);
+            }
             $("#debug").html(data["debug string"]);
             // if (data["last test"]) {
             //     localStorage.setItem("last test", "true");
@@ -304,16 +312,7 @@
             $("#info_main").replaceWith('<h3> Look at the demonstration on how you should complete this games task while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
         }
         }
-        // socket.on("", function (data) {
-        //     if (data["passed"]) {
-        //         $("button").replaceWith(`<button type="button" id="next"
-        //             onclick="make_sandbox()"
-        //             value="next" class="btn btn-primary btn-lg continue">
-        //             Next <span class="glyphicon glyphicon-arrow-right"></span>
-        //             </button>` );
-        //     }
-        // }
-        // );
+
 
         function prev() {
             console.log("I am going prev");
@@ -398,11 +397,13 @@
                 if(radioValue) {
                     localStorage.setItem("survey", radioValue);
                 }
-                $("#next").replaceWith(`<button type="button" id="next"
+                if (!window.last_in_round) {
+                    $("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
                         </button>` );
+                }
             }
             else {
                 let attn1 = $("input[name='attn1']:checked").val();
