@@ -306,6 +306,9 @@ def join_group():
             current_user.group_code = new_group.groups_push(current_user.username)
             db.session.add(new_group)
             current_user.group = old_group.id + 1
+            # note to self check that this works
+            cond_list = ["individual_belief_low", "individual_belief_high", "common_belief", "joint_belief"]
+            new_group.experimental_condition = cond_list[current_user.group % 4] 
             num_members = 1
     else: # if rejoining, get added to the same room
         rejoined_group = db.session.query(Group).filter_by(id=current_user.group).first()
@@ -472,6 +475,7 @@ def retrieve_next_round() -> dict:
     group = current_user.group
     round = current_user.round
     group_usernames = retrieve_group_usernames()
+    curr_group = db.session.query(Group).filter_by(id=group).first()
     
     pkg = {"group_union": None, 
            "group_intersection": None,
@@ -488,9 +492,11 @@ def retrieve_next_round() -> dict:
            "correct_A": False,
            "correct_B": False,
            "correct_C": False,
-           "experimental_condition": None} # add right or wrong
+           "experimental_condition": curr_group.experimental_condition,
+           "initial_call": True} # add right or wrong
     
     if round > 1:
+        pkg["initial_call"] = False
         prev_models = db.session.query(Round).filter_by(group_id=group, round_num=round-1).first()
         pkg["group_union"] = prev_models.group_union
         pkg["group_intersection"] = prev_models.group_intersection

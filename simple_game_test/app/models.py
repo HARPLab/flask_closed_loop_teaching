@@ -172,6 +172,8 @@ class Group(db.Model):
     B_EOR = db.Column(db.Boolean, default=False)
     C_EOR = db.Column(db.Boolean, default=False)
 
+    experimental_condition = db.Column(db.String(50))
+
     def groups_all_EOR(self):
         return (self.A_EOR and self.B_EOR and self.C_EOR)
     
