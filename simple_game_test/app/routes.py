@@ -477,7 +477,8 @@ def retrieve_next_round() -> dict:
     group_usernames = retrieve_group_usernames()
     curr_group = db.session.query(Group).filter_by(id=group).first()
     
-    pkg = {"group_union": None, 
+    pkg = {"group": group,
+           "group_union": None, 
            "group_intersection": None,
            "model_A": None,
            "model_B": None,
@@ -493,7 +494,11 @@ def retrieve_next_round() -> dict:
            "correct_B": False,
            "correct_C": False,
            "experimental_condition": curr_group.experimental_condition,
-           "initial_call": True} # add right or wrong
+           "initial_call": True,
+           '''running variables for generating demonstrations and tests'''
+           "variable_filter": None, 
+           "min_BEC_constraints_running": None, 
+           "visited_env_traj_idxs": None}
     
     if round > 1:
         pkg["initial_call"] = False
@@ -503,6 +508,10 @@ def retrieve_next_round() -> dict:
         pkg["model_A"] = prev_models.member_A_model
         pkg["model_B"] = prev_models.member_B_model
         pkg["model_C"] = prev_models.member_C_model
+
+        pkg["variable_filter"] = prev_models.variable_filter
+        pkg["min_BEC_constraints_running"] = prev_models.min_BEC_constraints_running
+        pkg["visited_env_traj_idxs"] = prev_models.visited_env_traj_idxs
 
         keys = ["moves_A", "moves_B", "moves_C"]
         keys_corr = ["correct_A", "correct_B", "correct_C"]
