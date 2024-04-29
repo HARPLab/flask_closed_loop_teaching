@@ -536,6 +536,9 @@ def retrieve_next_round() -> dict:
     curr_group.B_EOR = False
     curr_group.C_EOR = False
 
+    if round == 3:
+        socketio.emit("congratulations!", to=group)
+
 
     new_round = Round(group_id=group, round_num=round, 
                       group_union=None,

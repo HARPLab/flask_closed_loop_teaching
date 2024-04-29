@@ -165,6 +165,9 @@
     socket.on("member joined again", function (data) {
         console.log(data["user code"] + " joined");
     });
+    socket.on("congratulations!", () => {
+        window.location.href = "/final_survey"
+    });
         socket.on("settings configured", function (data) {
             
             if (data["last test"]) {

@@ -150,6 +150,9 @@ class Round(db.Model):
     member_A_model = db.Column(db.PickleType)
     member_B_model = db.Column(db.PickleType)
     member_C_model = db.Column(db.PickleType)
+    variable_filter = db.Column(db.PickleType)
+    min_BEC_constraints_running = db.Column(db.PickleType)
+    visited_env_traj_idxs = db.Column(db.PickleType)
     round_info = db.Column(db.PickleType)
     last_round = db.Column(db.Boolean) # only know this after the last round is completed
 
