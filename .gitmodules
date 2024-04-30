@@ -3,4 +3,4 @@
 	url = https://github.com/HARPLab/augmented_taxi.git
 [submodule "simple_game_test/app/group_teaching"]
 	path = simple_game_test/app/group_teaching
-	url = https://github.com/HARPLab/group-teaching.git
+	url = https://github.com/HARPLab/group_teaching.git

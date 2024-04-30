@@ -15,13 +15,16 @@ import json
 # from learner import Learner
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
+# sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
 # from .augmented_taxi.policy_summarization.flask_user_study_utils import normalize_trajectories, obtain_constraint
 # from .augmented_taxi.policy_summarization.BEC import obtain_remedial_demonstrations
 # from .augmented_taxi import params
 # from .augmented_taxi.policy_summarization import BEC_helpers
 # from .augmented_taxi.policy_summarization import particle_filter as pf
 
+sys.path.append(os.path.join(os.path.dirname(__file__), 'group_teaching'))
+from .group_teaching.user_study_utils import generate_demos_test_interaction_round
+from .group_teaching import params_team as params
 from app.backend_test import send_signal
 from app import socketio
 from flask_socketio import join_room, leave_room
@@ -529,6 +532,8 @@ def retrieve_next_round() -> dict:
     
     # currently, just return a list of env variable dicts 
     ret = send_signal(pkg) # change this, just a demo with a test file
+
+    ret = user_study_utils.generate_demos_test_interaction_round(pkg)
     
     curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
 
