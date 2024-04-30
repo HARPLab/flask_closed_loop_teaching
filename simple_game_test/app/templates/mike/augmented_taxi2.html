@@ -222,7 +222,13 @@
     
     socket.on("all reached EOR", function (){
         console.log("all reached EOR");
+        $("#next").replaceWith(`<button type="button" id="next"
+                    onclick="next()"
+                    value="next" class="btn btn-primary btn-lg continue">
+                    Next <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>` );
         document.getElementById('wait').style.display = 'none';
+
         window.last_in_round = false;
 
     });
@@ -400,7 +406,14 @@
                 if(radioValue) {
                     localStorage.setItem("survey", radioValue);
                 }
-                if (!window.last_in_round) {
+                if (window.last_in_round) {
+                    socket.emit("reached EOR");
+                    console.log("I finished my last test in the round!");
+
+                    document.getElementById('wait').style.display = 'block';
+
+                }
+                else {
                     $("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
@@ -941,12 +954,7 @@
             context.textAlign = "center";
             context.fillText("Game completed!", (mdp_parameters.width*100)/2+offset_x*100, (mdp_parameters.height*100)/2+offset_y*100+200);
             
-            if (window.last_in_round) {
-                socket.emit("reached EOR");
-                console.log("I finished my last test in the round!");
-                document.getElementById('wait').style.display = 'block';
 
-            }
 
             //requestAnimationFrame(draw);
 
