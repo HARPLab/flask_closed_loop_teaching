@@ -5,6 +5,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, TrialForm, DemoForm, ConsentForm, AttentionCheckForm, FinalForm, TrainingForm, FeedbackSurveyForm, NoFeedbackSurveyForm, InformativenessForm
 from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey, Domain, Group, Round
 from app.params import *
+import copy
 # from utils import rules_to_str, str_to_rules
 # import numpy as np
 # import random as rand
@@ -532,9 +533,17 @@ def retrieve_next_round() -> dict:
     
     # currently, just return a list of env variable dicts 
     ret = send_signal(pkg) # change this, just a demo with a test file
+    games = ret
+    to_add = []
+    for game in games:
+        if game["interaction type"] == "test":
+            new_game = copy.deepcopy(game)
+            new_game["interaction type"] = "answer"
+            new_game["params"]["tag"] = -1
+            to_add.append(new_game)
+    games.extend(to_add)
 
-    ret = user_study_utils.generate_demos_test_interaction_round(pkg)
-    
+
     curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
 
     curr_group.A_EOR = False
