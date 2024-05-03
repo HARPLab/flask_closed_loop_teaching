@@ -166,15 +166,19 @@
         console.log(data["user code"] + " joined");
     });
     socket.on("congratulations!", () => {
-        window.location.href = "/final_survey"
+        console.log("at the last round now!")
+        window.last_round = true;
     });
         socket.on("settings configured", function (data) {
-            
-            if (data["last test"]) {
+            if (data["last answer"]) {
                 window.last_in_round = true;
-                console.log("reached last test in round");
+                console.log("reached last answer in round");
             }
             else {
+                if (data["interaction type"] == "demo") {
+                    window.last_round = false;
+                    window.joint_EOR = false;
+                }
                 window.last_in_round = false;
             }
             
@@ -228,8 +232,8 @@
                     Next <span class="glyphicon glyphicon-arrow-right"></span>
                     </button>` );
         document.getElementById('wait').style.display = 'none';
-
-        window.last_in_round = false;
+        
+        window.joint_EOR = true;
 
     });
 
@@ -366,6 +370,9 @@
             data["use3"] = localStorage.getItem("use3");
             data["short answer"] = localStorage.getItem("short answer");   
             socket.emit("settings", data);
+            if (window.last_round && window.last_in_round) {
+                window.location.href = "/final_survey"
+            }
             }
 
         }
@@ -406,9 +413,9 @@
                 if(radioValue) {
                     localStorage.setItem("survey", radioValue);
                 }
-                if (window.last_in_round) {
-                    socket.emit("reached EOR");
-                    console.log("I finished my last test in the round!");
+                if (window.last_in_round && !window.joint_EOR) {
+                    // socket.emit("reached EOR");
+                    // console.log("I finished my last test in the round!");
 
                     document.getElementById('wait').style.display = 'block';
 

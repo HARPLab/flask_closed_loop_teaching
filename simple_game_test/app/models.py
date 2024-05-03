@@ -162,7 +162,7 @@ class Group(db.Model):
                                     default=[])
     status = db.Column(db.String(10))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    current_round = db.Column(db.Integer)
+    current_round = db.Column(db.Integer, default=0)
     round_data = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
 

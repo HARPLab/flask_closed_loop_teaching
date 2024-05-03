@@ -477,7 +477,7 @@ def retrieve_next_round() -> dict:
     side effects: none  
     """ 
     group = current_user.group
-    round = current_user.round
+    round = current_user.round + 1
     group_usernames = retrieve_group_usernames()
     curr_group = db.session.query(Group).filter_by(id=group).first()
     
@@ -570,31 +570,31 @@ def retrieve_next_round() -> dict:
     #on specific 
     return ret
 
-@socketio.on("reached EOR")
-def send_EOR():
-    curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
-    if current_user.group_code == "A":
-        curr_group.A_EOR = True
-        print("A reached EOR here")
-    elif current_user.group_code == "B":
-        curr_group.B_EOR = True
-        print("B reached EOR here")
-    elif current_user.group_code == "C":
-        curr_group.C_EOR = True
-        print("C reached EOR here")
-    db.session.commit()
+# @socketio.on("reached EOR")
+# def send_EOR():
+#     curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
+#     if current_user.group_code == "A":
+#         curr_group.A_EOR = True
+#         print("A reached EOR here")
+#     elif current_user.group_code == "B":
+#         curr_group.B_EOR = True
+#         print("B reached EOR here")
+#     elif current_user.group_code == "C":
+#         curr_group.C_EOR = True
+#         print("C reached EOR here")
+#     db.session.commit()
 
-    # debug
-    if curr_group.A_EOR:
-        print("A reached EOR")
-    if curr_group.B_EOR:
-        print("B reached EOR")
-    if curr_group.C_EOR:
-        print("C reached EOR")
+#     # debug
+#     if curr_group.A_EOR:
+#         print("A reached EOR")
+#     if curr_group.B_EOR:
+#         print("B reached EOR")
+#     if curr_group.C_EOR:
+#         print("C reached EOR")
     
-    if (curr_group.groups_all_EOR()):
-        socketio.emit("all reached EOR", to=current_user.group)
-    return
+#     if (curr_group.groups_all_EOR()):
+#         socketio.emit("all reached EOR", to=current_user.group)
+#     return
 
 
 # takes in state, including user input etc
@@ -619,6 +619,8 @@ def settings(data):
     # round = current_user.round
     # group = current_user.group
     response = {}
+    curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
+
 
     if current_user.interaction_type == "survey":
         dom = Domain(
@@ -667,11 +669,15 @@ def settings(data):
     if data["movement"] == "next":
         if current_user.last_iter_in_round:
             print("getting next round")
-            current_user.round += 1
+            # current_user.round += 1
             # if current_user.user_code == "A":
                 # actually might need to change this to, like, the first person to reach this point
-            if db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).count() == 0:
+            # if db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).count() == 0:
+            if (current_user.round == 0 and
+                db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).count() == 0):
                 retrieve_next_round()
+            
+            current_user.round += 1
             
             current_user.iteration = 1
             print("new iteration is: ")
@@ -685,6 +691,36 @@ def settings(data):
     
     curr_round = db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).first()
     mdp_params = curr_round.round_info[current_user.iteration - 1]
+    # this will short circuit if not answer, ensuring the index is never out of bounds
+    # check if we just went to last test
+    if (mdp_params["interaction type"] == "answer" and 
+        curr_round.round_info[current_user.iteration - 2]["interaction type"] == "test"):
+        # hit EOR
+        if current_user.group_code == "A":
+            curr_group.A_EOR = True
+            print("A reached EOR here")
+        elif current_user.group_code == "B":
+            curr_group.B_EOR = True
+            print("B reached EOR here")
+        elif current_user.group_code == "C":
+            curr_group.C_EOR = True
+            print("C reached EOR here")
+        db.session.commit()
+
+        if curr_group.A_EOR:
+            print("A reached EOR")
+        if curr_group.B_EOR:
+            print("B reached EOR")
+        if curr_group.C_EOR:
+            print("C reached EOR")
+        
+        if (curr_group.groups_all_EOR()):
+            print("all groups reached EOR, so i'm trying to construct the next round")
+            retrieve_next_round()
+            socketio.emit("all reached EOR", to=current_user.group)
+
+
+
     print(current_user.iteration)
     print("current mdp params are:")
     print(mdp_params["params"])
@@ -874,7 +910,7 @@ def settings(data):
 
     debug_string = f"domain={domain}, interaction type={current_user.interaction_type}, iteration={current_user.iteration}, round={current_user.round}"
     response["debug string"] = debug_string
-    response["last test"] = current_user.last_iter_in_round
+    response["last answer"] = current_user.last_iter_in_round
     response["interaction type"] = current_user.interaction_type
     response["already completed"] = already_completed
     response["go prev"] = go_prev
