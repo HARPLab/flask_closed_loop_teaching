@@ -477,7 +477,7 @@ def retrieve_next_round() -> dict:
     side effects: none  
     """ 
     group = current_user.group
-    round = current_user.round + 1
+    round = current_user.round 
     group_usernames = retrieve_group_usernames()
     curr_group = db.session.query(Group).filter_by(id=group).first()
     
@@ -504,9 +504,9 @@ def retrieve_next_round() -> dict:
            "min_BEC_constraints_running": None, 
            "visited_env_traj_idxs": None}
     
-    if round > 1:
+    if round > 0:
         pkg["initial_call"] = False
-        prev_models = db.session.query(Round).filter_by(group_id=group, round_num=round-1).first()
+        prev_models = db.session.query(Round).filter_by(group_id=group, round_num=round).first()
         pkg["group_union"] = prev_models.group_union
         pkg["group_intersection"] = prev_models.group_intersection
         pkg["model_A"] = prev_models.member_A_model
@@ -550,11 +550,11 @@ def retrieve_next_round() -> dict:
     curr_group.B_EOR = False
     curr_group.C_EOR = False
 
-    if round == 3:
+    if round == 2:
         socketio.emit("congratulations!", to=group)
 
 
-    new_round = Round(group_id=group, round_num=round, 
+    new_round = Round(group_id=group, round_num=round+1, 
                       group_union=None,
                       group_intersection=None,
                       member_A_model=None,
@@ -674,7 +674,7 @@ def settings(data):
                 # actually might need to change this to, like, the first person to reach this point
             # if db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).count() == 0:
             if (current_user.round == 0 and
-                db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).count() == 0):
+                db.session.query(Round).filter_by(group_id=current_user.group, round_num=1).count() == 0):
                 retrieve_next_round()
             
             current_user.round += 1
