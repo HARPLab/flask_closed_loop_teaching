@@ -616,6 +616,8 @@ def settings(data):
     # round = current_user.round
     # group = current_user.group
     response = {}
+    curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
+
 
     if current_user.interaction_type == "survey":
         dom = Domain(
@@ -668,7 +670,8 @@ def settings(data):
             # if current_user.user_code == "A":
                 # actually might need to change this to, like, the first person to reach this point
             # if db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).count() == 0:
-            if current_user.round == 0:
+            if (current_user.round == 0 and
+                db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).count() == 0):
                 retrieve_next_round()
             
             current_user.round += 1
@@ -690,7 +693,6 @@ def settings(data):
     if (mdp_params["interaction type"] == "answer" and 
         curr_round.round_info[current_user.iteration - 2]["interaction type"] == "test"):
         # hit EOR
-        curr_group = db.session.query(Group).filter_by(id=current_user.group).first()
         if current_user.group_code == "A":
             curr_group.A_EOR = True
             print("A reached EOR here")
@@ -710,6 +712,7 @@ def settings(data):
             print("C reached EOR")
         
         if (curr_group.groups_all_EOR()):
+            print("all groups reached EOR, so i'm trying to construct the next round")
             retrieve_next_round()
             socketio.emit("all reached EOR", to=current_user.group)
 
