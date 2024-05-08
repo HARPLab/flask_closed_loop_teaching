@@ -16,13 +16,16 @@ import json
 # from learner import Learner
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
+# sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
 # from .augmented_taxi.policy_summarization.flask_user_study_utils import normalize_trajectories, obtain_constraint
 # from .augmented_taxi.policy_summarization.BEC import obtain_remedial_demonstrations
 # from .augmented_taxi import params
 # from .augmented_taxi.policy_summarization import BEC_helpers
 # from .augmented_taxi.policy_summarization import particle_filter as pf
 
+sys.path.append(os.path.join(os.path.dirname(__file__), 'group_teaching'))
+from .group_teaching.user_study_utils import generate_demos_test_interaction_round
+from .group_teaching import params_team as params
 from app.backend_test import send_signal
 from app import socketio
 from flask_socketio import join_room, leave_room
@@ -315,6 +318,8 @@ def join_group():
         rejoined_group = db.session.query(Group).filter_by(id=current_user.group).first()
         num_members = rejoined_group.num_members
 
+    print('Current user: .' + str(current_user.username) + 'Current user group: ' + str(current_user.group))
+
     db.session.commit()
 
     # make sure that when people leave and rejoin they check the time elapsed and 
@@ -478,44 +483,77 @@ def retrieve_next_round() -> dict:
     group_usernames = retrieve_group_usernames()
     curr_group = db.session.query(Group).filter_by(id=group).first()
     
-    pkg = {"group": group,
-           "group_union": None, 
-           "group_intersection": None,
-           "model_A": None,
-           "model_B": None,
-           "model_C": None,
-           '''the next 3 entries have values of 2-d list type, 
-           with the first entry in the list being the sequence of moves
-           submitted to the first test'''
-           "moves_A": None,
-           "moves_B": None,
-           "moves_C": None,
-            '''the next 3 entries have bool list type'''
-           "correct_A": False,
-           "correct_B": False,
-           "correct_C": False,
-           "experimental_condition": curr_group.experimental_condition,
-           "initial_call": True,
-           '''running variables for generating demonstrations and tests'''
-           "variable_filter": None, 
-           "min_BEC_constraints_running": None, 
-           "visited_env_traj_idxs": None}
+    # pkg = {"group": group,
+    #        "group_union": None, 
+    #        "group_intersection": None,
+    #        "model_A": None,
+    #        "model_B": None,
+    #        "model_C": None,
+    #        '''the next 3 entries have values of 2-d list type, 
+    #        with the first entry in the list being the sequence of moves
+    #        submitted to the first test'''
+    #        "moves_A": None,
+    #        "moves_B": None,
+    #        "moves_C": None,
+    #         '''the next 3 entries have bool list type'''
+    #        "correct_A": False,
+    #        "correct_B": False,
+    #        "correct_C": False,
+    #        "experimental_condition": curr_group.experimental_condition,
+    #        "initial_call": True,
+    #        '''running variables for generating demonstrations and tests'''
+    #        "variable_filter": None, 
+    #        "min_BEC_constraints_running": None, 
+    #        "visited_env_traj_idxs": None}
     
+    # if round > 0:
+    #     pkg["initial_call"] = False
+    #     prev_models = db.session.query(Round).filter_by(group_id=group, round_num=round).first()
+    #     pkg["group_union"] = prev_models.group_union
+    #     pkg["group_intersection"] = prev_models.group_intersection
+    #     pkg["model_A"] = prev_models.member_A_model
+    #     pkg["model_B"] = prev_models.member_B_model
+    #     pkg["model_C"] = prev_models.member_C_model
+
+    #     pkg["variable_filter"] = prev_models.variable_filter
+    #     pkg["min_BEC_constraints_running"] = prev_models.min_BEC_constraints_running
+    #     pkg["visited_env_traj_idxs"] = prev_models.visited_env_traj_idxs
+
+    #     keys = ["moves_A", "moves_B", "moves_C"]
+    #     keys_corr = ["correct_A", "correct_B", "correct_C"]
+
+    #     for i, un in enumerate(group_usernames):
+    #         curr_moves = list()
+    #         correct_list = list()
+    #         trials = db.session.query(Trial).filter_by(user_id=un, interaction_type="test", is_first_time=True, round=round)
+    #         for trial in trials:
+    #             curr_moves.append(trial.moves)
+    #             correct_list.append(trial.is_opt_respons)
+    #         pkg[keys[i]] = curr_moves
+    #         pkg[keys_corr[i]] = correct_list
+
+    
+    group_union, group_intersection = None, None
+    model_A, model_B, model_C = None, None, None
+    moves_A, moves_B, moves_C = None, None, None
+    correct_A, correct_B, correct_C = False, False, False
+    experimental_condition = curr_group.experimental_condition
+    initial_call = True
+    variable_filter, min_BEC_constraints_running, visited_env_traj_idxs = None, None, None
+
     if round > 0:
-        pkg["initial_call"] = False
+        initial_call = False
         prev_models = db.session.query(Round).filter_by(group_id=group, round_num=round).first()
-        pkg["group_union"] = prev_models.group_union
-        pkg["group_intersection"] = prev_models.group_intersection
-        pkg["model_A"] = prev_models.member_A_model
-        pkg["model_B"] = prev_models.member_B_model
-        pkg["model_C"] = prev_models.member_C_model
+        group_union = prev_models.group_union
+        group_intersection = prev_models.group_intersection
+        model_A = prev_models.member_A_model
+        model_B = prev_models.member_B_model
+        model_C = prev_models.member_C_model
 
-        pkg["variable_filter"] = prev_models.variable_filter
-        pkg["min_BEC_constraints_running"] = prev_models.min_BEC_constraints_running
-        pkg["visited_env_traj_idxs"] = prev_models.visited_env_traj_idxs
+        variable_filter = prev_models.variable_filter
+        min_BEC_constraints_running = prev_models.min_BEC_constraints_running
+        visited_env_traj_idxs = prev_models.visited_env_traj_idxs
 
-        keys = ["moves_A", "moves_B", "moves_C"]
-        keys_corr = ["correct_A", "correct_B", "correct_C"]
 
         for i, un in enumerate(group_usernames):
             curr_moves = list()
@@ -524,13 +562,34 @@ def retrieve_next_round() -> dict:
             for trial in trials:
                 curr_moves.append(trial.moves)
                 correct_list.append(trial.is_opt_respons)
-            pkg[keys[i]] = curr_moves
-            pkg[keys_corr[i]] = correct_list
+            if i == 0:
+                moves_A = curr_moves
+                correct_A = correct_list
+            elif i == 1:
+                moves_B = curr_moves
+                correct_B = correct_list
+            elif i == 2:
+                moves_C = curr_moves
+                correct_C = correct_list
 
+    args = group, group_union, group_intersection, model_A, model_B, model_C, moves_A, moves_B, moves_C, correct_A, correct_B, correct_C, experimental_condition, initial_call, variable_filter, min_BEC_constraints_running, visited_env_traj_idxs
+    
     
     # currently, just return a list of env variable dicts 
-    ret = send_signal(pkg) # change this, just a demo with a test file
-    games = ret
+    # ret = send_signal(pkg) # change this, just a demo with a test file
+
+    demo_mdps, test_mdps, group, group_union, group_intersection, model_A, model_B, model_C, moves_A, moves_B, moves_C, correct_A, correct_B, correct_C, experimental_condition, initial_call, variable_filter, min_BEC_constraints_running, visited_env_traj_idxs = generate_demos_test_interaction_round(args)
+    
+    games = list()
+    for i in range(len(demo_mdps)):
+        games.append({"interaction type": "demo", "params": demo_mdps[i]})
+
+    for i in range(len(test_mdps)):
+        games.append({"interaction type": "test", "params": test_mdps[i]})
+
+    print('Games: ', games)
+
+    # games = copy.deepcopy(ret)
     to_add = []
     for game in games:
         if game["interaction type"] == "test":
@@ -552,12 +611,15 @@ def retrieve_next_round() -> dict:
 
 
     new_round = Round(group_id=group, round_num=round+1, 
-                      group_union=None,
-                      group_intersection=None,
-                      member_A_model=None,
-                      member_B_model=None,
-                      member_C_model=None,
-                      round_info=ret)
+                      group_union=group_union,
+                      group_intersection=group_intersection,
+                      member_A_model=model_A,
+                      member_B_model=model_B,
+                      member_C_model=model_C,
+                      round_info=games,
+                      variable_filter=variable_filter,
+                      min_BEC_constraints_running=min_BEC_constraints_running,
+                      visited_env_traj_idxs=visited_env_traj_idxs,)
     db.session.add(new_round)
     db.session.commit()
 
@@ -565,7 +627,7 @@ def retrieve_next_round() -> dict:
     # print(ret)
     #probably don't need to increment round in here, it might just be easier to do this 
     #on specific 
-    return ret
+    return games
 
 # @socketio.on("reached EOR")
 # def send_EOR():
