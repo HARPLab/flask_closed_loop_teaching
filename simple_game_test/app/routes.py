@@ -6,14 +6,10 @@ from app.forms import LoginForm, RegistrationForm, TrialForm, DemoForm, ConsentF
 from app.models import User, Trial, Demo, OnlineCondition, InPersonCondition, Survey, Domain, Group, Round
 from app.params import *
 import copy
-# from utils import rules_to_str, str_to_rules
 # import numpy as np
 # import random as rand
 import json
 # from datetime import datetime
-# from generate_rules import generate_rule, generate_hard_rule_constrained
-# from environment import Environment
-# from learner import Learner
 
 import sys, os
 # sys.path.append(os.path.join(os.path.dirname(__file__), 'augmented_taxi'))
@@ -24,13 +20,18 @@ import sys, os
 # from .augmented_taxi.policy_summarization import particle_filter as pf
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'group_teaching'))
-from .group_teaching.user_study_utils import generate_demos_test_interaction_round
-from .group_teaching import params_team as params
+from .group_teaching.codes.user_study.user_study_utils import generate_demos_test_interaction_round, initialize_teaching
+from .group_teaching.codes import params_team as params
 from app.backend_test import send_signal
 from app import socketio
 from flask_socketio import join_room, leave_room
+import asyncio
+from concurrent.futures import ProcessPoolExecutor
+
 import pickle
-# from multiprocessing import Pool
+
+executor = ProcessPoolExecutor()
+
 
 with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') as f:
     jsons = json.load(f)
@@ -73,6 +74,9 @@ CARD_ID_TO_FEATURES = [
 #
 # pool = Pool(os.cpu_count())
 
+# 
+# 
+# 
 # HOW TO PREVENT RULE / STATE CHANGE ON RELOAD???
 
 # shenai: I think I wrote this function
@@ -138,6 +142,10 @@ def index():
 @app.route("/introduction", methods=["GET", "POST"])
 @login_required
 def introduction():
+    # socketio.emit("intro_load_first_round", to=request.sid)
+    # retrieve_first_round()  # load first round info
+    # asyncio.run(retrieve_first_round())
+
     return render_template("mike/intro.html")
 
 @app.route("/overview", methods=["GET", "POST"])
@@ -179,6 +187,7 @@ def make_sandbox(data):
 @socketio.on("connect")
 def handle_connect():
     print(request.sid + " connected?")
+
 
 @socketio.on("sandbox settings")
 def sandbox_settings(data):
@@ -278,6 +287,7 @@ def post_practice():
 @login_required
 def waiting_room():
     preamble = ("<h3>Please wait while we find more group members for you!</h3")
+
     return render_template("mike/waiting_room.html", preamble=preamble)
 
 @socketio.on("join group")
@@ -417,6 +427,60 @@ def next_domain():
 
     db.session.commit()
 
+# @socketio.on("retrieve_first_round")
+# def retrieve_first_round() -> dict:
+
+async def retrieve_first_round():
+
+    loop = asyncio.get_event_loop()
+    games = await loop.run_in_executor(executor, retrieve_first_round_helper)
+    return games
+
+    
+
+## WIP functions, not completely working at the moment - 08/21/24
+def retrieve_first_round_helper() -> dict:
+
+    from app import pool, lock
+
+    # initialize the particles for the group
+    particles_team_teacher, _, _, _, _ = initialize_teaching((params.teacher_learning_factor, pool, lock))
+    model_A = copy.deepcopy(particles_team_teacher['p1'])
+    model_B = copy.deepcopy(particles_team_teacher['p2'])
+    model_C = copy.deepcopy(particles_team_teacher['p3'])
+
+    group_intersection = copy.deepcopy(particles_team_teacher['common_knowledge'])
+    group_union = copy.deepcopy(particles_team_teacher['joint_knowledge'])
+
+    group = current_user.group
+
+    #load the first round demos and tests (games)
+    with open(os.path.join(os.path.dirname(__file__), '../augmentedtaxi_first_demo_test_mdps.pickle'), 'rb') as f:
+        demo_mdps, test_mdps, variable_filter, min_BEC_constraints_running, visited_env_traj_idxs  = pickle.load(f)
+    
+    games = list()
+    for i in range(len(demo_mdps)):
+        games.append({"interaction type": "demo", "params": demo_mdps[i]})
+
+    for i in range(len(test_mdps)):
+        games.append({"interaction type": "test", "params": test_mdps[i]})
+
+    print('Initializing teacher model of learner for group: ', group)
+    new_round = Round(group_id=group, round_num=0, 
+                      group_union=group_union,
+                      group_intersection=group_intersection,
+                      member_A_model=model_A,
+                      member_B_model=model_B,
+                      member_C_model=model_C,
+                      round_info=games,
+                      variable_filter=variable_filter,
+                      min_BEC_constraints_running=min_BEC_constraints_running,
+                      visited_env_traj_idxs=visited_env_traj_idxs,)
+    db.session.add(new_round)
+    db.session.commit()
+
+    return games
+
 
 @app.route("/at_intro", methods=["GET", "POST"])
 @login_required
@@ -465,8 +529,11 @@ def retrieve_group_usernames() -> list[str]:
 
     # run query on Groups database
     curr_group = db.session.query(Group).filter_by(id=curr_group_num).first()
+    print(curr_group)
 
     return [curr_group.member_A, curr_group.member_B, curr_group.member_C]
+
+
 
 def retrieve_next_round() -> dict:
     """
@@ -478,59 +545,13 @@ def retrieve_next_round() -> dict:
     data out: environment variables for next round
     side effects: none  
     """ 
+    from app import pool, lock
+
+
     group = current_user.group
     round = current_user.round 
     group_usernames = retrieve_group_usernames()
     curr_group = db.session.query(Group).filter_by(id=group).first()
-    
-    # pkg = {"group": group,
-    #        "group_union": None, 
-    #        "group_intersection": None,
-    #        "model_A": None,
-    #        "model_B": None,
-    #        "model_C": None,
-    #        '''the next 3 entries have values of 2-d list type, 
-    #        with the first entry in the list being the sequence of moves
-    #        submitted to the first test'''
-    #        "moves_A": None,
-    #        "moves_B": None,
-    #        "moves_C": None,
-    #         '''the next 3 entries have bool list type'''
-    #        "correct_A": False,
-    #        "correct_B": False,
-    #        "correct_C": False,
-    #        "experimental_condition": curr_group.experimental_condition,
-    #        "initial_call": True,
-    #        '''running variables for generating demonstrations and tests'''
-    #        "variable_filter": None, 
-    #        "min_BEC_constraints_running": None, 
-    #        "visited_env_traj_idxs": None}
-    
-    # if round > 0:
-    #     pkg["initial_call"] = False
-    #     prev_models = db.session.query(Round).filter_by(group_id=group, round_num=round).first()
-    #     pkg["group_union"] = prev_models.group_union
-    #     pkg["group_intersection"] = prev_models.group_intersection
-    #     pkg["model_A"] = prev_models.member_A_model
-    #     pkg["model_B"] = prev_models.member_B_model
-    #     pkg["model_C"] = prev_models.member_C_model
-
-    #     pkg["variable_filter"] = prev_models.variable_filter
-    #     pkg["min_BEC_constraints_running"] = prev_models.min_BEC_constraints_running
-    #     pkg["visited_env_traj_idxs"] = prev_models.visited_env_traj_idxs
-
-    #     keys = ["moves_A", "moves_B", "moves_C"]
-    #     keys_corr = ["correct_A", "correct_B", "correct_C"]
-
-    #     for i, un in enumerate(group_usernames):
-    #         curr_moves = list()
-    #         correct_list = list()
-    #         trials = db.session.query(Trial).filter_by(user_id=un, interaction_type="test", is_first_time=True, round=round)
-    #         for trial in trials:
-    #             curr_moves.append(trial.moves)
-    #             correct_list.append(trial.is_opt_respons)
-    #         pkg[keys[i]] = curr_moves
-    #         pkg[keys_corr[i]] = correct_list
 
     
     group_union, group_intersection = None, None
@@ -540,7 +561,9 @@ def retrieve_next_round() -> dict:
     experimental_condition = curr_group.experimental_condition
     initial_call = True
     variable_filter, min_BEC_constraints_running, visited_env_traj_idxs = None, None, None
+    
 
+    # load previous round data
     if round > 0:
         initial_call = False
         prev_models = db.session.query(Round).filter_by(group_id=group, round_num=round).first()
@@ -572,12 +595,9 @@ def retrieve_next_round() -> dict:
                 moves_C = curr_moves
                 correct_C = correct_list
 
-    args = group, group_union, group_intersection, model_A, model_B, model_C, moves_A, moves_B, moves_C, correct_A, correct_B, correct_C, experimental_condition, initial_call, variable_filter, min_BEC_constraints_running, visited_env_traj_idxs
-    
-    
-    # currently, just return a list of env variable dicts 
-    # ret = send_signal(pkg) # change this, just a demo with a test file
 
+    # get demonstrations and tests for this round
+    args = group, group_union, group_intersection, model_A, model_B, model_C, moves_A, moves_B, moves_C, correct_A, correct_B, correct_C, experimental_condition, initial_call, variable_filter, min_BEC_constraints_running, visited_env_traj_idxs, pool, lock
     demo_mdps, test_mdps, group, group_union, group_intersection, model_A, model_B, model_C, moves_A, moves_B, moves_C, correct_A, correct_B, correct_C, experimental_condition, initial_call, variable_filter, min_BEC_constraints_running, visited_env_traj_idxs = generate_demos_test_interaction_round(args)
     
     games = list()
@@ -589,13 +609,12 @@ def retrieve_next_round() -> dict:
 
     print('Games: ', games)
 
-    # games = copy.deepcopy(ret)
     to_add = []
     for game in games:
         if game["interaction type"] == "test":
             new_game = copy.deepcopy(game)
             new_game["interaction type"] = "answer"
-            new_game["params"]["tag"] = -1
+            new_game["params"]["tag"] = -1   # this is for old format used by Mike and Shenai; params is recently a mdp list
             to_add.append(new_game)
     games.extend(to_add)
 
@@ -623,10 +642,6 @@ def retrieve_next_round() -> dict:
     db.session.add(new_round)
     db.session.commit()
 
-    # print("new round info is: ")
-    # print(ret)
-    #probably don't need to increment round in here, it might just be easier to do this 
-    #on specific 
     return games
 
 # @socketio.on("reached EOR")
@@ -723,23 +738,31 @@ def settings(data):
 
 
     # get data from the trial that was just completed
-    # THEN try to go next aiya
+    # THEN try to go next
 
     if data["movement"] == "next":
         if current_user.last_iter_in_round:
             print("getting next round")
-            # current_user.round += 1
-            # if current_user.user_code == "A":
-                # actually might need to change this to, like, the first person to reach this point
-            # if db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).count() == 0:
+
+            # # Next round when first round is loaded by default
+            # if (current_user.round > 0 and
+            #     db.session.query(Round).filter_by(group_id=current_user.group, round_num=1).count() == 0):
+            #     retrieve_next_round()
+            # elif (current_user.round == 0 and
+            #     db.session.query(Round).filter_by(group_id=current_user.group, round_num=1).count() == 0):
+            #     #TODO: code to load first round info
+            #     x = 1
+
+            # generate all rounds in real-time (slow process)
             if (current_user.round == 0 and
                 db.session.query(Round).filter_by(group_id=current_user.group, round_num=1).count() == 0):
                 retrieve_next_round()
-            
+
+
             current_user.round += 1
             
             current_user.iteration = 1
-            print("new iteration is: ")
+            print("New iteration is: ")
             print(current_user.iteration)
             # probably can just return here
             # return
@@ -749,6 +772,7 @@ def settings(data):
         current_user.iteration -= 1
     
     curr_round = db.session.query(Round).filter_by(group_id=current_user.group, round_num=current_user.round).first()
+    print("current round data:", curr_round, 'current_user.iteration: ', current_user.iteration)
     mdp_params = curr_round.round_info[current_user.iteration - 1]
     # this will short circuit if not answer, ensuring the index is never out of bounds
     # check if we just went to last test
@@ -782,7 +806,7 @@ def settings(data):
 
     print(current_user.iteration)
     print("current mdp params are:")
-    print(mdp_params["params"])
+    print(mdp_params)
     response["params"] = mdp_params["params"]
 
     current_user.interaction_type = mdp_params["interaction type"]
@@ -938,8 +962,7 @@ def settings(data):
                    ["final test",  0], ["final test", 1], ["final test", 2], ["final test", 3], ["final test", 4], ["final test", 5]]
         }
     }
-    print(loop_cond)
-    print(domain)
+
 
 
     
@@ -961,7 +984,7 @@ def settings(data):
         num_times_finished = num_times_completed - num_times_unfinished
         if num_times_finished > 0:
             already_completed = "true"
-            response["params"]["tag"] = -1
+            # response["params"]["tag"] = -1  # this is for old format used by Mike and Shenai; params is recently a mdp list
 
     go_prev = "true"
     if (current_user.iteration == 1 and current_user.interaction_type == "demo") or ("test" in current_user.interaction_type and already_completed == "false") or (current_user.interaction_type == "survey"):

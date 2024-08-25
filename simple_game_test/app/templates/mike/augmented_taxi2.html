@@ -163,7 +163,7 @@
             socket.emit("join group v2");
         });
     socket.on("member joined again", function (data) {
-        console.log(data["user code"] + " joined");
+        console.log(data["user code"] + " has now joined");
     });
     socket.on("congratulations!", () => {
         console.log("at the last round now!")

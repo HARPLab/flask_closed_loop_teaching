@@ -48,11 +48,8 @@ class User(UserMixin, db.Model):
     subiteration = db.Column(db.Integer)
 
     # refers to the corresponding number in the round database
-    # the round database will have a primary key
-    # but it'll also have a column for group number
-    # and round number in that group
-    # the round attribute for the user will refer to that round number
-    # you can find this by querying the round w/ group number
+    # the round database will have a primary key but it'll also have a column for group number and round number in that group
+    # the round attribute for the user will refer to that round number; you can find this by querying the round w/ group number
     round = db.Column(db.Integer, default=0)
     last_iter_in_round = db.Column(db.Boolean, default=True)
 

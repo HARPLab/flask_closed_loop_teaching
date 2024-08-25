@@ -5,6 +5,8 @@ from flask_login import LoginManager
 from config import Config
 
 from flask_socketio import SocketIO
+from multiprocessing import Manager, Pool, Lock
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -23,6 +25,12 @@ from app import routes, models
 
 # comment lines below when creating the database. uncomment lines below when running the app
 from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
+
+# Initialize the multiprocessing tools
+manager = Manager()
+lock = manager.Lock()
+pool = Pool(processes=64)  # Adjust the number of processes as needed
+
 
 rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
 if rows == 0:
