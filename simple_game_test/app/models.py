@@ -140,6 +140,7 @@ def load_user(id):
 
 class Round(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(20)) #demos_tests_generated, demos_updated, tests_updated
     group_id = db.Column(db.Integer)
     round_num = db.Column(db.Integer)
     group_union = db.Column(db.PickleType)
@@ -157,7 +158,7 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_ids = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
-    status = db.Column(db.String(10))
+    status = db.Column(db.String(10)) # 
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     current_round = db.Column(db.Integer, default=0)
     round_data = db.Column(MutableList.as_mutable(db.PickleType),
@@ -172,6 +173,7 @@ class Group(db.Model):
     B_EOR = db.Column(db.Boolean, default=False)
     C_EOR = db.Column(db.Boolean, default=False)
 
+    first_round_status = db.Column(db.String(20))
     experimental_condition = db.Column(db.String(50))
 
     def groups_all_EOR(self):
@@ -246,6 +248,19 @@ class Domain(db.Model):
     use2 = db.Column(db.Integer)
     use3 = db.Column(db.Integer)
     short_answer = db.Column(db.PickleType)
+
+
+class DomainParams(db.Model):
+    domain_name = db.Column(db.String(2), primary_key=True)
+    min_subset_constraints_record = db.Column(db.PickleType)
+    env_record = db.Column(db.PickleType)
+    traj_record = db.Column(db.PickleType) 
+    traj_features_record = db.Column(db.PickleType) 
+    mdp_features_record = db.Column(db.PickleType) 
+    consistent_state_count = db.Column(db.PickleType)
+    min_BEC_constraints = db.Column(db.PickleType)
+
+
 
 class Demo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

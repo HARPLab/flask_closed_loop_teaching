@@ -169,60 +169,61 @@
         console.log("at the last round now!")
         window.last_round = true;
     });
-        socket.on("settings configured", function (data) {
-            if (data["last answer"]) {
-                window.last_in_round = true;
-                console.log("reached last answer in round");
+    socket.on("settings configured", function (data) {
+        console.log('Received settings:', data);
+        if (data["last answer"]) {
+            window.last_in_round = true;
+            console.log("reached last answer in round");
+        }
+        else {
+            if (data["interaction type"] == "demo") {
+                window.last_round = false;
+                window.joint_EOR = false;
             }
-            else {
-                if (data["interaction type"] == "demo") {
-                    window.last_round = false;
-                    window.joint_EOR = false;
-                }
-                window.last_in_round = false;
-            }
-            
-            localStorage.setItem("movement", "false");
-            localStorage.setItem("user input", "{}");
-            // localStorage.setItem("game completed", "false");
-            // localStorage.setItem("survey completed", "false");
-            localStorage.setItem("survey", "-1");
-            window.mdp_parameters = data["params"];
-            window.interaction_type = data["interaction type"]; // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
-            localStorage.setItem("already completed", data["already completed"]);
-            if (data["go prev"] === "false") {
-                $("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
-            </button>`);
-            }
-            if (data["already completed"] === "true") {
-                $("#next").replaceWith(`<button type="button" id="next"
-                    onclick="next()"
-                    value="next" class="btn btn-primary btn-lg continue">
-                    Next <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>` );
-            }
-            else {
-                $("#next").replaceWith(`<button type="button" id="next" disabled
-            onclick="next()"
-            value="next" class="btn btn-primary btn-lg continue">
-            Next <span class="glyphicon glyphicon-arrow-right"></span>
-            </button>` );
-            $("#survey").html(``);
-            }
-            $("#debug").html(data["debug string"]);
-            // if (data["last test"]) {
-            //     localStorage.setItem("last test", "true");
-            // }
-            // hide the loading screen and show the game content
-            document.getElementById('wait').style.display = 'none';
-            document.getElementById('center-container').style.display = 'none';
-            document.getElementById('instructions').style.display = 'block';
-            document.getElementById('preamble').style.display = 'block';
-            console.log(window.interaction_type);
-            console.log(window.mdp_parameters);
-            change_text(window.interaction_type);
-            run_page(window.mdp_parameters);
-        });
+            window.last_in_round = false;
+        }
+        
+        localStorage.setItem("movement", "false");
+        localStorage.setItem("user input", "{}");
+        // localStorage.setItem("game completed", "false");
+        // localStorage.setItem("survey completed", "false");
+        localStorage.setItem("survey", "-1");
+        window.mdp_parameters = data["params"];
+        window.interaction_type = data["interaction type"]; // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
+        localStorage.setItem("already completed", data["already completed"]);
+        if (data["go prev"] === "false") {
+            $("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+        </button>`);
+        }
+        if (data["already completed"] === "true") {
+            $("#next").replaceWith(`<button type="button" id="next"
+                onclick="next()"
+                value="next" class="btn btn-primary btn-lg continue">
+                Next <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>` );
+        }
+        else {
+            $("#next").replaceWith(`<button type="button" id="next" disabled
+        onclick="next()"
+        value="next" class="btn btn-primary btn-lg continue">
+        Next <span class="glyphicon glyphicon-arrow-right"></span>
+        </button>` );
+        $("#survey").html(``);
+        }
+        $("#debug").html(data["debug string"]);
+        // if (data["last test"]) {
+        //     localStorage.setItem("last test", "true");
+        // }
+        // hide the loading screen and show the game content
+        document.getElementById('wait').style.display = 'none';
+        document.getElementById('center-container').style.display = 'none';
+        document.getElementById('instructions').style.display = 'block';
+        document.getElementById('preamble').style.display = 'block';
+        console.log(window.interaction_type);
+        console.log(window.mdp_parameters);
+        change_text(window.interaction_type);
+        run_page(window.mdp_parameters);
+    });
     
     socket.on("all reached EOR", function (){
         console.log("all reached EOR");
@@ -239,91 +240,103 @@
 
         // Assign html for interaction type
         function change_text(interaction_type){
-        console.log("changing text")
-        if (interaction_type === "survey") {
-            $("#non-buttons").html( 
-                `<h3> I lost myself in this experience.</h3>
-                <div class="likert">
-                <label><input name="attn1" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                <label><input name="attn1" type="radio" value="2"/><span>Disagree</span></label>
-                <label><input name="attn1" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                <label><input name="attn1" type="radio" value="4"/><span>Agree</span></label>
-                <label><input name="attn1" type="radio" value="5"/><span>Strongly Agree</span></label>
-                </div>
-                <br></br>
-                <h3> The time I spent learning the game strategy just slipped away.</h3>
-                <div class="likert">
-                <label><input name="attn2" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                <label><input name="attn2" type="radio" value="2"/><span>Disagree</span></label>
-                <label><input name="attn2" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                <label><input name="attn2" type="radio" value="4"/><span>Agree</span></label>
-                <label><input name="attn2" type="radio" value="5"/><span>Strongly Agree</span></label>
-                </div>
-                <br></br>
-                <h3> I was absorbed in this experience. </h3>
-                <div class="likert">
-                <label><input name="attn3" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                <label><input name="attn3" type="radio" value="2"/><span>Disagree</span></label>
-                <label><input name="attn3" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                <label><input name="attn3" type="radio" value="4"/><span>Agree</span></label>
-                <label><input name="attn3" type="radio" value="5"/><span>Strongly Agree</span></label>
-                </div>
-                <br></br>
-                
-                <h3> I felt frustrated while learning the game strategy.</h3>
-                <div class="likert">
-                <label><input name="use1" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                <label><input name="use1" type="radio" value="2"/><span>Disagree</span></label>
-                <label><input name="use1" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                <label><input name="use1" type="radio" value="4"/><span>Agree</span></label>
-                <label><input name="use1" type="radio" value="5"/><span>Strongly Agree</span></label>
-                </div>
-                <br></br>
-                <h3> I found learning the game strategy confusing.</h3>
-                <div class="likert">
-                <label><input name="use2" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                <label><input name="use2" type="radio" value="2"/><span>Disagree</span></label>
-                <label><input name="use2" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                <label><input name="use2" type="radio" value="4"/><span>Agree</span></label>
-                <label><input name="use2" type="radio" value="5"/><span>Strongly Agree</span></label>
-                </div>
-                <br></br>
-                <h3> Learning the game strategy was taxing. </h3>
-                <div class="likert">
-                <label><input name="use3" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                <label><input name="use3" type="radio" value="2"/><span>Disagree</span></label>
-                <label><input name="use3" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                <label><input name="use3" type="radio" value="4"/><span>Agree</span></label>
-                <label><input name="use3" type="radio" value="5"/><span>Strongly Agree</span></label>
-                </div>
-                <br></br>
-                <h3> Any further comments/thoughts on the practice stage? </h3>
-                <textarea id="short answer" rows="4" cols="50"></textarea>
-                `
-            );
-        }
-        else if ((interaction_type == "diagnostic test") || (interaction_type == "remedial test") || (interaction_type == "final test")) {
-            $("#table_controlinfo").replaceWith(`<div><br><br><br><br>
-        <table width="500">
-            <tr><th>Key</th><th>Action</th></tr>
-            <tr><td>up/down/left/right arrow keys</td><td>corresponding movement</td></tr>
-            <tr><td>p</td><td>pick up</td></tr>
-            <tr><td>d</td><td>drop</td></tr>
-            <tr><td>r</td><td>reset simulation</td></tr>
-        </table>
-        <br></div>`);
-            $("#info_main").replaceWith('<h3>Now its your turn to play six games! Please demonstrate how you would complete this games task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br> <h3>Please answer the question below on the confidence of your gameplay <b>after</b> providing your demonstration.</h3>');
+            console.log("changing text for interaction type", interaction_type);
+            if (interaction_type === "survey") {
+                $("#non-buttons").html( 
+                    `<h3> I lost myself in this experience.</h3>
+                    <div class="likert">
+                    <label><input name="attn1" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                    <label><input name="attn1" type="radio" value="2"/><span>Disagree</span></label>
+                    <label><input name="attn1" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                    <label><input name="attn1" type="radio" value="4"/><span>Agree</span></label>
+                    <label><input name="attn1" type="radio" value="5"/><span>Strongly Agree</span></label>
+                    </div>
+                    <br></br>
+                    <h3> The time I spent learning the game strategy just slipped away.</h3>
+                    <div class="likert">
+                    <label><input name="attn2" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                    <label><input name="attn2" type="radio" value="2"/><span>Disagree</span></label>
+                    <label><input name="attn2" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                    <label><input name="attn2" type="radio" value="4"/><span>Agree</span></label>
+                    <label><input name="attn2" type="radio" value="5"/><span>Strongly Agree</span></label>
+                    </div>
+                    <br></br>
+                    <h3> I was absorbed in this experience. </h3>
+                    <div class="likert">
+                    <label><input name="attn3" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                    <label><input name="attn3" type="radio" value="2"/><span>Disagree</span></label>
+                    <label><input name="attn3" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                    <label><input name="attn3" type="radio" value="4"/><span>Agree</span></label>
+                    <label><input name="attn3" type="radio" value="5"/><span>Strongly Agree</span></label>
+                    </div>
+                    <br></br>
+                    
+                    <h3> I felt frustrated while learning the game strategy.</h3>
+                    <div class="likert">
+                    <label><input name="use1" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                    <label><input name="use1" type="radio" value="2"/><span>Disagree</span></label>
+                    <label><input name="use1" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                    <label><input name="use1" type="radio" value="4"/><span>Agree</span></label>
+                    <label><input name="use1" type="radio" value="5"/><span>Strongly Agree</span></label>
+                    </div>
+                    <br></br>
+                    <h3> I found learning the game strategy confusing.</h3>
+                    <div class="likert">
+                    <label><input name="use2" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                    <label><input name="use2" type="radio" value="2"/><span>Disagree</span></label>
+                    <label><input name="use2" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                    <label><input name="use2" type="radio" value="4"/><span>Agree</span></label>
+                    <label><input name="use2" type="radio" value="5"/><span>Strongly Agree</span></label>
+                    </div>
+                    <br></br>
+                    <h3> Learning the game strategy was taxing. </h3>
+                    <div class="likert">
+                    <label><input name="use3" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                    <label><input name="use3" type="radio" value="2"/><span>Disagree</span></label>
+                    <label><input name="use3" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                    <label><input name="use3" type="radio" value="4"/><span>Agree</span></label>
+                    <label><input name="use3" type="radio" value="5"/><span>Strongly Agree</span></label>
+                    </div>
+                    <br></br>
+                    <h3> Any further comments/thoughts on the practice stage? </h3>
+                    <textarea id="short answer" rows="4" cols="50"></textarea>
+                    `
+                );
             }
-        else {
-            $("#table_controlinfo").replaceWith(`<div><br><br><br>
-        <table width="500">
-            <tr><th>Key</th><th>Action</th></tr>
-            <tr><td>space bar</td><td>next movement</td></tr>
-            <tr><td>r</td><td>reset simulation</td></tr>
-        </table>
-        <br></div>`);
-            $("#info_main").replaceWith('<h3> Look at the demonstration on how you should complete this games task while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
-        }
+            else if ((interaction_type == "diagnostic test") || (interaction_type == "remedial test") || (interaction_type == "final test")) {
+                console.log("I am in the diagnostic test");
+                if (localStorage.getItem("already completed") == 'true') {
+                    $("#table_controlinfo").html(`<div><br><br>
+                    <table width="500">
+                        <tr><th>Key</th><th>Action</th></tr>
+                        <tr><td>space bar</td><td>next movement</td></tr>
+                        <tr><td>r</td><td>reset simulation</td></tr>
+                    </table>
+                    <br></div>`);
+                }
+                else{
+                    $("#table_controlinfo").html(`<div><br><br><br><br>
+                <table width="500">
+                    <tr><th>Key</th><th>Action</th></tr>
+                    <tr><td>up/down/left/right arrow keys</td><td>corresponding movement</td></tr>
+                    <tr><td>p</td><td>pick up</td></tr>
+                    <tr><td>d</td><td>drop</td></tr>
+                    <tr><td>r</td><td>reset simulation</td></tr>
+                </table>
+                <br></div>`);
+                }
+            }
+                
+            else {
+                $("#table_controlinfo").html(`<div><br><br><br>
+            <table width="500">
+                <tr><th>Key</th><th>Action</th></tr>
+                <tr><td>space bar</td><td>next movement</td></tr>
+                <tr><td>r</td><td>reset simulation</td></tr>
+            </table>
+            <br></div>`);
+                $("#info_main").html('<h3> Look at the demonstration on how you should complete this games task while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
+            }
         }
 
 
@@ -355,7 +368,7 @@
             else {
         
 
-                // window.location.href='/at';
+            // window.location.href='/at';
             console.log("printing agent history nonoffset");
             console.log(window.agent_history_nonoffset);
                 let data = {};
