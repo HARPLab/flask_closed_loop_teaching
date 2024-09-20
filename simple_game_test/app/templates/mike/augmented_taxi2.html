@@ -188,6 +188,7 @@
         // localStorage.setItem("game completed", "false");
         // localStorage.setItem("survey completed", "false");
         localStorage.setItem("survey", "-1");
+        console.log('MDP params: ', data["params"]);
         window.mdp_parameters = data["params"];
         window.interaction_type = data["interaction type"]; // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
         localStorage.setItem("already completed", data["already completed"]);
@@ -219,8 +220,8 @@
         document.getElementById('center-container').style.display = 'none';
         document.getElementById('instructions').style.display = 'block';
         document.getElementById('preamble').style.display = 'block';
-        console.log(window.interaction_type);
-        console.log(window.mdp_parameters);
+        console.log('Interaction type:', window.interaction_type);
+        console.log('Params:', window.mdp_parameters);
         change_text(window.interaction_type);
         run_page(window.mdp_parameters);
     });

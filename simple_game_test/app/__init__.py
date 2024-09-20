@@ -47,7 +47,10 @@ if rows == 0:
 # # remove the 3 lines below when starting the second round of trials
 # db.session.query(models.Round).delete()
 # db.session.query(models.Group).delete()
-# group = models.Group(user_ids=[])
-# db.session.add(group)
+
+old_group = db.session.query(models.Group).first()
+if old_group is None:
+	group = models.Group(user_ids=[])
+	db.session.add(group)
 
 db.session.commit()

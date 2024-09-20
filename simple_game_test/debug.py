@@ -86,4 +86,4 @@ def plot_last_few_rounds(group_id):
 # Running the Flask app
 if __name__ == '__main__':
     with app.app_context():
-        plot_last_few_rounds(13)  # Call the function to plot the last 5 rounds
+        plot_last_few_rounds(1)  # Call the function to plot the last 5 rounds

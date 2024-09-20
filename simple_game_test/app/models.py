@@ -42,7 +42,7 @@ class User(UserMixin, db.Model):
     loop_condition = db.Column(db.String(4))
     domain_1 = db.Column(db.String(2))
     domain_2 = db.Column(db.String(2))
-    domain_3 = db.Column(db.String(2))
+    # domain_3 = db.Column(db.String(2))
     interaction_type = db.Column(db.String(20))
     iteration = db.Column(db.Integer)
     subiteration = db.Column(db.Integer)
@@ -140,15 +140,23 @@ def load_user(id):
 
 class Round(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    domain = db.Column(db.String(2))
     status = db.Column(db.String(20)) #demos_tests_generated, demos_updated, tests_updated
     group_id = db.Column(db.Integer)
     round_num = db.Column(db.Integer)
-    group_union = db.Column(db.PickleType)
-    group_intersection = db.Column(db.PickleType)
+    group_union_model = db.Column(db.PickleType)
+    group_intersection_model = db.Column(db.PickleType)
+    group_knowledge = db.Column(db.PickleType)
+    kc_id = db.Column(db.PickleType)
+    min_KC_constraints = db.Column(db.PickleType)
     member_A_model = db.Column(db.PickleType)
     member_B_model = db.Column(db.PickleType)
     member_C_model = db.Column(db.PickleType)
+    member_A_status = db.Column(db.PickleType)
+    member_B_status = db.Column(db.PickleType)
+    member_C_status = db.Column(db.PickleType)
     variable_filter = db.Column(db.PickleType)
+    nonzero_counter = db.Column(db.PickleType)
     min_BEC_constraints_running = db.Column(db.PickleType)
     visited_env_traj_idxs = db.Column(db.PickleType)
     round_info = db.Column(db.PickleType)
@@ -168,42 +176,74 @@ class Group(db.Model):
     member_B = db.Column(db.String(50), default="")
     member_C = db.Column(db.String(50), default="")
     num_members = db.Column(db.Integer, default=0)
+    max_members = 2
 
     A_EOR = db.Column(db.Boolean, default=False)
     B_EOR = db.Column(db.Boolean, default=False)
     C_EOR = db.Column(db.Boolean, default=False)
 
+    member_A_status = db.Column(db.String(50), default="not_joined")  # not_joined, joined, left
+    member_B_status = db.Column(db.String(50), default="not_joined")
+    member_C_status = db.Column(db.String(50), default="not_joined")
+
     first_round_status = db.Column(db.String(20))
     experimental_condition = db.Column(db.String(50))
 
+    # domain_1 = db.Column(db.String(2), default="at")
+    # domain_2 = db.Column(db.String(2))
+    # domain_3 = db.Column(db.String(2))
+
+    domains = ["at", "sb"]
+    # rand.shuffle(domains)
+    domain_1 = domains[0]
+    domain_2 = domains[1]
+
+    curr_progress = "domain_1"
+
+
     def groups_all_EOR(self):
-        return (self.A_EOR and self.B_EOR and self.C_EOR)
+        EOR_list = []
+        if self.member_A_status == "joined":
+            EOR_list.append(self.A_EOR)
+        if self.member_B_status == "joined":
+            EOR_list.append(self.B_EOR)
+        if self.member_C_status == "joined":
+            EOR_list.append(self.C_EOR)
+
+        return all(EOR_list)
     
     def groups_push(self, value):
         ret = ""
         if not self.member_A:
             self.member_A = value
+            self.member_A_status = "joined"
             ret = "A"
         elif not self.member_B:
             self.member_B = value
+            self.member_B_status = "joined"
             ret = "B"
         elif not self.member_C:
             self.member_C = value
+            self.member_C_status = "joined"
             ret = "C"
+        
 
         self.num_members += 1
-        return ret
-
+        return ret, self.domain_1, self.domain_2
+    
     def groups_remove(self, value):
         ret = ""
         if self.member_A == value:
             self.member_A = ""
+            self.member_A_status = "left"
             ret = "A"
         elif self.member_B == value:
             self.member_B = ""
+            self.member_B_status = "left"
             ret = "B"
         elif self.member_C == value:
             self.member_C = ""
+            self.member_C_status = "left"
             ret = "C"
 
         self.num_members -= 1
@@ -216,6 +256,7 @@ class Trial(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.String(64))
+    group_code = db.Column(db.String(1))
     duration_ms = db.Column(db.Float)
     domain = db.Column(db.String(2))
     interaction_type = db.Column(db.String(20))
