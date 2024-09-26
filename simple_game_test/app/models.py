@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func
 from sqlalchemy.ext.mutable import MutableList
+from sqlalchemy.orm.attributes import flag_modified
 import random
 import string
 
@@ -57,7 +58,8 @@ class User(UserMixin, db.Model):
                                     default=[])
     curr_trial_idx = db.Column(db.Integer)
     group = db.Column(db.Integer)
-    group_code = db.Column(db.String(1))
+    group_code = db.Column(db.Integer)
+    group_member_id = db.Column(db.Integer)
 
     def __repr__(self):
         return "<User {}>".format(self.username)
@@ -118,48 +120,31 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-# class Trial(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-#     user_id = db.Column(db.String(64))
-#     trial_num = db.Column(db.Integer)
-#     duration_ms = db.Column(db.Float)
-#     rule_str = db.Column(db.String(256))
-#     fb_type = db.Column(db.String(32))
-#     cards_played = db.Column(db.PickleType)
-#     n_cards = db.Column(db.Integer)
-#     n_cards_to_learn_rule = db.Column(db.Integer)
-#     card_select_times = db.Column(db.PickleType)
-#     n_hypotheses_remaining = db.Column(db.PickleType)
-#     n_failed_terminations = db.Column(db.Integer)
-#     terminate_confidences = db.Column(db.PickleType)
-#     feedback_confidences = db.Column(db.PickleType)
-#     terminate_record = db.Column(db.PickleType)
-#     bonus_value = db.Column(db.String(256))
-#     feedback_strings = db.Column(db.PickleType)
-
 class Round(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     domain = db.Column(db.String(2))
     status = db.Column(db.String(20)) #demos_tests_generated, demos_updated, tests_updated
     group_id = db.Column(db.Integer)
     round_num = db.Column(db.Integer)
+    ind_member_models = db.Column(db.PickleType)
     group_union_model = db.Column(db.PickleType)
     group_intersection_model = db.Column(db.PickleType)
+    members_statuses = db.Column(db.PickleType)
     group_knowledge = db.Column(db.PickleType)
     kc_id = db.Column(db.PickleType)
     min_KC_constraints = db.Column(db.PickleType)
-    member_A_model = db.Column(db.PickleType)
-    member_B_model = db.Column(db.PickleType)
-    member_C_model = db.Column(db.PickleType)
-    member_A_status = db.Column(db.PickleType)
-    member_B_status = db.Column(db.PickleType)
-    member_C_status = db.Column(db.PickleType)
+    # member_A_model = db.Column(db.PickleType)
+    # member_B_model = db.Column(db.PickleType)
+    # member_C_model = db.Column(db.PickleType)
+    # member_A_status = db.Column(db.PickleType)
+    # member_B_status = db.Column(db.PickleType)
+    # member_C_status = db.Column(db.PickleType)
     variable_filter = db.Column(db.PickleType)
     nonzero_counter = db.Column(db.PickleType)
     min_BEC_constraints_running = db.Column(db.PickleType)
+    prior_min_BEC_constraints_running = db.Column(db.PickleType)
     visited_env_traj_idxs = db.Column(db.PickleType)
-    round_info = db.Column(db.PickleType)
+    round_info = db.Column(db.PickleType)  # the MDPS of demos and tests
     last_round = db.Column(db.Boolean) # only know this after the last round is completed
 
 class Group(db.Model):
@@ -172,19 +157,25 @@ class Group(db.Model):
     round_data = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
 
-    member_A = db.Column(db.String(50), default="")
-    member_B = db.Column(db.String(50), default="")
-    member_C = db.Column(db.String(50), default="")
+    # member_A = db.Column(db.String(50), default="")
+    # member_B = db.Column(db.String(50), default="")
+    # member_C = db.Column(db.String(50), default="")
+
+    # A_EOR = db.Column(db.Boolean, default=False)
+    # B_EOR = db.Column(db.Boolean, default=False)
+    # C_EOR = db.Column(db.Boolean, default=False)
+
+    # member_A_status = db.Column(db.String(50), default="not_joined")  # not_joined, joined, left
+    # member_B_status = db.Column(db.String(50), default="not_joined")
+    # member_C_status = db.Column(db.String(50), default="not_joined")
+
+    
+    members = db.Column(db.PickleType)
+    member_user_ids = db.Column(db.PickleType)
     num_members = db.Column(db.Integer, default=0)
-    max_members = 2
-
-    A_EOR = db.Column(db.Boolean, default=False)
-    B_EOR = db.Column(db.Boolean, default=False)
-    C_EOR = db.Column(db.Boolean, default=False)
-
-    member_A_status = db.Column(db.String(50), default="not_joined")  # not_joined, joined, left
-    member_B_status = db.Column(db.String(50), default="not_joined")
-    member_C_status = db.Column(db.String(50), default="not_joined")
+    num_active_members = db.Column(db.Integer, default=0)
+    members_statuses = db.Column(db.PickleType)
+    members_EOR = db.Column(db.PickleType)
 
     first_round_status = db.Column(db.String(20))
     experimental_condition = db.Column(db.String(50))
@@ -203,54 +194,58 @@ class Group(db.Model):
 
     def groups_all_EOR(self):
         EOR_list = []
-        if self.member_A_status == "joined":
-            EOR_list.append(self.A_EOR)
-        if self.member_B_status == "joined":
-            EOR_list.append(self.B_EOR)
-        if self.member_C_status == "joined":
-            EOR_list.append(self.C_EOR)
+        for idx in range(self.num_members):
+            if self.members_statuses[idx] == "joined":
+                EOR_list.append(self.members_EOR[idx])
 
         return all(EOR_list)
     
-    def groups_push(self, value):
-        ret = ""
-        if not self.member_A:
-            self.member_A = value
-            self.member_A_status = "joined"
-            ret = "A"
-        elif not self.member_B:
-            self.member_B = value
-            self.member_B_status = "joined"
-            ret = "B"
-        elif not self.member_C:
-            self.member_C = value
-            self.member_C_status = "joined"
-            ret = "C"
+    def groups_push(self, value, user_id):
         
+        ret = ""
+        print('Before. num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
+        for idx in range(self.num_members):
+            if self.members_statuses[idx] != "joined":
+                self.members[idx] = value
+                self.member_user_ids[idx] = user_id
+                self.members_statuses[idx] = "joined"
+                self.num_active_members += 1
+                ret = int(idx)
 
-        self.num_members += 1
-        return ret, self.domain_1, self.domain_2
+                # mark changes
+                flag_modified(self, "members")
+                flag_modified(self, "member_user_ids")
+                flag_modified(self, "members_statuses")
+                flag_modified(self, "num_active_members")
+                break
+        if ret == "":
+            RuntimeError("Member cannot be added to group")
+        
+        print('After. num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
+        
+        return self, ret, self.domain_1, self.domain_2
     
     def groups_remove(self, value):
-        ret = ""
-        if self.member_A == value:
-            self.member_A = ""
-            self.member_A_status = "left"
-            ret = "A"
-        elif self.member_B == value:
-            self.member_B = ""
-            self.member_B_status = "left"
-            ret = "B"
-        elif self.member_C == value:
-            self.member_C = ""
-            self.member_C_status = "left"
-            ret = "C"
 
-        self.num_members -= 1
+        ret = ""
+        print('num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
+        for idx in range(self.num_members):
+            if self.members[idx] == value:
+                self.members_statuses[idx] = "left"
+                ret = int(idx)
+                self.num_active_members -= 1
+                flag_modified(self, "members_statuses")
+                flag_modified(self, "num_active_members")
+                flag_modified(self, "members")
+                break
+
+        if ret == "":
+            RuntimeError("No member found to remove")
+
         return ret
     
-    def get_group(self):
-        return {"A":bool(self.member_A), "B":bool(self.member_B), "C":bool(self.member_C)}
+    # def get_group(self):
+    #     return {"A":bool(self.member_A), "B":bool(self.member_B), "C":bool(self.member_C)}
 
 class Trial(db.Model):
     id = db.Column(db.Integer, primary_key=True)

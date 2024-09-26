@@ -21,7 +21,7 @@
     socket.on("group joined", function (data) {
         let num_members = data["num_members"];
         console.log("Number of members: " + num_members);
-        if (num_members === 2) {
+        if (num_members === data['max_num_members']) {
             // When 3 members have joined, start the study
             start_study();
         } else {
