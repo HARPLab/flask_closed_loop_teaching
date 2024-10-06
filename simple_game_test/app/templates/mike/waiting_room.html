@@ -6,7 +6,7 @@
 <div id="waiting_section" class="text-center">
     <h2>Waiting Room</h2>
     <hr />
-    <p id="waiting" style="font-weight: bold; font-size: 24px;">Waiting for 3 more members...</p>
+    <p id="waiting" style="font-weight: bold; font-size: 24px;">Waiting for 10 more members...</p>
 </div>
 
 <script>
@@ -20,13 +20,25 @@
     // Listen for updates about group members
     socket.on("group joined", function (data) {
         let num_members = data["num_members"];
-        console.log("Number of members: " + num_members);
+
+
+        
+        console.log("Number of members: " + num_members + " Max number of members: " + data['max_num_members']);
+        // const now = new Date();
+        // start_time = now.toLocaleTimeString(); 
+        // console.log("Start time: " + start_time);
+        // while (now.toLocaleTimeString() - start_time <= 1500) {
+        //     console.log("Waiting...." + now.toLocaleTimeString());
+        // }
+
+        localStorage.setItem("room_name", data["room_name"]);
+
         if (num_members === data['max_num_members']) {
             // When 3 members have joined, start the study
             start_study();
         } else {
             // Update waiting message
-            let remaining = 2 - num_members;
+            let remaining = data['max_num_members'] - num_members;
             let display_text = "Waiting for " + remaining + " more member" + (remaining > 1 ? "s" : "") + "...";
             $("#waiting").html(display_text);
         }
@@ -59,7 +71,19 @@
         localStorage.setItem("use3", "-1");
         localStorage.setItem("short answer", "");
 
-        socket.emit("next domain");
+        let data = {};
+            data["survey"] = localStorage.getItem("survey")
+            data["user input"] = JSON.parse(localStorage.getItem("user input"));
+            data["movement"] = localStorage.getItem("movement");
+            data["attn1"] = localStorage.getItem("attn1");
+            data["attn2"] = localStorage.getItem("attn2");
+            data["attn3"] = localStorage.getItem("attn3");
+            data["use1"] = localStorage.getItem("use1");
+            data["use2"] = localStorage.getItem("use2");
+            data["use3"] = localStorage.getItem("use3");
+            data["short answer"] = localStorage.getItem("short answer");   
+
+        socket.emit("next domain", data);
         socket.on("next domain is", function(data) {
             let url = "";
             if (data["domain"].length === 2){

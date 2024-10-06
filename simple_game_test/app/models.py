@@ -52,7 +52,9 @@ class User(UserMixin, db.Model):
     # the round database will have a primary key but it'll also have a column for group number and round number in that group
     # the round attribute for the user will refer to that round number; you can find this by querying the round w/ group number
     round = db.Column(db.Integer, default=0)
+    # last_iter_in_domain = db.Column(db.Boolean, default=False)
     last_iter_in_round = db.Column(db.Boolean, default=True)
+    last_test_in_round = db.Column(db.Boolean, default=True)
 
     control_stack = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
@@ -126,19 +128,9 @@ class Round(db.Model):
     status = db.Column(db.String(20)) #demos_tests_generated, demos_updated, tests_updated
     group_id = db.Column(db.Integer)
     round_num = db.Column(db.Integer)
-    ind_member_models = db.Column(db.PickleType)
-    group_union_model = db.Column(db.PickleType)
-    group_intersection_model = db.Column(db.PickleType)
     members_statuses = db.Column(db.PickleType)
-    group_knowledge = db.Column(db.PickleType)
     kc_id = db.Column(db.PickleType)
     min_KC_constraints = db.Column(db.PickleType)
-    # member_A_model = db.Column(db.PickleType)
-    # member_B_model = db.Column(db.PickleType)
-    # member_C_model = db.Column(db.PickleType)
-    # member_A_status = db.Column(db.PickleType)
-    # member_B_status = db.Column(db.PickleType)
-    # member_C_status = db.Column(db.PickleType)
     variable_filter = db.Column(db.PickleType)
     nonzero_counter = db.Column(db.PickleType)
     min_BEC_constraints_running = db.Column(db.PickleType)
@@ -146,6 +138,16 @@ class Round(db.Model):
     visited_env_traj_idxs = db.Column(db.PickleType)
     round_info = db.Column(db.PickleType)  # the MDPS of demos and tests
     last_round = db.Column(db.Boolean) # only know this after the last round is completed
+
+    # list of list; one for each iteration
+    ind_member_models_pos = db.Column(MutableList.as_mutable(db.PickleType), default=[])
+    ind_member_models_weights = db.Column(MutableList.as_mutable(db.PickleType), default=[])
+    group_union_model_pos = db.Column(MutableList.as_mutable(db.PickleType), default=[])
+    group_union_model_weights = db.Column(MutableList.as_mutable(db.PickleType), default=[])
+    group_intersection_model_pos = db.Column(MutableList.as_mutable(db.PickleType), default=[])
+    group_intersection_model_weights = db.Column(MutableList.as_mutable(db.PickleType), default=[])
+    group_knowledge = db.Column(MutableList.as_mutable(db.PickleType), default=[])
+
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -156,19 +158,6 @@ class Group(db.Model):
     current_round = db.Column(db.Integer, default=0)
     round_data = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
-
-    # member_A = db.Column(db.String(50), default="")
-    # member_B = db.Column(db.String(50), default="")
-    # member_C = db.Column(db.String(50), default="")
-
-    # A_EOR = db.Column(db.Boolean, default=False)
-    # B_EOR = db.Column(db.Boolean, default=False)
-    # C_EOR = db.Column(db.Boolean, default=False)
-
-    # member_A_status = db.Column(db.String(50), default="not_joined")  # not_joined, joined, left
-    # member_B_status = db.Column(db.String(50), default="not_joined")
-    # member_C_status = db.Column(db.String(50), default="not_joined")
-
     
     members = db.Column(db.PickleType)
     member_user_ids = db.Column(db.PickleType)
@@ -176,6 +165,16 @@ class Group(db.Model):
     num_active_members = db.Column(db.Integer, default=0)
     members_statuses = db.Column(db.PickleType)
     members_EOR = db.Column(db.PickleType)
+
+    members_last_test = db.Column(db.PickleType)
+
+    ind_member_models = db.Column(db.PickleType)
+    group_union_model = db.Column(db.PickleType)
+    group_intersection_model = db.Column(db.PickleType)
+    models_update_iteration = db.Column(db.Integer, default=0)
+
+    group_knowledge = db.Column(db.PickleType)
+
 
     first_round_status = db.Column(db.String(20))
     experimental_condition = db.Column(db.String(50))
@@ -199,6 +198,16 @@ class Group(db.Model):
                 EOR_list.append(self.members_EOR[idx])
 
         return all(EOR_list)
+
+    def group_last_test(self):
+        last_test_list = []
+        for idx in range(self.num_members):
+            if self.members_statuses[idx] == "joined":
+                last_test_list.append(self.members_last_test[idx])
+
+        return all(last_test_list)
+
+
     
     def groups_push(self, value, user_id):
         
@@ -247,6 +256,7 @@ class Group(db.Model):
     # def get_group(self):
     #     return {"A":bool(self.member_A), "B":bool(self.member_B), "C":bool(self.member_C)}
 
+
 class Trial(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -267,10 +277,12 @@ class Trial(db.Model):
     moves = db.Column(db.PickleType)
     coordinates = db.Column(db.PickleType)
     is_opt_response = db.Column(db.Boolean)
-    percent_seen = db.Column(db.Float)
     mdp_parameters = db.Column(db.PickleType)
     human_model = db.Column(db.PickleType) # don't need this
     is_first_time = db.Column(db.Boolean, default=True)
+    num_visits = db.Column(db.Integer)
+
+
 
 class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
