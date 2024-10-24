@@ -153,7 +153,7 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_ids = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
-    status = db.Column(db.String(10)) # 
+    status = db.Column(db.String(10)) # gen_demos, upd_demos, upd_tests, study_end
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     current_round = db.Column(db.Integer, default=0)
     round_data = db.Column(MutableList.as_mutable(db.PickleType),
@@ -183,12 +183,13 @@ class Group(db.Model):
     # domain_2 = db.Column(db.String(2))
     # domain_3 = db.Column(db.String(2))
 
-    domains = ["at", "sb"]
+    domains = ["sb", "at"]
+    
     # rand.shuffle(domains)
-    domain_1 = domains[0]
-    domain_2 = domains[1]
+    domain_1 = db.Column(db.PickleType, default=domains[0])
+    domain_2 = db.Column(db.PickleType, default=domains[1])
 
-    curr_progress = "domain_1"
+    curr_progress =  db.Column(db.PickleType, default="domain_1")
 
 
     def groups_all_EOR(self):
@@ -233,11 +234,33 @@ class Group(db.Model):
         print('After. num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
         
         return self, ret, self.domain_1, self.domain_2
+
+
+    def groups_push_again(self, value, user_id):
+        
+        print('Rejoining member status updated in group')
+        
+        print('Before. num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
+        
+        idx = self.member_user_ids.index(user_id)
+        self.members_statuses[idx] = "joined"
+        self.num_active_members += 1
+        ret = int(idx)
+
+        # mark changes
+        flag_modified(self, "members_statuses")
+        flag_modified(self, "num_active_members")
+
+        print('After. num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
     
+        return self, ret, self.domain_1, self.domain_2
+    
+
+
     def groups_remove(self, value):
 
         ret = ""
-        print('num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
+        print('num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'mber to remove: ', value, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
         for idx in range(self.num_members):
             if self.members[idx] == value:
                 self.members_statuses[idx] = "left"

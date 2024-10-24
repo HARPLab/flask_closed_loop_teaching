@@ -1079,6 +1079,7 @@ def update_learner_models_from_tests(params) -> tuple:
                                     prior_min_BEC_constraints_running=curr_round.prior_min_BEC_constraints_running,
                                     visited_env_traj_idxs=curr_round.visited_env_traj_idxs)
 
+
     update_database(curr_round_tests_updated, 'Update learner models from tests')
 
 
@@ -1319,8 +1320,7 @@ def retrieve_next_round(params) -> dict:
                         prior_min_BEC_constraints_running=prior_min_BEC_constraints_running,
                         visited_env_traj_idxs=visited_env_traj_idxs)
                         
-        db.session.add(new_round)
-        db.session.commit()
+        update_database(new_round, 'Added next round to database')
 
         return games_extended
 

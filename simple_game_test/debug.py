@@ -2,6 +2,35 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app.models import User, Trial, Demo, Survey, Domain, Group, Round, DomainParams, OnlineCondition, InPersonCondition
 import matplotlib.pyplot as plt
+import os, sys
+
+print(os.path.abspath(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching')))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching'))
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+codes_dir = os.path.join(project_root, 'codes')
+if codes_dir not in sys.path:
+    sys.path.insert(0, codes_dir)
+
+# Add the 'packages' directory to sys.path
+packages_dir = os.path.join(project_root, 'packages')
+if packages_dir not in sys.path:
+    sys.path.insert(0, packages_dir)
+
+# To be removed for final version
+debug_dir = os.path.join(project_root, 'debug_practice')
+if debug_dir not in sys.path:
+    sys.path.insert(0, debug_dir)
+
+model_dir = os.path.join(project_root, 'models')
+if model_dir not in sys.path:
+    sys.path.insert(0, model_dir)
+
+import teams.particle_filter_team as pf_team
 
 
 app = Flask(__name__)
@@ -40,50 +69,75 @@ db = SQLAlchemy(app)
     
 #     return {"rounds": rounds_data}
 
-# Function to plot member_A_model for the last few rounds
+# # Function to plot member_A_model for the last few rounds
+# def plot_last_few_rounds(group_id):
+#     # Fetch the last few rounds ordered by round_num or id, limited by the 'limit' parameter
+#     last_few_rounds = Round.query.filter_by(group_id=group_id).order_by(Round.round_num.desc()).all()
+    
+#     for rnd in last_few_rounds:
+#         if rnd.member_A_model:
+#             # Assuming member_A_model has a plot function
+#             plt.figure()  # Create a new figure for each plot
+#             rnd.member_A_model.plot()  # Call the plot method of the class
+            
+#             # Save the plot or display it
+#             plt.title(f"Plot for member A Round {rnd.id} (Round Number: {rnd.round_num})")
+#             plt.savefig(f'plot_round_memb_A_{rnd.id}.png')  # Save the plot to a file
+#             plt.close()  # Close the figure after saving to avoid memory issues
+#         else:
+#             print(f"No member_A_model for round {rnd.id}")
+
+#         if rnd.member_B_model:
+#             # Assuming member_A_model has a plot function
+#             plt.figure()  # Create a new figure for each plot
+#             rnd.member_B_model.plot()  # Call the plot method of the class
+            
+#             # Save the plot or display it
+#             plt.title(f"Plot for member B Round {rnd.id} (Round Number: {rnd.round_num})")
+#             plt.savefig(f'plot_round_memb_B_{rnd.id}.png')  # Save the plot to a file
+#             plt.close()  # Close the figure after saving to avoid memory issues
+#         else:
+#             print(f"No member_B_model for round {rnd.id}")
+
+#         if rnd.member_C_model:
+#             # Assuming member_A_model has a plot function
+#             plt.figure()  # Create a new figure for each plot
+#             rnd.member_C_model.plot()  # Call the plot method of the class
+            
+#             # Save the plot or display it
+#             plt.title(f"Plot for member C Round {rnd.id} (Round Number: {rnd.round_num})")
+#             plt.savefig(f'plot_round_memb_C_{rnd.id}.png')  # Save the plot to a file
+#             plt.close()  # Close the figure after saving to avoid memory issues
+#         else:
+#             print(f"No member_C_model for round {rnd.id}")
+
+
+
+
 def plot_last_few_rounds(group_id):
-    # Fetch the last few rounds ordered by round_num or id, limited by the 'limit' parameter
-    last_few_rounds = Round.query.filter_by(group_id=group_id).order_by(Round.round_num.desc()).all()
+    last_few_rounds = Round.query.filter_by(group_id=group_id).order_by().all()
     
     for rnd in last_few_rounds:
-        if rnd.member_A_model:
-            # Assuming member_A_model has a plot function
-            plt.figure()  # Create a new figure for each plot
-            rnd.member_A_model.plot()  # Call the plot method of the class
-            
-            # Save the plot or display it
-            plt.title(f"Plot for member A Round {rnd.id} (Round Number: {rnd.round_num})")
-            plt.savefig(f'plot_round_memb_A_{rnd.id}.png')  # Save the plot to a file
-            plt.close()  # Close the figure after saving to avoid memory issues
-        else:
-            print(f"No member_A_model for round {rnd.id}")
+        print(rnd.id, rnd.status, rnd.min_KC_constraints, rnd.min_BEC_constraints_running)
 
-        if rnd.member_B_model:
-            # Assuming member_A_model has a plot function
-            plt.figure()  # Create a new figure for each plot
-            rnd.member_B_model.plot()  # Call the plot method of the class
-            
-            # Save the plot or display it
-            plt.title(f"Plot for member B Round {rnd.id} (Round Number: {rnd.round_num})")
-            plt.savefig(f'plot_round_memb_B_{rnd.id}.png')  # Save the plot to a file
-            plt.close()  # Close the figure after saving to avoid memory issues
-        else:
-            print(f"No member_B_model for round {rnd.id}")
+        for model_id in range(len(rnd.ind_member_models_pos)):
+            particles_pos = rnd.ind_member_models_pos[model_id][0]
+            particles_weights = rnd.ind_member_models_weights[model_id][0]
 
-        if rnd.member_C_model:
-            # Assuming member_A_model has a plot function
-            plt.figure()  # Create a new figure for each plot
-            rnd.member_C_model.plot()  # Call the plot method of the class
+            # print(particles_pos)
+            # print(particles_weights)
             
-            # Save the plot or display it
-            plt.title(f"Plot for member C Round {rnd.id} (Round Number: {rnd.round_num})")
-            plt.savefig(f'plot_round_memb_C_{rnd.id}.png')  # Save the plot to a file
-            plt.close()  # Close the figure after saving to avoid memory issues
-        else:
-            print(f"No member_C_model for round {rnd.id}")
+            pf = pf_team.Particles_team(particles_pos, 0.8, 36)
+            pf.weights = particles_weights
+
+            pf.plot()
+            plt.show()
+
+            
+
 
 
 # Running the Flask app
 if __name__ == '__main__':
     with app.app_context():
-        plot_last_few_rounds(1)  # Call the function to plot the last 5 rounds
+        plot_last_few_rounds(113)  # Call the function to plot the last 5 rounds

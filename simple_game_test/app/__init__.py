@@ -6,6 +6,8 @@ from config import Config
 
 from flask_socketio import SocketIO
 from multiprocessing import Manager, Pool, Lock
+import logging, os
+
 
 
 app = Flask(__name__)
@@ -29,7 +31,11 @@ from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 # Initialize the multiprocessing tools
 manager = Manager()
 lock = manager.Lock()
-pool = Pool(processes=64)  # Adjust the number of processes as needed
+pool_size = min(os.cpu_count(), 64)
+print(f"Using {pool_size} processes")
+pool = Pool(processes=pool_size)  # Adjust the number of processes as needed
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
