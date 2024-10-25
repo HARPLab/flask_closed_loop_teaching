@@ -68,8 +68,8 @@ CARD_ID_TO_FEATURES = [
 # @app.route("/index", methods=["GET", "POST"])
 @login_required
 def index():
-    online_condition_id = current_user.online_condition_id
-    current_condition = db.session.query(OnlineCondition).get(online_condition_id)
+    # online_condition_id = current_user.online_condition_id
+    # current_condition = db.session.query(OnlineCondition).get(online_condition_id)
 
     completed = True if current_user.study_completed == 1 else False
 
@@ -82,6 +82,7 @@ def index():
                            completed=completed,
                            code=current_user.code)
 
+# For Debugging
 @app.route('/headers')
 def headers():
     headers = dict(request.headers)
@@ -1098,6 +1099,7 @@ def consent():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    print('Index url: ', url_for("index", _external=True))
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     form = LoginForm()
@@ -1166,6 +1168,7 @@ def final_survey():
 
         # They are complete and can receive their payment code
         return redirect(url_for("index"))
+    
     print(form.errors)
     return render_template(template,
                             methods=["GET", "POST"],
