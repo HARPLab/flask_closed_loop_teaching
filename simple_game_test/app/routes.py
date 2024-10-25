@@ -1103,14 +1103,14 @@ def login():
     print('User is authenticated?', current_user.is_authenticated)
     
     if current_user.is_authenticated:
-        next_page = request.args.get("next")
+        # next_page = request.args.get("next")
 
-        if next_page == "/":
-            # Redirect to /flask_closed_loop_teaching/ instead of root
-            next_page = "/flask_closed_loop_teaching/"
+        # if next_page == "/":
+        #     # Redirect to /flask_closed_loop_teaching/ instead of root
+        #     next_page = "/flask_closed_loop_teaching/"
 
-        return redirect(next_page or url_for("index"))
-        # return redirect(url_for("index"))
+        # return redirect(next_page or url_for("index"))
+        return redirect(url_for("index"))
     
     
     form = LoginForm()
@@ -1143,9 +1143,9 @@ def login():
         
         print('Next page url:', next_page)
         
-        if next_page == '/':
-            print('Next page is / so redirecting to index')
-            next_page = '/flask_closed_loop_teaching/'
+        # if next_page == '/':
+        #     print('Next page is / so redirecting to index')
+        #     next_page = '/flask_closed_loop_teaching/'
 
         return redirect(next_page or url_for("index"))
         # return redirect(next_page)
