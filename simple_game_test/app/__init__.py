@@ -7,11 +7,17 @@ from config import Config
 from flask_socketio import SocketIO
 from multiprocessing import Manager, Pool, Lock
 import logging, os
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
+app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching/'
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
+
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
@@ -36,6 +42,7 @@ print(f"Using {pool_size} processes")
 pool = Pool(processes=pool_size)  # Adjust the number of processes as needed
 
 logging.basicConfig(level=logging.DEBUG)
+
 
 
 rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())

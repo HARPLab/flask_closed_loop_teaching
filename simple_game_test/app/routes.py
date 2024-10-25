@@ -1108,6 +1108,7 @@ def login():
         if next_page == "/":
             # Redirect to /flask_closed_loop_teaching/ instead of root
             next_page = "/flask_closed_loop_teaching/"
+
         return redirect(next_page or url_for("index"))
         # return redirect(url_for("index"))
     
