@@ -1016,12 +1016,14 @@ def settings(data):
 @app.route("/sign_consent", methods=["GET", "POST"])
 @login_required
 def sign_consent():
+    print('Entering sign consent')
     current_user.consent = 1
     flag_modified(current_user, "consent")
     update_database(current_user, str(current_user.username) + ". User consent")
     # need to return json since this function is called on button press
     # which replaces the current url with new url
     # sorry trying to work within existing infra
+    print('Url for introduction:', url_for("introduction"))
     return {"url":url_for("introduction")}
 
 @app.route("/pass_trajectories", methods=["GET", "POST"])
