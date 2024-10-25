@@ -1100,8 +1100,18 @@ def consent():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     print('Index url: ', url_for("index", _external=True))
+    print('User is authenticated?', current_user.is_authenticated)
+    
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        next_page = request.args.get("next")
+
+        if next_page == "/":
+            # Redirect to /flask_closed_loop_teaching/ instead of root
+            next_page = "/flask_closed_loop_teaching/"
+        return redirect(next_page or url_for("index"))
+        # return redirect(url_for("index"))
+    
+    
     form = LoginForm()
     
     if form.validate_on_submit():
@@ -1129,12 +1139,15 @@ def login():
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
             next_page = url_for("index")
-
+        
+        print('Next page url:', next_page)
+        
         if next_page == '/':
             print('Next page is / so redirecting to index')
             next_page = '/flask_closed_loop_teaching/'
 
-        return redirect(next_page)
+        return redirect(next_page or url_for("index"))
+        # return redirect(next_page)
 
     return render_template("login.html", title="Sign In", form=form)
 
