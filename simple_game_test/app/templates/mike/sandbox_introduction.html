@@ -29,7 +29,7 @@
     // socket.on("connect", function() {socket.emit('make sandbox', {version: 1})});
     socket.on('made sandbox', function() {
       localStorage.setItem("progress", "sandbox_1");
-      window.location.assign("/sandbox");
+      window.location.assign("url_for('sandbox')");
     });
   };
 </script>
