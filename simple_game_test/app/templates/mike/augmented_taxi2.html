@@ -544,7 +544,7 @@
         function prev() {
             console.log("I am going prev");
             localStorage.setItem("movement", "prev");
-            window.location.href='{{ url_for(&quot;at&quot;) }}';
+            window.location.href="{{ url_for('at') }}";
         }
 
 
@@ -566,15 +566,15 @@
                     if (data["domain"].length === 2){
                         // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
                         if (data["domain"] == 'at'){
-                            url = '{{ url_for(&quot;at_intro&quot;) }}';
+                            url = "{{ url_for('at_intro') }}";
                         }
                         if (data["domain"] == 'sb'){
-                            url = '{{ url_for(&quot;sb_intro&quot;) }}';
+                            url = "{{ url_for('sb_intro') }}";
                         }
 
                     }
                     else {
-                        url = '{{ url_for(&quot;final_survey&quot;) }}';
+                        url = "{{ url_for('final_survey') }}";
                     }
                     window.location.href=url;
                 });
@@ -599,7 +599,7 @@
             document.getElementById('flashMessage').style.display = 'none';
             
             if (window.last_round && window.last_in_round) {
-                window.location.href = '{{ url_for(&quot;final_survey&quot;) }}';
+                window.location.href = "{{ url_for('final_survey') }}";
             }
             }
             

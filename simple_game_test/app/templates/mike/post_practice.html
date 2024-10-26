@@ -10,7 +10,7 @@
     <div class="instructionsnav">
         <div class="row justify-content-between">
             <div class="col-xs-3">
-                <button type="button" id="prev" onclick="window.location.href='{{ url_for(&quot;sandbox&quot;) }}'" value="previous" class="btn btn-primary btn-lg continue">
+                <button type="button" id="prev" onclick="window.location.href='{{ url_for('sandbox') }}'" value="previous" class="btn btn-primary btn-lg continue">
                     Previous <span class="glyphicon glyphicon-arrow-left"></span>
                 </button>
             </div>
@@ -29,7 +29,7 @@
     function go_to_waiting_page() {
 
         // Redirect to waiting_time.html before starting the study
-        window.location.href = '{{ url_for(&quot;waiting_room&quot;) }}';
+        window.location.href = '{{ url_for('waiting_room') }}';
     }
 </script>
 {% endblock %}

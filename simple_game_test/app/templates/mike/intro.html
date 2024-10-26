@@ -25,12 +25,12 @@
     <div class="instructionsnav">
         <div class="row justify-content-between">
             <div class="col-xs-3">
-                <button type="button" id="prev" onclick="window.location.href='{{ url_for(&quot;index&quot;) }}'" value="previous" class="btn btn-primary btn-lg continue">
+                <button type="button" id="prev" onclick='window.location.href="{{ url_for("index") }}"' value="previous" class="btn btn-primary btn-lg continue">
                     Previous <span class="glyphicon glyphicon-arrow-left"></span>
                 </button>
             </div>
             <div class="col-xs-3">
-                <button type="button" id="next" onclick="window.location.href='{{ url_for(&quot;overview&quot;) }}'" value="next" class="btn btn-primary btn-lg continue">
+                <button type="button" id="next" onclick="window.location.href='{{ url_for('overview') }}'" value="next" class="btn btn-primary btn-lg continue">
                     Next <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>
             </div>
