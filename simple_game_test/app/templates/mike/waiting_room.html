@@ -87,9 +87,17 @@
         socket.on("next domain is", function(data) {
             let url = "";
             if (data["domain"].length === 2){
-                url = "/".concat(data["domain"], "_intro");
-            } else {
-                url = "final_survey";
+                // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
+                if (data["domain"] == 'at'){
+                    url = '{{ url_for(&quot;at_intro&quot;) }}';
+                }
+                if (data["domain"] == 'sb'){
+                    url = '{{ url_for(&quot;sb_intro&quot;) }}';
+                }
+
+            }
+            else {
+                url = '{{ url_for(&quot;final_survey&quot;) }}';
             }
             window.location.href = url;
         });
