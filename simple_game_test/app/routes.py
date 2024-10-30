@@ -138,13 +138,13 @@ def make_sandbox(data):
     # socketio.emit('join event', {"test":current_user.username + "just joined!"}, to=curr_room)
 
 @socketio.on("connect")
-def handle_connect(auth=None):
+def handle_connect():
     print(request.sid + " connected?")
     rejoin_group()
 
 
 @socketio.on("disconnect")
-def handle_disconnect(auth=None):
+def handle_disconnect():
     print(request.sid + " disconnected?")
     leave_group()
 
