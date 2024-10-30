@@ -71,6 +71,9 @@ def index():
     # online_condition_id = current_user.online_condition_id
     # current_condition = db.session.query(OnlineCondition).get(online_condition_id)
 
+    print("Index url in index function:", request.url)
+    print("User is authenticated?", current_user.is_authenticated)
+
     completed = True if current_user.study_completed == 1 else False
 
     current_user.loop_condition = "debug"
@@ -1117,6 +1120,10 @@ def login():
     
     form = LoginForm()
     
+    print('form validate:', form.validate_on_submit())
+    print('Form errors:', form.errors)
+
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
 
@@ -1138,7 +1145,9 @@ def login():
 
             db.session.commit()
 
+        print('Logging in user:', user)
         login_user(user)
+        print(f"User is authenticated after login? {current_user.is_authenticated}")
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
             next_page = url_for("index")
