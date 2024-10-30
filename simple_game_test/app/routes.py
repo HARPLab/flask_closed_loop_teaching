@@ -129,7 +129,7 @@ def make_sandbox(data):
     update_database(current_user, str(current_user.username) + ". User progress sandbox")
 
     print("current user progress is: " + current_user.curr_progress)
-    socketio.emit('made sandbox', to=request.sid)
+    socketio.emit('', to=request.sid)
     # current_user.set_test_column(812)
     # db.session.commit()
     # curr_room = ""

@@ -109,13 +109,13 @@
         socket.emit('make sandbox', {version: 2});
         // socket.on("connect", function() {socket.emit('make sandbox', {version: 1})});
         socket.on('made sandbox', function() {
-        window.location.assign("/sandbox");
+        window.location.assign("{{url_for('sandbox')}}");
         });
     }
     else if (localStorage.getItem("progress") === "sandbox_2") {
             if (localStorage.getItem("passed_attention_check") === "true") {
             localStorage.setItem("progress", "post_practice");
-            window.location.assign("/post_practice");
+            window.location.assign("{{url_for('post_practice')}}");
             }
 
         }
