@@ -103,19 +103,19 @@
 
     function make_sandbox() {
     console.log("I am getting called!")
-    
+    print(localStorage.getItem("progress"));
     if (localStorage.getItem("progress") === "sandbox_1") {
         localStorage.setItem("progress", "sandbox_2");
         socket.emit('make sandbox', {version: 2});
         // socket.on("connect", function() {socket.emit('make sandbox', {version: 1})});
         socket.on('made sandbox', function() {
-        window.location.assign("{{url_for('sandbox')}}");
+            window.location.assign("{{url_for('sandbox')}}");
         });
     }
     else if (localStorage.getItem("progress") === "sandbox_2") {
             if (localStorage.getItem("passed_attention_check") === "true") {
-            localStorage.setItem("progress", "post_practice");
-            window.location.assign("{{url_for('post_practice')}}");
+                localStorage.setItem("progress", "post_practice");
+                window.location.assign("{{url_for('post_practice')}}");
             }
 
         }
