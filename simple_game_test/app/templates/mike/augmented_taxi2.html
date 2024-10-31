@@ -318,6 +318,8 @@
         console.log('MDP params: ', data["params"], 'go_prev:', data["go prev"]);
          // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
         
+        console.log($)
+
         if (data["go prev"] == false) {
             $("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
         </button>`);
