@@ -28,6 +28,8 @@
     socket.emit('make sandbox', {version: 1});
     // socket.on("connect", function() {socket.emit('make sandbox', {version: 1})});
     socket.on('made sandbox', function() {
+      console.log('Next url from sandbox 1: ', "{{url_for('sandbox')}}");
+      console.log('Progress: ', localStorage.getItem("progress"));
       localStorage.setItem("progress", "sandbox_1");
       window.location.assign("{{url_for('sandbox')}}");
     });
