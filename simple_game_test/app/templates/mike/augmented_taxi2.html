@@ -4,6 +4,13 @@
     <title>Simulation</title>
 
     <script src="/static/lib/jquery-min.js" type="text/javascript"> </script>
+    <script type="text/javascript">
+        console.log(typeof $ !== 'undefined' ? "jQuery is loaded" : "jQuery is not loaded"); // Debug: check if jQuery is loaded
+    </script> 
+    <script>
+        var $jq = jQuery.noConflict();
+        console.log($jq); // Debug: Testing the conflict-free jQuery reference
+    </script>
     <script src="/static/lib/underscore-min.js" type="text/javascript"> </script>
     <script src="/static/lib/backbone-min.js" type="text/javascript"> </script>
     <script src="/static/lib/d3.v3.min.js" type="text/javascript"> </script>
