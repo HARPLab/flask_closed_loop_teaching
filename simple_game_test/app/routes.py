@@ -967,6 +967,8 @@ def settings(data):
             # if (current_user.round == 1 and current_user.iteration==1 and current_user.interaction_type == "demo") or ("test" in current_user.interaction_type and not already_completed) or (current_user.interaction_type == "survey"):
             if (current_user.round == 1 and current_user.iteration==1 and current_user.interaction_type == "demo") or (current_user.interaction_type == "survey") or (current_user.interaction_type == "answer"):
                 go_prev = False
+            if ('test' in current_user.interaction_type):
+                go_prev = False
 
             print('Go prev for this iteration:', go_prev)
 
@@ -992,7 +994,7 @@ def settings(data):
                 debug_string = f"Final tests for this game. <br> Test no. {current_user.iteration}/{len(updated_round.round_info)}."
 
 
-            response["debug string"] = debug_string
+            response["debug string"] = ''
             response["last answer"] = current_user.last_iter_in_round
             response["last test"] = current_user.last_test_in_round
             response["interaction type"] = current_user.interaction_type
@@ -1862,19 +1864,24 @@ def add_trial_data(domain, data):
 
 def update_domain(current_group):
 
-     # update group variables
-    if current_group.curr_progress == "domain_1":
-        current_group.curr_progress = "domain_2"
-        current_group.status = "next_domain"
-        domain = current_group.domain_2
+    # update group variables
+    # Correct code
+    # if current_group.curr_progress == "domain_1":
+    #     current_group.curr_progress = "domain_2"
+    #     current_group.status = "next_domain"
+    #     domain = current_group.domain_2
 
-    elif current_group.curr_progress == "domain_2":
-        current_group.curr_progress = "study_end"
-        current_group.status = "study_end"
-        domain = current_group.domain_2
+    # elif current_group.curr_progress == "domain_2":
+    #     current_group.curr_progress = "study_end"
+    #     current_group.status = "study_end"
+    #     domain = current_group.domain_2
 
-    else:
-        RuntimeError("Domain not found")
+    # else:
+    #     RuntimeError("Domain not found")
+
+    # Temporary code - for debugging
+    current_group.curr_progress = "study_end"
+    current_group.status = "study_end"
 
     print('Updated domain:', domain)
 

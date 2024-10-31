@@ -343,34 +343,34 @@
         $("#interaction_survey").html(``);
         }
         
-        console.log('Interaction type:', window.interaction_type);
-        if (window.interaction_type == "final test") {
-            $("#header").replaceWith('<h1>Strategy assessment)</h1>');
-            // cl, pl, open, wtcl
-            $("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
-            // wt
-            //$("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
-            //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
-            document.getElementById('prev').style.display = 'none';
-        } 
-        else if (window.interaction_type == "diagnostic test") {
-            $("#header").replaceWith('<h1>Check-in test</h1>');
-            if (localStorage.getItem("already completed") == 'true') {
-                $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
-            }
-            else {
-                $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
-            }
-        }
-        else if (window.interaction_type == "demo"){
-            $("#header").replaceWith('<h1>Demonstration</h1>');
-            $("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
+        // console.log('Interaction type:', window.interaction_type);
+        // if (window.interaction_type == "final test") {
+        //     $("#header").replaceWith('<h1>Strategy assessment)</h1>');
+        //     // cl, pl, open, wtcl
+        //     $("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+        //     // wt
+        //     //$("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
+        //     //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+        //     document.getElementById('prev').style.display = 'none';
+        // } 
+        // else if (window.interaction_type == "diagnostic test") {
+        //     $("#header").replaceWith('<h1>Check-in test</h1>');
+        //     if (localStorage.getItem("already completed") == 'true') {
+        //         $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
+        //     }
+        //     else {
+        //         $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
+        //     }
+        // }
+        // else if (window.interaction_type == "demo"){
+        //     $("#header").replaceWith('<h1>Demonstration</h1>');
+        //     $("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
 
-        }
-        else if (window.interaction_type == "answer"){
-            $("#header").replaceWith('<h1>Feedback</h1>');
-            $("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
-        }
+        // }
+        // else if (window.interaction_type == "answer"){
+        //     $("#header").replaceWith('<h1>Feedback</h1>');
+        //     $("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
+        // }
 
 
 
@@ -442,6 +442,43 @@
         // Assign html for interaction type
         function change_text(interaction_type){
             console.log("changing text for interaction type", interaction_type);
+            
+            // change headers
+            console.log('Interaction type:', window.interaction_type);
+            if (interaction_type == "final test") {
+                console.log("final test");
+                $("#header").replaceWith('<h1>Strategy assessment)</h1>');
+                // cl, pl, open, wtcl
+                $("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+                // wt
+                //$("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
+                //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+                document.getElementById('prev').style.display = 'none';
+            } 
+            else if (interaction_type == "diagnostic test") {
+                console.log("diagnostic test");
+                $("#header").replaceWith('<h1>Check-in test</h1>');
+                if (localStorage.getItem("already completed") == 'true') {
+                    $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
+                }
+                else {
+                    $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
+                }
+            }
+            else if (interaction_type == "demo"){
+                console.log("demo");
+                $("#header").replaceWith('<h1>Demonstration</h1>');
+                $("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
+
+            }
+            else if (interaction_type == "answer"){
+                console.log("answer");
+                $("#header").replaceWith('<h1>Feedback</h1>');
+                $("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
+            }
+
+            
+            // change table and survey
             if (interaction_type === "survey") {
                 $("#non-buttons").html( 
                     `<h3> I lost myself in this experience.</h3>
@@ -606,7 +643,9 @@
 
             socket.emit("settings", data);
             // reset vars (in case trajectory was not completed)
-            reset();
+            window.moves = [];
+            window.agent_history = [];
+            window.agent_history_nonoffset = [];
 
         }
         addEventListener("beforeunload", (event) => {
@@ -701,9 +740,9 @@
                 }
             }
         });
+    
 
-
-  function run_page(mdp_parameters) {
+    function run_page(mdp_parameters) {
     var canvas = document.getElementById("game");
     var context = canvas.getContext("2d");
 
@@ -719,7 +758,7 @@
 
     var offset_x = 1.5;
     var offset_y = 1;
-    disableScroll();
+    // disableScroll();
 
     // var mdp_parameters = window.parent.mdp_parameters;
 
@@ -1126,7 +1165,7 @@
         });
 
         var event = new CustomEvent("game-completed", { "detail": "Demonstration has now ended." });
-        enableScroll();
+        // enableScroll();
         document.dispatchEvent(event);
 
         localStorage.setItem("user input", final_data);
@@ -1227,7 +1266,7 @@
             
             if (window.interaction_type.includes('test')) {
             document.getElementById('message-container').style.display = 'block';
-            }s
+            }
 
             //requestAnimationFrame(draw);
 
@@ -1450,7 +1489,8 @@
         hotswap_station.visited = false;
         window.agent_history = [];
         window.agent_history_nonoffset = [];
-      }
+    }
+
 
       function checkHotswap(version){
         if (version == "agent"){
@@ -1471,17 +1511,17 @@
         }
     }
 
-    function disableScroll() {
-            scrollTop = window.pageYOffset
+    // function disableScroll() {
+    //         scrollTop = window.pageYOffset
 
-            window.onscroll = function() {
-                window.scrollTo(scrollTop);
-            };
-        }
+    //         window.onscroll = function() {
+    //             window.scrollTo(scrollTop);
+    //         };
+    //     }
 
-        function enableScroll() {
-            window.onscroll = function() {};
-        }
+    // function enableScroll() {
+    //     window.onscroll = function() {};
+    // }
 
       window.idx = 0;
       var agent_human_spacer = -0.2;
@@ -1649,6 +1689,10 @@
             }
         }
     }
+
+
+    
+
 
     reset();
     

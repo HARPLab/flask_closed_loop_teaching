@@ -175,7 +175,6 @@ class Group(db.Model):
 
     group_knowledge = db.Column(db.PickleType)
 
-
     first_round_status = db.Column(db.String(20))
     experimental_condition = db.Column(db.String(50))
 
@@ -183,7 +182,7 @@ class Group(db.Model):
     # domain_2 = db.Column(db.String(2))
     # domain_3 = db.Column(db.String(2))
 
-    domains = ["sb", "at"]
+    domains = ["at", "sb"]
     
     # rand.shuffle(domains)
     domain_1 = db.Column(db.PickleType, default=domains[0])
