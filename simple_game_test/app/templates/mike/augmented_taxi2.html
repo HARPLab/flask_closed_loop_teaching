@@ -190,7 +190,7 @@
 
 
     //   const roomIdentifier = "uniqueRoomIdentifier";  // Replace with the actual room identifier
-    //   const websocket = new WebSocket(`ws://localhost:8765/${roomIdentifier}`); // todo: will likely have to replace with a nonlocal host
+    //   const websocket = new WebSocket(`ws://localhost:8765/$jq{roomIdentifier}`); // todo: will likely have to replace with a nonlocal host
 
     //   websocket.onopen = function(event) {
     //       console.log('Connected to server');
@@ -207,7 +207,7 @@
     //           if (isNaN(progress)) {
     //               progress = 0
     //           }
-    //           loadingText.innerHTML = `Loading the next instruction... (${progress}% completed)`
+    //           loadingText.innerHTML = `Loading the next instruction... ($jq{progress}% completed)`
     //       }
     //   };
 
@@ -325,65 +325,65 @@
         console.log('MDP params: ', data["params"], 'go_prev:', data["go prev"]);
          // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
         
-        console.log($)
+        console.log($jq)
 
         if (data["go prev"] == false) {
-            $("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+            $jq("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
         </button>`);
         }
         else {
-            $("#prev").replaceWith(`<button type="button" id="prev" onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+            $jq("#prev").replaceWith(`<button type="button" id="prev" onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
         </button>`);
         }
 
         if ((data["already completed"] == true)) {
-            $("#next").replaceWith(`<button type="button" id="next"
+            $jq("#next").replaceWith(`<button type="button" id="next"
                 onclick="next()"
                 value="next" class="btn btn-primary btn-lg continue">
                 Next <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>` );
         }
         else {
-            $("#next").replaceWith(`<button type="button" id="next" disabled
+            $jq("#next").replaceWith(`<button type="button" id="next" disabled
         onclick="next()"
         value="next" class="btn btn-primary btn-lg continue">
         Next <span class="glyphicon glyphicon-arrow-right"></span>
         </button>` );
-        $("#interaction_survey").html(``);
+        $jq("#interaction_survey").html(``);
         }
         
         // console.log('Interaction type:', window.interaction_type);
         // if (window.interaction_type == "final test") {
-        //     $("#header").replaceWith('<h1>Strategy assessment)</h1>');
+        //     $jq("#header").replaceWith('<h1>Strategy assessment)</h1>');
         //     // cl, pl, open, wtcl
-        //     $("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+        //     $jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
         //     // wt
-        //     //$("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
+        //     //$jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
         //     //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
         //     document.getElementById('prev').style.display = 'none';
         // } 
         // else if (window.interaction_type == "diagnostic test") {
-        //     $("#header").replaceWith('<h1>Check-in test</h1>');
+        //     $jq("#header").replaceWith('<h1>Check-in test</h1>');
         //     if (localStorage.getItem("already completed") == 'true') {
-        //         $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
+        //         $jq("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
         //     }
         //     else {
-        //         $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
+        //         $jq("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
         //     }
         // }
         // else if (window.interaction_type == "demo"){
-        //     $("#header").replaceWith('<h1>Demonstration</h1>');
-        //     $("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
+        //     $jq("#header").replaceWith('<h1>Demonstration</h1>');
+        //     $jq("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
 
         // }
         // else if (window.interaction_type == "answer"){
-        //     $("#header").replaceWith('<h1>Feedback</h1>');
-        //     $("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
+        //     $jq("#header").replaceWith('<h1>Feedback</h1>');
+        //     $jq("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
         // }
 
 
 
-        $("#debug").html(data["debug string"]);
+        $jq("#debug").html(data["debug string"]);
         // if (data["last test"]) {
         //     localStorage.setItem("last test", "true");
         // }
@@ -428,13 +428,13 @@
 
         localStorage.setItem("survey completed", "true");
         // checked based on input name
-        let radioValue = $("input[name='info']:checked").val();
+        let radioValue = $jq("input[name='info']:checked").val();
         if(radioValue) {
             localStorage.setItem("interaction_survey", radioValue);
         }
 
         if (radioValue != -1) {
-            $("#next").replaceWith(`<button type="button" id="next"
+            $jq("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
@@ -456,40 +456,40 @@
             console.log('Interaction type:', window.interaction_type);
             if (interaction_type == "final test") {
                 console.log("final test");
-                $("#header").replaceWith('<h1>Strategy assessment)</h1>');
+                $jq("#header").replaceWith('<h1>Strategy assessment)</h1>');
                 // cl, pl, open, wtcl
-                $("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+                $jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
                 // wt
-                //$("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
+                //$jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
                 //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
                 document.getElementById('prev').style.display = 'none';
             } 
             else if (interaction_type == "diagnostic test") {
                 console.log("diagnostic test");
-                $("#header").replaceWith('<h1>Check-in test</h1>');
+                $jq("#header").replaceWith('<h1>Check-in test</h1>');
                 if (localStorage.getItem("already completed") == 'true') {
-                    $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
+                    $jq("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
                 }
                 else {
-                    $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
+                    $jq("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
                 }
             }
             else if (interaction_type == "demo"){
                 console.log("demo");
-                $("#header").replaceWith('<h1>Demonstration</h1>');
-                $("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
+                $jq("#header").replaceWith('<h1>Demonstration</h1>');
+                $jq("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
 
             }
             else if (interaction_type == "answer"){
                 console.log("answer");
-                $("#header").replaceWith('<h1>Feedback</h1>');
-                $("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
+                $jq("#header").replaceWith('<h1>Feedback</h1>');
+                $jq("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
             }
 
             
             // change table and survey
             if (interaction_type === "survey") {
-                $("#non-buttons").html( 
+                $jq("#non-buttons").html( 
                     `<h3> I lost myself in this experience.</h3>
                     <div class="likert">
                     <label><input name="attn1" type="radio" value="1"/><span>Strongly Disagree</span></label>
@@ -553,7 +553,7 @@
             else if ((interaction_type == "diagnostic test") || (interaction_type == "remedial test") || (interaction_type == "final test")) {
                 console.log("I am in the diagnostic test");
                 if (localStorage.getItem("already completed") == 'true') {
-                    $("#table_controlinfo").html(`<div><br><br>
+                    $jq("#table_controlinfo").html(`<div><br><br>
                     <table width="500">
                         <tr><th>Key</th><th>Action</th></tr>
                         <tr><td>space bar</td><td>next movement</td></tr>
@@ -562,7 +562,7 @@
                     <br></div>`);
                 }
                 else{
-                    $("#table_controlinfo").html(`<div><br><br><br><br>
+                    $jq("#table_controlinfo").html(`<div><br><br><br><br>
                 <table width="500">
                     <tr><th>Key</th><th>Action</th></tr>
                     <tr><td>up/down/left/right arrow keys</td><td>corresponding movement</td></tr>
@@ -575,14 +575,14 @@
             }
                 
             else {
-                $("#table_controlinfo").html(`<div><br><br><br>
+                $jq("#table_controlinfo").html(`<div><br><br><br>
             <table width="500">
                 <tr><th>Key</th><th>Action</th></tr>
                 <tr><td>space bar</td><td>next movement</td></tr>
                 <tr><td>r</td><td>reset simulation</td></tr>
             </table>
             <br></div>`);
-                $("#info_main").html('<h3> Look at the following demonstration on how you should complete this game while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
+                $jq("#info_main").html('<h3> Look at the following demonstration on how you should complete this game while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
             }
         }
 
@@ -693,7 +693,7 @@
                 localStorage.setItem("survey completed", "true");
                 //localStorage.setItem("survey completed", "true");
                 // checked based on input name
-                let radioValue = $("input[name='info']:checked").val();
+                let radioValue = $jq("input[name='info']:checked").val();
                 if(radioValue) {
                     localStorage.setItem("interaction_survey", radioValue);
                 }
@@ -707,7 +707,7 @@
 
                 }
                 else {
-                    $("#next").replaceWith(`<button type="button" id="next"
+                    $jq("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
@@ -715,33 +715,33 @@
                 }
             }
             else {
-                let attn1 = $("input[name='attn1']:checked").val();
+                let attn1 = $jq("input[name='attn1']:checked").val();
                 if(attn1) {
                     localStorage.setItem("attn1", attn1);
                 }
-                let attn2 = $("input[name='attn2']:checked").val();
+                let attn2 = $jq("input[name='attn2']:checked").val();
                 if(attn2) {
                     localStorage.setItem("attn2", attn2);
                 }
-                let attn3 = $("input[name='attn3']:checked").val();
+                let attn3 = $jq("input[name='attn3']:checked").val();
                 if(attn3) {
                     localStorage.setItem("attn3", attn3);
                 }
-                let use1 = $("input[name='use1']:checked").val();
+                let use1 = $jq("input[name='use1']:checked").val();
                 if(use1) {
                     localStorage.setItem("use1", use1);
                 }
-                let use2 = $("input[name='use2']:checked").val();
+                let use2 = $jq("input[name='use2']:checked").val();
                 if(use2) {
                     localStorage.setItem("use2", use2);
                 }
-                let use3 = $("input[name='use3']:checked").val();
+                let use3 = $jq("input[name='use3']:checked").val();
                 if(use3) {
                     localStorage.setItem("use3", use3);
                 }
 
                 if (attn1 && attn2 && attn3 && use1 && use2 && use3) {
-                    $("#next").replaceWith(`<button type="button" id="next"
+                    $jq("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
@@ -1295,17 +1295,17 @@
                         final_score += 1;
                     }
                     document.getElementById('score').style.display = 'block';
-                    $("#score").html('<div class="text-center"><h1>Score Results</h1><p>You scored <p id="score_val"></p>times correctly.</p></div>')
+                    $jq("#score").html('<div class="text-center"><h1>Score Results</h1><p>You scored <p id="score_val"></p>times correctly.</p></div>')
                     document.getElementById('score_val').innerHTML = final_score;
                 }
-                $("#next").replaceWith(`<button type="button" id="next"
+                $jq("#next").replaceWith(`<button type="button" id="next"
                     onclick="next()"
                     value="next" class="btn btn-primary btn-lg continue">
                     Next <span class="glyphicon glyphicon-arrow-right"></span>
                     </button>` );
             }
             else if (localStorage.getItem("already completed") === "false"){
-                $("#interaction_survey").html(`<h3> This sequence improved my understanding of the game strategy.</h3>
+                $jq("#interaction_survey").html(`<h3> This sequence improved my understanding of the game strategy.</h3>
                 <div class="likert">
                 <label><input name="info" type="radio" value="1"/><span>Strongly Disagree</span></label>
                 <label><input name="info" type="radio" value="2"/><span>Disagree</span></label>
