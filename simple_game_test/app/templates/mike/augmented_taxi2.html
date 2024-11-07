@@ -1291,7 +1291,7 @@
             console.log("I am in the draw function");
             console.log(it, same_traj, data_sent);
             
-            if (it.includes('test')) {
+            if (it == "diagnostic test") {
                 document.getElementById('message-container').style.display = 'block';
                 if (same_traj && localStorage.getItem("already completed") === "false") {
                     // if the test was answered correctly or page wasn't already shown previously, show likert scale

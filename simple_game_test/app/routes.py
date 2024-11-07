@@ -1529,9 +1529,9 @@ def retrieve_next_round(params, current_group) -> dict:
         if not np.any(variable_filter):
             teaching_complete_flag = True
 
-        # Debug for having only one round
-        if round > 0:
-            teaching_complete_flag = True
+        # # Debug for having only one round
+        # if round > 0:
+        #     teaching_complete_flag = True
 
 
         print('Teaching complete flag before generating demos:', teaching_complete_flag)
