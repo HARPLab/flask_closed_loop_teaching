@@ -63,6 +63,13 @@ CARD_ID_TO_FEATURES = [
 '''
 
 
+@app.route("/logout")
+def logout():
+    # Clear this variable -- for some reason was not clearing on its own.
+    session.pop("attention_check_rules", None)
+    logout_user()
+    return {"url":url_for("index")}
+
     
 @app.route("/", methods=["GET", "POST"])
 # @app.route("/index", methods=["GET", "POST"])
@@ -186,9 +193,12 @@ def sandbox():
     version = current_user.curr_progress
     print(version)
     if version == "sandbox_1":
-        preamble = ''' <h3>Feel free to play around in the game below and get used to the controls. </h3> <h4>You can click the continue button whenever you feel ready to move on.</h4><br>
-        <h4>If you accidentally take a wrong action, you may reset the simulation and start over.</h4><h4>A subset of the following keys will be available to control Chip in each game:</h4><br>
-        '''
+        preamble = ("<h1>Free play</h1> <hr/> " + "<h4>A subset of the keys in the table below will be available to control Chip in each game.<br>All game instances that you decide how Chip behaves in will be marked with a <font color='blue'>blue border</font>, like below.</h4><br>" +
+        "<h4>Feel free to play around in the game below and get used to the controls.</h4>" +
+        "<h4>If you accidentally take a wrong action, you may reset the simulation and start over by pressing 'r'.</h4><br>" +
+        "<h4>You can click the continue button whenever you feel ready to move on.</h4><br>" +
+        "<h5> As a reminder this game consists of a <b>location</b> (e.g. <img src = 'static/img/star.png' width=\"20\" height=auto />), <b>an object that you can grab and drop</b> (e.g. <img src = 'static/img/pentagon.png' width=\"20\" height=auto />), <b>an object that you can absorb by moving through</b> (e.g. <img src = 'static/img/diamond.png' width=\"20\" height=auto />), and <b>walls </b>that you can't move through (<img src = 'static/img/wall.png' width=\"20\" height=auto />).</h5>")
+      
         # params = {
         #     'agent': {'x': 4, 'y': 3, 'has_passenger': 0},
         #     'walls': [{'x': 2, 'y': 3}, {'x': 2, 'y': 2}, {'x': 3, 'y': 2}, {'x': 4, 'y': 2}],
@@ -201,15 +211,15 @@ def sandbox():
         # continue_condition = "free_play"
     elif version == "sandbox_2":
         preamble = ("<h1>Practice game</h1> <hr/> " +
-        "<h3>As previously mentioned, the task in this practice game is the following: </h3> <br>" +
+        "<h4>As previously mentioned, the task in this practice game is the following: </h4> <br>" +
         "<table class=\"center\"><tr><th>Task</th><th>Sample sequence</th></tr><tr><td>Dropping off the green pentagon at the purple star</td><td><img src = 'static/img/sandbox_dropoff1.png' width=\"75\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/sandbox_dropoff2.png' width=\"75\" height=auto /></td></tr></table> <br>" +
-        "<h3>Each game will consist of <b>actions that change your energy level</b> differently. In this game, the following actions affect your energy:</h3> <br>" +
+        "<h4>Each game will consist of <b>actions that change your energy level</b> differently. In this game, the following actions affect your energy:</h4> <br>" +
         "<table class=\"center\"><tr><th>Action</th><th>Sample sequence</th><th>Energy change</th></tr>" +
-        "<tr><td>Moving through the orange diamond</td><td><img src = 'static/img/sandbox_diamond1.png' width=\"225\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/sandbox_diamond2.png' width=\"225\" height=auto /> <img src='static/img/arrow.png' width=\"30\" height=auto /><img src ='static/img/sandbox_diamond3.png' width=\"225\" height=auto/> <td>+10%</td></tr>" +
-        "<tr><td>Any action that you take (e.g. moving right)</td><td><img src = 'static/img/right1.png' width=\"150\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/right2.png' width=\"150\" height=auto /><td>-5%</td></tr></table> <br>" +
-        "<h3><b>Pick up the green pentagon</b> and <b>drop it off at the purple star</b> with the <b>maximum possible energy remaining</b>. </h3> " +
-        "<h4>You should end with 40% energy left (you won't be able to move if energy falls to 0%). <u>You will have 3 chances to get it right to continue on with the study!</u></h4>" +
-        "<h4>Note: Since this is practice, we have revealed each actions's effect on Chip's energy and also provide a running counter of Chip's current energy level below.</h4> <br>")
+        "<tr><td>Moving through the orange diamond</td><td><img src = 'static/img/sandbox_diamond1.png' width=\"225\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/sandbox_diamond2.png' width=\"225\" height=auto /> <img src='static/img/arrow.png' width=\"30\" height=auto /><img src ='static/img/sandbox_diamond3.png' width=\"225\" height=auto/> <td><h3><b>+ 3%</b></h3></td></tr>" +
+        "<tr><td>Any action that you take (e.g. moving right)</td><td><img src = 'static/img/right1.png' width=\"150\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/right2.png' width=\"150\" height=auto /><td><h3><b>- 1%</b></h3></td></tr></table> <br>" +
+        "<h4><b>Grab the green pentagon</b> and <b>drop it off at the purple star</b> with the <b>maximum possible energy remaining</b>. </h4> " +
+        "<h5>You should end with 89% energy left (you won't be able to move if energy falls to 0%, but you can reset by pressing 'r'). <u>You will need to successfully complete this practice game to continue on with the study!</u></h5>" +
+        "<h5>Note: Since this is practice, we have revealed each actions's effect on Chip's energy and also provide a running counter of Chip's current energy level below.</h5> <br>")
         # params = {
         #     'agent': {'x': 4, 'y': 1, 'has_passenger': 0},
         #     'walls': [{'x': 1, 'y': 3}, {'x': 2, 'y': 3}, {'x': 3, 'y': 3}],
@@ -246,10 +256,13 @@ def post_practice():
 
     update_database(current_user, str(current_user.username) + ". User progress post practice")
 
-    preamble = ("<h3>Good job on completing the practice game! Let's now head over to the three main games and <b>begin the real study</b>.</h3><br>" +
+    preamble = ("<br><br><h3>Good job on completing the practice game! Let's now head over to the <b>two main games</b> and <b>begin the real study</b>.</h3><br>" +
             "<h3>In these games, you will <b>not</b> be told how each action changes Chip's energy level.</h3><br>" +
             "For example, note the '???' in the Energy Change column below. <table class=\"center\"><tr><th>Action</th><th>Sample sequence</th><th>Energy change</th></tr><tr><td>Any action that you take (e.g. moving right)</td><td><img src = 'static/img/right1.png' width=\"150\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/right2.png' width=\"150\" height=auto /><td>???</td></tr></table> <br>" +
-            "<h3>Instead, you will have to <u>figure that out</u> and subsequently the best strategy for completing the task while minimizing Chip's energy loss <u>by observing Chip's demonstrations!</u></h3><br>")
+            "<h3>Instead, you will have to <u>figure that out</u> and subsequently the best strategy for completing the task while minimizing Chip's energy loss <u>by observing Chip's demonstrations!</u></h3><br>" +
+                "<h4>In between demonstrations, Chip may test your understanding by asking you to predict the best strategy and giving you corrective feedback to help you learn!</h4><br>" +
+            "<h4>Finally, <u>you may navigate back to previous interactions</u> (e.g. demonstrations) to refresh your memory <u>when you're not being tested!</u></h4>")
+    
     return render_template("mike/post_practice.html", preamble=preamble)
 
 @app.route("/waiting_room", methods=["GET", "POST"])
@@ -442,7 +455,7 @@ def next_domain(data):
     
     # save remaining data from final test
     if len(data["user input"]) !=0:
-
+        domain, _ = get_domain()
         trial = Trial(
             user_id = current_user.id,
             group_code = current_user.group_code,
@@ -452,7 +465,7 @@ def next_domain(data):
             interaction_type = current_user.interaction_type,
             iteration = current_user.iteration,
             subiteration = current_user.subiteration,
-            likert = int(data["survey"]),
+            likert = int(data["interaction_survey"]),
             moves = data["user input"]["moves"],
             coordinates = data["user input"]["agent_history_nonoffset"],
             is_opt_response = data["user input"]["opt_response"],
@@ -482,6 +495,7 @@ def next_domain(data):
     #     current_user.set_curr_progress("final survey")
     #     socketio.emit("next domain is", {"domain": "final survey"}, to=request.sid)
     elif current_user.curr_progress == "domain 1":
+        current_user.interaction_type = "survey"
         current_user.set_curr_progress("final survey")
         socketio.emit("next domain is", {"domain": "final survey"}, to=request.sid)
 
@@ -801,13 +815,24 @@ def settings(data):
                             socketio.emit("all reached EOR", to='room_'+ str(current_user.group))  # triggers next page button to go to next round for clients
 
                         print('Interaction type: ', current_mdp_params["interaction type"], 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
-        
-                    current_user.iteration += 1   # iteration for answers to diagnostic tests
+
+                    if not opt_response_flag:
+                        current_user.iteration += 1   # iteration for answers to diagnostic tests
+                    # else:
+                    #     current_user.last_iter_in_round = True
+                    else:
+                        current_user.iteration += 1 
 
 
                 else:
                     print('Moving for with next iteration in current round...', 'Iteration:', current_user.iteration)
-                    current_user.iteration += 1
+                    if data["interaction type"] != "diagnostic test": 
+                        current_user.iteration += 1
+                    elif data["interaction type"] == "diagnostic test" and not opt_response_flag:
+                        current_user.iteration += 1
+                    elif data["interaction type"] == "diagnostic test" and opt_response_flag:
+                        current_user.iteration += 1
+                        # current_user.iteration += 2  # skip the optimal response and go to the next test
                 ###########################
 
 
@@ -1000,7 +1025,7 @@ def settings(data):
             response["interaction type"] = current_user.interaction_type
             response["already completed"] = next_already_completed
             response["go prev"] = go_prev
-            if current_group.status == "Domain teaching completed" and current_user.last_iter_in_round:
+            if current_group.status == "Domain teaching completed" and current_user.interaction_type=="final test" and current_user.last_iter_in_round:
                 response["domain_completed"] = True
             else:
                 response["domain_completed"] = False
@@ -1062,7 +1087,7 @@ def intro():
     #
     #         # Change depending on the study type.
     #         cond = user.set_condition("in_person" if IS_IN_PERSON else "online")
-    #         code = user.set_code()
+    #         code = user.()
     #
     #         db.session.add(user)
     #
@@ -1139,8 +1164,8 @@ def login():
 
             # Change depending on the study type.
             # cond = user.set_condition("in_person" if IS_IN_PERSON else "online")
-            # code = user.set_code()
-
+            
+            code = user.set_code()
             db.session.add(user)
 
             # cond.users.append(user)
@@ -1504,6 +1529,10 @@ def retrieve_next_round(params, current_group) -> dict:
         if not np.any(variable_filter):
             teaching_complete_flag = True
 
+        # Debug for having only one round
+        if round > 0:
+            teaching_complete_flag = True
+
 
         print('Teaching complete flag before generating demos:', teaching_complete_flag)
 
@@ -1543,6 +1572,9 @@ def retrieve_next_round(params, current_group) -> dict:
                         if final_test_id in final_tests_to_add:
                             games.append({"interaction type": "final test", "params": mdp_dict})
                         final_test_id += 1
+
+            # add a survey at the end
+            # games.append({"interaction type": "survey", "params": {}})
 
             print('Added ', len(games), ' final tests for this round...')
             
@@ -1865,23 +1897,18 @@ def add_trial_data(domain, data):
 def update_domain(current_group):
 
     # update group variables
-    # Correct code
-    # if current_group.curr_progress == "domain_1":
-    #     current_group.curr_progress = "domain_2"
-    #     current_group.status = "next_domain"
-    #     domain = current_group.domain_2
+    if current_group.curr_progress == "domain_1":
+        current_group.curr_progress = "domain_2"
+        current_group.status = "next_domain"
+        domain = current_group.domain_2
 
-    # elif current_group.curr_progress == "domain_2":
-    #     current_group.curr_progress = "study_end"
-    #     current_group.status = "study_end"
-    #     domain = current_group.domain_2
+    elif current_group.curr_progress == "domain_2":
+        current_group.curr_progress = "study_end"
+        current_group.status = "study_end"
+        domain = current_group.domain_2
 
-    # else:
-    #     RuntimeError("Domain not found")
-
-    # Temporary code - for debugging
-    current_group.curr_progress = "study_end"
-    current_group.status = "study_end"
+    else:
+        RuntimeError("Domain not found")
 
     print('Updated domain:', domain)
 

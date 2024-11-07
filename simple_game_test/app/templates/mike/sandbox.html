@@ -103,7 +103,7 @@
 
     function make_sandbox() {
     console.log("I am getting called!")
-    print(localStorage.getItem("progress"));
+    console.log(localStorage.getItem("progress"));
     if (localStorage.getItem("progress") === "sandbox_1") {
         localStorage.setItem("progress", "sandbox_2");
         socket.emit('make sandbox', {version: 2});
@@ -142,8 +142,6 @@
     // let mdp_parameters;
     // let continue_condition;
     
-    console.log("what on earth");
-    console.log(mdp_parameters.agent.x);
 
     var text_loc_x = offset_x*100+200;
     var text_loc_y =  50;
@@ -489,6 +487,13 @@
           drawDestination();
           drawHotswapStation();
           drawTaxi();
+
+          // Draw blue border around the grid
+          context.beginPath();
+          context.rect(offset_x*100 - 3, offset_y*100 - 3, mdp_parameters.width*100 + 6, mdp_parameters.height*100 + 6);
+          context.strokeStyle = "blue";
+          context.lineWidth = 2;
+          context.stroke();
       }
 
     /* https://gist.github.com/chriskoch/366054

@@ -343,13 +343,12 @@
             }
         }
         else if (window.interaction_type == "demo"){
-            $("#header").replaceWith('<h1>Demonstration</h1>');
-            $("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
-
+            $("#header").replaceWith('<h1>Demonstration of best strategy (' + (Number(localStorage.getItem("iteration")) + 1).toString() + '/' + localStorage.getItem("demo total") + ')</h1>');
+            $("#info_main").replaceWith('<h3>Step through the demonstration <u>using your space bar</u>.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue!</h3>');
         }
         else if (window.interaction_type == "answer"){
-            $("#header").replaceWith('<h1>Feedback</h1>');
-            $("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
+            $("#header").replaceWith('<h1>Corrective feedback</h1>');
+            $("#info_main").replaceWith('<h3>Step through how your answer (replayed by <img src=\'static/img/agent_light.png\' width=\"30\" height=auto/>) differs from Chip\'s (replayed by <img src=\'static/img/agent_dark.png\' width=\"30\" height=auto/>) using your space bar.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue!</h3>');
         }
 
 
@@ -419,72 +418,86 @@
 
         });
 
+        // Shuffle function
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
+            while (0 !== currentIndex) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+            return array;
+        }
 
 
         // Assign html for interaction type
         function change_text(interaction_type){
             console.log("changing text for interaction type", interaction_type);
             if (interaction_type === "survey") {
-                $("#non-buttons").html( 
-                    `<h3> I lost myself in this experience.</h3>
-                    <div class="likert">
-                    <label><input name="attn1" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                    <label><input name="attn1" type="radio" value="2"/><span>Disagree</span></label>
-                    <label><input name="attn1" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                    <label><input name="attn1" type="radio" value="4"/><span>Agree</span></label>
-                    <label><input name="attn1" type="radio" value="5"/><span>Strongly Agree</span></label>
-                    </div>
-                    <br></br>
-                    <h3> The time I spent learning the game strategy just slipped away.</h3>
-                    <div class="likert">
-                    <label><input name="attn2" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                    <label><input name="attn2" type="radio" value="2"/><span>Disagree</span></label>
-                    <label><input name="attn2" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                    <label><input name="attn2" type="radio" value="4"/><span>Agree</span></label>
-                    <label><input name="attn2" type="radio" value="5"/><span>Strongly Agree</span></label>
-                    </div>
-                    <br></br>
-                    <h3> I was absorbed in this experience. </h3>
-                    <div class="likert">
-                    <label><input name="attn3" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                    <label><input name="attn3" type="radio" value="2"/><span>Disagree</span></label>
-                    <label><input name="attn3" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                    <label><input name="attn3" type="radio" value="4"/><span>Agree</span></label>
-                    <label><input name="attn3" type="radio" value="5"/><span>Strongly Agree</span></label>
-                    </div>
-                    <br></br>
-                    
-                    <h3> I felt frustrated while learning the game strategy.</h3>
-                    <div class="likert">
-                    <label><input name="use1" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                    <label><input name="use1" type="radio" value="2"/><span>Disagree</span></label>
-                    <label><input name="use1" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                    <label><input name="use1" type="radio" value="4"/><span>Agree</span></label>
-                    <label><input name="use1" type="radio" value="5"/><span>Strongly Agree</span></label>
-                    </div>
-                    <br></br>
-                    <h3> I found learning the game strategy confusing.</h3>
-                    <div class="likert">
-                    <label><input name="use2" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                    <label><input name="use2" type="radio" value="2"/><span>Disagree</span></label>
-                    <label><input name="use2" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                    <label><input name="use2" type="radio" value="4"/><span>Agree</span></label>
-                    <label><input name="use2" type="radio" value="5"/><span>Strongly Agree</span></label>
-                    </div>
-                    <br></br>
-                    <h3> Learning the game strategy was taxing. </h3>
-                    <div class="likert">
-                    <label><input name="use3" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                    <label><input name="use3" type="radio" value="2"/><span>Disagree</span></label>
-                    <label><input name="use3" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                    <label><input name="use3" type="radio" value="4"/><span>Agree</span></label>
-                    <label><input name="use3" type="radio" value="5"/><span>Strongly Agree</span></label>
-                    </div>
-                    <br></br>
-                    <h3> Any further comments/thoughts on the practice stage? </h3>
-                    <textarea id="short answer" rows="4" cols="50"></textarea>
-                    `
-                );
+                var questions = [
+                    {
+                        question: "I was fully engaged with learning the game strategy.",
+                        name: "attn1"
+                    },
+                    {
+                        question: "The time I spent learning the game strategy passed by quickly.",
+                        name: "attn2"
+                    },
+                    {
+                        question: "I was absorbed in this experience.",
+                        name: "attn3"
+                    },
+                    {
+                        question: "I felt frustrated while learning the game strategy.",
+                        name: "use1"
+                    },
+                    {
+                        question: "I found learning the game strategy confusing.",
+                        name: "use2"
+                    },
+                    {
+                        question: "Learning the game strategy was taxing.",
+                        name: "use3"
+                    },
+                ];
+            // Shuffle the questions
+            questions = shuffle(questions);
+
+            // Generate the HTML
+            var html = `<br></br>
+            <h2>The following statements ask you to <u>reflect on your experience of engaging with Chip</u> to learn the game strategy. For each statement, please use the following scale to indicate what is most true for you.</h2>
+            <br></br>`;
+
+            for (var i = 0; i < questions.length; i++) {
+                html += `<h3>${questions[i].question}</h3>
+                <div class="likert">
+                <label><input name="${questions[i].name}" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                <label><input name="${questions[i].name}" type="radio" value="2"/><span>Disagree</span></label>
+                <label><input name="${questions[i].name}" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                <label><input name="${questions[i].name}" type="radio" value="4"/><span>Agree</span></label>
+                <label><input name="${questions[i].name}" type="radio" value="5"/><span>Strongly Agree</span></label>
+                </div>
+                <br></br>`;
+            }
+
+
+                html += `<h3>Finally, do you feel that you now understand the game strategy?</h3>
+            <div class="likert">
+                <label><input name="understanding" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                <label><input name="understanding" type="radio" value="2"/><span>Disagree</span></label>
+                <label><input name="understanding" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                <label><input name="understanding" type="radio" value="4"/><span>Agree</span></label>
+                <label><input name="understanding" type="radio" value="5"/><span>Strongly Agree</span></label>
+                </div>
+                <br></br>`;
+
+
+            html += `<h3>Please feel free to explain any of your selections above or any comments or thoughts you'd like to share!</h3>
+            <textarea id="engagement short answer" rows="4" cols="50"></textarea>`;
+
+            $("#non-buttons").html(html);
             }
             else if ((interaction_type == "diagnostic test") || (interaction_type == "remedial test") || (interaction_type == "final test")) {
                 console.log("I am in the diagnostic test");
@@ -1130,21 +1143,21 @@
             context.closePath();
         }
 
-        // // indicate to the user that it's their turn to play
-        //   if ((window.interaction_type.includes("test")) && (localStorage.getItem("already completed") == 'false')) {
-        //       context.font = "25px Arial";
-        //       context.fillStyle = text_color;
-        //       context.textAlign = "center";
+        // indicate to the user that it's their turn to play
+          if ((window.interaction_type.includes("test")) && (localStorage.getItem("already completed") == 'false')) {
+              context.font = "25px Arial";
+              context.fillStyle = text_color;
+              context.textAlign = "center";
 
-        //     context.fillText("Your turn to play!", offset_x * 100 + 305, 60);
+            context.fillText("Your turn to play!", offset_x * 100 + 305, 60);
 
-        //     // Draw blue border around the grid
-        //     context.beginPath();
-        //     context.rect(offset_x*100 - 3, offset_y*100 - 3, mdp_parameters.width*100 + 6, mdp_parameters.height*100 + 6);
-        //     context.strokeStyle = "blue";
-        //     context.lineWidth = 2;
-        //     context.stroke();
-        // }
+            // Draw blue border around the grid
+            context.beginPath();
+            context.rect(offset_x*100 - 3, offset_y*100 - 3, mdp_parameters.width*100 + 6, mdp_parameters.height*100 + 6);
+            context.strokeStyle = "blue";
+            context.lineWidth = 2;
+            context.stroke();
+        }
 
 
         context.beginPath();
@@ -1181,146 +1194,101 @@
             
             // // watched_vid_arr[current_page] = true;
 
-            if (data_sent == false) {
-                record_data()
-            }
-            var it = window.interaction_type;
-            // var last_test = localStorage.getItem("last test");
-            var last_test = window.last_test;
-            if (it == "final test"){
-                if(last_test){
-                    var final_score = 0;
-                    if (sessionStorage.getItem('first_test_1') == 'true') {
-                        final_score += 1;
+            if (it == "remedial test" || it == "diagnostic test") {
+                    if (same_traj && localStorage.getItem("already completed") === "false") {
+                        // if the test was answered correctly or page wasn't already shown previously, show likert scale
+                        show_likert = true
+
+                        if (localStorage.getItem("already completed") == 'false') $("#feedback").html('<div class="text-center"><h4>Great, you answered correctly!</h4><br></div>')
                     }
-                    if (sessionStorage.getItem('first_test_2') == 'true') {
-                        final_score += 1;
+                    else {
+                        // if the test was answered incorrectly or page was already shown previously, simply enable the next button
+                        // set the likert value to 0 (changing from -1) so that you know that you've been to this page before
+                        localStorage.setItem("survey", 0)
+
+                        const subiteration = localStorage.getItem("subiteration")
+                        if (localStorage.getItem("already completed") == 'false') {
+                            $("#feedback").html('<div class="text-center"><h4>Oh no, you answered incorrectly! Let\'s review on the next page!</h4><br></div>')
+                        }
+
+                        $("#next").replaceWith(`<button type="button" id="next"
+                        onclick="next()"
+                        value="next" class="btn btn-primary btn-lg continue">
+                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>` );
                     }
-                    document.getElementById('score').style.display = 'block';
-                    $("#score").html('<div class="text-center"><h1>Score Results</h1><p>You scored <p id="score_val"></p>times correctly.</p></div>')
-                    document.getElementById('score_val').innerHTML = final_score;
-                }
-                $("#next").replaceWith(`<button type="button" id="next"
+                } else if (it == "final test"){
+                    if(last_test == 'true'){
+                        var score = 0;
+                        var first = 0;
+                        var second = 0;
+                        var third = 0;
+                        var fourth = 0;
+                        var fifth = 0;
+                        var sixth = 0;
+                        if (sessionStorage.getItem('skateboard2_0') == 'true') {
+                            score += 1;
+                            first += 1;
+                        }
+                        if (sessionStorage.getItem('skateboard2_1') == 'true') {
+                            score += 1;
+                            second += 1;
+                        }
+                        // if (sessionStorage.getItem('skateboard2_2') == 'true') {
+                        //     score += 1;
+                        //     third += 1;
+                        // }
+                        // if (sessionStorage.getItem('skateboard2_3') == 'true') {
+                        //     score += 1;
+                        //     fourth += 1;
+                        // }
+                        // if (sessionStorage.getItem('skateboard2_4') == 'true') {
+                        //     score += 1;
+                        //     fifth += 1;
+                        // }
+                        // if (sessionStorage.getItem('skateboard2_5') == 'true') {
+                        //     score += 1;
+                        //     sixth += 1;
+                        // }
+                        console.log("game score: ")
+                        console.log(score)
+                        $("#feedback").html('<div class="text-center"><h1>Score Results</h1><p>In order of the tests you took, you scored <p id="score_val"></p>getting <p id="score_val2" style="display:inline"></p> tests correctly out of 6.</p></div>')
+                        document.getElementById('score_val').innerHTML = first + ' + ' + second + ' + ' + third  + ' + ' + fourth  + ' + ' + fifth + ' + ' + sixth + ' = ' + score
+                        document.getElementById('score_val2').innerHTML = score
+
+                        // exploratory data collection on whether people are able to explicitly predict the weights
+                        // for cl, pl, open,
+                        $("#survey").html("<br><h3>Finally, please provide your best guess of energy change of the actions below (the last one is given and decimals are allowed!):</h3><table class='center'><tr><th>Action</th><th>Sample sequence(s)</th><th>Energy change</th></tr><tr><td>Moving with the orange rectangle grabbed</td><td><img src = 'static/img/skateboard2_skateboard2.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_skateboard3.png' width='75' height=auto /></td><td><input id='reward_ft_wt_1' type='number' style='width: 4em;'</>%</td></tr><tr><td>Moving <u>out of</u> a purple square (e.g. into purple <u>or</u> white square)</td><td><img src = 'static/img/skateboard2_purple1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_purple2.png' width='150' height=auto /></td><td><input id='reward_ft_wt_2' type='number' style='width: 4em;'</>%</td></tr><tr><td>Any action that you take (e.g. moving right, grabbing, etc) </td><td><img src = 'static/img/right1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/right2.png' width='150' height=auto /><br><br><img src = 'static/img/skateboard2_skateboard1.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_skateboard2.png' width='75' height=auto /></td>  <td>-1.0%</td></tr></table>");
+                    }
+                        $("#next").replaceWith(`<button type="button" id="next"
                     onclick="next()"
                     value="next" class="btn btn-primary btn-lg continue">
                     Next <span class="glyphicon glyphicon-arrow-right"></span>
                     </button>` );
-            }
-            else if (localStorage.getItem("already completed") === "false"){
-                $("#interaction_survey").html(`<h3> This sequence improved my understanding of the game strategy.</h3>
+                } else if (localStorage.getItem("already completed") === "false") {
+                    show_likert = true
+                }
+
+                if (show_likert){
+                    $("#survey").html(`<h3>Did this interaction improve your understanding of the game strategy?</h3>
                 <div class="likert">
-                <label><input name="info" type="radio" value="1"/><span>Strongly Disagree</span></label>
-                <label><input name="info" type="radio" value="2"/><span>Disagree</span></label>
-                <label><input name="info" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
-                <label><input name="info" type="radio" value="4"/><span>Agree</span></label>
-                <label><input name="info" type="radio" value="5"/><span>Strongly Agree</span></label>
+                <label><input name="info" type="radio" value="1"/><span>Not at all</span></label>
+                <label><input name="info" type="radio" value="2"/><span>Slightly</span></label>
+                <label><input name="info" type="radio" value="3"/><span>Moderately</span></label>
+                <label><input name="info" type="radio" value="4"/><span>Very</span></label>
+                <label><input name="info" type="radio" value="5"/><span>Extremely</span></label>
                 </div>
-                <br></br>` );
+                <br></br>
+
+<h5>Please feel free to explain your selection if you wish!</h5>
+            <textarea id="improvement short answer" rows="2" cols="50"></textarea>
+` );
+    var textarea = document.querySelector('textarea');
+    textarea.addEventListener('keydown', function(event) {
+        event.stopPropagation();
+    });
+                }
             }
-
-
-//             if (data_sent == false) {
-//                 var it = window.interaction_type;
-//                 var last_test = localStorage.getItem("last test");
-
-//                 same_traj = record_data()
-
-//                 var show_likert = false
-
-//                 if (it == "remedial test" || it == "diagnostic test") {
-//                     if (same_traj && localStorage.getItem("already completed") === "false") {
-//                         // if the test was answered correctly or page wasn't already shown previously, show likert scale
-//                         show_likert = true
-
-//                         if (localStorage.getItem("already completed") == 'false') $("#feedback").html('<div class="text-center"><h4>Great, you answered correctly!</h4><br></div>')
-//                     }
-//                     else {
-//                         // if the test was answered incorrectly or page was already shown previously, simply enable the next button
-//                         // set the likert value to 0 (changing from -1) so that you know that you've been to this page before
-//                         localStorage.setItem("survey", 0)
-
-//                         const subiteration = localStorage.getItem("subiteration")
-//                         if (localStorage.getItem("already completed") == 'false') {
-//                             $("#feedback").html('<div class="text-center"><h4>Oh no, you answered incorrectly! Let\'s review on the next page!</h4><br></div>')
-//                         }
-
-//                         $("#next").replaceWith(`<button type="button" id="next"
-//                         onclick="next()"
-//                         value="next" class="btn btn-primary btn-lg continue">
-//                         Next <span class="glyphicon glyphicon-arrow-right"></span>
-//                         </button>` );
-//                     }
-//                 } else if (it == "final test"){
-//                     if(last_test == 'true'){
-//                         var score = 0;
-//                         var first = 0;
-//                         var second = 0;
-//                         var third = 0;
-//                         var fourth = 0;
-//                         var fifth = 0;
-//                         var sixth = 0;
-//                         if (sessionStorage.getItem('skateboard2_0') == 'true') {
-//                             score += 1;
-//                             first += 1;
-//                         }
-//                         if (sessionStorage.getItem('skateboard2_1') == 'true') {
-//                             score += 1;
-//                             second += 1;
-//                         }
-//                         if (sessionStorage.getItem('skateboard2_2') == 'true') {
-//                             score += 1;
-//                             third += 1;
-//                         }
-//                         if (sessionStorage.getItem('skateboard2_3') == 'true') {
-//                             score += 1;
-//                             fourth += 1;
-//                         }
-//                         if (sessionStorage.getItem('skateboard2_4') == 'true') {
-//                             score += 1;
-//                             fifth += 1;
-//                         }
-//                         if (sessionStorage.getItem('skateboard2_5') == 'true') {
-//                             score += 1;
-//                             sixth += 1;
-//                         }
-//                         console.log("game score: ")
-//                         console.log(score)
-//                         $("#feedback").html('<div class="text-center"><h1>Score Results</h1><p>In order of the tests you took, you scored <p id="score_val"></p>getting <p id="score_val2" style="display:inline"></p> tests correctly out of 6.</p></div>')
-//                         document.getElementById('score_val').innerHTML = first + ' + ' + second + ' + ' + third  + ' + ' + fourth  + ' + ' + fifth + ' + ' + sixth + ' = ' + score
-//                         document.getElementById('score_val2').innerHTML = score
-
-//                         // exploratory data collection on whether people are able to explicitly predict the weights
-//                         // for cl, pl, open,
-//                         $("#survey").html("<br><h3>Finally, please provide your best guess of energy change of the actions below (the last one is given and decimals are allowed!):</h3><table class='center'><tr><th>Action</th><th>Sample sequence(s)</th><th>Energy change</th></tr><tr><td>Moving with the orange rectangle grabbed</td><td><img src = 'static/img/skateboard2_skateboard2.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_skateboard3.png' width='75' height=auto /></td><td><input id='reward_ft_wt_1' type='number' style='width: 4em;'</>%</td></tr><tr><td>Moving <u>out of</u> a purple square (e.g. into purple <u>or</u> white square)</td><td><img src = 'static/img/skateboard2_purple1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_purple2.png' width='150' height=auto /></td><td><input id='reward_ft_wt_2' type='number' style='width: 4em;'</>%</td></tr><tr><td>Any action that you take (e.g. moving right, grabbing, etc) </td><td><img src = 'static/img/right1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/right2.png' width='150' height=auto /><br><br><img src = 'static/img/skateboard2_skateboard1.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_skateboard2.png' width='75' height=auto /></td>  <td>-1.0%</td></tr></table>");
-//                     }
-//                         $("#next").replaceWith(`<button type="button" id="next"
-//                     onclick="next()"
-//                     value="next" class="btn btn-primary btn-lg continue">
-//                     Next <span class="glyphicon glyphicon-arrow-right"></span>
-//                     </button>` );
-//                 } else if (localStorage.getItem("already completed") === "false") {
-//                     show_likert = true
-//                 }
-
-//                 if (show_likert){
-//                     $("#survey").html(`<h3>Did this interaction improve your understanding of the game strategy?</h3>
-//                 <div class="likert">
-//                 <label><input name="info" type="radio" value="1"/><span>Not at all</span></label>
-//                 <label><input name="info" type="radio" value="2"/><span>Slightly</span></label>
-//                 <label><input name="info" type="radio" value="3"/><span>Moderately</span></label>
-//                 <label><input name="info" type="radio" value="4"/><span>Very</span></label>
-//                 <label><input name="info" type="radio" value="5"/><span>Extremely</span></label>
-//                 </div>
-//                 <br></br>
-
-// <h5>Please feel free to explain your selection if you wish!</h5>
-//             <textarea id="improvement short answer" rows="2" cols="50"></textarea>` );
-//     var textarea = document.querySelector('textarea');
-//     textarea.addEventListener('keydown', function(event) {
-//         event.stopPropagation();
-//     });
-//                 }
-//             }
         }
     }
 

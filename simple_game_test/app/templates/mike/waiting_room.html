@@ -6,7 +6,7 @@
 <div id="waiting_section" class="text-center">
     <h2>Waiting Room</h2>
     <hr />
-    <p id="waiting" style="font-weight: bold; font-size: 24px;">Waiting for 10 more members...</p>
+    <p id="waiting" style="font-weight: bold; font-size: 24px;">Waiting for more members to join...</p>
 </div>
 
 <script>
@@ -21,8 +21,6 @@
     socket.on("group joined", function (data) {
         let num_members = data["num_members"];
 
-
-        
         console.log("Number of members: " + num_members + " Max number of members: " + data['max_num_members']);
         // const now = new Date();
         // start_time = now.toLocaleTimeString(); 
