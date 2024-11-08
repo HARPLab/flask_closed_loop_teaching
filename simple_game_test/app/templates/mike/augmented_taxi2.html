@@ -271,6 +271,9 @@
         localStorage.setItem("interaction type", data["interaction type"]);
         localStorage.setItem("domain", data["domain"]);
         localStorage.setItem("iteration", data["iteration"]);
+        localStorage.setItem("total iterations", data["total iterations"]);
+        localStorage.setItem("lesson id", data["lesson id"]);
+        localStorage.setItem("lesson string", data["lesson string"]);
 
         window.last_test = false;
 
@@ -400,27 +403,41 @@
         // show the flash message
         var flashMessage = document.getElementById("flashMessage");
         flashMessage.style.display = 'block';
-        flashMessage.innerHTML = "Next learning session is available now! Please complete reviewing the feedback, if not already done, and continue with the study by pressing 'Next'";
+        flashMessage.innerHTML = "Next learning session is available now! Press any key to continue with the study.";
 
         // play the audio
         audio = new Audio("/static/audio/mixkit-positive-notification-951.wav");
         audio.loop = true;
         audio.play();
 
-        localStorage.setItem("survey completed", "true");
-        // checked based on input name
-        let radioValue = $jq("input[name='info']:checked").val();
-        if(radioValue) {
-            localStorage.setItem("interaction_survey", radioValue);
-        }
+        // // when next lesson is available before completing survey
+        // localStorage.setItem("survey completed", "true");
+        // // checked based on input name
+        // let radioValue = $jq("input[name='info']:checked").val();
+        // if(radioValue) {
+        //     localStorage.setItem("interaction_survey", radioValue);
+        // }
 
-        if (radioValue != -1) {
-            $jq("#next").replaceWith(`<button type="button" id="next"
-                        onclick="next()"
-                        value="next" class="btn btn-primary btn-lg continue">
-                        Next <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>` );
-        }
+        // if (radioValue != -1) {
+        //     $jq("#next").replaceWith(`<button type="button" id="next"
+        //                 onclick="next()"
+        //                 value="next" class="btn btn-primary btn-lg continue">
+        //                 Next <span class="glyphicon glyphicon-arrow-right"></span>
+        //                 </button>` );
+        // }
+
+        // Add event listener for keypress to hide the message and stop the audio
+        document.addEventListener('keydown', function() {
+            // Hide the flash message
+            flashMessage.style.display = 'none';
+            
+            // Stop the audio
+            audio.pause();
+            audio.currentTime = 0;  // Reset audio to start position
+
+            document.removeEventListener('keydown', arguments.callee);
+        });
+
 
         document.getElementById('wait').style.display = 'none';
         // next();  // automatically go to next session
@@ -449,7 +466,7 @@
             // change headers
             if (interaction_type == "final test") {
                 console.log("final test");
-                $jq("#header").html('<h1>Strategy assessment</h1>');
+                $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration")) + 1).toString() + '/6)</h1>');
                 // cl, pl, open, wtcl
                 $jq("#info_main").html('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
                 // wt
@@ -459,7 +476,7 @@
             } 
             else if (interaction_type == "diagnostic test") {
                 console.log("diagnostic test");
-                $jq("#header").html('<h1>Check-in test</h1>');
+                $jq("#header").html('<h1> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Check-in test (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
                 if (localStorage.getItem("already completed") == 'true') {
                     $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
                 }
@@ -469,7 +486,12 @@
             }
             else if (interaction_type == "demo"){
                 console.log("demo");
-                $jq("#header").html('<h1>Demonstration of best strategy</h1>');
+                if (localStorage.getItem("iteration")==1){
+                    $jq("#header").html('<h1>' + localStorage.getItem("lesson string") + ' Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
+                }
+                else{
+                    $jq("#header").html('<h1> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
+                }
                 $jq("#info_main").html('<h3>Step through the demonstration <u>using your space bar</u>.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue!</h3>');
  
             }
@@ -597,7 +619,12 @@
             //localStorage.setItem("survey completed", "false");
 
             if (!window.domain_completed){
-                if (window.last_test) {
+                // if (window.last_test) {
+                //     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
+                //     document.getElementById('wait').style.display = 'block';
+                // }
+
+                if (window.last_in_round) {
                     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
                     document.getElementById('wait').style.display = 'block';
                 }
@@ -696,22 +723,31 @@
                 if(radioValue) {
                     localStorage.setItem("interaction_survey", radioValue);
                 }
+                
+                // // Next button logic (wait for all members to finish)
+                // console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
+                // if (window.last_in_round && !window.joint_EOR) {
+                //     // socket.emit("reached EOR");
+                //     // console.log("I finished my last test in the round!");
 
+                //     document.getElementById('wait').style.display = 'block';
+
+                // }
+                // else {
+                //     $jq("#next").replaceWith(`<button type="button" id="next"
+                //         onclick="next()"
+                //         value="next" class="btn btn-primary btn-lg continue">
+                //         Next <span class="glyphicon glyphicon-arrow-right"></span>
+                //         </button>` );
+                // }
+
+                // Next button logic
                 console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
-                if (window.last_in_round && !window.joint_EOR) {
-                    // socket.emit("reached EOR");
-                    // console.log("I finished my last test in the round!");
-
-                    document.getElementById('wait').style.display = 'block';
-
-                }
-                else {
-                    $jq("#next").replaceWith(`<button type="button" id="next"
-                        onclick="next()"
-                        value="next" class="btn btn-primary btn-lg continue">
-                        Next <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>` );
-                }
+                $jq("#next").replaceWith(`<button type="button" id="next"
+                    onclick="next()"
+                    value="next" class="btn btn-primary btn-lg continue">
+                    Next <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>` );
             }
             else {
                 let attn1 = $jq("input[name='attn1']:checked").val();
@@ -1104,6 +1140,22 @@
             context.fill();
             context.closePath();
         }
+
+        // indicate to the participant that it's their turn play
+        if ((window.interaction_type.includes("test")) && (localStorage.getItem("already completed") == 'false')) {
+            context.font = "25px Arial";
+            context.fillStyle = text_color;
+            context.textAlign = "center";
+            context.fillText("Your turn to play!", offset_x * 100 + 200, 80);
+
+            // Draw blue border around the grid
+            context.beginPath();
+            context.rect(offset_x*100 - 3, offset_y*100 - 3, mdp_parameters.width*100 + 6, mdp_parameters.height*100 + 6);
+            context.strokeStyle = "blue";
+            context.lineWidth = 2;
+            context.stroke();
+        }
+
 
         context.beginPath();
         // Begin drawing
@@ -1559,6 +1611,7 @@
         passenger.picked = false;
         passenger.picked_human = false;
         hotswap_station.visited = false;
+        hotswap_station.visited_human = false;
         window.agent_history = [];
         window.agent_history_nonoffset = [];
     }
@@ -1618,6 +1671,7 @@
                     var next_action_human = mdp_parameters.normalized_human_actions[idx];
                     console.log("agent:" + next_action_agent);
                     console.log("human:" + next_action_human);
+                    console.log("Idx: ", idx);
                     idx++;
                     switch (next_action_human) {
                         case "left":
@@ -1680,7 +1734,7 @@
                         //space bar pressed, advance demo
                         var next_action_agent = mdp_parameters.opt_actions[idx];
                         console.log('Visiting test: ', idx);
-                        console.log(idx);
+                        console.log('Idx:', idx);
                         console.log("next agent action");
                         console.log(next_action_agent);
                         idx++;
@@ -1765,7 +1819,7 @@
 
     
 
-
+    idx = 0;
     reset();
     
 

@@ -256,12 +256,17 @@ def post_practice():
 
     update_database(current_user, str(current_user.username) + ". User progress post practice")
 
-    preamble = ("<br><br><h3>Good job on completing the practice game! Let's now head over to the <b>two main games</b> and <b>begin the real study</b>.</h3><br>" +
-            "<h3>In these games, you will <b>not</b> be told how each action changes Chip's energy level.</h3><br>" +
+    preamble = ("<br><br><h3>Good job on completing the practice game! <b>Read these instructions carefully!</b> Let's now head over to the <b>two main games</b> and <b>begin the real study</b>.</h3><br>" +
+            "<h4>In these games, you will <b>not</b> be told how each action changes Chip's energy level.</h4><br>" +
             "For example, note the '???' in the Energy Change column below. <table class=\"center\"><tr><th>Action</th><th>Sample sequence</th><th>Energy change</th></tr><tr><td>Any action that you take (e.g. moving right)</td><td><img src = 'static/img/right1.png' width=\"150\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/right2.png' width=\"150\" height=auto /><td>???</td></tr></table> <br>" +
-            "<h3>Instead, you will have to <u>figure that out</u> and subsequently the best strategy for completing the task while minimizing Chip's energy loss <u>by observing Chip's demonstrations!</u></h3><br>" +
-                "<h4>In between demonstrations, Chip may test your understanding by asking you to predict the best strategy and giving you corrective feedback to help you learn!</h4><br>" +
-            "<h4>Finally, <u>you may navigate back to previous interactions</u> (e.g. demonstrations) to refresh your memory <u>when you're not being tested!</u></h4>")
+            "<h4>Instead, you will have to <u>figure that out</u> and subsequently the best strategy for completing the task while minimizing Chip's energy loss <u>by observing Chip's demonstrations, given as different lessons!</u></h3><br>" +
+            "<h4>In between demonstrations/lessons, Chip may test your understanding by asking you to predict the best strategy and giving you corrective feedback to help you learn!</h4><br>" +
+            "<h4>Finally, <u>you may navigate back to previous interactions</u> (e.g. demonstrations) to refresh your memory <u>when you're not being tested!</u></h4>" + 
+            "<h4> <b> Remember, you are part of a group and will be learning the same lessons as the group members. This means you may have to wait for all your members to complete a lesson before moving onto the next lesson. </b> </h4><br>" +
+            "<h4> <b> If anyone in your group has not learned the lesson, your entire group will repeat the lesson. </b> </h4><br>" +
+            "<h4> You will need to successfully complete both games to finish the study</u> and receive your compensation!</h4><br>" +
+            "<h4>Click the Next button when you're ready to start the study!</h4>"
+        )
     
     return render_template("mike/post_practice.html", preamble=preamble)
 
@@ -684,7 +689,8 @@ def settings(data):
                 #########################
                 print('Next movement. Current trial already completed:', curr_already_completed, '. Current user last iter in round:', current_user.last_iter_in_round)
                 ### generate new round if all group members are at the end of current round (end of tests); if not step through the remaining iterations in the round
-                if not curr_already_completed and current_user.last_test_in_round:
+                # if not curr_already_completed and current_user.last_test_in_round:
+                if not curr_already_completed and current_user.last_iter_in_round:
                     
                     ### check for end of domain
                     print('Current user round: ', current_user.round, 'Current user iteration:', current_user.iteration, 'Current user last iter in round:', current_user.last_iter_in_round, 'current interaction type:', current_user.interaction_type)
@@ -744,21 +750,28 @@ def settings(data):
 
                     else:
                         
-                        ## update EOR status for current user
-                        member_idx = current_group.members.index(current_user.username)
-                        current_group.members_last_test[member_idx] = True
-                        flag_modified(current_group, "members_last_test")
-                        print('Member' + str(member_idx) + ' reached last test')
-                        update_database(current_group, 'Member ' + str(member_idx) + ' reached last test')
+                        # ## update last test status for current user
+                        # member_idx = current_group.members.index(current_user.username)
+                        # current_group.members_last_test[member_idx] = True
+                        # flag_modified(current_group, "members_last_test")
+                        # print('Member' + str(member_idx) + ' reached last test')
+                        # update_database(current_group, 'Member ' + str(member_idx) + ' reached last test')
 
-                        # current_group.members_EOR[member_idx] = True
-                        # flag_modified(current_group, "members_EOR")
-                        # print('Member' + str(member_idx) + ' reached EOR')
-                        # update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR')
+                        ## Update EOR status for current user
+                        print('User: ', current_user.username, 'reached last iteration in round')
+                        member_idx = current_group.members.index(current_user.username)
+                        current_group.members_EOR[member_idx] = True
+                        flag_modified(current_group, "members_EOR")
+                        print('Member' + str(member_idx) + ' reached EOR')
+                        update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR')
 
                         
                         print('Group members EOR status: ', current_group.members_EOR, 'all EOR:', current_group.groups_all_EOR(), 'all last test:', current_group.group_last_test(), 'mdp_params["interaction type"]: ', current_mdp_params["interaction type"])
-                        if (current_group.group_last_test()):
+                        # if (current_group.group_last_test()):
+                        #     print("All groups reached last test, so i'm trying to construct the next round now")
+                        #     print("Current group status: ", current_group.status)
+
+                        if (current_group.groups_all_EOR()):
                             print("All groups reached last test, so i'm trying to construct the next round now")
                             print("Current group status: ", current_group.status)
                             
@@ -836,13 +849,13 @@ def settings(data):
                 ###########################
 
 
-                ### update member status for last iteration in round
-                if current_user.last_iter_in_round and current_user.round != 0:
-                    print('User: ', current_user.username, 'reached last iteration in round')
-                    member_idx = current_group.members.index(current_user.username)
-                    current_group.members_EOR[member_idx] = True
-                    flag_modified(current_group, "members_EOR")
-                    print('Member' + str(member_idx) + ' reached EOR')
+                # ### update member status for last iteration in round (when new round is generated based on last test)
+                # if current_user.last_iter_in_round and current_user.round != 0:
+                #     print('User: ', current_user.username, 'reached last iteration in round')
+                #     member_idx = current_group.members.index(current_user.username)
+                #     current_group.members_EOR[member_idx] = True
+                #     flag_modified(current_group, "members_EOR")
+                #     print('Member' + str(member_idx) + ' reached EOR')
                 #################
 
                 ## check if a new round was generated
@@ -1004,20 +1017,42 @@ def settings(data):
             N_diagnostic_tests = len([x for x in updated_round.round_info if x["interaction type"] == "diagnostic test"])
             
             if current_kc_id != next_kc_id:
-                demo_string = f"Moving onto a new game concept. Seeing a demonstration. <br> Current learning session ={current_user.round}. Demo no. 1/{N_demos}. <br> Game instance in current round = 1/{len(updated_round.round_info)}."
+                first_demo_string = f"Moving onto a new game lesson."
             else:
-                demo_string = f"Not everyone in your group learned the previous game concept. Repeating it again. <br> Seeing a demonstration. <br> Current learning session ={current_user.round}. Demo no. {current_user.iteration}/{N_demos}. <br> Game instance in current round = {current_user.iteration}/{len(updated_round.round_info)}."
+                first_demo_string = f"Not everyone in your group learned the previous game lesson. Repeating it again."
             
-            if current_user.interaction_type == "demo":
-                debug_string = demo_string
-            elif current_user.interaction_type == "diagnostic test":
-                current_test_id = int((current_user.iteration - N_demos)/2) + 1
-                debug_string = f"A diagnostic test. <br> Current learning session ={current_user.round}. Test no. {current_test_id}/{N_diagnostic_tests}. <br> Game instance in current round = {current_user.iteration}/{len(updated_round.round_info)}"
-            elif current_user.interaction_type == "answer":
-                debug_string = f"Here is the answer to the previous diagnostic test. <br> Current learning session ={current_user.round}. <br> Game instance in current round = {current_user.iteration}/{len(updated_round.round_info)}"
-            elif current_user.interaction_type == "final test":
-                debug_string = f"Final tests for this game. <br> Test no. {current_user.iteration}/{len(updated_round.round_info)}."
+            print('current_kc_id:', current_kc_id, 'next_kc_id:', next_kc_id, 'first_demo_string:', first_demo_string)
+            print('current_user.interaction_type: ', current_user.interaction_type, 'current_user.iteration: ', current_user.iteration)
 
+            lesson_string = ''
+            iteration_id = ''
+            N_iterations = ''
+            debug_string = ''
+            lesson_id = current_kc_id + 1
+            if current_user.interaction_type == "demo" and current_user.iteration == 1:
+                # debug_string = first_demo_string
+                lesson_string = first_demo_string
+                iteration_id = 1
+                N_iterations = N_demos
+                lesson_id = next_kc_id + 1
+            elif current_user.interaction_type == "demo" and current_user.iteration > 1:
+                # debug_string = f"Lesson ={current_kc_id}. Demo no. {current_user.iteration}/{N_demos}. <br>"
+                iteration_id = current_user.iteration
+                N_iterations = N_demos
+                lesson_id = current_kc_id + 1
+            elif current_user.interaction_type == "diagnostic test":
+                iteration_id = int((current_user.iteration - N_demos)/2) + 1
+                N_iterations = N_diagnostic_tests
+                lesson_id = current_kc_id + 1
+                # debug_string = f"Lesson ={current_kc_id}. Test no. {iteration_id}/{N_diagnostic_tests}. <br>"
+            elif current_user.interaction_type == "answer":
+                # debug_string = f"Here is the answer to the previous diagnostic test. <br> Current learning session ={current_user.round}. <br> Game instance in current round = {current_user.iteration}/{len(updated_round.round_info)}"
+                debug_string = ''    
+                lesson_id = current_kc_id + 1            
+            elif current_user.interaction_type == "final test":
+                iteration_id = current_user.iteration
+                N_iterations = len(updated_round.round_info)
+                # debug_string = f"Final tests for this game. <br> Test no. {current_user.iteration}/{len(updated_round.round_info)}."
 
             response["debug string"] = ''
             response["last answer"] = current_user.last_iter_in_round
@@ -1025,6 +1060,10 @@ def settings(data):
             response["interaction type"] = current_user.interaction_type
             response["already completed"] = next_already_completed
             response["go prev"] = go_prev
+            response["iteration"] = iteration_id
+            response["total iterations"] = N_iterations
+            response["lesson id"] = lesson_id
+            response["lesson string"] = lesson_string
             if current_group.status == "Domain teaching completed" and current_user.interaction_type=="final test" and current_user.last_iter_in_round:
                 response["domain_completed"] = True
             else:
@@ -1526,7 +1565,7 @@ def retrieve_next_round(params, current_group) -> dict:
         
         # check if teaching is complete
         teaching_complete_flag = False
-        if not np.any(variable_filter):
+        if not np.any(variable_filter) and unit_learning_goal_reached_flag:
             teaching_complete_flag = True
 
         # # Debug for having only one round
