@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simulation</title>
+
+    <script src="/static/lib/jquery-min.js" type="text/javascript"> </script>
+    <script type="text/javascript">
+        console.log(typeof $ !== 'undefined' ? "jQuery is loaded" : "jQuery is not loaded"); // Debug: check if jQuery is loaded
+    </script> 
+    <script>
+        var $jq = jQuery.noConflict();
+        console.log($jq); // Debug: Testing the conflict-free jQuery reference
+    </script>
+    <script src="/static/lib/underscore-min.js" type="text/javascript"> </script>
+    <script src="/static/lib/backbone-min.js" type="text/javascript"> </script>
+    <script src="/static/lib/d3.v3.min.js" type="text/javascript"> </script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="/static/css/jspsych.css" type="text/css" />
+    <style type="text/css">
+    .likert ul
+    {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+    .likert li
+    {
+        float: left;
+        text-align: left;
+        list-style-type: none;
+        padding:10px;
+    }
+
+    .pre_info{
+        float: center;
+        text-align: center;
+    }
+        /* Add your CSS styles here */
+    #center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    #loading-container {
+      display: flex;
+      align-items: center;
+      color: #333;
+    }
+    
+    #loading-text {
+      margin-top: 10px;
+      color: #333;
+      font-size: 24px;
+    }
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left-color: #3498db;
+      animation: spin 1s linear infinite;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Style for the message container */
+    #message-container {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #9ca9e4ea;
+    min-height: 50px;
+    text-align: center;
+    font-size: large;
+    color: #333;
+    }
+
+    #flashMessage {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: orange;
+        color: black;
+        font-size: 20px;
+        font-weight: bold;
+        z-index: 1000;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        animation: flashAnimation 0.5s alternate infinite;
+    }
+
+    #wait {
+    font-size: 18px; /* Increase or decrease the font size as needed */
+    color: #555; /* Set the font color */
+    text-align: center; /* Center the text */
+    padding: 10px; /* Add padding */
+    background-color: #f3a581; /* Set a background color */
+    border-radius: 5px; /* Optional: add rounded corners */
+    }
+
+
+    @keyframes flashAnimation {
+        from { opacity: 1; }
+        to { opacity: 0.5; }
+    }
+
+    </style>
+  </head>
+
+  <body>
+
+    <!-- <style>
+        table {
+            /* #font-size: 0.8em; /* Reduce font size */
+            padding: 0; /* Remove padding */
+            margin: 0; /* Remove margin */
+            line-height: 1; /* Reduce line height */
+        }
+    </style> -->
+
+    <div class="container-fluid" style="padding-left: 5%; padding-right: 5%">
+    <div id="container-instructions" class="text-center">
+        <!-- non button section, id'd by non-buttons, should be entirely replaced by 
+        survey when we get to end of all of training -->
+        <div id="non-buttons">
+            <div id="center-container">
+                <div id="loading-container">
+                    <div class="spinner"></div>
+                    <div id="loading-text">Please wait. Loading the next instruction...</div>
+                </div>
+            </div>
+        <div id="preamble" class="pre_info">
+            <h1 id="header">Participant gameplay</h1> <hr/>
+            <div id = "info_main"></div>
+        </div>
+        <h2 id="debug"></h2><br><br><br>
+        <div id="game_container" class="row justify-content-around">
+            <canvas id="game" width="850" height="500"></canvas>
+            <div id="table_controlinfo"></div>
+        </div>
+
+        <div id="message-container"></div>
+        <div id="score"></div>
+        <div id="interaction-survey"></div>
+        <div id="wait">Please wait until all members of your team have finished this round and for the next session to be available.</div>
+        <div id="flashMessage"></div>
+        <div id="feedback"></div>
+        <div id="survey"></div>
+        <hr>
+        <br>
+        </div>
+
+
+        <div id="instructions" class="instructionsnav">
+            <div class="row justify-content-between">
+            <div class="col-xs-3">
+                <button type="button" id="prev" onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+                </button>
+            </div>
+            <div class="col-xs-3">
+                    <button type="button" id="next" disabled
+                onclick="next()"
+                value="next" class="btn btn-primary btn-lg continue">
+                Next <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>
+            </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        </div>
+    </div>
+
+  <script>
+    
+    let audio; // Declare the audio variable globally
+    var socket = io();
+
+
+    // hide the game instructions and preamble and show a loading screen while waiting to receive the necessary game data
+    document.getElementById('instructions').style.display = 'none';
+    document.getElementById('preamble').style.display = 'none';
+    document.getElementById('wait').style.display = 'none';
+    document.getElementById('message-container').style.display = 'none';
+    document.getElementById('flashMessage').style.display = 'none';
+
+
+    //   const roomIdentifier = "uniqueRoomIdentifier";  // Replace with the actual room identifier
+    //   const websocket = new WebSocket(`ws://localhost:8765/$jq{roomIdentifier}`); // todo: will likely have to replace with a nonlocal host
+
+    //   websocket.onopen = function(event) {
+    //       console.log('Connected to server');
+    //   };
+
+    //   const loadingText = document.getElementById('loading-text');
+    //   websocket.onmessage = function(event) {
+    //       const data = event.data;
+    //       if (data === "Progress updates complete") {
+    //           console.log('Progress updates complete');
+    //           websocket.close(); // Close the WebSocket connection
+    //       } else {
+    //           var progress = parseInt(data);
+    //           if (isNaN(progress)) {
+    //               progress = 0
+    //           }
+    //           loadingText.innerHTML = `Loading the next instruction... ($jq{progress}% completed)`
+    //       }
+    //   };
+
+      
+
+    function populateData() {
+        let data = {};
+        data["domain"] = localStorage.getItem("domain");
+        data["interaction type"] = localStorage.getItem("interaction type");
+        data["interaction survey"] = localStorage.getItem("interaction survey")
+        data["iteration"] = Number(localStorage.getItem("iteration"));
+        data["user input"] = JSON.parse(localStorage.getItem("user input"));
+        data["movement"] = localStorage.getItem("movement");
+        data["attn1"] = localStorage.getItem("attn1");
+        data["attn2"] = localStorage.getItem("attn2");
+        data["attn3"] = localStorage.getItem("attn3");
+        data["use1"] = localStorage.getItem("use1");
+        data["use2"] = localStorage.getItem("use2");
+        data["use3"] = localStorage.getItem("use3");
+        data["understanding"] = localStorage.getItem("understanding");
+        data["engagement short answer"] = localStorage.getItem("engagement short answer");
+        data["improvement short answer"] = localStorage.getItem("improvement short answer");            
+        data["already completed"] = localStorage.getItem("already completed");
+        data["room_name"] = localStorage.getItem("room_name");
+
+        let reward_ft_wt_1_field = document.getElementById("reward_ft_wt_1")
+        let reward_ft_wt_2_field = document.getElementById("reward_ft_wt_2")
+        if ((reward_ft_wt_1_field != null) && (reward_ft_wt_2_field != null)) {
+            data["reward_ft_weights"] = [reward_ft_wt_1_field.value, reward_ft_wt_2_field.value]
+        } else {
+            data["reward_ft_weights"] = []
+        }
+        return data
+      }
+
+    socket.on("connect", function () {
+        data = populateData()
+        socket.emit("settings", data);
+    });
+
+    socket.on("member joined again", function (data) {
+        console.log(data["user code"] + " has now joined");
+    });
+
+    socket.on("congratulations!", () => {
+        console.log("at the last round now!")
+        window.last_round = true;
+    });
+
+    socket.on("settings configured", function (data) {
+        console.log('Received settings:', data);
+        localStorage.setItem("interaction survey", "-1");
+        localStorage.setItem("movement", "false");
+        localStorage.setItem("user input", JSON.stringify({ moves: data["moves"] }));
+        localStorage.setItem("already completed", data["already completed"]);
+        localStorage.setItem("interaction type", data["interaction type"]);
+        localStorage.setItem("domain", data["domain"]);
+        localStorage.setItem("iteration", data["iteration"]);
+        localStorage.setItem("total iterations", data["total iterations"]);
+        localStorage.setItem("lesson id", data["lesson id"]);
+        localStorage.setItem("lesson string", data["lesson string"]);
+
+        window.mdp_parameters = data["params"];
+        window.interaction_type = data["interaction type"];
+        
+        // // reset the flags - to change
+        // window.last_test = false;
+        // window.last_in_round = false;
+        // window.last_round = false;
+        // window.joint_EOR = false;
+        // window.domain_completed = false;
+        // window.start_time_set = false;
+
+        // document.getElementById("message-container").style.display = 'none';
+        
+        // if (data["last iteration"]) {
+        //     window.last_in_round = true;
+        //     console.log("reached last iteration in round");
+        // }
+
+        // if (data["last test"]) {
+        //     window.last_test = true;
+        //     console.log("reached last test in round");
+        // }
+
+        // if (data["domain completed"]) {
+        //     console.log("domain completed");
+        //     window.domain_completed = true;
+        // }
+        // //////////////////////////
+
+        window.last_test = false;
+
+        document.getElementById("message-container").style.display = 'none';
+
+        if (data["last answer"]) {
+            window.last_in_round = true;
+            console.log("reached last answer in round");
+
+        }
+        else {
+            if (data["interaction type"] == "demo") {
+                window.last_round = false;
+                window.joint_EOR = false;
+            }
+            window.last_in_round = false;
+
+            if (data["last test"]) {
+                window.last_test = true;
+                console.log("reached last test in round");
+            }
+        }
+
+        if (data["domain_completed"]) {
+            console.log("domain completed");
+            window.domain_completed = true;
+        }
+        ////////////////////////
+
+        
+        // localStorage.setItem("game completed", "false");
+        // localStorage.setItem("survey completed", "false");
+        console.log('MDP params: ', data["params"], 'go_prev:', data["go prev"]);
+         // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
+    
+
+        if (data["go prev"] == false) {
+            $jq("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+        </button>`);
+        }
+        else {
+            $jq("#prev").replaceWith(`<button type="button" id="prev" onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+        </button>`);
+        }
+
+        if ((data["already completed"] == true)) {
+            $jq("#next").replaceWith(`<button type="button" id="next"
+                onclick="next()"
+                value="next" class="btn btn-primary btn-lg continue">
+                Next <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>` );
+        }
+        else {
+            $jq("#next").replaceWith(`<button type="button" id="next" disabled
+        onclick="next()"
+        value="next" class="btn btn-primary btn-lg continue">
+        Next <span class="glyphicon glyphicon-arrow-right"></span>
+        </button>` );
+        $jq("#interaction-survey").html(``);
+        }
+
+
+        $jq("#debug").html(data["debug string"]);
+        // if (data["last test"]) {
+        //     localStorage.setItem("last test", "true");
+        // }
+
+        // hide the loading screen and show the game content
+        document.getElementById('wait').style.display = 'none';
+        document.getElementById('center-container').style.display = 'none';
+        document.getElementById('score').style.display = 'none'
+        
+        document.getElementById('instructions').style.display = 'block';
+        document.getElementById('preamble').style.display = 'block';
+
+
+        if (!window.interaction_type.includes('test')) {
+            document.getElementById('message-container').style.display = 'none';
+            }
+        console.log('Interaction type:', window.interaction_type);
+        console.log('Params:', window.mdp_parameters);
+        change_text(window.interaction_type);
+        run_page(window.mdp_parameters);
+    });
+    
+
+    socket.on("all reached EOR", function (){
+        console.log("all reached EOR");
+
+        const now = new Date();
+        start_time = now.toLocaleTimeString(); 
+        console.log("Start time: " + start_time);
+        while (now.toLocaleTimeString() - start_time <= 1500) {
+            console.log("All reached EOR...." + now.toLocaleTimeString());
+        }
+
+        // show the flash message
+        var flashMessage = document.getElementById("flashMessage");
+        flashMessage.style.display = 'block';
+        flashMessage.innerHTML = "Next learning session is available now! Press any key to continue with the study.";
+
+        // play the audio
+        audio = new Audio("/static/audio/mixkit-positive-notification-951.wav");
+        audio.loop = true;
+        audio.play();
+
+        // // when next lesson is available before completing survey
+        // localStorage.setItem("survey completed", "true");
+        // // checked based on input name
+        // let radioValue = $jq("input[name='info']:checked").val();
+        // if(radioValue) {
+        //     localStorage.setItem("interaction_survey", radioValue);
+        // }
+
+        // if (radioValue != -1) {
+        //     $jq("#next").replaceWith(`<button type="button" id="next"
+        //                 onclick="next()"
+        //                 value="next" class="btn btn-primary btn-lg continue">
+        //                 Next <span class="glyphicon glyphicon-arrow-right"></span>
+        //                 </button>` );
+        // }
+
+        // Add event listener for keypress to hide the message and stop the audio
+        document.addEventListener('keydown', function() {
+            // Hide the flash message
+            flashMessage.style.display = 'none';
+            
+            // Stop the audio
+            audio.pause();
+            audio.currentTime = 0;  // Reset audio to start position
+
+            document.removeEventListener('keydown', arguments.callee);
+        });
+
+
+        document.getElementById('wait').style.display = 'none';
+        // next();  // automatically go to next session
+        
+        window.joint_EOR = true;
+
+    });
+
+        // Shuffle function
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
+            while (0 !== currentIndex) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+            return array;
+        }
+
+        // Assign html for interaction type
+        function change_text(interaction_type){
+            console.log("changing text for interaction type", interaction_type);
+            
+            // change headers
+            if (interaction_type == "final test") {
+                console.log("final test");
+                $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration")) + 1).toString() + '/6)</h1>');
+                // cl, pl, open, wtcl
+                $jq("#info_main").html('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+                // wt
+                //$jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
+                //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+                document.getElementById('prev').style.display = 'none';
+            } 
+            else if (interaction_type == "diagnostic test") {
+                console.log("diagnostic test");
+                $jq("#header").html('<h1> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Check-in test (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
+                if (localStorage.getItem("already completed") == 'true') {
+                    $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
+                }
+                else {
+                    $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
+                }
+            }
+            else if (interaction_type == "demo"){
+                console.log("demo");
+                if (localStorage.getItem("iteration")==1){
+                    $jq("#header").html('<h1>' + localStorage.getItem("lesson string") + ' Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
+                }
+                else{
+                    $jq("#header").html('<h1> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
+                }
+                $jq("#info_main").html('<h3>Step through the demonstration <u>using your space bar</u>.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue!</h3>');
+ 
+            }
+            else if (interaction_type == "answer"){
+                console.log("answer");
+                $jq("#header").html('<h1>Feedback</h1>');
+                $jq("#info_main").html("<h3>Chip's optimal path to previous check-in test</h3>");
+            }
+            else{
+                console.log("default");
+                $jq("#header").html('<h1>Participant gameplay</h1>');
+                $jq("#info_main").html('<h3>Blah.</h3>');
+            }
+
+            
+            // change table and survey
+            if (interaction_type === "survey") {
+                var questions = [
+                    {
+                        question: "I was fully engaged with learning the game strategy.",
+                        name: "attn1"
+                    },
+                    {
+                        question: "The time I spent learning the game strategy passed by quickly.",
+                        name: "attn2"
+                    },
+                    {
+                        question: "I was absorbed in this experience.",
+                        name: "attn3"
+                    },
+                    {
+                        question: "I felt frustrated while learning the game strategy.",
+                        name: "use1"
+                    },
+                    {
+                        question: "I found learning the game strategy confusing.",
+                        name: "use2"
+                    },
+                    {
+                        question: "Learning the game strategy was taxing.",
+                        name: "use3"
+                    },
+                ];
+                // Shuffle the questions
+                questions = shuffle(questions);
+
+                // Generate the HTML
+                var html = `<br></br>
+                    <h2>The following statements ask you to <u>reflect on your experience of engaging with Chip</u> to learn the game strategy. For each statement, please use the following scale to indicate what is most true for you.</h2>
+                    <br></br>`;
+
+                for (var i = 0; i < questions.length; i++) {
+                    html += `<h3>${questions[i].question}</h3>
+                <div class="likert">
+                <label><input name="${questions[i].name}" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                <label><input name="${questions[i].name}" type="radio" value="2"/><span>Disagree</span></label>
+                <label><input name="${questions[i].name}" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                <label><input name="${questions[i].name}" type="radio" value="4"/><span>Agree</span></label>
+                <label><input name="${questions[i].name}" type="radio" value="5"/><span>Strongly Agree</span></label>
+                </div>
+                <br></br>`;
+                }
+
+                html += `<h3>Finally, do you feel that you now understand the game strategy?</h3>
+            <div class="likert">
+                <label><input name="understanding" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                <label><input name="understanding" type="radio" value="2"/><span>Disagree</span></label>
+                <label><input name="understanding" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                <label><input name="understanding" type="radio" value="4"/><span>Agree</span></label>
+                <label><input name="understanding" type="radio" value="5"/><span>Strongly Agree</span></label>
+                </div>
+                <br></br>`;
+
+                html += `<h3>Please feel free to explain any of your selections above or any comments or thoughts you'd like to share!</h3>
+            <textarea id="engagement short answer" rows="4" cols="50"></textarea>`;
+
+                $jq("#non-buttons").html(html);
+            } 
+            else if ((interaction_type == "diagnostic test") || (interaction_type == "final test")) {
+                console.log("I am in the diagnostic test");
+                if (localStorage.getItem("already completed") == 'true') {
+                    $jq("#table_controlinfo").html(`<div><br><br>
+                    <table width="500">
+                        <tr><th>Key</th><th>Action</th></tr>
+                        <tr><td>space bar</td><td>next movement</td></tr>
+                        <tr><td>r</td><td>reset simulation</td></tr>
+                    </table>
+                    <br></div>`);
+                }
+                else{
+                    $jq("#table_controlinfo").html(`<div><br><br><br><br>
+                <table width="500">
+                    <tr><th>Key</th><th>Action</th></tr>
+                    <tr><td>up/down/left/right arrow keys</td><td>corresponding movement</td></tr>
+                    <tr><td>p</td><td>pick up</td></tr>
+                    <tr><td>d</td><td>drop</td></tr>
+                    <tr><td>r</td><td>reset simulation</td></tr>
+                </table>
+                <br></div>`);
+                }
+            }
+                
+            else {
+                $jq("#table_controlinfo").html(`<div><br><br><br>
+            <table width="500">
+                <tr><th>Key</th><th>Action</th></tr>
+                <tr><td>space bar</td><td>next movement</td></tr>
+                <tr><td>r</td><td>reset simulation</td></tr>
+            </table>
+            <br></div>`);
+                $jq("#info_main").html('<h3> Look at the following demonstration on how you should complete this game while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
+            }
+        }
+
+
+        function prev() {
+            console.log("I am going prev");
+            localStorage.setItem("movement", "prev");
+            window.location.href="{{ url_for('at') }}";
+        }
+
+
+        function next() {
+            localStorage.setItem("movement", "next");
+            //localStorage.setItem("survey completed", "false");
+
+            if (!window.domain_completed){
+                // if (window.last_test) {
+                //     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
+                //     document.getElementById('wait').style.display = 'block';
+                // }
+
+                if (window.last_in_round) {
+                    // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
+                    document.getElementById('wait').style.display = 'block';
+                }
+
+                // hide the flash message
+                document.getElementById('flashMessage').style.display = 'none';
+
+                // if audio is playing, stop it
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            }
+            
+            console.log("Domain completed?", window.domain_completed);
+            if (window.domain_completed) {
+                // localStorage.setItem("last test", "false");
+                socket.emit("next domain", data);
+                socket.on("next domain is", function(data) {
+                    console.log("I have received next domain");
+                    let url = "";
+                    if (data["domain"].length === 2){
+                        // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
+                        if (data["domain"] == 'at'){
+                            url = "{{ url_for('at_intro') }}";
+                        }
+                        if (data["domain"] == 'sb'){
+                            url = "{{ url_for('sb_intro') }}";
+                        }
+
+                    }
+                    else {
+                        url = "{{ url_for('final_survey') }}";
+                    }
+                    window.location.href=url;
+                });
+                window.domain_completed = false;
+            }
+
+            else {
+            // window.location.href='/at';
+            console.log("printing agent history nonoffset");
+            console.log(window.agent_history_nonoffset);
+            data = populateData()
+
+            // if (window.last_round && window.last_in_round) {
+            //     window.location.href = "{{ url_for('final_survey') }}";
+            // }
+            }
+            
+
+            socket.emit("settings", data);
+            
+            // reset vars (in case trajectory was not completed)
+            window.moves = [];
+            window.agent_history = [];
+            window.agent_history_nonoffset = [];
+
+        }
+        addEventListener("beforeunload", (event) => {
+            if (localStorage.getItem("movement") === "false") {
+                event.preventDefault();
+                event.returnValue = "Are you sure you want to leave? The task is incomplete.";
+            }
+            if (window.interaction_type === "survey") {
+                localStorage.setItem("short answer", document.getElementById("short answer").value);
+            }
+
+            else {
+                let simulation_rt = 0;
+                if (localStorage.getItem("user input") === "{}") {
+                    if (window.moves.length > 0) {
+                        simulation_rt = performance.now() - window.start_time;
+                    }
+                    console.log('coordinates: ', window.agent_history_nonoffset);
+                    final_data = JSON.stringify({
+                        'moves': window.moves,
+                        'opt_response': false,
+                        'agent_history_nonoffset': window.agent_history_nonoffset,
+                        'mdp_parameters': window.mdp_parameters,
+                        'simulation_rt': simulation_rt,
+                    });
+                    localStorage.setItem("user input", final_data);
+                }
+            }
+
+            //
+            socket.disconnect();
+
+        });
+
+        addEventListener("input", (event) => {
+            if ((window.interaction_type == "final test") && (localStorage.getItem("last test") == "true")) {
+                var reward_ft_wt_1 = document.getElementById('reward_ft_wt_1')
+                var reward_ft_wt_2 = document.getElementById('reward_ft_wt_2')
+                if (reward_ft_wt_1.value !== "" && reward_ft_wt_2.value !== "") {
+                    $("#next").replaceWith(`<button type="button" id="next"
+                        onclick="next()"
+                        value="next" class="btn btn-primary btn-lg continue">
+                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>`);
+                }
+                else {
+                    // disable button again if one of the fields is deleted
+                    $("#next").replaceWith(`<button type="button" id="next" disabled
+                            onclick="next()"
+                            value="next" class="btn btn-primary btn-lg continue">
+                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>`);
+                }
+            }
+            else if (window.interaction_type !== "survey") {
+                localStorage.setItem("survey completed", "true");
+                // checked based on input name
+                let radioValue = $jq("input[name='info']:checked").val();
+                if(radioValue) {
+                    localStorage.setItem("interaction survey", radioValue);
+                    
+                    // Next button logic
+                    console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
+                    $jq("#next").replaceWith(`<button type="button" id="next"
+                        onclick="next()"
+                        value="next" class="btn btn-primary btn-lg continue">
+                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>` );
+                }
+                
+                // // Next button logic (wait for all members to finish)
+                // console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
+                // if (window.last_in_round && !window.joint_EOR) {
+                //     // socket.emit("reached EOR");
+                //     // console.log("I finished my last test in the round!");
+
+                //     document.getElementById('wait').style.display = 'block';
+
+                // }
+                // else {
+                //     $jq("#next").replaceWith(`<button type="button" id="next"
+                //         onclick="next()"
+                //         value="next" class="btn btn-primary btn-lg continue">
+                //         Next <span class="glyphicon glyphicon-arrow-right"></span>
+                //         </button>` );
+                // }
+
+
+            }
+            else {
+                let attn1 = $jq("input[name='attn1']:checked").val();
+                if(attn1) {
+                    localStorage.setItem("attn1", attn1);
+                }
+                let attn2 = $jq("input[name='attn2']:checked").val();
+                if(attn2) {
+                    localStorage.setItem("attn2", attn2);
+                }
+                let attn3 = $jq("input[name='attn3']:checked").val();
+                if(attn3) {
+                    localStorage.setItem("attn3", attn3);
+                }
+                let use1 = $jq("input[name='use1']:checked").val();
+                if(use1) {
+                    localStorage.setItem("use1", use1);
+                }
+                let use2 = $jq("input[name='use2']:checked").val();
+                if(use2) {
+                    localStorage.setItem("use2", use2);
+                }
+                let use3 = $jq("input[name='use3']:checked").val();
+                if(use3) {
+                    localStorage.setItem("use3", use3);
+                }
+
+                if (attn1 && attn2 && attn3 && use1 && use2 && use3) {
+                    $jq("#next").replaceWith(`<button type="button" id="next"
+                        onclick="next()"
+                        value="next" class="btn btn-primary btn-lg continue">
+                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>` );
+                }
+            }
+        });
+    
+
+    function run_page(mdp_parameters) {
+        console.log("running page with params", mdp_parameters);
+        var canvas = document.getElementById("game");
+        var context = canvas.getContext("2d");
+
+        // variables for parent window
+        var final_data = [];
+        var data_sent = false;
+
+        window.start_time = 0;
+        window.start_time_set = false;
+        window.moves = [];
+        window.agent_history = [];
+        window.agent_history_nonoffset = [];  // this is for keep track of the agent's location in gridworld integers
+
+        var offset_x = 1.5;
+        var offset_y = 1;
+        // disableScroll();
+
+        // var mdp_parameters = window.parent.mdp_parameters;
+        // var watched_vid_arr = window.parent.watched_vid_arr;
+        // var current_page = window.parent.current_page;
+
+
+        var text_color = "#394d7e";
+        var map_layout = {};
+
+
+        var spaceship =
+        {
+            color: "#628dbe",
+            color_light: "#7cb8fc",//"#b90f0a",
+            width: 65,
+            height: 130,
+            grid_loc:
+            {
+                x: 0,
+                y: 0,
+                human_x: 0,
+                human_y: 0
+            },
+            taxi_set: false,
+        }
+
+        var passenger =
+        {
+            color: "#B395C4",
+            color_light: "#C8BBF5",
+            width: 350,
+            height: 350,
+            grid_loc:
+            {
+                x: 0,
+                y: 0,
+                human_x: 0,
+                human_y: 0
+            },
+            picked: false,
+            picked_human: false,
+            dropped: false,
+            dropped_human: false
+        }
+
+        var hotswap_station =
+        {
+            color: "#58895F",
+            color_light: "#81cc8b",
+            width: 350,
+            height: 350,
+            grid_loc:
+            {
+                x: 0,
+                y: 0,
+                human_x: 0,
+                human_y:0
+            },
+            visited: false,
+            visited_human: false,
+        }
+
+        var goal =
+        {
+            grid_loc:
+            {
+                x: 0,
+                y: 0
+            }
+        }
+
+        function build_grid(){
+            //create a grid
+            var temp = [];
+            for (i = 0; i < mdp_parameters.height; i++) {
+                temp.push([0]);
+            }
+            for (j = 0; j < mdp_parameters.height-1; j++) {
+                for (k = 0; k < mdp_parameters.width-1; k++) {
+                    temp[j].push(0)
+                }
+            }
+            return temp;
+        }
+
+        function set_grids()
+        {
+            //set location of taxi
+            spaceship.grid_loc.x =  (mdp_parameters.agent.x-1) + offset_x;
+            spaceship.grid_loc.y =  (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
+            spaceship.grid_loc.human_x =  (mdp_parameters.agent.x-1) + offset_x + agent_human_spacer;
+            spaceship.grid_loc.human_y =  (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
+            window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y])
+            console.log("Pushed to agent history in setup. History: ", window.agent_history);
+            window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+            spaceship.taxi_set = true;
+            
+            //set location of passenger
+            if (mdp_parameters.agent.has_passenger == 1){
+                passenger.picked = true;
+                passenger.picked_human = true;
+                passenger.grid_loc.x = (mdp_parameters.agent.x-1) + offset_x;
+                passenger.grid_loc.y = (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
+                passenger.grid_loc.human_x = (mdp_parameters.agent.x-1) + offset_x + agent_human_spacer;
+                passenger.grid_loc.human_y = (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
+            }
+            else{
+                passenger.grid_loc.x = (mdp_parameters.passengers[0].x-1) + offset_x;
+                passenger.grid_loc.y = (mdp_parameters.height - mdp_parameters.passengers[0].y) + offset_y;
+                passenger.grid_loc.human_x = (mdp_parameters.passengers[0].x-1) + offset_x + agent_human_spacer;
+                passenger.grid_loc.human_y = (mdp_parameters.height - mdp_parameters.passengers[0].y) + offset_y;
+            }
+            //set destination
+            destination_grid = build_grid();
+            goal.grid_loc.x = mdp_parameters.passengers[0].dest_x;
+            goal.grid_loc.y = mdp_parameters.height - mdp_parameters.passengers[0].dest_y + 1;
+            destination_grid[mdp_parameters.height - mdp_parameters.passengers[0].dest_y][mdp_parameters.passengers[0].dest_x-1] = 1;
+            map_layout.destination = destination_grid;
+
+            //set walls
+            var color_locs = build_grid();
+            for (i = 0; i < mdp_parameters.walls.length; i++) {
+                color_locs[mdp_parameters.height - mdp_parameters.walls[i].y][mdp_parameters.walls[i].x-1] = 1;
+            }
+            for (j = 0; j < mdp_parameters.tolls.length; j++) {
+                color_locs[mdp_parameters.height - mdp_parameters.tolls[j].y][mdp_parameters.tolls[j].x-1] = 2;
+            }
+            map_layout.color_blocks = color_locs;
+
+            if (mdp_parameters.hotswap_station.length > 0) {
+                hotswap_station.grid_loc.x =  (mdp_parameters.hotswap_station[0].x-1) + offset_x;
+                hotswap_station.grid_loc.y =  (mdp_parameters.height - mdp_parameters.hotswap_station[0].y + offset_y);
+                hotswap_station.grid_loc.human_x =  (mdp_parameters.hotswap_station[0].x-1) + offset_x + agent_human_spacer;
+                hotswap_station.grid_loc.human_y =  (mdp_parameters.height - mdp_parameters.hotswap_station[0].y + offset_y);
+            } else {
+                hotswap_station.visited = true;
+                hotswap_station.visited_human = true;
+            }
+
+        }
+
+        //http://www.scienceprimer.com/drawing-regular-polygons-javascript-canvas
+        function drawHexagon(Xcenter, Ycenter, color) {
+                var numberOfSides = 6, size = 10;
+
+                context.beginPath();
+                context.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));
+
+                for (var i = 1; i <= numberOfSides;i += 1) {
+                context.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+                }
+                context.fillStyle = color;
+                context.fill();
+                context.closePath()
+        }
+
+
+        function drawTaxi(x,y,color)
+        {
+            if (spaceship.taxi_set == false){
+                taxiSet();
+            }
+            context.save();
+            context.beginPath();
+            context.translate(100*(x) + 50 + translate_draw, 100*(y) + 150);
+                context.lineTo(-spaceship.width * 0.5 , -spaceship.height * 0.5);
+                context.lineTo(0, -spaceship.height);
+                context.lineTo(-spaceship.width * -0.5, -spaceship.height * 0.5);
+            if (color == "light"){
+                context.fillStyle = spaceship.color_light;
+            }
+            else {
+                context.fillStyle = spaceship.color;
+            }
+            context.fill();
+            context.closePath();
+            context.restore();
+        }
+
+        function drawPassenger(x,y,color)
+        {
+            context.save();
+            context.beginPath();
+            var i = 0;
+            var j = 0;
+            if (color == "light"){
+                context.fillStyle = passenger.color_light;
+                condition = !passenger.picked_human;
+                if (!passenger.picked_human){
+                    context.arc(x*100 + 25 + translate_draw, y*100 + 45, 9, 0, 2 * Math.PI);
+                    context.fill();
+                    context.closePath();
+                }
+                else{
+                    context.arc(x*100 + 49 + translate_draw, y*100 + 22, 9, 0, 2 * Math.PI);
+                    context.fill();
+                    context.closePath();
+                }
+            }
+            else {
+                context.fillStyle = passenger.color;
+                condition = !passenger.picked;
+                if (!passenger.picked){
+                context.arc(x*100 + 25 + translate_draw, y*100 + 45, 9, 0, 2 * Math.PI);
+                context.fill();
+                context.closePath();
+
+                }
+                else{
+                    context.arc(x*100 + 49 + translate_draw, y*100 + 22, 9, 0, 2 * Math.PI);
+                    context.fill();
+                    context.closePath();
+                }
+            }
+            context.restore();
+        }
+        
+        // debug this function
+        function drawAgentHistory()
+        {
+            // console.log("drawing agent history");
+            context.save();
+            console.log('Draw. Agent history:', window.agent_history);
+            for (j = 0; j < window.agent_history.length; j++) {
+                context.beginPath();
+                if (j == 0) {
+                    context.rect(window.agent_history[j][0]*100 + 37, window.agent_history[j][1]*100 + 48, 25, 4);
+                    context.fillStyle = '#677387';
+                }
+                context.arc(window.agent_history[j][0]*100 + 50, window.agent_history[j][1]*100 + 50, 6, 0, 2 * Math.PI);
+                context.fillStyle = '#677387';
+                context.fill();
+                context.closePath();
+            }
+            context.restore();
+        }
+
+        function drawHotswapStation(x,y,version){
+            context.save();
+            if (version == "agent"){
+                if (!hotswap_station.visited){
+                drawHexagon(x * 100 + 50 + translate_draw, y * 100 + 50, hotswap_station.color)
+            }}
+            else{
+                if (!hotswap_station.visited_human){
+                drawHexagon(x * 100 + 50 + translate_draw, y * 100 + 50, hotswap_station.color_light)
+            }
+            }
+            context.restore();
+        }
+
+        function drawDestination(){
+            context.save();
+            context.beginPath();
+            var i = 0;
+            var j = 0;
+
+            for (i = 0; i < mdp_parameters.height; i++) {
+                for (j = 0; j < mdp_parameters.width; j++) {
+                    if (map_layout.destination[i][j] == 1){
+                        context.beginPath();
+                        context.rect(100*j + 15+offset_x*100, 100*i + 15 + offset_y*100, 19,15);
+                        context.fillStyle = passenger.color;
+                        context.fill();
+                        context.closePath();
+                    }
+                }
+            }
+            context.restore();
+        }
+
+
+        function drawMap(){
+            context.save();
+                var i;
+                var j;
+                for (i = 0; i < mdp_parameters.height; i++) {
+                    for (j = 0; j < mdp_parameters.width; j++) {
+                        if (map_layout.color_blocks[i][j] == 2){
+                            context.beginPath();
+                            context.rect(4 + 100*j+offset_x*100, 4+100*i + offset_y*100, 92, 92);
+                            context.fillStyle = "#E0E644";
+                            context.fill();
+                            context.closePath();
+                        }
+                        if (map_layout.color_blocks[i][j] == 1){
+                            context.beginPath();
+                            context.rect(4 + 100*j+offset_x*100, 4+100*i + offset_y*100, 92, 92);
+                            context.fillStyle = "#2E3131";
+                            context.fill();
+                            context.closePath();
+                        }
+                    }
+                }
+            context.restore();
+        }
+
+        function start_screen() {
+            if (!map_layout.set){
+                set_grids();
+                map_layout.set = true;
+            }
+            // Clear entire screen
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.beginPath();
+            context.fillStyle = "black";
+            context.fill();
+            context.closePath();
+
+            // context.font = "25px Arial";
+            // context.fillStyle = text_color;
+            // context.textAlign = "center";
+            // context.fillText("Click on the game below to start controlling Chip", offset_x*100+200, 50);
+
+            //draw grid
+            for (i = 0; i <= mdp_parameters.height; i++) {
+                context.beginPath();
+                context.moveTo(0+offset_x*100, 100*i-1+offset_y*100);
+                context.lineTo(0+offset_x*100, 100*i+1+offset_y*100);
+                context.lineTo(mdp_parameters.width*100+offset_x*100, 100*i+1+offset_y*100);
+                context.lineTo(mdp_parameters.width*100+offset_x*100, 100*i-1+offset_y*100);
+                context.fillStyle = "black";
+                context.fill();
+                context.closePath();
+            }
+            for (i = 0; i <= mdp_parameters.width; i++) {
+                context.beginPath();
+                context.moveTo(100*i-1+offset_x*100, 0+offset_y*100);
+                context.lineTo(100*i+1+offset_x*100, 0+offset_y*100);
+                context.lineTo(100*i+1+offset_x*100, mdp_parameters.height*100+offset_y*100);
+                context.lineTo(100*i-1+offset_x*100, mdp_parameters.height*100+offset_y*100);
+                context.fillStyle = "black";
+                context.fill();
+                context.closePath();
+            }
+
+            // indicate to the participant that it's their turn play
+            if ((window.interaction_type.includes("test")) && (localStorage.getItem("already completed") == 'false')) {
+                context.font = "25px Arial";
+                context.fillStyle = text_color;
+                context.textAlign = "center";
+                context.fillText("Your turn to play!", offset_x * 100 + 200, 80);
+
+                // Draw blue border around the grid
+                context.beginPath();
+                context.rect(offset_x*100 - 3, offset_y*100 - 3, mdp_parameters.width*100 + 6, mdp_parameters.height*100 + 6);
+                context.strokeStyle = "blue";
+                context.lineWidth = 2;
+                context.stroke();
+            }
+
+
+            context.beginPath();
+            // Begin drawing
+            drawMap();
+            //Single destination irrespective of version
+            drawDestination();
+            if (mdp_parameters.tag  == -2){
+                drawTaxi(spaceship.grid_loc.human_x,spaceship.grid_loc.human_y,"light");
+                drawPassenger(passenger.grid_loc.human_x,passenger.grid_loc.human_y,"light");
+                drawHotswapStation(hotswap_station.grid_loc.human_x,hotswap_station.grid_loc.human_y,"human");
+            }
+            drawHotswapStation(hotswap_station.grid_loc.x,hotswap_station.grid_loc.y,"agent");
+            if (mdp_parameters.tag  == -1){
+                //Not needed unless single agents
+                drawAgentHistory();
+            }
+            drawTaxi(spaceship.grid_loc.x,spaceship.grid_loc.y,"normal");
+            drawPassenger(passenger.grid_loc.x,passenger.grid_loc.y,"normal");
+    }
+
+        function record_data(){
+            var end_time = performance.now();
+
+            // record whether the user got the optimal trajectory or not
+            var same_traj = false;
+            for (var j = 0; j < mdp_parameters.all_opt_actions.length; j++) {
+                opt_moves = mdp_parameters.all_opt_actions[j]
+                if (moves.length == opt_moves.length) {
+                    for (var k = 0; k < moves.length; k++) {
+                        if (moves[k] != opt_moves[k]) {
+                            // if one move differs, no need to consider other moves. they're not the same trajectory
+                            break;
+                        }
+                    }
+
+                    // if you've found a matching trajectory, no need to check other trajectories
+                    if (k == moves.length) {
+                        same_traj = true;
+                        break;
+                    }
+                }
+            }
+
+
+            var it = window.interaction_type
+            if(it == "final test") {
+                sessionStorage.setItem('augmented_taxi2_' + localStorage.getItem("iteration").toString(), same_traj)
+            }
+
+            final_data = JSON.stringify({
+                'simulation_rt': (end_time - window.start_time),
+                'moves': window.moves,
+                'opt_response': same_traj,
+                'agent_history_nonoffset': window.agent_history_nonoffset,
+                'mdp_parameters': mdp_parameters,
+            });
+
+            var event = new CustomEvent("game-completed", { "detail": "Demonstration has now ended." });
+            // enableScroll();
+            document.dispatchEvent(event);
+
+            localStorage.setItem("user input", final_data);
+            data_sent = true;
+
+            // Display message based on whether the user got the optimal response
+            var messageContainer = document.getElementById("message-container");
+            messageContainer.innerHTML = ""; // Clear previous messages
+
+            if (same_traj) {
+                message = "Congratulations! You followed an optimal path.";
+                messageContainer.style.backgroundColor = "#d4f1d4"; // Subtle green background
+                messageContainer.style.color = "#27632a"; // Darker green text color for readability
+            } else {
+                message = "Unfortunately, you did not follow an optimal path. Let\'s review on the next page!";
+                messageContainer.style.backgroundColor = "#f8d6d8"; // Subtle red background
+                messageContainer.style.color = "#7b2b2d"; // Darker red text color for readability
+            }
+
+            // Display the message
+            messageContainer.textContent = message;
+
+            return same_traj
+        }
+
+        function draw()
+        {
+            if (!window.start_time_set) {
+                window.start_time = performance.now();
+                window.start_time_set = true
+            }
+            if (!map_layout.set){
+                set_grids();
+                map_layout.set = true;
+            }
+            // Clear entire screen
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.beginPath();
+            context.fillStyle = "black";
+            context.fill();
+            context.closePath();
+
+
+            //draw grid
+            for (i = 0; i <= mdp_parameters.height; i++) {
+                    context.beginPath();
+                    context.moveTo(0+offset_x*100, 100*i-1+offset_y*100);
+                    context.lineTo(0+offset_x*100, 100*i+1+offset_y*100);
+                    context.lineTo(mdp_parameters.width*100+offset_x*100, 100*i+1+offset_y*100);
+                    context.lineTo(mdp_parameters.width*100+offset_x*100, 100*i-1+offset_y*100);
+                    context.fillStyle = "black";
+                    context.fill();
+                    context.closePath();
+            }
+            for (i = 0; i <= mdp_parameters.width; i++) {
+                    context.beginPath();
+                    context.moveTo(100*i-1+offset_x*100, 0+offset_y*100);
+                    context.lineTo(100*i+1+offset_x*100, 0+offset_y*100);
+                    context.lineTo(100*i+1+offset_x*100, mdp_parameters.height*100+offset_y*100);
+                    context.lineTo(100*i-1+offset_x*100, mdp_parameters.height*100+offset_y*100);
+                    context.fillStyle = "black";
+                    context.fill();
+                    context.closePath();
+            }
+            
+            // indicate to the participant that it's their turn play
+            if ((window.interaction_type.includes("test")) && (localStorage.getItem("already completed") == 'false')) {
+                context.font = "25px Arial";
+                context.fillStyle = text_color;
+                context.textAlign = "center";
+                context.fillText("Your turn to play!", offset_x * 100 + 200, 80);
+
+                // Draw blue border around the grid
+                context.beginPath();
+                context.rect(offset_x*100 - 3, offset_y*100 - 3, mdp_parameters.width*100 + 6, mdp_parameters.height*100 + 6);
+                context.strokeStyle = "blue";
+                context.lineWidth = 2;
+                context.stroke();
+            }
+
+            context.beginPath();
+            // Begin drawing
+            drawMap();
+            //Single destination irrespective of version
+            drawDestination();
+            if (mdp_parameters.tag  == -2){
+                drawTaxi(spaceship.grid_loc.human_x,spaceship.grid_loc.human_y,"light");
+                drawPassenger(passenger.grid_loc.human_x,passenger.grid_loc.human_y,"light");
+                drawHotswapStation(hotswap_station.grid_loc.human_x,hotswap_station.grid_loc.human_y,"human");
+            }
+            drawHotswapStation(hotswap_station.grid_loc.x,hotswap_station.grid_loc.y,"agent");
+            if (mdp_parameters.tag  == -1){
+                //Not needed unless single agents
+                drawAgentHistory();
+            }
+            drawTaxi(spaceship.grid_loc.x,spaceship.grid_loc.y,"normal");
+            drawPassenger(passenger.grid_loc.x,passenger.grid_loc.y,"normal");
+
+            var game_completed = false
+            if (mdp_parameters.tag == -2) {
+                if (passenger.dropped && passenger.dropped_human) game_completed = true;
+            } else if (passenger.dropped) game_completed = true;
+            
+            console.log("passenger.dropped? ", passenger.dropped, "Game completed?", game_completed);
+
+            if(game_completed)
+            {
+                // canvas.removeEventListener('click', draw);
+                // document.removeEventListener('keydown', keyPressed);
+                context.font = "bold 28px Arial";
+                context.fillStyle = text_color;
+                context.textAlign = "center";
+                context.fillText("Game completed!", (mdp_parameters.width*100)/2+offset_x*100, (mdp_parameters.height*100)/2+offset_y*100+200);
+                
+                var show_likert = false;
+                var same_traj = false;
+                var it = window.interaction_type;
+                var last_test = window.last_test;
+
+
+                //requestAnimationFrame(draw);
+                
+                if (data_sent == false) {
+                    same_traj = record_data()
+                
+                    console.log("I am in the draw function. Interaction type is", it, "Same trajectory?", same_traj, "Data sent?", data_sent);
+                    
+                    if (it == "diagnostic test") {
+                        document.getElementById('message-container').style.display = 'block';
+                        if (same_traj && localStorage.getItem("already completed") === "false") {
+                            // if the test was answered correctly or page wasn't already shown previously, show likert scale
+                            show_likert = true
+                        }
+                    }
+
+                    if (it == "final test"){
+                        if(last_test){
+                            var first = 0;
+                            var second = 0;
+                            var final_score = 0;
+                            
+                            if (sessionStorage.getItem('augmented_taxi2_1') == 'true') {
+                                first = 1;
+                                final_score += 1;
+                            }
+                            if (sessionStorage.getItem('augmented_taxi2_2') == 'true') {
+                                second = 1;
+                                final_score += 1;
+                            }
+                            
+                            var third = 0;
+                            var fourth = 0;
+                            var fifth = 0;
+                            var sixth = 0;
+
+                            if (sessionStorage.getItem('augmented_taxi2_3') == 'true') {
+                                third = 1;
+                                final_score += 1;
+                            }
+                            if (sessionStorage.getItem('augmented_taxi2_4') == 'true') {
+                                fourth = 1;
+                                final_score += 1;
+                            }
+                            if (sessionStorage.getItem('augmented_taxi2_5') == 'true') {
+                                fifth = 1;
+                                final_score += 1;
+                            }
+                            if (sessionStorage.getItem('augmented_taxi2_6') == 'true') {
+                                sixth = 1;
+                                final_score += 1;
+                            }
+
+                            document.getElementById('score').style.display = 'block';
+                            // $jq("#score").html('<div class="text-center"><h1>Score Results</h1><p>You scored <p id="score_val"></p>times correctly.</p></div>')
+                            // document.getElementById('score_val').innerHTML = final_score;
+                            
+                            $jq("#feedback").html('<div class="text-center"><h1>Score Results</h1><p>In order of the tests you took, you scored <p id="score_val"></p>getting <p id="score_val2" style="display:inline"></p> tests correctly out of 6.</p></div>')
+                            // document.getElementById('score_val').innerHTML = first + ' + ' + second + ' + ' + third  + ' + ' + fourth  + ' + ' + fifth + ' + ' + sixth + ' = ' + score
+                            document.getElementById('score_val').innerHTML = first + ' + ' + second + ' = ' + final_score
+                            document.getElementById('score_val2').innerHTML = final_score
+                            
+                            // exploratory data collection on whether people are able to explicitly predict the weights
+                            $("#interaction-survey").html("<br><h3>Finally, please provide your best guess of energy change of the actions below (the last one is given and decimals are allowed!):</h3><table class='center'><tr><th>Actions</th><th>Sample sequence(s)</th><th>Energy change</th></tr><tr><td>Moving <u>out of</u> a yellow square (into yellow <u>or</u> white square)</td><td><img src = 'static/img/augmented_taxi2_toll1.png' width=auto height='125' /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/augmented_taxi2_toll2.png' width=auto height='125' /></td><td><input id='reward_ft_wt_1' type='number' style='width: 4em;'</>%</td></tr><tr><td>Moving through the green hexagon</td><td><img src = 'static/img/augmented_taxi2_battery1.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/augmented_taxi2_battery2.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/augmented_taxi2_battery3.png' width='75' height=auto /></td><td><input id='reward_ft_wt_2' type='number' style='width: 4em;'</>%</td></tr><tr><td>Any action that you take (e.g. moving right, picking up, etc)</td><td><img src = 'static/img/right1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/right2.png' width='150' height=auto /></td><td>-1.0%</td></tr></table>")
+                        }
+                        $jq("#next").replaceWith(`<button type="button" id="next"
+                            onclick="next()"
+                            value="next" class="btn btn-primary btn-lg continue">
+                            Next <span class="glyphicon glyphicon-arrow-right"></span>
+                            </button>` );
+                    }
+                    else if (localStorage.getItem("already completed") === "false"){
+                        show_likert = true;
+                    }
+
+                    if (show_likert) {
+                        $jq("#interaction-survey").html(`<h3>Did this interaction improve your understanding of the game strategy?</h3>
+                        <div class="likert">
+                        <label><input name="info" type="radio" value="1"/><span>Not at all</span></label>
+                        <label><input name="info" type="radio" value="2"/><span>Slightly</span></label>
+                        <label><input name="info" type="radio" value="3"/><span>Moderately</span></label>
+                        <label><input name="info" type="radio" value="4"/><span>Very</span></label>
+                        <label><input name="info" type="radio" value="5"/><span>Extremely</span></label>
+                        </div>
+                        <br></br>
+
+                        <h5>Please feel free to explain your selection if you wish!</h5>
+                        <textarea id="improvement short answer" rows="2" cols="50"></textarea>
+                        ` );
+
+                        var textarea = document.querySelector('textarea');
+                        textarea.addEventListener('keydown', function(event) {
+                            event.stopPropagation();
+                        });
+                    }
+            }
+
+            }
+        }
+
+        function left(version) {
+            var agent_on_hotswap_station = checkHotswap("agent");
+            var human_on_hotswap_station = checkHotswap("human");
+
+            if (version == "agent"){
+                if (spaceship.grid_loc.x > offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-1-offset_x] != 1){
+                spaceship.grid_loc.x -= 1;
+                window.moves.push("left");
+                // agent_history_nonoffset needs to be updated within movement functions to ignore stray key presses that don't change the state
+                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+                if (passenger.picked){
+                    passenger.grid_loc.x -= 1;
+                }
+                if (agent_on_hotswap_station) {
+                    hotswap_station.visited = true;
+                }
+            }
+            }
+            else{
+                if (spaceship.grid_loc.human_x > offset_x && map_layout.color_blocks[spaceship.grid_loc.human_y-offset_y][spaceship.grid_loc.human_x-1-offset_x] != 1){
+                spaceship.grid_loc.human_x -= 1;
+                if (passenger.picked_human){
+                    passenger.grid_loc.human_x -= 1;
+                }
+                if (agent_on_hotswap_station) {
+                    hotswap_station.visited_human = true;
+                }
+                }
+                }
+        }
+
+        function right(version) {
+            var agent_on_hotswap_station = checkHotswap("agent");
+            var human_on_hotswap_station = checkHotswap("human");
+
+            if (version == "agent"){
+                if (spaceship.grid_loc.x < mdp_parameters.width-1+offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x+1-offset_x] != 1){
+                spaceship.grid_loc.x += 1;
+                window.moves.push("right");
+                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+                if (passenger.picked){
+                    passenger.grid_loc.x += 1;
+                }
+                if (agent_on_hotswap_station) {
+                    hotswap_station.visited = true;
+                }
+            }
+            }
+            else{
+                if (spaceship.grid_loc.human_x < mdp_parameters.width-1+offset_x && map_layout.color_blocks[spaceship.grid_loc.human_y-offset_y][spaceship.grid_loc.human_x+1-offset_x] != 1){
+                spaceship.grid_loc.human_x += 1;
+                if (passenger.picked_human){
+                    passenger.grid_loc.human_x += 1;
+                }
+                if (agent_on_hotswap_station) {
+                    hotswap_station.visited = true;
+                }
+                }
+                }
+        }
+
+        function up(version) {
+            var agent_on_hotswap_station = checkHotswap("agent");
+            var human_on_hotswap_station = checkHotswap("human");
+
+            if (version == "agent"){
+                if (spaceship.grid_loc.y > offset_y && map_layout.color_blocks[spaceship.grid_loc.y-1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
+                spaceship.grid_loc.y -= 1;
+                window.moves.push("up");
+                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+                if (passenger.picked){
+                    passenger.grid_loc.y -= 1;
+                }
+                if (agent_on_hotswap_station) {
+                    hotswap_station.visited = true;
+                }
+            }
+            }
+            else{
+                if (spaceship.grid_loc.human_y > offset_y && map_layout.color_blocks[spaceship.grid_loc.human_y-1-offset_y][spaceship.grid_loc.human_x-offset_x] != 1){
+                spaceship.grid_loc.human_y -= 1;
+                if (passenger.picked_human){
+                    passenger.grid_loc.human_y -= 1;
+                }
+                if (human_on_hotswap_station) {
+                    hotswap_station.visited_human = true;
+                }
+                }
+                }
+
+        }
+
+        function down(version) {
+            var agent_on_hotswap_station = checkHotswap("agent");
+            var human_on_hotswap_station = checkHotswap("human");
+
+            if (version == "agent"){
+                if (spaceship.grid_loc.y < mdp_parameters.height-1+offset_y && map_layout.color_blocks[spaceship.grid_loc.y+1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
+                spaceship.grid_loc.y += 1;
+                window.moves.push("down");
+                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+                if (passenger.picked){
+                    passenger.grid_loc.y += 1;
+                }
+                if (agent_on_hotswap_station) {
+                    hotswap_station.visited = true;
+                }
+            }
+            }
+            else{
+                if (spaceship.grid_loc.human_y < mdp_parameters.height-1+offset_y && map_layout.color_blocks[spaceship.grid_loc.human_y+1-offset_y][spaceship.grid_loc.human_x-offset_x] != 1){
+                spaceship.grid_loc.human_y += 1;
+                if (passenger.picked_human){
+                    passenger.grid_loc.human_y += 1;
+                }
+                if (human_on_hotswap_station) {
+                    hotswap_station.visited_human = true;
+                }
+                }
+                }
+        }
+
+        function pickup(version) {
+            if (version == "agent"){
+                if (Math.floor(spaceship.grid_loc.x) == Math.floor(passenger.grid_loc.x) && spaceship.grid_loc.y == passenger.grid_loc.y && passenger.picked == false){
+                    moves.push("pickup");
+                    window.moves.push("pickup");
+                    passenger.picked = true;
+                    window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+            }}
+            else{
+                console.log("here")
+                if (Math.floor(spaceship.grid_loc.human_x) == Math.floor(passenger.grid_loc.human_x) && spaceship.grid_loc.human_y == passenger.grid_loc.human_y && passenger.picked_human == false){
+                    passenger.picked_human = true;
+            }}
+        }
+
+        function no_op(){
+            return;
+        }
+
+        function dropoff(version) {
+            if (version == "agent"){
+                var condition_goal = ((Math.floor(spaceship.grid_loc.x) == goal.grid_loc.x) && (spaceship.grid_loc.y == goal.grid_loc.y));
+
+                if (passenger.picked){
+                    window.moves.push("dropoff");
+                    passenger.picked = false;
+                    if (condition_goal){
+                        passenger.dropped = true;
+                        //watched_vid_arr[current_page] = true;
+                        console.log(moves);
+                        window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+                    }
+                }
+            }
+            else{
+                var condition_goal = ((Math.floor(spaceship.grid_loc.human_x) == goal.grid_loc.x) && (spaceship.grid_loc.human_y == goal.grid_loc.y));
+
+                if (passenger.picked_human){
+                    passenger.picked_human = false;
+                    if (condition_goal){
+                        passenger.dropped_human = true;
+                    }
+                }
+            }
+
+
+        }
+
+        function reset() {
+            // document.removeEventListener('keydown', keyPressed);
+            // window.moves = [];
+            moves = [];
+            map_layout.set = false;
+            passenger.picked = false;
+            passenger.picked_human = false;
+            hotswap_station.visited = false;
+            hotswap_station.visited_human = false;
+            window.agent_history = [];
+            window.agent_history_nonoffset = [];
+        }
+
+
+        function checkHotswap(version){
+            if (version == "agent"){
+                if (spaceship.grid_loc.x == hotswap_station.grid_loc.x && spaceship.grid_loc.y == hotswap_station.grid_loc.y) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else{
+                if (spaceship.grid_loc.human_x == hotswap_station.grid_loc.human_x && spaceship.grid_loc.human_y == hotswap_station.grid_loc.human_y) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+
+        // function disableScroll() {
+        //         scrollTop = window.pageYOffset
+
+        //         window.onscroll = function() {
+        //             window.scrollTo(scrollTop);
+        //         };
+        //     }
+
+        // function enableScroll() {
+        //     window.onscroll = function() {};
+        // }
+
+        idx = 0;
+        var agent_human_spacer = -0.2;
+        if (mdp_parameters.tag == -2) {
+            var translate_draw = 10;
+        }
+        else {
+            var translate_draw = 0;
+        }
+
+        function keyPressed(event)
+        {
+            event.preventDefault();
+            if (mdp_parameters.tag == -2) {
+                //training case, agent & human
+
+                if (event.keyCode == 32) {
+                    
+                    //space bar pressed, advance demo
+
+                    var next_action_agent = mdp_parameters.normalized_opt_actions[idx];
+                    var next_action_human = mdp_parameters.normalized_human_actions[idx];
+                    console.log("agent:" + next_action_agent);
+                    console.log("human:" + next_action_human);
+                    console.log("Idx: ", idx);
+                    idx++;
+                    switch (next_action_human) {
+                        case "left":
+                            left("human");
+                            break;
+                        case "right":
+                            right("human");
+                            break;
+                        case "up":
+                            up("human");
+                            break;
+                        case "down":
+                            down("human");
+                            break;
+                        case "pickup":
+                            pickup("human");
+                            break;
+                        case "dropoff":
+                            dropoff("human");
+                            break;
+                        case "no-op":
+                            no_op();
+                            break;
+                    }
+                    switch (next_action_agent) {
+                        case "left":
+                            left("agent");
+                            break;
+                        case "right":
+                            right("agent");
+                            break;
+                        case "up":
+                            up("agent");
+                            break;
+                        case "down":
+                            down("agent");
+                            break;
+                        case "pickup":
+                            pickup("agent");
+                            break;
+                        case "dropoff":
+                            dropoff("agent");
+                            break;
+                        case "no-op":
+                            no_op();
+                            break;
+                    }
+                    //agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                    requestAnimationFrame(draw);
+                }
+                if (event.keyCode == 82) {
+                        idx = 0;
+                        reset();
+                        requestAnimationFrame(draw);
+                    }
+            }
+            else if (mdp_parameters.tag == -1) {
+                    //training case, just agent
+                    if (event.keyCode == 32) {
+                        //space bar pressed, advance demo
+                        var next_action_agent = mdp_parameters.opt_actions[idx];
+                        console.log('Idx:', idx, 'Next action:', next_action_agent);
+                        idx++;
+                        switch (next_action_agent) {
+                            case "left":
+                                left("agent");
+                                break;
+                            case "right":
+                                right("agent");
+                                break;
+                            case "up":
+                                up("agent");
+                                break;
+                            case "down":
+                                down("agent");
+                                break;
+                            case "pickup":
+                                pickup("agent");
+                                break;
+                            case "dropoff":
+                                dropoff("agent");
+                                break;
+                        }
+                        
+                        window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                        console.log("Pushed to agent history in training. History: ", window.agent_history);
+                        // console.log([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                        requestAnimationFrame(draw);
+                    } 
+                    else if (event.keyCode == 82) {
+                        idx = 0;
+                        reset();
+                        requestAnimationFrame(draw);
+                    }
+                }
+            else {
+                //testing case
+                // prevent arrow keys from simultaneously moving the window
+                if([37, 38, 39, 40].indexOf(event.keyCode) > -1) {
+                    event.preventDefault();
+                }
+                if (!passenger.dropped) {
+                    switch (event.keyCode) {
+                        case 37:
+                            // Left Arrow key
+                            left("agent");
+                            break;
+                        case 39:
+                            // Right Arrow key
+                            right("agent");
+                            break;
+                        case 38:
+                            // Up Arrow key
+                            up("agent");
+                            break;
+                        case 40:
+                            // down Arrow key
+                            down("agent");
+                            break;
+                        case 80:
+                            //p key
+                            pickup("agent");
+                            break;
+                        case 68:
+                            //d key
+                            dropoff("agent");
+                            break;
+                        case 82:
+                            //r key
+                            reset("agent");
+                            break;
+                    }
+                    if (event.keyCode != 82) {
+                        window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                        console.log("Pushed to agent in testing case. History: ", window.agent_history);
+                    }
+                    requestAnimationFrame(draw);
+                }
+            }
+        }
+
+        function filterMovementKeys(event) {
+            // This function will run every time a key is pressed...
+            if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(event.code) > -1) {
+                event.preventDefault();
+            }
+            }
+        
+
+        // Debounce the keyPressed function
+        var debouncedKeyPressed = _.debounce(keyPressed, 100); // limit consecutive keystrokes
+        //var debouncedKeyPressed = keyPressed;
+
+        // Create a new function that calls both functions
+        function keydownHandler(event) {
+            filterMovementKeys(event);
+            debouncedKeyPressed(event);
+        }
+        document.addEventListener('keydown', keydownHandler);
+
+
+        // document.addEventListener('keydown', _.debounce(keyPressed, 200))
+        // document.addEventListener('keydown', keyPressed);
+
+        start_screen();
+        canvas.addEventListener('click', draw);
+        context.restore();
+        return "finished execution";
+    }
+    </script>
+  </body>
+</html>

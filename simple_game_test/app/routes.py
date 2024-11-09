@@ -470,7 +470,7 @@ def next_domain(data):
             interaction_type = current_user.interaction_type,
             iteration = current_user.iteration,
             subiteration = current_user.subiteration,
-            likert = int(data["interaction_survey"]),
+            likert = int(data["interaction survey"]),
             moves = data["user input"]["moves"],
             coordinates = data["user input"]["agent_history_nonoffset"],
             is_opt_response = data["user input"]["opt_response"],
@@ -666,7 +666,7 @@ def settings(data):
 
 
                 ### Add trial data to database when a trial is completed and re-visited after completion
-                if (current_trial is None and current_user.round !=0 and data["interaction type"] is not None and int(data["interaction_survey"]) != -1) or (current_trial is not None and int(data["interaction_survey"]) != -1):
+                if (current_trial is None and current_user.round !=0 and data["interaction type"] is not None and int(data["interaction survey"]) != -1) or (current_trial is not None and int(data["interaction survey"]) != -1):
                     
                     print('Adding trial data to database...')
                     if 'test' in current_user.interaction_type:
@@ -1055,7 +1055,7 @@ def settings(data):
                 # debug_string = f"Final tests for this game. <br> Test no. {current_user.iteration}/{len(updated_round.round_info)}."
 
             response["debug string"] = ''
-            response["last answer"] = current_user.last_iter_in_round
+            response["last iteration"] = current_user.last_iter_in_round
             response["last test"] = current_user.last_test_in_round
             response["interaction type"] = current_user.interaction_type
             response["already completed"] = next_already_completed
@@ -1065,9 +1065,9 @@ def settings(data):
             response["lesson id"] = lesson_id
             response["lesson string"] = lesson_string
             if current_group.status == "Domain teaching completed" and current_user.interaction_type=="final test" and current_user.last_iter_in_round:
-                response["domain_completed"] = True
+                response["domain completed"] = True
             else:
-                response["domain_completed"] = False
+                response["domain completed"] = False
 
             print('Settings response:', response)
         
@@ -1919,7 +1919,7 @@ def add_trial_data(domain, data):
         interaction_type = current_user.interaction_type,
         iteration = current_user.iteration,
         subiteration = current_user.subiteration,
-        likert = int(data["interaction_survey"]),
+        likert = int(data["interaction survey"]),
         moves = data["user input"]["moves"],
         coordinates = data["user input"]["agent_history_nonoffset"],
         is_opt_response = data["user input"]["opt_response"],

@@ -54,8 +54,6 @@ pool = Pool(processes=pool_size)  # Adjust the number of processes as needed
 
 logging.basicConfig(level=logging.DEBUG)
 
-
-
 rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
 if rows == 0:
 	for condition in ONLINE_CONDITIONS:
