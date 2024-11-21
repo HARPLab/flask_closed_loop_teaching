@@ -4,6 +4,9 @@
     <title>Simulation</title>
 
     <script src="/static/lib/jquery-min.js" type="text/javascript"> </script>
+    <script type="text/javascript">
+        console.log(typeof $ !== 'undefined' ? "jQuery is loaded" : "jQuery is not loaded"); // Debug: check if jQuery is loaded
+    </script> 
     <script>
         var $jq = jQuery.noConflict();
         console.log($jq); // Debug: Testing the conflict-free jQuery reference
@@ -14,12 +17,9 @@
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <!-- <link rel="stylesheet" href="/static/css/bootstrap.min.css.4.3.1.css" type="text/css" /> -->
     <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
     <link rel="stylesheet" href="/static/css/jspsych.css" type="text/css" />
- 
-
-  <style type="text/css">
+    <style type="text/css">
     .likert ul
     {
         list-style-type: none;
@@ -118,62 +118,45 @@
         to { opacity: 0.5; }
     }
 
-    table {
-        /* #font-size: 0.8em; /* Reduce font size */
-        padding: 0; /* Remove padding */
-        margin: 0; /* Remove margin */
-        line-height: 1; /* Reduce line height */
-    }
-</style>
+    </style>
+  </head>
 
-</head>
-
-
-
-<body>
-
+  <body>
 <div class="container-fluid" style="padding-left: 5%; padding-right: 5%">
   <div id="container-instructions" class="text-center">
-    <!-- non button section, id'd by non-buttons, should be entirely replaced by
+    <!-- non button section, id'd by non-buttons, should be entirely replaced by 
     survey when we get to end of all of training -->
     <div id="non-buttons">
-          <div id="center-container">
-              <div id="loading-container">
-                  <div class="spinner"></div>
-                  <div id="loading-text">Please wait. Loading the next instruction...</div>
-              </div>
-          </div>
-    <div id="preamble" class="pre_info">
-        <h1 id="header">Participant gameplay</h1> <hr/>
-        <div id = "info_main"></div>
-    </div>
-    <h2 id="debug"></h2><br><br><br>
-    <div class="row justify-content-around">
-        <canvas id="game" width="850" height="500"></canvas>
-        <div id="container">
-            <div id="table_controlinfo"></div>
-            <!-- only for wtcl and wt -->
-            <!--<div id="reward_weight_table"><br>
-            <table width="500">
-                <tr><th>Actions</th><th>Energy change</th></tr>
-                <tr><td>Moving out of a yellow square</td><td>- 3%</td></tr>
-                <tr><td>Moving through the green hexagon</td><td>+ 3.5%</td></tr>
-                <tr><td>Any action that you take</td><td>- 1%</td></tr>
-            </table>
-            <br></div>-->
+            <div id="center-container">
+                <div id="loading-container">
+                    <div class="spinner"></div>
+                    <div id="loading-text">Please wait. Loading the next instruction...</div>
+                </div>
+            </div>
+        <div id="preamble" class="pre_info">
+            <h1 id="header">Participant gameplay</h1> <hr/>
+            <div id = "info_main"></div>
         </div>
+        <h2 id="debug"></h2><br><br><br>
+        <div id="game_container" class="row justify-content-around">
+            <canvas id="game" width="850" height="500"></canvas>
+            <div id="table_controlinfo"></div>
+        </div>
+
+        <div id="message-container"></div>
+        <div id="score"></div>
+        <!-- <div id="interaction_survey"></div> -->
+        <div id="wait">Please wait until all members of your team have finished this round and for the next session to be available.</div>
+        <div id="flashMessage"></div>
+        <div id="feedback"></div>
+        <div id="survey"></div>
+        <hr>
+        <br>
     </div>
 
-    <div id="message-container"></div>
-    <div id="score"></div>
-    <!-- <div id="interaction_survey"></div> -->
-    <div id="wait">Please wait until all members of your team have finished this round and for the next session to be available.</div>
-    <div id="flashMessage"></div>
-    <div id="feedback"></div>
-    <div id="survey"></div>
-    <hr>
-    <br>
-    </div>
+
+    
+
 
     <div id="instructions" class="instructionsnav">
         <div class="row justify-content-between">
@@ -182,7 +165,7 @@
             </button>
           </div>
           <div class="col-xs-3">
-            <button type="button" id="next" disabled
+                <button type="button" id="next" disabled
             onclick="next()"
             value="next" class="btn btn-primary btn-lg continue">
             Next <span class="glyphicon glyphicon-arrow-right"></span>
@@ -195,48 +178,49 @@
     </div>
     </div>
 
-
   <script>
+    
+    let audio; // Declare the audio variable globally
 
-        let audio; // Declare the audio variable globally   
-        
-        // hide the game instructions and preamble and show a loading screen while waiting to receive the necessary game data
-        document.getElementById('instructions').style.display = 'none';
-        document.getElementById('preamble').style.display = 'none';
-        document.getElementById('wait').style.display = 'none';
-        document.getElementById('message-container').style.display = 'none';
-        document.getElementById('flashMessage').style.display = 'none';
 
-        // var roomIdentifier = localStorage.getItem("username")
+    // hide the game instructions and preamble and show a loading screen while waiting to receive the necessary game data
+    document.getElementById('instructions').style.display = 'none';
+    document.getElementById('preamble').style.display = 'none';
+    document.getElementById('wait').style.display = 'none';
+    document.getElementById('message-container').style.display = 'none';
+    document.getElementById('flashMessage').style.display = 'none';
 
-        // if (roomIdentifier == null) {
-        //     // the username will available in localStorage after the first page between augmented_taxi2.html, colored_tiles.html, skateboard2.html
-        //     // for the first page, simply make up a placeholder which statistically won't conflict (and the first page of each domain should load instantaneously anyways)
-        //     roomIdentifier = Math.floor(Math.random() * 100000000000000);
-        // }
 
-        var socket = io();
+    //   const roomIdentifier = "uniqueRoomIdentifier";  // Replace with the actual room identifier
+    //   const websocket = new WebSocket(`ws://localhost:8765/$jq{roomIdentifier}`); // todo: will likely have to replace with a nonlocal host
 
-        const loadingText = document.getElementById('loading-text');
-        // socket.on('message', function(data) {
-        //     if (data === "Progress updates complete") {
-        //         console.log('Progress updates complete');
-        //     } else {
-        //         var progress = parseInt(data);
-        //         if (isNaN(progress)) {
-        //             progress = 0
-        //         }
-        //         loadingText.innerHTML = `Loading the next instruction... ($jq{progress}% completed)`
-        //     }
-        // });
+    //   websocket.onopen = function(event) {
+    //       console.log('Connected to server');
+    //   };
 
-        function populateData() {
+    //   const loadingText = document.getElementById('loading-text');
+    //   websocket.onmessage = function(event) {
+    //       const data = event.data;
+    //       if (data === "Progress updates complete") {
+    //           console.log('Progress updates complete');
+    //           websocket.close(); // Close the WebSocket connection
+    //       } else {
+    //           var progress = parseInt(data);
+    //           if (isNaN(progress)) {
+    //               progress = 0
+    //           }
+    //           loadingText.innerHTML = `Loading the next instruction... ($jq{progress}% completed)`
+    //       }
+    //   };
+
+      var socket = io();
+
+      function populateData() {
             let data = {};
             data["domain"] = localStorage.getItem("domain");
             data["interaction type"] = localStorage.getItem("interaction type");
-            data["survey"] = localStorage.getItem("survey")
+            data["interaction survey"] = localStorage.getItem("interaction survey")
             data["iteration"] = Number(localStorage.getItem("iteration"));
-            data["subiteration"] = Number(localStorage.getItem("subiteration"));
             data["user input"] = JSON.parse(localStorage.getItem("user input"));
             data["movement"] = localStorage.getItem("movement");
             data["attn1"] = localStorage.getItem("attn1");
@@ -247,177 +231,221 @@
             data["use3"] = localStorage.getItem("use3");
             data["understanding"] = localStorage.getItem("understanding");
             data["engagement short answer"] = localStorage.getItem("engagement short answer");
-            data["improvement short answer"] = localStorage.getItem("improvement short answer");
+            data["improvement short answer"] = localStorage.getItem("improvement short answer");            
             data["already completed"] = localStorage.getItem("already completed");
             data["room_name"] = localStorage.getItem("room_name");
 
-        let reward_ft_wt_1_field = document.getElementById("reward_ft_wt_1")
-        let reward_ft_wt_2_field = document.getElementById("reward_ft_wt_2")
-        if ((reward_ft_wt_1_field != null) && (reward_ft_wt_2_field != null)) {
+          let reward_ft_wt_1_field = document.getElementById("reward_ft_wt_1")
+          let reward_ft_wt_2_field = document.getElementById("reward_ft_wt_2")
+          if ((reward_ft_wt_1_field != null) && (reward_ft_wt_2_field != null)) {
                 data["reward_ft_weights"] = [reward_ft_wt_1_field.value, reward_ft_wt_2_field.value]
             } else {
                 data["reward_ft_weights"] = []
-        }
-        return data
-        }
+          }
+          return data
+      }
 
-        socket.on("connect", function () {
+      socket.on("connect", function () {
+  
             data = populateData()
             socket.emit("settings", data);
         });
 
-        socket.on("member joined again", function (data) {
+    socket.on("member joined again", function (data) {
         console.log(data["user code"] + " has now joined");
-        });
+    });
 
+    socket.on("congratulations!", () => {
+        console.log("at the last round now!")
+        window.last_round = true;
+    });
 
-        socket.on("settings configured", function (data) {
-            console.log('Received settings:', data);
-            localStorage.setItem("username", data["username"]);
-            localStorage.setItem("movement", "false");
-            localStorage.setItem("user input", "{}");
-            // localStorage.setItem("game completed", "false");
-            // localStorage.setItem("survey completed", "false");
-            localStorage.setItem("survey", "-1");
-            window.mdp_parameters = data["params"];
-            window.interaction_type = data["interaction type"]; // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
-            localStorage.setItem("already completed", data["already completed"]);
-            localStorage.setItem("domain", data["domain"]);
-            localStorage.setItem("interaction type", data["interaction type"]);
-            localStorage.setItem("iteration", data["iteration"]);
-            localStorage.setItem("total iterations", data["total iterations"]);
-            localStorage.setItem("lesson id", data["lesson id"]);
-            localStorage.setItem("lesson string", data["lesson string"]);
-            window.domain_completed = false;
+    socket.on("settings configured", function (data) {
+        console.log('Received settings:', data);
+        localStorage.setItem("interaction survey", "-1");
+        localStorage.setItem("movement", "false");
+        localStorage.setItem("user input", JSON.stringify({ moves: data["moves"] }));
+        window.mdp_parameters = data["params"];
+        window.interaction_type = data["interaction type"];
+
+        localStorage.setItem("already completed", data["already completed"]);
+        localStorage.setItem("interaction type", data["interaction type"]);
+        localStorage.setItem("domain", data["domain"]);
+        localStorage.setItem("iteration", data["iteration"]);
+        localStorage.setItem("total iterations", data["total iterations"]);
+        localStorage.setItem("lesson id", data["lesson id"]);
+        localStorage.setItem("lesson string", data["lesson string"]);
+
+        window.last_test = false;
+
+        document.getElementById("message-container").style.display = 'none';
+        
+        if (data["last answer"]) {
+            window.last_in_round = true;
+            console.log("reached last answer in round");
+
+        }
+        else {
+            if (data["interaction type"] == "demo") {
+                window.last_round = false;
+                window.joint_EOR = false;
+            }
+            window.last_in_round = false;
 
             if (data["last test"]) {
-                localStorage.setItem("last test", "true");
-                console.log("Reached last test in round");
+                window.last_test = true;
+                console.log("reached last test in round");
             }
+        }
 
-            if (!data["last iteration"]) {
-                if (data["interaction type"] == "demo") {
-                    window.joint_EOR = false;
-                }
-                window.last_in_round = false;
-            }
-            else {
-                window.last_in_round = true;
-                console.log("Reached last iteration in round");
-            }
-
-            if (data["domain completed"]) {
-                console.log("domain completed");
-                window.domain_completed = true;
-            }
+        if (data["domain_completed"]) {
+            console.log("domain completed");
+            window.domain_completed = true;
+        }
 
 
-            if (data["go prev"] == false) {
-                $jq("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
-            </button>`);
-            }
-            else {
-                $jq("#prev").replaceWith(`<button type="button" id="prev" onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
-            </button>`);
-            }
-
-            if ((data["already completed"] == true)) {
-                $jq("#next").replaceWith(`<button type="button" id="next"
-                    onclick="next()"
-                    value="next" class="btn btn-primary btn-lg continue">
-                    Next <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>` );
-            }
-            else {
-                $jq("#next").replaceWith(`<button type="button" id="next" disabled
-            onclick="next()"
-            value="next" class="btn btn-primary btn-lg continue">
-            Next <span class="glyphicon glyphicon-arrow-right"></span>
-            </button>` );
-            $jq("#interaction_survey").html(``);
-            }
         
+        // localStorage.setItem("game completed", "false");
+        // localStorage.setItem("survey completed", "false");
+        console.log('MDP params: ', data["params"], 'go_prev:', data["go prev"]);
+         // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
+        
+        console.log($jq)
 
-            $jq("#debug").html(data["debug string"]);
+        if (data["go prev"] == false) {
+            $jq("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+        </button>`);
+        }
+        else {
+            $jq("#prev").replaceWith(`<button type="button" id="prev" onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+        </button>`);
+        }
 
-            // hide the loading screen and show the game content
-            document.getElementById('wait').style.display = 'none';
-            document.getElementById('center-container').style.display = 'none';
-            
-            document.getElementById('instructions').style.display = 'block';
-            document.getElementById('preamble').style.display = 'block';
-            
-            if (!window.interaction_type.includes('test')) {
+        if ((data["already completed"] == true)) {
+            $jq("#next").replaceWith(`<button type="button" id="next"
+                onclick="next()"
+                value="next" class="btn btn-primary btn-lg continue">
+                Next <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>` );
+        }
+        else {
+            $jq("#next").replaceWith(`<button type="button" id="next" disabled
+        onclick="next()"
+        value="next" class="btn btn-primary btn-lg continue">
+        Next <span class="glyphicon glyphicon-arrow-right"></span>
+        </button>` );
+        $jq("#interaction_survey").html(``);
+        }
+        
+        // console.log('Interaction type:', window.interaction_type);
+        // if (window.interaction_type == "final test") {
+        //     $jq("#header").replaceWith('<h1>Strategy assessment)</h1>');
+        //     // cl, pl, open, wtcl
+        //     $jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+        //     // wt
+        //     //$jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
+        //     //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+        //     document.getElementById('prev').style.display = 'none';
+        // } 
+        // else if (window.interaction_type == "diagnostic test") {
+        //     $jq("#header").replaceWith('<h1>Check-in test</h1>');
+        //     if (localStorage.getItem("already completed") == 'true') {
+        //         $jq("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
+        //     }
+        //     else {
+        //         $jq("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
+        //     }
+        // }
+        // else if (window.interaction_type == "demo"){
+        //     $jq("#header").replaceWith('<h1>Demonstration</h1>');
+        //     $jq("#info_main").replaceWith('<h3>Demonstration of best strategy that minimizes Chip\'s energy loss</h3>');
+
+        // }
+        // else if (window.interaction_type == "answer"){
+        //     $jq("#header").replaceWith('<h1>Feedback</h1>');
+        //     $jq("#info_main").replaceWith("<h3>Chip's optimal path to previous check-in test</h3>");
+        // }
+
+
+
+        $jq("#debug").html(data["debug string"]);
+        // if (data["last test"]) {
+        //     localStorage.setItem("last test", "true");
+        // }
+        // hide the loading screen and show the game content
+        document.getElementById('wait').style.display = 'none';
+        document.getElementById('center-container').style.display = 'none';
+        document.getElementById('score').style.display = 'none'
+        
+        document.getElementById('instructions').style.display = 'block';
+        document.getElementById('preamble').style.display = 'block';
+
+
+        if (!window.interaction_type.includes('test')) {
             document.getElementById('message-container').style.display = 'none';
             }
+        console.log('Interaction type:', window.interaction_type);
+        console.log('Params:', window.mdp_parameters);
+        change_text(window.interaction_type);
+        run_page(window.mdp_parameters);
+    });
+    
 
-            // don't show the previous button for final tests
-            if (window.interaction_type == 'final test') {
-                document.getElementById('prev').style.display = 'none';
-            }
+    socket.on("all reached EOR", function (){
+        console.log("all reached EOR");
 
-            console.log('Interaction type:', window.interaction_type);
-            console.log('Params:', window.mdp_parameters);
-            change_text(window.interaction_type);
-            run_page(window.mdp_parameters);
-        });
+        const now = new Date();
+        start_time = now.toLocaleTimeString(); 
+        console.log("Start time: " + start_time);
+        while (now.toLocaleTimeString() - start_time <= 1500) {
+            console.log("All reached EOR...." + now.toLocaleTimeString());
+        }
 
-        
-        socket.on("all reached EOR", function (){
-            console.log("received all reached EOR message...");
+        // show the flash message
+        var flashMessage = document.getElementById("flashMessage");
+        flashMessage.style.display = 'block';
+        flashMessage.innerHTML = "Next learning session is available now! Press any key to continue with the study.";
 
-            const now = new Date();
-            start_time = now.toLocaleTimeString(); 
-            console.log("Start time: " + start_time);
-            while (now.toLocaleTimeString() - start_time <= 1500) {
-                console.log("All reached EOR...." + now.toLocaleTimeString());
-            }
+        // play the audio
+        audio = new Audio("/static/audio/mixkit-positive-notification-951.wav");
+        audio.loop = true;
+        audio.play();
 
-            // show the flash message
-            var flashMessage = document.getElementById("flashMessage");
-            flashMessage.style.display = 'block';
-            flashMessage.innerHTML = "Next learning session is available now! Press any key to continue with the study.";
+        // // when next lesson is available before completing survey
+        // localStorage.setItem("survey completed", "true");
+        // // checked based on input name
+        // let radioValue = $jq("input[name='info']:checked").val();
+        // if(radioValue) {
+        //     localStorage.setItem("interaction_survey", radioValue);
+        // }
 
-            // play the audio
-            audio = new Audio("/static/audio/mixkit-positive-notification-951.wav");
-            audio.loop = true;
-            audio.play();
+        // if (radioValue != -1) {
+        //     $jq("#next").replaceWith(`<button type="button" id="next"
+        //                 onclick="next()"
+        //                 value="next" class="btn btn-primary btn-lg continue">
+        //                 Next <span class="glyphicon glyphicon-arrow-right"></span>
+        //                 </button>` );
+        // }
 
-            // // when next lesson is available before completing survey
-            // localStorage.setItem("survey completed", "true");
-            // // checked based on input name
-            // let radioValue = $jq("input[name='info']:checked").val();
-            // if(radioValue) {
-            //     localStorage.setItem("interaction_survey", radioValue);
-            // }
-
-            // if (radioValue != -1) {
-            //     $jq("#next").replaceWith(`<button type="button" id="next"
-            //                 onclick="next()"
-            //                 value="next" class="btn btn-primary btn-lg continue">
-            //                 Next <span class="glyphicon glyphicon-arrow-right"></span>
-            //                 </button>` );
-            // }
-
-            // Add event listener for keypress to hide the message and stop the audio
-            document.addEventListener('keydown', function() {
-                // Hide the flash message
-                flashMessage.style.display = 'none';
-                
-                // Stop the audio
-                audio.pause();
-                audio.currentTime = 0;  // Reset audio to start position
-
-                document.removeEventListener('keydown', arguments.callee);
-            });
-
-
-            document.getElementById('wait').style.display = 'none';
-            // next();  // automatically go to next session
+        // Add event listener for keypress to hide the message and stop the audio
+        document.addEventListener('keydown', function() {
+            // Hide the flash message
+            flashMessage.style.display = 'none';
             
-            window.joint_EOR = true;
+            // Stop the audio
+            audio.pause();
+            audio.currentTime = 0;  // Reset audio to start position
 
+            document.removeEventListener('keydown', arguments.callee);
         });
+
+
+        document.getElementById('wait').style.display = 'none';
+        // next();  // automatically go to next session
+        
+        window.joint_EOR = true;
+
+    });
 
         // Shuffle function
         function shuffle(array) {
@@ -435,31 +463,17 @@
         // Assign html for interaction type
         function change_text(interaction_type){
             console.log("changing text for interaction type", interaction_type);
-
-            // Define background colors for each interaction type
-            const colors = {
-                "final test": "lightcoral",
-                "diagnostic test": "lightyellow",
-                "demo": "lightgreen",
-                "diagnostic feedback": "628dbe",  // same color as the agent in the game
-                "default": "white" // Fallback color
-            };
-
-
-            const headerElement = document.getElementById("header");
-
             
             // change headers
             if (interaction_type == "final test") {
                 console.log("final test");
-                $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration"))).toString() + '/6)</h1>');
+                $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration")) + 1).toString() + '/6)</h1>');
                 // cl, pl, open, wtcl
                 $jq("#info_main").html('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
                 // wt
                 //$jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
                 //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
                 document.getElementById('prev').style.display = 'none';
-                headerElement.style.backgroundColor = colors["final test"];
             } 
             else if (interaction_type == "diagnostic test") {
                 console.log("diagnostic test");
@@ -470,8 +484,6 @@
                 else {
                     $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
                 }
-                headerElement.style.backgroundColor = colors["diagnostic test"];
-
             }
             else if (interaction_type == "demo"){
                 console.log("demo");
@@ -482,23 +494,19 @@
                     $jq("#header").html('<h1> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
                 }
                 $jq("#info_main").html('<h3>Step through the demonstration <u>using your space bar</u>.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue!</h3>');
-                headerElement.style.backgroundColor = colors["demo"];
-
+ 
             }
             else if (interaction_type == "diagnostic feedback"){
                 console.log("diagnostic feedback");
                 $jq("#header").html('<h1>Feedback</h1>');
                 $jq("#info_main").html("<h3>Chip's optimal path to previous check-in test</h3>");
-                headerElement.style.backgroundColor = colors["diagnostic feedback"];
-
             }
             else{
                 console.log("default");
                 $jq("#header").html('<h1>Participant gameplay</h1>');
                 $jq("#info_main").html('<h3>Blah.</h3>');
-                headerElement.style.backgroundColor = colors["default"];
-
             }
+
             
             // change table and survey
             if (interaction_type === "survey") {
@@ -599,16 +607,6 @@
             }
         }
 
-        // socket.on("", function (data) {
-        //     if (data["passed"]) {
-        //         $jq("button").replaceWith(`<button type="button" id="next"
-        //             onclick="make_sandbox()"
-        //             value="next" class="btn btn-primary btn-lg continue">
-        //             Next <span class="glyphicon glyphicon-arrow-right"></span>
-        //             </button>` );
-        //     }
-        // }
-        // );
 
         function prev() {
             console.log("I am going prev");
@@ -618,11 +616,8 @@
 
 
         function next() {
-            idx = 0;
             localStorage.setItem("movement", "next");
             //localStorage.setItem("survey completed", "false");
-            
-            console.log("Domain completed?", window.domain_completed);
 
             if (!window.domain_completed){
                 // if (window.last_test) {
@@ -645,22 +640,19 @@
                 }
             }
             
-            
+            console.log("Domain completed?", window.domain_completed);
             if (window.domain_completed) {
                 // localStorage.setItem("last test", "false");
-                
-                data = populateData();
-                
                 socket.emit("next domain", data);
-                socket.on("next domain is", function(next_dom_data) {
+                socket.on("next domain is", function(data) {
                     console.log("I have received next domain");
                     let url = "";
-                    if (next_dom_data["domain"].length === 2){
+                    if (data["domain"].length === 2){
                         // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
-                        if (next_dom_data["domain"] == 'at'){
+                        if (data["domain"] == 'at'){
                             url = "{{ url_for('at_intro') }}";
                         }
-                        if (next_dom_data["domain"] == 'sb'){
+                        if (data["domain"] == 'sb'){
                             url = "{{ url_for('sb_intro') }}";
                         }
 
@@ -674,10 +666,10 @@
             }
 
             else {
-                window.location.href="{{ url_for('at')}}";
-                console.log("printing agent history nonoffset");
-                console.log(window.agent_history_nonoffset);
-                data = populateData()
+            // window.location.href='/at';
+            console.log("printing agent history nonoffset");
+            console.log(window.agent_history_nonoffset);
+            data = populateData()
 
             // if (window.last_round && window.last_in_round) {
             //     window.location.href = "{{ url_for('final_survey') }}";
@@ -691,47 +683,22 @@
             window.agent_history = [];
             window.agent_history_nonoffset = [];
 
-            // update the next button to be disabled
-            if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
-                
-                loadingText.innerHTML = `Please wait for all your teammates to complete. Loading the next instruction...)`
-
-                // document.getElementById('wait').style.display = 'block';
-
-                // $jq("#next").replaceWith(`<button type="button" id="next" disabled
-                //     onclick="next()"
-                //     value="next" class="btn btn-primary btn-lg continue">
-                //     Next <span class="glyphicon glyphicon-arrow-right"></span>
-                //     </button>`);
-            }
-
         }
-        
         addEventListener("beforeunload", (event) => {
             if (localStorage.getItem("movement") === "false") {
                 event.preventDefault();
                 event.returnValue = "Are you sure you want to leave? The task is incomplete.";
             }
-
             if (window.interaction_type === "survey") {
-                localStorage.setItem("engagement short answer", document.getElementById("engagement short answer").value);
+                localStorage.setItem("short answer", document.getElementById("short answer").value);
             }
 
             else {
-                let engagement_sa = document.getElementById("engagement short answer")
-                let improvement_sa = document.getElementById("improvement short answer")
-
-                if (engagement_sa) localStorage.setItem("engagement short answer", engagement_sa.value.trim());
-                else localStorage.setItem("engagement short answer", '');
-                if (improvement_sa) localStorage.setItem("improvement short answer", improvement_sa.value.trim());
-                else localStorage.setItem("improvement short answer", '');
-
                 let simulation_rt = 0;
                 if (localStorage.getItem("user input") === "{}") {
                     if (window.moves.length > 0) {
                         simulation_rt = performance.now() - window.start_time;
                     }
-                    console.log('coordinates: ', window.agent_history_nonoffset);
                     final_data = JSON.stringify({
                         'moves': window.moves,
                         'opt_response': false,
@@ -743,34 +710,19 @@
                 }
             }
 
+            //
+            socket.disconnect();
+
         });
 
-         addEventListener("input", (event) => {
-            if ((window.interaction_type == "final test") && (localStorage.getItem("last test") == "true")) {
-                var reward_ft_wt_1 = document.getElementById('reward_ft_wt_1')
-                var reward_ft_wt_2 = document.getElementById('reward_ft_wt_2')
-                if (reward_ft_wt_1.value !== "" && reward_ft_wt_2.value !== "") {
-                    $jq("#next").replaceWith(`<button type="button" id="next"
-                        onclick="next()"
-                        value="next" class="btn btn-primary btn-lg continue">
-                        Next <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>`);
-                }
-                else {
-                    // disable button again if one of the fields is deleted
-                    $jq("#next").replaceWith(`<button type="button" id="next" disabled
-                            onclick="next()"
-                            value="next" class="btn btn-primary btn-lg continue">
-                        Next <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>`);
-                }
-            }
-            else if (window.interaction_type !== "survey") {
+        addEventListener("input", (event) => {
+            if (window.interaction_type !== "survey") {
                 localStorage.setItem("survey completed", "true");
+                //localStorage.setItem("survey completed", "true");
                 // checked based on input name
                 let radioValue = $jq("input[name='info']:checked").val();
                 if(radioValue) {
-                    localStorage.setItem("survey", radioValue);
+                    localStorage.setItem("interaction survey", radioValue);
                 }
                 
                 // // Next button logic (wait for all members to finish)
@@ -778,7 +730,9 @@
                 // if (window.last_in_round && !window.joint_EOR) {
                 //     // socket.emit("reached EOR");
                 //     // console.log("I finished my last test in the round!");
+
                 //     document.getElementById('wait').style.display = 'block';
+
                 // }
                 // else {
                 //     $jq("#next").replaceWith(`<button type="button" id="next"
@@ -788,11 +742,13 @@
                 //         </button>` );
                 // }
 
+                // Next button logic
+                console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
                 $jq("#next").replaceWith(`<button type="button" id="next"
-                //         onclick="next()"
-                //         value="next" class="btn btn-primary btn-lg continue">
-                //         Next <span class="glyphicon glyphicon-arrow-right"></span>
-                //         </button>` );
+                    onclick="next()"
+                    value="next" class="btn btn-primary btn-lg continue">
+                    Next <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>` );
             }
             else {
                 let attn1 = $jq("input[name='attn1']:checked").val();
@@ -819,12 +775,8 @@
                 if(use3) {
                     localStorage.setItem("use3", use3);
                 }
-                let understanding = $jq("input[name='understanding']:checked").val();
-                if(understanding) {
-                    localStorage.setItem("understanding", understanding);
-                }
 
-                if (attn1 && attn2 && attn3 && use1 && use2 && use3 && understanding) {
+                if (attn1 && attn2 && attn3 && use1 && use2 && use3) {
                     $jq("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
@@ -833,29 +785,29 @@
                 }
             }
         });
+    
 
-
-
-  function run_page(mdp_parameters) {
-    console.log("running page....");
+    function run_page(mdp_parameters) {
     var canvas = document.getElementById("game");
     var context = canvas.getContext("2d");
 
     // variables for parent window
     var final_data = [];
     var data_sent = false;
-    var show_likert = false;
 
     window.start_time = 0;
+    // window.start_time_set = false;
     window.moves = [];
-    window.agent_history = [];            // for drawing a history of the agent's path
-    window.agent_history_nonoffset = [];  // for keeping track of the agent's location in gridworld integers
+    window.agent_history = [];
+    window.agent_history_nonoffset = [];  // this is for keep track of the agent's location in gridworld integers
 
     var offset_x = 1.5;
     var offset_y = 1;
     // disableScroll();
 
     // var mdp_parameters = window.parent.mdp_parameters;
+
+
     // var watched_vid_arr = window.parent.watched_vid_arr;
     // var current_page = window.parent.current_page;
 
@@ -928,7 +880,7 @@
 
     function build_grid(){
         //create a grid
-        temp = [];
+        var temp = [];
         for (i = 0; i < mdp_parameters.height; i++) {
             temp.push([0]);
         }
@@ -948,12 +900,13 @@
           spaceship.grid_loc.human_x =  (mdp_parameters.agent.x-1) + offset_x + agent_human_spacer;
           spaceship.grid_loc.human_y =  (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
           window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y])
+        //   console.log("pushed to agent history in setup");
+        //   console.log([spaceship.grid_loc.x, spaceship.grid_loc.y]);
           window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
           spaceship.taxi_set = true;
         //set location of passenger
         if (mdp_parameters.agent.has_passenger == 1){
             passenger.picked = true;
-            passenger.picked_human = true;
             passenger.grid_loc.x = (mdp_parameters.agent.x-1) + offset_x;
             passenger.grid_loc.y = (mdp_parameters.height - mdp_parameters.agent.y) + offset_y;
             passenger.grid_loc.human_x = (mdp_parameters.agent.x-1) + offset_x + agent_human_spacer;
@@ -966,14 +919,14 @@
             passenger.grid_loc.human_y = (mdp_parameters.height - mdp_parameters.passengers[0].y) + offset_y;
         }
         //set destination
-        destination_grid = build_grid();
+        var destination_grid = build_grid();
         goal.grid_loc.x = mdp_parameters.passengers[0].dest_x;
         goal.grid_loc.y = mdp_parameters.height - mdp_parameters.passengers[0].dest_y + 1;
         destination_grid[mdp_parameters.height - mdp_parameters.passengers[0].dest_y][mdp_parameters.passengers[0].dest_x-1] = 1;
         map_layout.destination = destination_grid;
 
         //set walls
-        color_locs = build_grid();
+        var color_locs = build_grid();
         for (i = 0; i < mdp_parameters.walls.length; i++) {
             color_locs[mdp_parameters.height - mdp_parameters.walls[i].y][mdp_parameters.walls[i].x-1] = 1;
         }
@@ -995,85 +948,87 @@
       }
 
     //http://www.scienceprimer.com/drawing-regular-polygons-javascript-canvas
-    function drawHexagon(Xcenter, Ycenter, color) {
-        var numberOfSides = 6, size = 10;
+      function drawHexagon(Xcenter, Ycenter, color) {
+            var numberOfSides = 6, size = 10;
 
-        context.beginPath();
-        context.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));
+            context.beginPath();
+            context.moveTo (Xcenter +  size * Math.cos(0), Ycenter +  size *  Math.sin(0));
 
-        for (var i = 1; i <= numberOfSides;i += 1) {
-            context.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+            for (var i = 1; i <= numberOfSides;i += 1) {
+              context.lineTo (Xcenter + size * Math.cos(i * 2 * Math.PI / numberOfSides), Ycenter + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+            }
+            context.fillStyle = color;
+            context.fill();
+            context.closePath()
+      }
+
+
+      function drawTaxi(x,y,color)
+      {
+        if (spaceship.taxi_set == false){
+            taxiSet();
         }
-        context.fillStyle = color;
+        context.save();
+        context.beginPath();
+        context.translate(100*(x) + 50 + translate_draw, 100*(y) + 150);
+            context.lineTo(-spaceship.width * 0.5 , -spaceship.height * 0.5);
+            context.lineTo(0, -spaceship.height);
+            context.lineTo(-spaceship.width * -0.5, -spaceship.height * 0.5);
+        if (color == "light"){
+            context.fillStyle = spaceship.color_light;
+        }
+        else {
+            context.fillStyle = spaceship.color;
+        }
         context.fill();
-        context.closePath()
-    }
+        context.closePath();
+        context.restore();
+      }
 
-
-    function drawTaxi(x,y,color)
-    {
-    if (spaceship.taxi_set == false){
-        taxiSet();
-    }
-    context.save();
-    context.beginPath();
-    context.translate(100*(x) + 50 + translate_draw, 100*(y) + 150);
-        context.lineTo(-spaceship.width * 0.5 , -spaceship.height * 0.5);
-        context.lineTo(0, -spaceship.height);
-        context.lineTo(-spaceship.width * -0.5, -spaceship.height * 0.5);
-    if (color == "light"){
-        context.fillStyle = spaceship.color_light;
-    }
-    else {
-        context.fillStyle = spaceship.color;
-    }
-    context.fill();
-    context.closePath();
-    context.restore();
-    }
-
-    function drawPassenger(x,y,color)
-    {
-    context.save();
-    context.beginPath();
-    var i = 0;
-    var j = 0;
-    if (color == "light"){
-        context.fillStyle = passenger.color_light;
-        condition = !passenger.picked_human;
-        if (!passenger.picked_human){
+      function drawPassenger(x,y,color)
+      {
+        context.save();
+        context.beginPath();
+        var i = 0;
+        var j = 0;
+        if (color == "light"){
+            context.fillStyle = passenger.color_light;
+            condition = !passenger.picked_human;
+            if (!passenger.picked_human){
+                context.arc(x*100 + 25 + translate_draw, y*100 + 45, 9, 0, 2 * Math.PI);
+                context.fill();
+                context.closePath();
+            }
+            else{
+                context.arc(x*100 + 49 + translate_draw, y*100 + 22, 9, 0, 2 * Math.PI);
+                context.fill();
+                context.closePath();
+            }
+        }
+        else {
+            context.fillStyle = passenger.color;
+            condition = !passenger.picked;
+            if (!passenger.picked){
             context.arc(x*100 + 25 + translate_draw, y*100 + 45, 9, 0, 2 * Math.PI);
             context.fill();
             context.closePath();
-        }
-        else{
-            context.arc(x*100 + 49 + translate_draw, y*100 + 22, 9, 0, 2 * Math.PI);
-            context.fill();
-            context.closePath();
-        }
-    }
-    else {
-        context.fillStyle = passenger.color;
-        condition = !passenger.picked;
-        if (!passenger.picked){
-        context.arc(x*100 + 25 + translate_draw, y*100 + 45, 9, 0, 2 * Math.PI);
-        context.fill();
-        context.closePath();
 
+            }
+            else{
+                context.arc(x*100 + 49 + translate_draw, y*100 + 22, 9, 0, 2 * Math.PI);
+                context.fill();
+                context.closePath();
+            }
         }
-        else{
-            context.arc(x*100 + 49 + translate_draw, y*100 + 22, 9, 0, 2 * Math.PI);
-            context.fill();
-            context.closePath();
-        }
-    }
-    context.restore();
-    }
-
+        context.restore();
+      }
+    
+    // debug this function
     function drawAgentHistory()
     {
+        // console.log("drawing agent history");
         context.save();
-        console.log('Draw. Agent history:', window.agent_history);
+        console.log(window.agent_history);
         for (j = 0; j < window.agent_history.length; j++) {
             context.beginPath();
             if (j == 0) {
@@ -1113,7 +1068,7 @@
                 if (map_layout.destination[i][j] == 1){
                     context.beginPath();
                     context.rect(100*j + 15+offset_x*100, 100*i + 15 + offset_y*100, 19,15);
-                    context.fillStyle = "#8a8a8a";
+                    context.fillStyle = passenger.color;
                     context.fill();
                     context.closePath();
                 }
@@ -1160,9 +1115,12 @@
         context.fill();
         context.closePath();
 
+        context.font = "25px Arial";
+        context.fillStyle = text_color;
+        context.textAlign = "center";
+        context.fillText("Click on the game below to start controlling Chip", offset_x*100+200, 50);
 
         //draw grid
-        // vertical
         for (i = 0; i <= mdp_parameters.height; i++) {
             context.beginPath();
             context.moveTo(0+offset_x*100, 100*i-1+offset_y*100);
@@ -1173,8 +1131,6 @@
             context.fill();
             context.closePath();
         }
-
-        // horizontal
         for (i = 0; i <= mdp_parameters.width; i++) {
             context.beginPath();
             context.moveTo(100*i-1+offset_x*100, 0+offset_y*100);
@@ -1186,8 +1142,8 @@
             context.closePath();
         }
 
-          // indicate to the participant that it's their turn play
-          if ((window.interaction_type.includes("test")) && (localStorage.getItem("already completed") == 'false')) {
+        // indicate to the participant that it's their turn play
+        if ((window.interaction_type.includes("test")) && (localStorage.getItem("already completed") == 'false')) {
             context.font = "25px Arial";
             context.fillStyle = text_color;
             context.textAlign = "center";
@@ -1201,11 +1157,13 @@
             context.stroke();
         }
 
+
         context.beginPath();
         // Begin drawing
         drawMap();
         //Single destination irrespective of version
         drawDestination();
+        console.log("mdp_params start screen:", mdp_parameters);
         if (mdp_parameters.tag  == -2){
             drawTaxi(spaceship.grid_loc.human_x,spaceship.grid_loc.human_y,"light");
             drawPassenger(passenger.grid_loc.human_x,passenger.grid_loc.human_y,"light");
@@ -1224,19 +1182,19 @@
         var end_time = performance.now();
 
         // record whether the user got the optimal trajectory or not
-        same_traj = false;
+        var same_traj = false;
         for (var j = 0; j < mdp_parameters.all_opt_actions.length; j++) {
             opt_moves = mdp_parameters.all_opt_actions[j]
-            if (window.moves.length == opt_moves.length) {
-                for (var k = 0; k < window.moves.length; k++) {
-                    if (window.moves[k] != opt_moves[k]) {
+            if (moves.length == opt_moves.length) {
+                for (var k = 0; k < moves.length; k++) {
+                    if (moves[k] != opt_moves[k]) {
                         // if one move differs, no need to consider other moves. they're not the same trajectory
                         break;
                     }
                 }
 
                 // if you've found a matching trajectory, no need to check other trajectories
-                if (k == window.moves.length) {
+                if (k == moves.length) {
                     same_traj = true;
                     break;
                 }
@@ -1245,6 +1203,14 @@
 
         //console.log('augmented_taxi2_' + mdp_parameters.test_difficulty + '_' + mdp_parameters.tag.toString());
         //console.log(same_traj);
+
+        // the two test demonstrations at each level of difficulty are always pairs of an even and odd number
+        // if((mdp_parameters.tag % 2 == 0) && (mdp_parameters.tag > 0)) {
+        //     sessionStorage.setItem('augmented_taxi2_' + mdp_parameters.test_difficulty + '_a', same_traj)
+        // }
+        // else {
+        //     sessionStorage.setItem('augmented_taxi2_' + mdp_parameters.test_difficulty + '_b', same_traj)
+        // }
 
         var it = window.interaction_type
         if(it == "final test") {
@@ -1260,7 +1226,7 @@
         });
 
         var event = new CustomEvent("game-completed", { "detail": "Demonstration has now ended." });
-        enableScroll();
+        // enableScroll();
         document.dispatchEvent(event);
 
         localStorage.setItem("user input", final_data);
@@ -1288,9 +1254,12 @@
         return same_traj
     }
 
-    function draw()
+      function draw()
       {
-        console.log("I am in the draw function");
+        //   if (!window.start_time_set) {
+        //       window.start_time = performance.now();
+        //       window.start_time_set = true
+        //   }
           if (!map_layout.set){
             set_grids();
             map_layout.set = true;
@@ -1301,6 +1270,7 @@
           context.fillStyle = "black";
           context.fill();
           context.closePath();
+
 
           //draw grid
           for (i = 0; i <= mdp_parameters.height; i++) {
@@ -1324,21 +1294,6 @@
                 context.closePath();
           }
 
-          // indicate to the participant that it's their turn play
-          if ((window.interaction_type.includes("test")) && (localStorage.getItem("already completed") == 'false')) {
-            context.font = "25px Arial";
-            context.fillStyle = text_color;
-            context.textAlign = "center";
-            context.fillText("Your turn to play!", offset_x * 100 + 200, 80);
-
-            // Draw blue border around the grid
-            context.beginPath();
-            context.rect(offset_x*100 - 3, offset_y*100 - 3, mdp_parameters.width*100 + 6, mdp_parameters.height*100 + 6);
-            context.strokeStyle = "blue";
-            context.lineWidth = 2;
-            context.stroke();
-        }
-
         context.beginPath();
         // Begin drawing
         drawMap();
@@ -1357,16 +1312,11 @@
         drawTaxi(spaceship.grid_loc.x,spaceship.grid_loc.y,"normal");
         drawPassenger(passenger.grid_loc.x,passenger.grid_loc.y,"normal");
 
-        game_completed = false
-
-        if (mdp_parameters.tag == -2) {
-            if (passenger.dropped && passenger.dropped_human) game_completed = true;
-        } 
-        else if (passenger.dropped) game_completed = true;
-    
-
-        console.log("passenger.dropped? ", passenger.dropped, "Game completed?", game_completed);
-
+        // todo: update this to also consider whether the passenger.dropped_human is true as well if mdp_parameter.tag == -2
+          var game_completed = false
+          if (mdp_parameters.tag == -2) {
+              if (passenger.dropped && passenger.dropped_human) game_completed = true;
+          } else if (passenger.dropped) game_completed = true;
 
         if(game_completed)
         {
@@ -1376,121 +1326,119 @@
             context.fillStyle = text_color;
             context.textAlign = "center";
             context.fillText("Game completed!", (mdp_parameters.width*100)/2+offset_x*100, (mdp_parameters.height*100)/2+offset_y*100+200);
+            
+            var show_likert = false;
+            var same_traj = false;
+
+
 
             //requestAnimationFrame(draw);
-
+            
             if (data_sent == false) {
-                var it = window.interaction_type;
-                var last_test = localStorage.getItem("last test");
-
                 same_traj = record_data()
-                console.log("same_traj: ", same_traj)
+            }
+            var it = window.interaction_type;
+            // var last_test = localStorage.getItem("last test");
+            var last_test = window.last_test;
 
-                if (it == "diagnostic test") {
-                    if (localStorage.getItem("already completed") === "false"){
-                        document.getElementById('message-container').style.display = 'block';
+            console.log("I am in the draw function");
+            console.log(it, same_traj, data_sent);
+            
+            if (it == "diagnostic test") {
+                document.getElementById('message-container').style.display = 'block';
+                if (same_traj && localStorage.getItem("already completed") === "false") {
+                    // if the test was answered correctly or page wasn't already shown previously, show likert scale
+                    show_likert = true
+                }
+            }
+
+
+
+            if (it == "final test"){
+                if(last_test){
+                    var first = 0;
+                    var second = 0;
+                    var final_score = 0;
+                    
+                    if (sessionStorage.getItem('augmented_taxi2_1') == 'true') {
+                        first = 1;
+                        final_score += 1;
+                    }
+                    if (sessionStorage.getItem('augmented_taxi2_2') == 'true') {
+                        second = 1;
+                        final_score += 1;
                     }
                     
-                    if (same_traj && localStorage.getItem("already completed") === "false") {
-                        // if the test was answered correctly or page wasn't already shown previously, show likert scale
-                        show_likert = true
+                    var third = 0;
+                    var fourth = 0;
+                    var fifth = 0;
+                    var sixth = 0;
 
-                        if (localStorage.getItem("already completed") == 'false') $jq("#feedback").html('<div class="text-center"><h4>Great, you answered correctly!</h4><br></div>')
+                    if (sessionStorage.getItem('augmented_taxi2_3') == 'true') {
+                        third = 1;
+                        final_score += 1;
                     }
-                    else {
-                        // if the test was answered incorrectly or page was already shown previously, simply enable the next button
-                        // set the likert value to 0 (changing from -1) so that you know that you've been to this page before
-                        localStorage.setItem("survey", 0)
-                        // const subiteration = localStorage.getItem("subiteration")
-                        // if (localStorage.getItem("already completed") == 'false') {
-                        //     $jq("#feedback").html('<div class="text-center"><h4>Oh no, you answered incorrectly! Let\'s review on the next page!</h4><br></div>')
-                        // }
+                    if (sessionStorage.getItem('augmented_taxi2_4') == 'true') {
+                        fourth = 1;
+                        final_score += 1;
+                    }
+                    if (sessionStorage.getItem('augmented_taxi2_5') == 'true') {
+                        fifth = 1;
+                        final_score += 1;
+                    }
+                    if (sessionStorage.getItem('augmented_taxi2_6') == 'true') {
+                        sixth = 1;
+                        final_score += 1;
+                    }
 
-                        $jq("#next").replaceWith(`<button type="button" id="next"
-                        onclick="next()"
-                        value="next" class="btn btn-primary btn-lg continue">
-                        Next <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>` );
-                    }
-                } else if (it == "final test"){
-                    if(last_test == "true"){
-                        var score = 0;
-                        var first = 0;
-                        var second = 0;
-                        var third = 0;
-                        var fourth = 0;
-                        var fifth = 0;
-                        var sixth = 0;
-                        if (sessionStorage.getItem('augmented_taxi2_1') == 'true') {
-                            score += 1;
-                            first += 1;
-                        }
-                        if (sessionStorage.getItem('augmented_taxi2_2') == 'true') {
-                            score += 1;
-                            second += 1;
-                        }
-                        if (sessionStorage.getItem('augmented_taxi2_3') == 'true') {
-                            score += 1;
-                            third += 1;
-                        }
-                        if (sessionStorage.getItem('augmented_taxi2_4') == 'true') {
-                            score += 1;
-                            fourth += 1;
-                        }
-                        if (sessionStorage.getItem('augmented_taxi2_5') == 'true') {
-                            score += 1;
-                            fifth += 1;
-                        }
-                        if (sessionStorage.getItem('augmented_taxi2_6') == 'true') {
-                            score += 1;
-                            sixth += 1;
-                        }
-                        console.log("game score: ")
-                        console.log(score)
-                        $jq("#feedback").html('<div class="text-center"><h1>Score Results</h1><p>In order of the tests you took, you scored <p id="score_val"></p>getting <p id="score_val2" style="display:inline"></p> tests correctly out of 6.</p></div>')
-                        document.getElementById('score_val').innerHTML = first + ' + ' + second + ' + ' + third  + ' + ' + fourth  + ' + ' + fifth + ' + ' + sixth + ' = ' + score
-                        document.getElementById('score_val2').innerHTML = score
+                    document.getElementById('score').style.display = 'block';
+                    // $jq("#score").html('<div class="text-center"><h1>Score Results</h1><p>You scored <p id="score_val"></p>times correctly.</p></div>')
+                    // document.getElementById('score_val').innerHTML = final_score;
+                    
+                    $jq("#feedback").html('<div class="text-center"><h1>Score Results</h1><p>In order of the tests you took, you scored <p id="score_val"></p>getting <p id="score_val2" style="display:inline"></p> tests correctly out of 6.</p></div>')
+                    // document.getElementById('score_val').innerHTML = first + ' + ' + second + ' + ' + third  + ' + ' + fourth  + ' + ' + fifth + ' + ' + sixth + ' = ' + score
+                    document.getElementById('score_val').innerHTML = first + ' + ' + second + ' = ' + final_score
+                    document.getElementById('score_val2').innerHTML = final_score
 
-                        // exploratory data collection on whether people are able to explicitly predict the weights
-                        // for cl, pl, open,
-                        $jq("#survey").html("<br><h3>Finally, please provide your best guess of energy change of the actions below (the last one is given and decimals are allowed!):</h3><table class='center'><tr><th>Actions</th><th>Sample sequence(s)</th><th>Energy change</th></tr><tr><td>Moving <u>out of</u> a yellow square (into yellow <u>or</u> white square)</td><td><img src = 'static/img/augmented_taxi2_toll1.png' width=auto height='125' /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/augmented_taxi2_toll2.png' width=auto height='125' /></td><td><input id='reward_ft_wt_1' type='number' style='width: 4em;'</>%</td></tr><tr><td>Moving through the green hexagon</td><td><img src = 'static/img/augmented_taxi2_battery1.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/augmented_taxi2_battery2.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/augmented_taxi2_battery3.png' width='75' height=auto /></td><td><input id='reward_ft_wt_2' type='number' style='width: 4em;'</>%</td></tr><tr><td>Any action that you take (e.g. moving right, picking up, etc)</td><td><img src = 'static/img/right1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/right2.png' width='150' height=auto /></td><td>-1.0%</td></tr></table>")
-                    }
-                    $jq("#next").replaceWith(`<button type="button" id="next"
+                }
+                $jq("#next").replaceWith(`<button type="button" id="next"
                     onclick="next()"
                     value="next" class="btn btn-primary btn-lg continue">
                     Next <span class="glyphicon glyphicon-arrow-right"></span>
-                    </button>`);
+                    </button>` );
+            }
+            else if (localStorage.getItem("already completed") === "false"){
+                show_likert = true;
+            }
 
-                } else if (localStorage.getItem("already completed") === "false") {
-                    show_likert = true
-                }
-
-                if (show_likert){
-                    $jq("#survey").html(`<h3>Did this interaction improve your understanding of the game strategy?</h3>
+            if (show_likert) {
+                $jq("#interaction_survey").html(`<h3> This sequence improved my understanding of the game strategy.</h3>
                 <div class="likert">
-                <label><input name="info" type="radio" value="1"/><span>Not at all</span></label>
-                <label><input name="info" type="radio" value="2"/><span>Slightly</span></label>
-                <label><input name="info" type="radio" value="3"/><span>Moderately</span></label>
-                <label><input name="info" type="radio" value="4"/><span>Very</span></label>
-                <label><input name="info" type="radio" value="5"/><span>Extremely</span></label>
+                <label><input name="info" type="radio" value="1"/><span>Strongly Disagree</span></label>
+                <label><input name="info" type="radio" value="2"/><span>Disagree</span></label>
+                <label><input name="info" type="radio" value="3"/><span>Neither Agree nor Disagree</span></label>
+                <label><input name="info" type="radio" value="4"/><span>Agree</span></label>
+                <label><input name="info" type="radio" value="5"/><span>Strongly Agree</span></label>
                 </div>
                 <br></br>
 
-<h5>Please feel free to explain your selection if you wish!</h5>
-            <textarea id="improvement short answer" rows="2" cols="50"></textarea>
-` );
-    var textarea = document.querySelector('textarea');
-    textarea.addEventListener('keydown', function(event) {
-        event.stopPropagation();
-    });
-                }
+                <h5>Please feel free to explain your selection if you wish!</h5>
+                <textarea id="improvement short answer" rows="2" cols="50"></textarea>
+                ` );
+
+                var textarea = document.querySelector('textarea');
+                textarea.addEventListener('keydown', function(event) {
+                    event.stopPropagation();
+                });
             }
+
+
         }
       }
 
       function left(version) {
-        agent_on_hotswap_station = checkHotswap("agent");
-        human_on_hotswap_station = checkHotswap("human");
+        var agent_on_hotswap_station = checkHotswap("agent");
+        var human_on_hotswap_station = checkHotswap("human");
 
         if (version == "agent"){
             if (spaceship.grid_loc.x > offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x-1-offset_x] != 1){
@@ -1512,7 +1460,7 @@
             if (passenger.picked_human){
                 passenger.grid_loc.human_x -= 1;
             }
-            if (human_on_hotswap_station) {
+            if (agent_on_hotswap_station) {
                 hotswap_station.visited_human = true;
             }
             }
@@ -1520,8 +1468,8 @@
       }
 
       function right(version) {
-        agent_on_hotswap_station = checkHotswap("agent");
-        human_on_hotswap_station = checkHotswap("human");
+        var agent_on_hotswap_station = checkHotswap("agent");
+        var human_on_hotswap_station = checkHotswap("human");
 
         if (version == "agent"){
             if (spaceship.grid_loc.x < mdp_parameters.width-1+offset_x && map_layout.color_blocks[spaceship.grid_loc.y-offset_y][spaceship.grid_loc.x+1-offset_x] != 1){
@@ -1542,16 +1490,16 @@
             if (passenger.picked_human){
                 passenger.grid_loc.human_x += 1;
             }
-            if (human_on_hotswap_station) {
-                hotswap_station.visited_human = true;
+            if (agent_on_hotswap_station) {
+                hotswap_station.visited = true;
             }
             }
             }
       }
 
       function up(version) {
-        agent_on_hotswap_station = checkHotswap("agent");
-        human_on_hotswap_station = checkHotswap("human");
+        var agent_on_hotswap_station = checkHotswap("agent");
+        var human_on_hotswap_station = checkHotswap("human");
 
         if (version == "agent"){
             if (spaceship.grid_loc.y > offset_y && map_layout.color_blocks[spaceship.grid_loc.y-1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
@@ -1581,8 +1529,8 @@
       }
 
       function down(version) {
-        agent_on_hotswap_station = checkHotswap("agent");
-        human_on_hotswap_station = checkHotswap("human");
+        var agent_on_hotswap_station = checkHotswap("agent");
+        var human_on_hotswap_station = checkHotswap("human");
 
         if (version == "agent"){
             if (spaceship.grid_loc.y < mdp_parameters.height-1+offset_y && map_layout.color_blocks[spaceship.grid_loc.y+1-offset_y][spaceship.grid_loc.x-offset_x] != 1){
@@ -1613,9 +1561,9 @@
       function pickup(version) {
         if (version == "agent"){
             if (Math.floor(spaceship.grid_loc.x) == Math.floor(passenger.grid_loc.x) && spaceship.grid_loc.y == passenger.grid_loc.y && passenger.picked == false){
-                window.moves.push("pickup");
-                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
+                moves.push("pickup");
                 passenger.picked = true;
+                window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
         }}
         else{
             console.log("here")
@@ -1630,21 +1578,21 @@
 
       function dropoff(version) {
         if (version == "agent"){
-            condition_goal = ((Math.floor(spaceship.grid_loc.x) == goal.grid_loc.x) && (spaceship.grid_loc.y == goal.grid_loc.y));
+            var condition_goal = ((Math.floor(spaceship.grid_loc.x) == goal.grid_loc.x) && (spaceship.grid_loc.y == goal.grid_loc.y));
 
             if (passenger.picked){
                 window.moves.push("dropoff");
                 passenger.picked = false;
                 if (condition_goal){
-                    console.log("dropoff. condition_goal: ", condition_goal);
                     passenger.dropped = true;
                     //watched_vid_arr[current_page] = true;
+                    console.log(moves);
                     window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y, passenger.picked])
                 }
             }
         }
         else{
-            condition_goal = ((Math.floor(spaceship.grid_loc.human_x) == goal.grid_loc.x) && (spaceship.grid_loc.human_y == goal.grid_loc.y));
+            var condition_goal = ((Math.floor(spaceship.grid_loc.human_x) == goal.grid_loc.x) && (spaceship.grid_loc.human_y == goal.grid_loc.y));
 
             if (passenger.picked_human){
                 passenger.picked_human = false;
@@ -1658,6 +1606,8 @@
       }
 
       function reset() {
+        // document.removeEventListener('keydown', keyPressed);
+        window.moves = [];
         map_layout.set = false;
         passenger.picked = false;
         passenger.picked_human = false;
@@ -1665,8 +1615,8 @@
         hotswap_station.visited_human = false;
         window.agent_history = [];
         window.agent_history_nonoffset = [];
-        window.moves = [];
-      }
+    }
+
 
       function checkHotswap(version){
         if (version == "agent"){
@@ -1687,19 +1637,19 @@
         }
     }
 
-    function disableScroll() {
-            scrollTop = window.pageYOffset
+    // function disableScroll() {
+    //         scrollTop = window.pageYOffset
 
-            window.onscroll = function() {
-                window.scrollTo(scrollTop);
-            };
-        }
+    //         window.onscroll = function() {
+    //             window.scrollTo(scrollTop);
+    //         };
+    //     }
 
-    function enableScroll() {
-        window.onscroll = function() {};
-    }
+    // function enableScroll() {
+    //     window.onscroll = function() {};
+    // }
 
-      var idx = 0;
+      idx = 0;
       var agent_human_spacer = -0.2;
       if (mdp_parameters.tag == -2) {
           var translate_draw = 10;
@@ -1710,17 +1660,19 @@
 
       function keyPressed(event)
       {
+        event.preventDefault();
         if (mdp_parameters.tag == -2) {
             //training case, agent & human
 
                 if (event.keyCode == 32) {
+                    
                     //space bar pressed, advance demo
 
                     var next_action_agent = mdp_parameters.normalized_opt_actions[idx];
                     var next_action_human = mdp_parameters.normalized_human_actions[idx];
                     console.log("agent:" + next_action_agent);
                     console.log("human:" + next_action_human);
-                    console.log("idx:" + idx);
+                    console.log("Idx: ", idx);
                     idx++;
                     switch (next_action_human) {
                         case "left":
@@ -1782,8 +1734,10 @@
                     if (event.keyCode == 32) {
                         //space bar pressed, advance demo
                         var next_action_agent = mdp_parameters.opt_actions[idx];
+                        console.log('Visiting test: ', idx);
                         console.log('Idx:', idx);
-                        console.log("next agent action: ", next_action_agent);
+                        console.log("next agent action");
+                        console.log(next_action_agent);
                         idx++;
                         switch (next_action_agent) {
                             case "left":
@@ -1805,7 +1759,10 @@
                                 dropoff("agent");
                                 break;
                         }
+                        
                         window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                        console.log("pushed to agent history in training");
+                        console.log([spaceship.grid_loc.x, spaceship.grid_loc.y]);
                         requestAnimationFrame(draw);
                     } else if (event.keyCode == 82) {
                         idx = 0;
@@ -1847,35 +1804,28 @@
                         break;
                     case 82:
                         //r key
-                        idx = 0;
-                        reset();
+                        reset("agent");
                         break;
                 }
                 if (event.keyCode != 82) {
                     window.agent_history.push([spaceship.grid_loc.x, spaceship.grid_loc.y]);
+                    console.log("pushed to agent in testing case");
+                    console.log([spaceship.grid_loc.x, spaceship.grid_loc.y]);
                 }
                 requestAnimationFrame(draw);
             }
         }
-      }
-
-    function filterMovementKeys(event) {
-        // This function will run every time a key is pressed...
-        if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(event.code) > -1) {
-            event.preventDefault();
-        }
     }
 
-    // Debounce the keyPressed function
-    var debouncedKeyPressed = _.debounce(keyPressed, 100); // limit consecutive keystrokes
-    //var debouncedKeyPressed = keyPressed;
 
-    // Create a new function that calls both functions
-    function keydownHandler(event) {
-        filterMovementKeys(event);
-        debouncedKeyPressed(event);
-    }
-    document.addEventListener('keydown', keydownHandler);
+    
+
+    idx = 0;
+    reset();
+    
+
+    // document.addEventListener('keydown', _.debounce(keyPressed, 200))
+    document.addEventListener('keydown', keyPressed);
     start_screen();
     canvas.addEventListener('click', draw);
     context.restore();

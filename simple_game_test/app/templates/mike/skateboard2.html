@@ -4,8 +4,12 @@
     <title>Simulation</title>
 
     <script src="/static/lib/jquery-min.js" type="text/javascript"> </script>
+    <script>
+        var $jq = jQuery.noConflict();
+        console.log($jq); // Debug: Testing the conflict-free jQuery reference
+    </script>
     <script type="text/javascript">
-        console.log(typeof $ !== 'undefined' ? "jQuery is loaded" : "jQuery is not loaded"); // Debug: check if jQuery is loaded
+        console.log(typeof $jq !== 'undefined' ? "jQuery is loaded" : "jQuery is not loaded"); // Debug: check if jQuery is loaded
     </script> 
     <script>
         var $jq = jQuery.noConflict();
@@ -17,6 +21,7 @@
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/static/css/bootstrap.min.css.4.3.1.css" type="text/css" /> -->
     <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
     <link rel="stylesheet" href="/static/css/jspsych.css" type="text/css" />
     <style type="text/css">
@@ -117,9 +122,19 @@
             from { opacity: 1; }
             to { opacity: 0.5; }
         }
+
+        table {
+        /* #font-size: 0.8em; /* Reduce font size */
+        padding: 0; /* Remove padding */
+        margin: 0; /* Remove margin */
+        line-height: 1; /* Reduce line height */
+        }
     
     </style>
   </head>
+
+
+
   <body>
     <div class="container-fluid" style="padding-left: 5%; padding-right: 5%">
         <div id="container-instructions" class="text-center">
@@ -129,8 +144,7 @@
                 <div id="center-container">
                     <div id="loading-container">
                         <div class="spinner"></div>
-                        <div id="loading-text">Loading the next instruction...</div>
-                    </div>
+                        <div id="loading-text">Please wait. Loading the next instruction...</div>                    </div>
                 </div>
           <div id="preamble" class="pre_info">
               <h1 id="header">Participant gameplay</h1> <hr/>
@@ -144,9 +158,10 @@
       
           <div id="message-container"></div>
           <div id="score"></div>
-          <div id="interaction_survey"></div>
           <div id="wait">Please wait until all members of your team have finished this round before progressing.</div>
           <div id="flashMessage"></div>
+          <div id="feedback"></div>
+          <div id="survey"></div>
           <hr>
           <br>
             </div>
@@ -189,8 +204,10 @@
             let data = {};
             data["domain"] = localStorage.getItem("domain");
             data["interaction type"] = localStorage.getItem("interaction type");
-            data["interaction_survey"] = localStorage.getItem("interaction_survey")
+            data["survey"] = localStorage.getItem("survey")
             data["iteration"] = Number(localStorage.getItem("iteration"));
+            data["subiteration"] = Number(localStorage.getItem("subiteration"));
+
             data["user input"] = JSON.parse(localStorage.getItem("user input"));
             data["movement"] = localStorage.getItem("movement");
             data["attn1"] = localStorage.getItem("attn1");
@@ -199,7 +216,9 @@
             data["use1"] = localStorage.getItem("use1");
             data["use2"] = localStorage.getItem("use2");
             data["use3"] = localStorage.getItem("use3");
-            data["short answer"] = localStorage.getItem("short answer");
+            data["understanding"] = localStorage.getItem("understanding");
+            data["engagement short answer"] = localStorage.getItem("engagement short answer");
+            data["improvement short answer"] = localStorage.getItem("improvement short answer");
             data["already completed"] = localStorage.getItem("already completed");
             data["room_name"] = localStorage.getItem("room_name");
 
@@ -217,26 +236,6 @@
 
 
         socket.on("connect", function () {
-            // if (localStorage.getItem("progress") === "sandbox_1") {
-            //     socket.emit("sandbox settings", { version: 1 });
-            // }
-            // else if (localStorage.getItem("progress") === "sandbox_2") {
-            //     socket.emit("sandbox settings", { version: 2 });
-            //     $("button").replaceWith(`<button type="button" disabled id="next" 
-            //         onclick="make_sandbox()"
-            //         value="next" class="btn btn-primary btn-lg continue">
-            //         Next <span class="glyphicon glyphicon-arrow-right"></span>
-            //         </button>` );
-            // }
-            // let data = {};
-            // data["domain"] = localStorage.getItem("domain");
-            // data["interaction type"] = localStorage.getItem("interaction type");
-            // data["iteration"] = Number(localStorage.getItem("iteration"));
-            // data["subiteration"] = Number(localStorage.getItem("subiteration"));
-            // data["user input"] = JSON.parse(localStorage.getItem("user input"));
-            // data["movement"] = localStorage.getItem("movement");
-            // socket.emit("settings", data);
-
             data = populateData()
             socket.emit("settings", data);
         });
@@ -253,7 +252,7 @@
 
         socket.on("settings configured", function (data) {
         console.log('Received settings:', data);
-        localStorage.setItem("interaction_survey", "-1");
+        localStorage.setItem("survey", "-1");
         localStorage.setItem("movement", "false");
         localStorage.setItem("user input", JSON.stringify({ moves: data["moves"] }));
         window.mdp_parameters = data["params"];
@@ -264,117 +263,89 @@
         // New
         localStorage.setItem("domain", data["domain"]);
         localStorage.setItem("iteration", data["iteration"]);
+        localStorage.setItem("total iterations", data["total iterations"]);
+        localStorage.setItem("lesson id", data["lesson id"]);
+        localStorage.setItem("lesson string", data["lesson string"]);
+        localStorage.setItem("optimal_traj", false);
+        window.domain_completed = false;
 
-        window.last_test = false;
+        // window.last_test = false;
 
-        document.getElementById("message-container").style.display = 'none';
-        
-        if (data["last answer"]) {
-            window.last_in_round = true;
-            console.log("reached last answer in round");
-
-            // check if domain is done
-            if (data["interaction type"] == "final test") {
-                window.domain_completed = true;
-            }
-
+        if (data["last test"]) {
+                localStorage.setItem("last test", "true");
+                console.log("Reached last test in round");
         }
         else {
+            localStorage.setItem("last test", "false");
+        }
+
+        if (!data["last iteration"]) {
             if (data["interaction type"] == "demo") {
                 window.last_round = false;
                 window.joint_EOR = false;
             }
             window.last_in_round = false;
-
-            if (data["last test"]) {
-                window.last_test = true;
-                console.log("reached last test in round");
-            }
+        }
+        else {
+            window.last_in_round = true;
+            console.log("Reached last iteration in round");
         }
 
-        // if (data["domain_completed"]) {
-        //     console.log("domain completed");
-        //     window.domain_completed = true;
-        // }
+        if (data["domain completed"]) {
+            console.log("domain completed");
+            window.domain_completed = true;
+        }
 
-
+        
         
         // localStorage.setItem("game completed", "false");
         // localStorage.setItem("survey completed", "false");
         console.log('MDP params: ', data["params"], 'go_prev:', data["go prev"]);
          // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
         
-        if (data["go prev"] == false) {
-            $("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+         if (data["go prev"] == false) {
+            $jq("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
         </button>`);
         }
         else {
-            $("#prev").replaceWith(`<button type="button" id="prev" onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
+            $jq("#prev").replaceWith(`<button type="button" id="prev" onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
         </button>`);
         }
 
         if ((data["already completed"] == true)) {
-            $("#next").replaceWith(`<button type="button" id="next"
+            $jq("#next").replaceWith(`<button type="button" id="next"
                 onclick="next()"
                 value="next" class="btn btn-primary btn-lg continue">
                 Next <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>` );
         }
         else {
-            $("#next").replaceWith(`<button type="button" id="next" disabled
+            $jq("#next").replaceWith(`<button type="button" id="next" disabled
         onclick="next()"
         value="next" class="btn btn-primary btn-lg continue">
         Next <span class="glyphicon glyphicon-arrow-right"></span>
         </button>` );
-        $("#interaction_survey").html(``);
+        $jq("#survey").html(``);
         }
-        
-        console.log('Interaction type:', window.interaction_type);
-        if (window.interaction_type == "final test") {
-            $("#header").replaceWith('<h1>Strategy assessment)</h1>');
-            // cl, pl, open, wtcl
-            $("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
-            // wt
-            //$("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
-            //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
-            document.getElementById('prev').style.display = 'none';
-        } 
-        else if (window.interaction_type == "diagnostic test") {
-            $("#header").replaceWith('<h1>Check-in test</h1>');
-            if (localStorage.getItem("already completed") == 'true') {
-                $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
-            }
-            else {
-                $("#info_main").replaceWith('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
-            }
-        }
-        else if (window.interaction_type == "demo"){
-            $("#header").replaceWith('<h1>Demonstration of best strategy (' + (Number(localStorage.getItem("iteration")) + 1).toString() + '/' + localStorage.getItem("demo total") + ')</h1>');
-            $("#info_main").replaceWith('<h3>Step through the demonstration <u>using your space bar</u>.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue!</h3>');
-        }
-        else if (window.interaction_type == "answer"){
-            $("#header").replaceWith('<h1>Corrective feedback</h1>');
-            $("#info_main").replaceWith('<h3>Step through how your answer (replayed by <img src=\'static/img/agent_light.png\' width=\"30\" height=auto/>) differs from Chip\'s (replayed by <img src=\'static/img/agent_dark.png\' width=\"30\" height=auto/>) using your space bar.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue!</h3>');
-        }
+    
+        $jq("#debug").html(data["debug string"]);
 
-
-
-        $("#debug").html(data["debug string"]);
-        // if (data["last test"]) {
-        //     localStorage.setItem("last test", "true");
-        // }
         // hide the loading screen and show the game content
         document.getElementById('wait').style.display = 'none';
         document.getElementById('center-container').style.display = 'none';
-        document.getElementById('score').style.display = 'none'
-        
         document.getElementById('instructions').style.display = 'block';
         document.getElementById('preamble').style.display = 'block';
-
-
+        
         if (!window.interaction_type.includes('test')) {
-            document.getElementById('message-container').style.display = 'none';
-            }
+        document.getElementById('message-container').style.display = 'none';
+        }
+
+        // don't show the previous button for final tests
+        if (window.interaction_type == 'final test') {
+            document.getElementById('prev').style.display = 'none';
+        }
+        
+
         console.log('Interaction type:', window.interaction_type);
         console.log('Params:', window.mdp_parameters);
         change_text(window.interaction_type);
@@ -383,7 +354,7 @@
     
 
         socket.on("all reached EOR", function (){
-        console.log("all reached EOR");
+        console.log("received all reached EOR message...");
 
         const now = new Date();
         start_time = now.toLocaleTimeString(); 
@@ -402,20 +373,33 @@
         audio.loop = true;
         audio.play();
 
-        localStorage.setItem("survey completed", "true");
-        // checked based on input name
-        let radioValue = $("input[name='info']:checked").val();
-        if(radioValue) {
-            localStorage.setItem("interaction_survey", radioValue);
-        }
+        // // when next lesson is available before completing feedback/survey
+        // localStorage.setItem("survey completed", "true");
+        // // checked based on input name
+        // let radioValue = $jq("input[name='info']:checked").val();
+        // if(radioValue) {
+        //     localStorage.setItem("interaction_survey", radioValue);
+        // }
 
-        if (radioValue != -1) {
-            $("#next").replaceWith(`<button type="button" id="next"
-                        onclick="next()"
-                        value="next" class="btn btn-primary btn-lg continue">
-                        Next <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>` );
-        }
+        // if (radioValue != -1) {
+        //     $jq("#next").replaceWith(`<button type="button" id="next"
+        //                 onclick="next()"
+        //                 value="next" class="btn btn-primary btn-lg continue">
+        //                 Next <span class="glyphicon glyphicon-arrow-right"></span>
+        //                 </button>` );
+        // }
+
+        // Add event listener for keypress to hide the message and stop the audio
+        document.addEventListener('keydown', function() {
+        // Hide the flash message
+        flashMessage.style.display = 'none';
+        
+        // Stop the audio
+        audio.pause();
+        audio.currentTime = 0;  // Reset audio to start position
+
+        document.removeEventListener('keydown', arguments.callee);
+        });
 
         document.getElementById('wait').style.display = 'none';
         // next();  // automatically go to next session
@@ -441,6 +425,72 @@
         // Assign html for interaction type
         function change_text(interaction_type){
             console.log("changing text for interaction type", interaction_type);
+
+            // Define background colors for each interaction type
+            const colors = {
+                "final test": "lightcoral",
+                "diagnostic test": "lightblue",
+                "demo": "lightgreen",
+                "diagnostic feedback": "lightyellow",
+                "default": "white" // Fallback color
+            };
+
+            const headerElement = document.getElementById("header");
+
+            
+            // change headers
+            if (interaction_type == "final test") {
+                console.log("final test");
+                $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration"))).toString() + '/6)</h1>');
+                // cl, pl, open, wtcl
+                $jq("#info_main").html('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+                // wt
+                //$jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
+                //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+                document.getElementById('prev').style.display = 'none';
+                headerElement.style.backgroundColor = colors["final test"];
+            } 
+            else if (interaction_type == "diagnostic test") {
+                console.log("diagnostic test");
+                $jq("#header").html('<h1> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Check-in test (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
+                if (localStorage.getItem("already completed") == 'true') {
+                    $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
+                }
+                else {
+                    $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
+                }
+                headerElement.style.backgroundColor = colors["diagnostic test"];
+
+            }
+            else if (interaction_type == "demo"){
+                console.log("demo");
+                if (localStorage.getItem("iteration")==1){
+                    $jq("#header").html('<h1>' + localStorage.getItem("lesson string") + ' Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
+                }
+                else{
+                    $jq("#header").html('<h1> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</h1>');
+                }
+                $jq("#info_main").html('<h3>Step through the demonstration <u>using your space bar</u>.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue!</h3>');
+                headerElement.style.backgroundColor = colors["demo"];
+
+            }
+            else if (interaction_type == "diagnostic feedback"){
+                console.log("diagnostic feedback");
+                $jq("#header").html('<h1>Feedback</h1>');
+                $jq("#info_main").html("<h3>Chip's optimal path to previous check-in test</h3>");
+                headerElement.style.backgroundColor = colors["diagnostic feedback"];
+
+            }
+            else{
+                console.log("default");
+                $jq("#header").html('<h1>Participant gameplay</h1>');
+                $jq("#info_main").html('<h3>Blah.</h3>');
+                headerElement.style.backgroundColor = colors["default"];
+
+            }
+
+            
+            // change table and survey
             if (interaction_type === "survey") {
                 var questions = [
                     {
@@ -468,16 +518,16 @@
                         name: "use3"
                     },
                 ];
-            // Shuffle the questions
-            questions = shuffle(questions);
+                // Shuffle the questions
+                questions = shuffle(questions);
 
-            // Generate the HTML
-            var html = `<br></br>
-            <h2>The following statements ask you to <u>reflect on your experience of engaging with Chip</u> to learn the game strategy. For each statement, please use the following scale to indicate what is most true for you.</h2>
-            <br></br>`;
+                // Generate the HTML
+                var html = `<br></br>
+                    <h2>The following statements ask you to <u>reflect on your experience of engaging with Chip</u> to learn the game strategy. For each statement, please use the following scale to indicate what is most true for you.</h2>
+                    <br></br>`;
 
-            for (var i = 0; i < questions.length; i++) {
-                html += `<h3>${questions[i].question}</h3>
+                for (var i = 0; i < questions.length; i++) {
+                    html += `<h3>${questions[i].question}</h3>
                 <div class="likert">
                 <label><input name="${questions[i].name}" type="radio" value="1"/><span>Strongly Disagree</span></label>
                 <label><input name="${questions[i].name}" type="radio" value="2"/><span>Disagree</span></label>
@@ -486,8 +536,7 @@
                 <label><input name="${questions[i].name}" type="radio" value="5"/><span>Strongly Agree</span></label>
                 </div>
                 <br></br>`;
-            }
-
+                }
 
                 html += `<h3>Finally, do you feel that you now understand the game strategy?</h3>
             <div class="likert">
@@ -499,16 +548,15 @@
                 </div>
                 <br></br>`;
 
-
-            html += `<h3>Please feel free to explain any of your selections above or any comments or thoughts you'd like to share!</h3>
+                html += `<h3>Please feel free to explain any of your selections above or any comments or thoughts you'd like to share!</h3>
             <textarea id="engagement short answer" rows="4" cols="50"></textarea>`;
 
-            $("#non-buttons").html(html);
-            }
-            else if ((interaction_type == "diagnostic test") || (interaction_type == "remedial test") || (interaction_type == "final test")) {
-                console.log("I am in the diagnostic test");
+                $jq("#non-buttons").html(html);
+            } 
+            else if ((interaction_type == "diagnostic test") || (interaction_type == "final test")) {
+                console.log("I am in the diagnostic/final test");
                 if (localStorage.getItem("already completed") == 'true') {
-                    $("#table_controlinfo").html(`<div><br><br>
+                    $jq("#table_controlinfo").html(`<div><br><br>
                     <table width="500">
                         <tr><th>Key</th><th>Action</th></tr>
                         <tr><td>space bar</td><td>next movement</td></tr>
@@ -517,7 +565,7 @@
                     <br></div>`);
                 }
                 else{
-                    $("#table_controlinfo").html(`<div><br><br><br><br>
+                    $jq("#table_controlinfo").html(`<div><br><br><br><br>
                 <table width="500">
                     <tr><th>Key</th><th>Action</th></tr>
                     <tr><td>up/down/left/right arrow keys</td><td>corresponding movement</td></tr>
@@ -530,53 +578,73 @@
             }
                 
             else {
-                console.log("I am in the ", interaction_type);
-                $("#table_controlinfo").html(`<div><br><br><br>
+                $jq("#table_controlinfo").html(`<div><br><br><br>
             <table width="500">
                 <tr><th>Key</th><th>Action</th></tr>
                 <tr><td>space bar</td><td>next movement</td></tr>
                 <tr><td>r</td><td>reset simulation</td></tr>
             </table>
             <br></div>`);
-                $("#info_main").html('<h3> Look at the following demonstration on how you should complete this game while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
+                $jq("#info_main").html('<h3> Look at the following demonstration on how you should complete this game while minimizing Chips energy loss.</h3><h3>Please answer the question below on the confidence of your <b>understanding</b> of the demonstration.</h3>');
             }
         }
-
 
         function prev() {
             console.log("I am going prev");
             localStorage.setItem("movement", "prev");
-            window.location.href='{{ url_for("at") }}';
+            window.location.href='{{ url_for("sb") }}';
         }
 
 
         function next() {
+            idx = 0;
             localStorage.setItem("movement", "next");
             //localStorage.setItem("survey completed", "false");
 
-            if (window.last_test) {
-                // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
-                document.getElementById('wait').style.display = 'block';
-            }
+            console.log("Domain completed?", window.domain_completed);
 
+            if (!window.domain_completed){
+                // if (window.last_test) {
+                //     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
+                //     document.getElementById('wait').style.display = 'block';
+                // }
+
+                // if (window.last_in_round) {
+                //     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
+                //     document.getElementById('wait').style.display = 'block';
+                // }
+
+                // hide the flash message
+                document.getElementById('flashMessage').style.display = 'none';
+
+                // if audio is playing, stop it
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            }
+            
             if (window.domain_completed) {
                 // localStorage.setItem("last test", "false");
+                
+                data = populateData();
+                
                 socket.emit("next domain", data);
-                socket.on("next domain is", function(data) {
+                socket.on("next domain is", function(next_dom_data) {
                     console.log("I have received next domain");
                     let url = "";
-                    if (data["domain"].length === 2){
+                    if (next_dom_data["domain"].length === 2){
                         // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
-                        if (data["domain"] == 'at'){
+                        if (next_dom_data["domain"] == 'at'){
                             url = "{{ url_for('at_intro') }}";
                         }
-                        if (data["domain"] == 'sb'){
+                        if (next_dom_data["domain"] == 'sb'){
                             url = "{{ url_for('sb_intro') }}";
                         }
 
                     }
                     else {
-                        url =  "{{ url_for('final_survey') }}";
+                        url = "{{ url_for('final_survey') }}";
                     }
                     window.location.href=url;
                 });
@@ -584,31 +652,36 @@
             }
 
             else {
-            // window.location.href='/at';
-            console.log("printing agent history nonoffset");
-            console.log(window.agent_history_nonoffset);
-            data = populateData()
+                window.location.href="{{ url_for('sb')}}";
+                console.log("printing agent history nonoffset");
+                console.log(window.agent_history_nonoffset);
+                data = populateData()
 
-            
-            // if audio is playing, stop it
-            if (audio) {
-                audio.pause();
-                audio.currentTime = 0;
-            }
-            
-            
-            // hide the flash message
-            document.getElementById('flashMessage').style.display = 'none';
-            
-            if (window.last_round && window.last_in_round) {
-                window.location.href = "url_for('final_survey')"
-            }
+            // if (window.last_round && window.last_in_round) {
+            //     window.location.href = "{{ url_for('final_survey') }}";
+            // }
             }
             
 
             socket.emit("settings", data);
             // reset vars (in case trajectory was not completed)
-            reset();
+            window.moves = [];
+            window.agent_history = [];
+            window.agent_history_nonoffset = [];
+
+            // update the next button to be disabled
+            if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
+                
+                loadingText.innerHTML = `Please wait for all your teammates to complete. Loading the next instruction...)`
+
+                // document.getElementById('wait').style.display = 'block';
+
+                // $jq("#next").replaceWith(`<button type="button" id="next" disabled
+                //     onclick="next()"
+                //     value="next" class="btn btn-primary btn-lg continue">
+                //     Next <span class="glyphicon glyphicon-arrow-right"></span>
+                //     </button>`);
+            }
 
         }
         
@@ -617,16 +690,26 @@
                 event.preventDefault();
                 event.returnValue = "Are you sure you want to leave? The task is incomplete.";
             }
+
             if (window.interaction_type === "survey") {
-                localStorage.setItem("short answer", document.getElementById("short answer").value);
+                localStorage.setItem("engagement short answer", document.getElementById("engagement short answer").value);
             }
 
             else {
+                let engagement_sa = document.getElementById("engagement short answer")
+                let improvement_sa = document.getElementById("improvement short answer")
+
+                if (engagement_sa) localStorage.setItem("engagement short answer", engagement_sa.value.trim());
+                else localStorage.setItem("engagement short answer", '');
+                if (improvement_sa) localStorage.setItem("improvement short answer", improvement_sa.value.trim());
+                else localStorage.setItem("improvement short answer", '');
+
                 let simulation_rt = 0;
                 if (localStorage.getItem("user input") === "{}") {
                     if (window.moves.length > 0) {
                         simulation_rt = performance.now() - window.start_time;
                     }
+                    console.log('coordinates: ', window.agent_history_nonoffset);
                     final_data = JSON.stringify({
                         'moves': window.moves,
                         'opt_response': false,
@@ -638,65 +721,92 @@
                 }
             }
 
-            //
-            socket.disconnect();
-
         });
 
+
         addEventListener("input", (event) => {
-            if (window.interaction_type !== "survey") {
-                localStorage.setItem("survey completed", "true");
-                //localStorage.setItem("survey completed", "true");
-                // checked based on input name
-                let radioValue = $("input[name='info']:checked").val();
-                if(radioValue) {
-                    localStorage.setItem("interaction_survey", radioValue);
-                }
-
-                console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
-                if (window.last_in_round && !window.joint_EOR) {
-                    // socket.emit("reached EOR");
-                    // console.log("I finished my last test in the round!");
-
-                    document.getElementById('wait').style.display = 'block';
-
+            if ((window.interaction_type == "final test") && (localStorage.getItem("last test") == "true")) {
+                var reward_ft_wt_1 = document.getElementById('reward_ft_wt_1')
+                var reward_ft_wt_2 = document.getElementById('reward_ft_wt_2')
+                if (reward_ft_wt_1.value !== "" && reward_ft_wt_2.value !== "") {
+                    $jq("#next").replaceWith(`<button type="button" id="next"
+                        onclick="next()"
+                        value="next" class="btn btn-primary btn-lg continue">
+                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>`);
                 }
                 else {
-                    $("#next").replaceWith(`<button type="button" id="next"
+                    // disable button again if one of the fields is deleted
+                    $jq("#next").replaceWith(`<button type="button" id="next" disabled
+                            onclick="next()"
+                            value="next" class="btn btn-primary btn-lg continue">
+                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                    </button>`);
+                }
+            }
+            else if (window.interaction_type !== "survey") {
+                localStorage.setItem("survey completed", "true");
+                // checked based on input name
+                let radioValue = $jq("input[name='info']:checked").val();
+                if(radioValue) {
+                    localStorage.setItem("survey", radioValue);
+                }
+                
+                // // Next button logic (wait for all members to finish)
+                // console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
+                // if (window.last_in_round && !window.joint_EOR) {
+                //     // socket.emit("reached EOR");
+                //     // console.log("I finished my last test in the round!");
+
+                //     document.getElementById('wait').style.display = 'block';
+
+                // }
+                // else {
+                //     $jq("#next").replaceWith(`<button type="button" id="next"
+                //         onclick="next()"
+                //         value="next" class="btn btn-primary btn-lg continue">
+                //         Next <span class="glyphicon glyphicon-arrow-right"></span>
+                //         </button>` );
+                // }
+
+                $jq("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
                         </button>` );
-                }
             }
             else {
-                let attn1 = $("input[name='attn1']:checked").val();
+                let attn1 = $jq("input[name='attn1']:checked").val();
                 if(attn1) {
                     localStorage.setItem("attn1", attn1);
                 }
-                let attn2 = $("input[name='attn2']:checked").val();
+                let attn2 = $jq("input[name='attn2']:checked").val();
                 if(attn2) {
                     localStorage.setItem("attn2", attn2);
                 }
-                let attn3 = $("input[name='attn3']:checked").val();
+                let attn3 = $jq("input[name='attn3']:checked").val();
                 if(attn3) {
                     localStorage.setItem("attn3", attn3);
                 }
-                let use1 = $("input[name='use1']:checked").val();
+                let use1 = $jq("input[name='use1']:checked").val();
                 if(use1) {
                     localStorage.setItem("use1", use1);
                 }
-                let use2 = $("input[name='use2']:checked").val();
+                let use2 = $jq("input[name='use2']:checked").val();
                 if(use2) {
                     localStorage.setItem("use2", use2);
                 }
-                let use3 = $("input[name='use3']:checked").val();
+                let use3 = $jq("input[name='use3']:checked").val();
                 if(use3) {
                     localStorage.setItem("use3", use3);
                 }
+                let understanding = $jq("input[name='understanding']:checked").val();
+                if(understanding) {
+                    localStorage.setItem("understanding", understanding);
+                }
 
-                if (attn1 && attn2 && attn3 && use1 && use2 && use3) {
-                    $("#next").replaceWith(`<button type="button" id="next"
+                if (attn1 && attn2 && attn3 && use1 && use2 && use3 && understanding) {
+                    $jq("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
@@ -706,34 +816,24 @@
         });
 
     function run_page(mdp_parameters) {
+    console.log("running page....");
     var canvas = document.getElementById("game");
     var context = canvas.getContext("2d");
 
     // variables for parent window
     var final_data = [];
     var data_sent = false;
+    var show_likert = false;
 
-    // var start_time = 0;
-    // var start_time_set = false;
-    // var moves = [];
-    // var agent_history = [];
-
-    // var offset_x = 1.25;
-    // var offset_y = 0.75;
 
     window.start_time = 0;
     window.moves = [];
     window.agent_history = [];
     window.agent_history_nonoffset = []; // this is for keep track of the agent's location in gridworld integers
 
-
     var offset_x = 1.25;
     var offset_y = 0.75;
 
-
-    // var mdp_parameters = window.parent.mdp_parameters;
-    // var watched_vid_arr = window.parent.watched_vid_arr;
-    // var current_page = window.parent.current_page;
 
     var text_color = "#394d7e";
 
@@ -769,7 +869,8 @@
         },
         picked: false,
         picked_human: false,
-        dropped: false
+        dropped: false,
+        // dropped_human: false
     }
 
     var goal = 
@@ -843,7 +944,7 @@
       }
 
 
-            function drawTaxi(x,y,color)
+    function drawTaxi(x,y,color)
       {
         if (spaceship.taxi_set == false){
         taxiSet();
@@ -1043,16 +1144,16 @@
         same_traj = false;
         for (var j = 0; j < mdp_parameters.all_opt_actions.length; j++) {
             opt_moves = mdp_parameters.all_opt_actions[j]
-            if (moves.length == opt_moves.length) {
-                for (var k = 0; k < moves.length; k++) {
-                    if (moves[k] != opt_moves[k]) {
+            if (window.moves.length == opt_moves.length) {
+                for (var k = 0; k < window.moves.length; k++) {
+                    if (window.moves[k] != opt_moves[k]) {
                         // if one move differs, no need to consider other moves. they're not the same trajectory
                         break;
                     }
                 }
 
                 // if you've found a matching trajectory, no need to check other trajectories
-                if (k == moves.length) {
+                if (k ==window.moves.length) {
                     same_traj = true;
                     break;
                 }
@@ -1072,13 +1173,13 @@
 
         var it = window.interaction_type
         if(it == "final test") {
-            sessionStorage.setItem('final_test_' + localStorage.getItem("iteration").toString(), same_traj)
+            sessionStorage.setItem('skateboard2_' + localStorage.getItem("iteration").toString(), same_traj)
         }
 
 
         final_data = JSON.stringify({
             'simulation_rt': (end_time - window.start_time),
-            'moves': moves,
+            'moves': window.moves,
             'opt_response': same_traj,
             'agent_history_nonoffset': window.agent_history_nonoffset,
             'mdp_parameters': mdp_parameters,
@@ -1108,13 +1209,16 @@
 
         // Display the message
         messageContainer.textContent = message;
+
+        return same_traj;
     }
 
     function draw() {
-        if (!window.start_time_set) {
-              window.start_time = performance.now();
-              window.start_time_set = true
-          }
+        console.log("I am in the draw function");
+        // if (!window.start_time_set) {
+        //       window.start_time = performance.now();
+        //       window.start_time_set = true
+        //   }
         
         if (!map_layout.set) {
             set_grids();
@@ -1194,18 +1298,26 @@
             context.fillText("Game completed!", (mdp_parameters.width * 100) / 2 + offset_x * 100, (mdp_parameters.height * 100) / 2 + offset_y * 100 + 250);
             
             
-            if (window.interaction_type.includes('test')) {
-            document.getElementById('message-container').style.display = 'block';
-            }
+            // if (window.interaction_type.includes('test') && localStorage.getItem("already completed") == 'false') {
+            //     document.getElementById('message-container').style.display = 'block';
+            // }
             
             // // watched_vid_arr[current_page] = true;
+            if (data_sent == false) {
+                var it = window.interaction_type;
+                var last_test = localStorage.getItem("last test");
 
-            if (it == "remedial test" || it == "diagnostic test") {
+                same_traj = record_data()
+                localStorage.setItem("optimal_traj", same_traj)
+                console.log("same_traj: ", same_traj)
+                if (it == "diagnostic test") {
+                    if (localStorage.getItem("already completed") === "false"){
+                        document.getElementById('message-container').style.display = 'block';
+                    }
                     if (same_traj && localStorage.getItem("already completed") === "false") {
                         // if the test was answered correctly or page wasn't already shown previously, show likert scale
                         show_likert = true
-
-                        if (localStorage.getItem("already completed") == 'false') $("#feedback").html('<div class="text-center"><h4>Great, you answered correctly!</h4><br></div>')
+                        // if (localStorage.getItem("already completed") == 'false') $jq("#feedback").html('<div class="text-center"><h4>Great, you answered correctly!</h4><br></div>')
                     }
                     else {
                         // if the test was answered incorrectly or page was already shown previously, simply enable the next button
@@ -1213,17 +1325,18 @@
                         localStorage.setItem("survey", 0)
 
                         const subiteration = localStorage.getItem("subiteration")
-                        if (localStorage.getItem("already completed") == 'false') {
-                            $("#feedback").html('<div class="text-center"><h4>Oh no, you answered incorrectly! Let\'s review on the next page!</h4><br></div>')
-                        }
+                        // if (localStorage.getItem("already completed") == 'false') {
+                        //     $jq("#feedback").html('<div class="text-center"><h4>Oh no, you answered incorrectly! Let\'s review on the next page!</h4><br></div>')
+                        // }
 
-                        $("#next").replaceWith(`<button type="button" id="next"
+                        $jq("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
                         </button>` );
                     }
-                } else if (it == "final test"){
+                } 
+                else if (it == "final test"){
                     if(last_test == 'true'){
                         var score = 0;
                         var first = 0;
@@ -1232,51 +1345,52 @@
                         var fourth = 0;
                         var fifth = 0;
                         var sixth = 0;
-                        if (sessionStorage.getItem('skateboard2_0') == 'true') {
+                        if (sessionStorage.getItem('skateboard2_1') == 'true') {
                             score += 1;
                             first += 1;
                         }
-                        if (sessionStorage.getItem('skateboard2_1') == 'true') {
+                        if (sessionStorage.getItem('skateboard2_2') == 'true') {
                             score += 1;
                             second += 1;
                         }
-                        // if (sessionStorage.getItem('skateboard2_2') == 'true') {
-                        //     score += 1;
-                        //     third += 1;
-                        // }
-                        // if (sessionStorage.getItem('skateboard2_3') == 'true') {
-                        //     score += 1;
-                        //     fourth += 1;
-                        // }
-                        // if (sessionStorage.getItem('skateboard2_4') == 'true') {
-                        //     score += 1;
-                        //     fifth += 1;
-                        // }
-                        // if (sessionStorage.getItem('skateboard2_5') == 'true') {
-                        //     score += 1;
-                        //     sixth += 1;
-                        // }
+                        if (sessionStorage.getItem('skateboard2_3') == 'true') {
+                            score += 1;
+                            third += 1;
+                        }
+                        if (sessionStorage.getItem('skateboard2_4') == 'true') {
+                            score += 1;
+                            fourth += 1;
+                        }
+                        if (sessionStorage.getItem('skateboard2_5') == 'true') {
+                            score += 1;
+                            fifth += 1;
+                        }
+                        if (sessionStorage.getItem('skateboard2_6') == 'true') {
+                            score += 1;
+                            sixth += 1;
+                        }
                         console.log("game score: ")
                         console.log(score)
-                        $("#feedback").html('<div class="text-center"><h1>Score Results</h1><p>In order of the tests you took, you scored <p id="score_val"></p>getting <p id="score_val2" style="display:inline"></p> tests correctly out of 6.</p></div>')
+                        $jq("#feedback").html('<div class="text-center"><h1>Score Results</h1><p>In order of the tests you took, you scored <p id="score_val"></p>getting <p id="score_val2" style="display:inline"></p> tests correctly out of 6.</p></div>')
                         document.getElementById('score_val').innerHTML = first + ' + ' + second + ' + ' + third  + ' + ' + fourth  + ' + ' + fifth + ' + ' + sixth + ' = ' + score
                         document.getElementById('score_val2').innerHTML = score
 
                         // exploratory data collection on whether people are able to explicitly predict the weights
                         // for cl, pl, open,
-                        $("#survey").html("<br><h3>Finally, please provide your best guess of energy change of the actions below (the last one is given and decimals are allowed!):</h3><table class='center'><tr><th>Action</th><th>Sample sequence(s)</th><th>Energy change</th></tr><tr><td>Moving with the orange rectangle grabbed</td><td><img src = 'static/img/skateboard2_skateboard2.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_skateboard3.png' width='75' height=auto /></td><td><input id='reward_ft_wt_1' type='number' style='width: 4em;'</>%</td></tr><tr><td>Moving <u>out of</u> a purple square (e.g. into purple <u>or</u> white square)</td><td><img src = 'static/img/skateboard2_purple1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_purple2.png' width='150' height=auto /></td><td><input id='reward_ft_wt_2' type='number' style='width: 4em;'</>%</td></tr><tr><td>Any action that you take (e.g. moving right, grabbing, etc) </td><td><img src = 'static/img/right1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/right2.png' width='150' height=auto /><br><br><img src = 'static/img/skateboard2_skateboard1.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_skateboard2.png' width='75' height=auto /></td>  <td>-1.0%</td></tr></table>");
+                        $jq("#survey").html("<br><h3>Finally, please provide your best guess of energy change of the actions below (the last one is given and decimals are allowed!):</h3><table class='center'><tr><th>Action</th><th>Sample sequence(s)</th><th>Energy change</th></tr><tr><td>Moving with the orange rectangle grabbed</td><td><img src = 'static/img/skateboard2_skateboard2.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_skateboard3.png' width='75' height=auto /></td><td><input id='reward_ft_wt_1' type='number' style='width: 4em;'</>%</td></tr><tr><td>Moving <u>out of</u> a purple square (e.g. into purple <u>or</u> white square)</td><td><img src = 'static/img/skateboard2_purple1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_purple2.png' width='150' height=auto /></td><td><input id='reward_ft_wt_2' type='number' style='width: 4em;'</>%</td></tr><tr><td>Any action that you take (e.g. moving right, grabbing, etc) </td><td><img src = 'static/img/right1.png' width='150' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/right2.png' width='150' height=auto /><br><br><img src = 'static/img/skateboard2_skateboard1.png' width='75' height=auto /><img src = 'static/img/arrow.png' width='30' height=auto /><img src = 'static/img/skateboard2_skateboard2.png' width='75' height=auto /></td>  <td>-1.0%</td></tr></table>");
                     }
-                        $("#next").replaceWith(`<button type="button" id="next"
+                        $jq("#next").replaceWith(`<button type="button" id="next"
                     onclick="next()"
                     value="next" class="btn btn-primary btn-lg continue">
                     Next <span class="glyphicon glyphicon-arrow-right"></span>
                     </button>` );
-                } else if (localStorage.getItem("already completed") === "false") {
+                } 
+                else if (localStorage.getItem("already completed") === "false") {
                     show_likert = true
                 }
 
                 if (show_likert){
-                    $("#survey").html(`<h3>Did this interaction improve your understanding of the game strategy?</h3>
+                    $jq("#survey").html(`<h3>Did this interaction improve your understanding of the game strategy?</h3>
                 <div class="likert">
                 <label><input name="info" type="radio" value="1"/><span>Not at all</span></label>
                 <label><input name="info" type="radio" value="2"/><span>Slightly</span></label>
@@ -1330,7 +1444,7 @@
                     }
                     }   
                 spaceship.grid_loc.x -= 1;
-                moves.push("left");
+                window.moves.push("left");
                 window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y])
                 if (passenger.picked){
                     passenger.grid_loc.x -= 1;
@@ -1363,7 +1477,7 @@
                     }
                     }   
                 spaceship.grid_loc.x += 1;
-                moves.push("right");
+                window.moves.push("right");
                 window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y])
                 if (passenger.picked){
                     passenger.grid_loc.x += 1;
@@ -1396,7 +1510,7 @@
                     }
                     }   
                 spaceship.grid_loc.y -= 1;
-                moves.push("up");
+                window.moves.push("up");
                 window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y])
                 if (passenger.picked){
                     passenger.grid_loc.y -= 1;
@@ -1429,7 +1543,7 @@
                     }
                     }   
                 spaceship.grid_loc.y += 1;
-                moves.push("down");
+                window.moves.push("down");
                 window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y])
                 if (passenger.picked){
                     passenger.grid_loc.y += 1;
@@ -1455,7 +1569,7 @@
     function pickup(version) {
         if (version == "agent"){
             if (spaceship.grid_loc.x == passenger.grid_loc.x && spaceship.grid_loc.y == passenger.grid_loc.y && passenger.picked == false){
-                moves.push("pickup");
+                window.moves.push("pickup");
                 passenger.picked = true;
                 window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y])
         }}
@@ -1479,7 +1593,7 @@
                 window.agent_history_nonoffset.push([spaceship.grid_loc.x + 1 - offset_x, mdp_parameters.height - spaceship.grid_loc.y + offset_y])
                 if (condition_goal){
                 passenger.dropped = true;
-                    console.log(moves);
+                    console.log(window.moves);
                 }
             }
         }
@@ -1499,7 +1613,7 @@
     }
 
     function reset() {
-        moves = [];
+        window.moves = [];
         map_layout.set = false;
         passenger.picked = false;
         passenger.picked_human = false;
@@ -1530,6 +1644,8 @@
                 var next_action_human = mdp_parameters.normalized_human_actions[idx];
                 console.log("agent:" + next_action_agent);
                 console.log("human:" + next_action_human);
+                console.log("idx:" + idx);
+
                 idx++;
                 switch(next_action_human) {
                     case "left":
@@ -1644,8 +1760,8 @@
                         // down Arrow key
                         down("agent");
                         break;
-                    case 71:
-                        //g key
+                    case 80:
+                        //p key
                         pickup("agent");
                         break;
                     case 68:

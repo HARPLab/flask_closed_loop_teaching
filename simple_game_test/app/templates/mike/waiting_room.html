@@ -83,19 +83,20 @@
 
         socket.emit("next domain", data);
         socket.on("next domain is", function(data) {
+            console.log("I have received next domain: ", data["domain"]);
             let url = "";
             if (data["domain"].length === 2){
                 // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
                 if (data["domain"] == 'at'){
-                    url = '{{ url_for('at_intro') }}';
+                    url = "{{ url_for('at_intro') }}";
                 }
                 if (data["domain"] == 'sb'){
-                    url = '{{ url_for('sb_intro') }}';
+                    url = "{{ url_for('sb_intro') }}";
                 }
 
             }
             else {
-                url = '{{ url_for('final_survey') }}';
+                url = "{{ url_for('final_survey') }}";
             }
             window.location.href = url;
         });

@@ -105,7 +105,8 @@ class User(UserMixin, db.Model):
         self.study_type = cond_type
         return min_cond
 
-    def set_code(self, code='CYTO5M8C'):
+    def set_code(self):
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
         self.code = code
         return code
 
@@ -182,7 +183,7 @@ class Group(db.Model):
     # domain_2 = db.Column(db.String(2))
     # domain_3 = db.Column(db.String(2))
 
-    domains = ["at", "sb"]
+    domains = ["sb", "at"]
     
     # rand.shuffle(domains)
     domain_1 = db.Column(db.PickleType, default=domains[0])
@@ -310,6 +311,7 @@ class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.String(64))
+    group_id = db.Column(db.Integer)
     domain_name = db.Column(db.String(2))
     attn1 = db.Column(db.Integer)
     attn2 = db.Column(db.Integer)
@@ -317,7 +319,9 @@ class Domain(db.Model):
     use1 = db.Column(db.Integer)
     use2 = db.Column(db.Integer)
     use3 = db.Column(db.Integer)
-    short_answer = db.Column(db.PickleType)
+    engagement_short_answer = db.Column(db.PickleType)
+    improvement_short_answer = db.Column(db.PickleType)
+    reward_ft_weights = db.Column(db.PickleType)
 
 
 class DomainParams(db.Model):
