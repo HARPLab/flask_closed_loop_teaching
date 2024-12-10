@@ -117,6 +117,8 @@ def convert_db_to_excel(database_file, output_excel_file):
         if conn:
             conn.close()
 
+
+
 # Replace 'app.db' with your database file and 'output.xlsx' with the desired Excel file name
 convert_db_to_excel('app.db', 'output.xlsx')
 

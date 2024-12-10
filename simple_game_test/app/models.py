@@ -11,28 +11,29 @@ import string
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
+    
     
     # trials = db.relationship("Trial", backref="author", lazy="dynamic")
     demos = db.relationship("Demo", backref="author", lazy="dynamic")
     surveys = db.relationship("Survey", backref="author", lazy="dynamic")
 
+    ## Unused variables
+    password_hash = db.Column(db.String(128))
     condition_id = db.Column(db.Integer, db.ForeignKey("condition.id"))
     online_condition_id = db.Column(db.Integer, db.ForeignKey("online_condition.id"))
     in_person_condition_id = db.Column(db.Integer, db.ForeignKey("in_person_condition.id"))
-
     study_type = db.Column(db.PickleType)
-    code = db.Column(db.String(20))
     feedback_counts = db.Column(db.PickleType)
-    consent = db.Column(db.Integer)
     training = db.Column(db.Integer)
+    ##############
+
+    code = db.Column(db.String(20))
+    consent = db.Column(db.Integer)
     age = db.Column(db.Integer)
     gender = db.Column(db.Integer)
     ethnicity = db.Column(db.PickleType)
     education = db.Column(db.Integer)
-    robot = db.Column(db.Integer)
     browser = db.Column(db.String(256))
-    final_robot_choice = db.Column(db.Integer)
     final_feedback = db.Column(db.PickleType)
     num_trials_completed = db.Column(db.Integer)
 
@@ -56,9 +57,6 @@ class User(UserMixin, db.Model):
     last_iter_in_round = db.Column(db.Boolean, default=True)
     last_test_in_round = db.Column(db.Boolean, default=True)
 
-    control_stack = db.Column(MutableList.as_mutable(db.PickleType),
-                                    default=[])
-    curr_trial_idx = db.Column(db.Integer)
     group = db.Column(db.Integer)
     group_code = db.Column(db.Integer)
     group_member_id = db.Column(db.Integer)
@@ -79,10 +77,6 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-    def set_attention_check(self, value):
-        self.attention_check = value
-        return value
 
     def set_browser(self, value):
         self.browser = value
@@ -109,6 +103,10 @@ class User(UserMixin, db.Model):
         code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
         self.code = code
         return code
+    
+    def set_attention_check(self, value):
+        self.attention_check = value
+        return value
 
     def set_completion(self, status):
         self.study_completed = status
@@ -126,6 +124,7 @@ def load_user(id):
 class Round(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     domain = db.Column(db.String(2))
+    domain_progress = db.Column(db.String(20))
     status = db.Column(db.String(20)) #demos_tests_generated, demos_updated, tests_updated
     group_id = db.Column(db.Integer)
     round_num = db.Column(db.Integer)
@@ -182,12 +181,12 @@ class Group(db.Model):
     # domain_1 = db.Column(db.String(2), default="at")
     # domain_2 = db.Column(db.String(2))
     # domain_3 = db.Column(db.String(2))
-
-    domains = ["sb", "at"]
     
+    # domains = ["sb", "at"]
     # rand.shuffle(domains)
-    domain_1 = db.Column(db.PickleType, default=domains[0])
-    domain_2 = db.Column(db.PickleType, default=domains[1])
+    
+    domain_1 = db.Column(db.PickleType)
+    domain_2 = db.Column(db.PickleType)
 
     curr_progress =  db.Column(db.PickleType, default="domain_1")
 
@@ -304,6 +303,8 @@ class Trial(db.Model):
     human_model = db.Column(db.PickleType) # don't need this
     is_first_time = db.Column(db.Boolean, default=True)
     num_visits = db.Column(db.Integer)
+    engagement_short_answer = db.Column(db.PickleType)
+    improvement_short_answer = db.Column(db.PickleType)
 
 
 
@@ -319,8 +320,8 @@ class Domain(db.Model):
     use1 = db.Column(db.Integer)
     use2 = db.Column(db.Integer)
     use3 = db.Column(db.Integer)
+    understanding = db.Column(db.Integer)
     engagement_short_answer = db.Column(db.PickleType)
-    improvement_short_answer = db.Column(db.PickleType)
     reward_ft_weights = db.Column(db.PickleType)
 
 
