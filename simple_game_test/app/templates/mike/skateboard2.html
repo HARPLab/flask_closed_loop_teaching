@@ -753,35 +753,18 @@
                 }
             }
             else if (window.interaction_type !== "survey") {
-                localStorage.setItem("survey completed", "true");
                 // checked based on input name
                 let radioValue = $jq("input[name='info']:checked").val();
                 if(radioValue) {
                     localStorage.setItem("survey", radioValue);
-                }
-                
-                // // Next button logic (wait for all members to finish)
-                // console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
-                // if (window.last_in_round && !window.joint_EOR) {
-                //     // socket.emit("reached EOR");
-                //     // console.log("I finished my last test in the round!");
+                    localStorage.setItem("survey completed", "true");
 
-                //     document.getElementById('wait').style.display = 'block';
-
-                // }
-                // else {
-                //     $jq("#next").replaceWith(`<button type="button" id="next"
-                //         onclick="next()"
-                //         value="next" class="btn btn-primary btn-lg continue">
-                //         Next <span class="glyphicon glyphicon-arrow-right"></span>
-                //         </button>` );
-                // }
-
-                $jq("#next").replaceWith(`<button type="button" id="next"
+                    $jq("#next").replaceWith(`<button type="button" id="next"
                         onclick="next()"
                         value="next" class="btn btn-primary btn-lg continue">
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
                         </button>` );
+                }
             }
             else {
                 let attn1 = $jq("input[name='attn1']:checked").val();

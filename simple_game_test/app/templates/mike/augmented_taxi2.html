@@ -788,11 +788,18 @@
                 }
             }
             else if (window.interaction_type !== "survey") {
-                localStorage.setItem("survey completed", "true");
+                
                 // checked based on input name
                 let radioValue = $jq("input[name='info']:checked").val();
                 if(radioValue) {
                     localStorage.setItem("survey", radioValue);
+                    localStorage.setItem("survey completed", "true");
+
+                    $jq("#next").replaceWith(`<button type="button" id="next"
+                        onclick="next()"
+                        value="next" class="btn btn-primary btn-lg continue">
+                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>` );
                 }
                 
                 // // Next button logic (wait for all members to finish)
@@ -810,11 +817,7 @@
                 //         </button>` );
                 // }
 
-                $jq("#next").replaceWith(`<button type="button" id="next"
-                        onclick="next()"
-                        value="next" class="btn btn-primary btn-lg continue">
-                        Next <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>` );
+
             }
             else {
                 let attn1 = $jq("input[name='attn1']:checked").val();
