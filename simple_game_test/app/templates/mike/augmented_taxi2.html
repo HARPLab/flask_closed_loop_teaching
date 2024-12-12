@@ -398,34 +398,18 @@
             audio.loop = true;
             audio.play();
 
-            // // when next lesson is available before completing survey
-            // localStorage.setItem("survey completed", "true");
-            // // checked based on input name
-            // let radioValue = $jq("input[name='info']:checked").val();
-            // if(radioValue) {
-            //     localStorage.setItem("interaction_survey", radioValue);
-            // }
-
-            // if (radioValue != -1) {
-            //     $jq("#next").replaceWith(`<button type="button" id="next"
-            //                 onclick="next()"
-            //                 value="next" class="btn btn-primary btn-lg continue">
-            //                 Next <span class="glyphicon glyphicon-arrow-right"></span>
-            //                 </button>` );
-            // }
-
-            // Add event listener for keypress to hide the message and stop the audio
-            document.addEventListener('keydown', function() {
-                // Hide the flash message
-                flashMessage.style.display = 'none';
+            // // Add event listener for keypress to hide the message and stop the audio
+            // document.addEventListener('keydown', function() {
+            //     // Hide the flash message
+            //     flashMessage.style.display = 'none';
                 
-                // Stop the audio
-                audio.pause();
-                audio.currentTime = 0;  // Reset audio to start position
+            //     // Stop the audio
+            //     audio.pause();
+            //     audio.currentTime = 0;  // Reset audio to start position
 
-                document.removeEventListener('keydown', arguments.callee);
-            });
-
+            //     document.removeEventListener('keydown', arguments.callee);
+            // });
+            document.addEventListener('keydown', handleKeydown);
 
             document.getElementById('wait').style.display = 'none';
             // next();  // automatically go to next session
@@ -433,6 +417,20 @@
             window.joint_EOR = true;
 
         });
+
+        function handleKeydown(event) {
+            // Hide the flash message
+            flashMessage.style.display = 'none';
+
+            // Stop the audio
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0; // Reset audio to start position
+            }
+
+            // Remove this listener
+            document.removeEventListener('keydown', handleKeydown);
+        }
 
         // Shuffle function
         function shuffle(array) {

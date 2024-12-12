@@ -193,11 +193,15 @@ class Group(db.Model):
 
     def groups_all_EOR(self):
         EOR_list = []
-        for idx in range(self.num_members):
-            if self.members_statuses[idx] == "joined":
-                EOR_list.append(self.members_EOR[idx])
+        if self.num_active_members > 0:
+            for idx in range(self.num_members):
+                if self.members_statuses[idx] == "joined":
+                    EOR_list.append(self.members_EOR[idx])
 
-        return all(EOR_list)
+            return all(EOR_list)
+        else:
+            return False
+        
 
     def group_last_test(self):
         last_test_list = []
