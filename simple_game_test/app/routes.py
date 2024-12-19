@@ -12,8 +12,7 @@ import json
 import time
 from threading import Timer
 
-
-# from datetime import datetime
+from datetime import datetime
 
 import sys, os
 from termcolor import colored
@@ -45,7 +44,9 @@ import pickle
 import numpy as np
 from datetime import date
 import matplotlib.pyplot as plt
+from threading import Lock
 
+db_lock = Lock()
 executor = ProcessPoolExecutor()
 
 
@@ -73,21 +74,11 @@ CARD_ID_TO_FEATURES = [
 '''
 
 # Timeout for reconnection (in seconds)
-RECONNECT_TIMEOUT = 10  # Change this to the desired time
+RECONNECT_TIMEOUT = 60  # Change this to the desired time
 
 # List to track disconnected users
 disconnected_users = []
-
-
-@app.route('/logout')
-def logout():
-    session.pop("attention_check_rules", None)
-    logout_user()  # Logs out the user
-    return jsonify({'url': url_for('logout_confirmation')})  # Send redirect URL to frontend
-
-@app.route('/logout_confirmation')
-def logout_confirmation():
-    return render_template('logout_confirmation.html')  # Render confirmation page
+logout_reason = 'completed'
 
 
     
@@ -104,6 +95,7 @@ def index():
     completed = True if current_user.study_completed == 1 else False
 
     current_user.loop_condition = "debug"
+    # with db_lock:
     db.session.add(current_user)
     db.session.commit()
 
@@ -179,10 +171,10 @@ def handle_connect():
 
     print('User:', current_user.id, 'Disconnected users after connect:', disconnected_users)
 
-    # join the room
-    if current_user.group is not None:
-        rejoin_group()  # just in case the user was disconnected due to waiting too long
-        # join_room('room_'+ str(current_user.group))
+    # # join the room
+    # if current_user.group is not None:
+    #     rejoin_group()  # just in case the user was disconnected due to waiting too long
+    #     # join_room('room_'+ str(current_user.group))
 
 
 @socketio.on("disconnect")
@@ -205,9 +197,52 @@ def handle_disconnect():
 
             # if still not connected after timeout, leave group
             if user_id in disconnected_users:
+                current_user.set_curr_progress("left_study_or_got_disconnected")
+                flag_modified(current_user, "curr_progress")
+                update_database(current_user, str(current_user.username) + ". User left study or got disconnected")
                 leave_group()
-                
 
+
+@socketio.on("disconnect_user")
+def disconnect_user(data):
+    print('User: ', current_user.id, 'disconnecting due to inactivity.')
+
+    current_user.last_activity = data["last_activity"]
+    if current_user.last_activity is not None:
+        last_activity_time_seconds = float(data["last_activity_time"])/1000
+        current_user.last_activity_time = datetime.fromtimestamp(last_activity_time_seconds)
+    else:
+        current_user.last_activity_time = None
+
+    current_user.set_curr_progress("removed_due_to_inactivity")
+    
+    flag_modified(current_user, "last_activity")
+    flag_modified(current_user, "last_activity_time")
+    flag_modified(current_user, "curr_progress")
+    update_database(current_user, str(current_user.username) + ". User logged out due to inactivity")
+    
+    leave_group()
+
+    # Notify the client to redirect
+    socketio.emit("force_logout", {"reason": 'inactivity'}, to=request.sid)
+
+
+@app.route('/logout')
+def logout():
+    session.pop("attention_check_rules", None)
+    current_user.set_curr_progress("study_completed")
+    flag_modified(current_user, "curr_progress")
+    update_database(current_user, str(current_user.username) + ". User progress study completed")
+
+    logout_user()  # Logs out the user
+    
+    return jsonify({'url': url_for('logout_confirmation'), 'reason': 'complete'})  # Send redirect URL to frontend
+
+
+@app.route('/logout_confirmation')
+def logout_confirmation():
+    return render_template('logout_confirmation.html')  # Render confirmation page
+                
 
 @socketio.on("sandbox settings")
 def sandbox_settings(data):
@@ -305,16 +340,16 @@ def post_practice():
 
     update_database(current_user, str(current_user.username) + ". User progress post practice")
 
-    preamble = ("<br><br><h3>Good job on completing the practice game! <b>Read these instructions carefully!</b> Let's now head over to the <b>two main games</b> and <b>begin the real study</b>.</h3><br>" +
-            "<h4>In these games, you will <b>not</b> be told how each action changes Chip's energy level.</h4><br>" +
+    preamble = ("<br><br><p>Good job on completing the practice game! <b>Read these instructions carefully!</b> Let's now head over to the <b>two main games</b> and <b>begin the real study</b>.</p><br>" +
+            "<p>In these games, you will <b>not</b> be told how each action changes Chip's energy level.</p><br>" +
             "For example, note the '???' in the Energy Change column below. <table class=\"center\"><tr><th>Action</th><th>Sample sequence</th><th>Energy change</th></tr><tr><td>Any action that you take (e.g. moving right)</td><td><img src = 'static/img/right1.png' width=\"150\" height=auto /><img src = 'static/img/arrow.png' width=\"30\" height=auto /><img src = 'static/img/right2.png' width=\"150\" height=auto /><td>???</td></tr></table> <br>" +
-            "<h4>Instead, you will have to <u>figure that out</u> and subsequently the best strategy for completing the task while minimizing Chip's energy loss <u>by observing Chip's demonstrations, given as different lessons!</u></h3><br>" +
-            "<h4>In between demonstrations/lessons, Chip may test your understanding by asking you to predict the best strategy and giving you corrective feedback to help you learn!</h4><br>" +
-            "<h4>Finally, <u>you may navigate back to previous interactions</u> (e.g. demonstrations) to refresh your memory <u>when you're not being tested!</u></h4>" + 
-            "<h4> <b> Remember, you are part of a group and will be learning the same lessons as the group members. This means you may have to wait for all your members to complete a lesson before moving onto the next lesson. </b> </h4><br>" +
-            "<h4> <b> If anyone in your group has not learned the lesson, your entire group will repeat the lesson. </b> </h4><br>" +
-            "<h4> You will need to successfully complete both games to finish the study</u> and receive your compensation!</h4><br>" +
-            "<h4>Click the Next button when you're ready to start the study!</h4>"
+            "<p>Instead, you will have to <u>figure that out</u> and subsequently the best strategy for completing the task while minimizing Chip's energy loss <u>by observing Chip's demonstrations, given as different lessons!</u></p><br>" +
+            "<p>In between demonstrations/lessons, Chip may test your understanding by asking you to predict the best strategy and giving you corrective feedback to help you learn!</p><br>" +
+            "<p>Finally, <u>you may navigate back to previous interactions</u> (e.g. demonstrations) to refresh your memory <u>when you're not being tested!</u></p>" + 
+            "<p> <b> Remember, you are part of a group </b> and will be learning the same lessons as the group members. This means <b> you may have to wait for all your members to complete a lesson </b> before moving onto the next lesson. </p><br>" +
+            "<p> If any member of your group has not learned the lesson, the entire group will repeat the lesson. This will continue either until everyone in the group learns the lesson or until a set limit is reached, after which the group will move on to the next round. </p><br>" +
+            "<p> You will need to successfully complete both games to finish the study</u> and receive your compensation!</p><br>" +
+            "<p>Click the Next button when you're ready to start the study!</p>"
         )
     
     return render_template("mike/post_practice.html", preamble=preamble)
@@ -341,7 +376,9 @@ def join_group():
 
     ret = {}
     cond_list = ["individual_belief_low", "individual_belief_high", "common_belief", "joint_belief"]
-    domain_list = [["at", "sb"], ["sb", "at"]]
+    # domain_list = [["at", "sb"], ["sb", "at"]]
+    domain_list = [["sb", "at"]]
+
     
     # cond_list = ["individual_belief_low"]
     # domain_list = [["at", "sb"]]
@@ -384,7 +421,8 @@ def join_group():
                 members_EOR = [False for i in range(params['team_size'])],
                 members_last_test = [False for i in range(params['team_size'])],
                 )
-
+            
+            # with db_lock:
             db.session.add(new_group_entry)
             db.session.commit()
                         
@@ -470,8 +508,9 @@ def rejoin_group():
 #     socketio.emit("member left temp", {"member code": current_user.group_code}, to='room_'+ str(current_user.group))
 #     return
 
-@socketio.on("leave group")
+# @socketio.on("leave group")
 def leave_group():
+    
     """
     handles leaving groups. executed upon client-side call to "leave 
     group" in mike/augmented_taxi2_introduction.html or mike/augmented_taxi2.html.
@@ -482,7 +521,6 @@ def leave_group():
     data emitted: member_code
     side effects: TBD   
     """ 
-    
 
     if current_user.group is not None:
         print(colored('Leaving group....', 'red'))
@@ -503,12 +541,10 @@ def leave_group():
         # check if the remaining members are in EOR and waiting for the member who left
         group_EOR_status = current_group.groups_all_EOR()
         print('User:', current_user.id, 'Group EOR status:', group_EOR_status)
-            
-        # logout the user
-        logout()
 
-    
-    return
+        # Log out the user
+        session.pop("attention_check_rules", None)
+        logout_user()
 
 
 # @socketio.on('join room')
@@ -530,7 +566,7 @@ def leave_group():
 def next_domain(data):
     
 
-    # save remaining data from final test
+    # save remaining data from 
     if len(data["user input"]) !=0:
         domain, _ = get_domain()
         trial = Trial(
@@ -550,6 +586,7 @@ def next_domain(data):
             duration_ms = data["user input"]["simulation_rt"],
             human_model = None #TODO: later?
         )
+        # with db_lock:
         db.session.add(trial)
         db.session.commit()
 
@@ -708,9 +745,24 @@ def settings(data):
         current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
         print('User:', current_user.id, 'Current user group: ', current_user.group, 'current_user.curr_progress: ', current_user.curr_progress, 'current_group.curr_progress: ', current_group.curr_progress, 'Round_num:', current_user.round, 'current_round:', current_round, current_user.iteration, current_user.interaction_type)
 
+        print('Data received:', data)
+        
+        ## SAVE USER ACTIVITY DATA
+        current_user.last_activity = data["last_activity"]
+        if current_user.last_activity is not None:
+            last_activity_time_seconds = float(data["last_activity_time"])/1000
+            current_user.last_activity_time = datetime.fromtimestamp(last_activity_time_seconds)
+        else:
+            current_user.last_activity_time = None
+
+        if current_user.last_activity_time is not None:
+            flag_modified(current_user, "last_activity")
+            flag_modified(current_user, "last_activity_time")
+            update_database(current_user, 'Current user last activity: ' + current_user.last_activity)
+
+
 
         ## SAVE TRIAL DATA TO DATABASE
-        
         if current_user.interaction_type == "survey":
             # add_survey_data(domain, data)
             update_domain_flag = True
@@ -856,6 +908,7 @@ def settings(data):
                                 next_round_id = current_user.round+1
                                 next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
                                 if next_round is not None:
+                                    db.session.refresh(next_round)
                                     round_status = next_round.status  
                     
                     # vars for next round
@@ -865,7 +918,6 @@ def settings(data):
                 ### Generate next round for the group
                 else:
                 
-
                     ## Update EOR status for current user
                     print('User:', current_user.id, 'User: ', current_user.username, 'reached last iteration in round')
                     member_idx = current_group.members.index(current_user.username)
@@ -958,7 +1010,7 @@ def settings(data):
                             #         if next_round is not None:
                             #             round_status = next_round.status  
 
-                        time.sleep(5)
+                        time.sleep(3)
                         
                         
                     print('User:', current_user.id, 'Interaction type: ', current_mdp_params["interaction type"], 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
@@ -1059,7 +1111,7 @@ def settings(data):
         next_trial = db.session.query(Trial).filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration).order_by(Trial.id.desc()).first()
         updated_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
 
-        print('User:', current_user.id, 'Next trial: ', next_trial, '. Updated round:', updated_round)
+        print('User:', current_user.id, 'Next trial: ', next_trial, '. Next_trial.likert:', next_trial.likert, '. Updated round:', updated_round)
         ######################
 
 
@@ -1196,6 +1248,60 @@ def settings(data):
             iteration_id = current_user.iteration
             N_iterations = len(updated_round.round_info)
             # debug_string = f"Final tests for this game. <br> Test no. {current_user.iteration}/{len(updated_round.round_info)}."
+
+
+        # Get interaction type and iteration of other users in the group
+        group_user_ids = current_group.member_user_ids
+        print('Group user ids:', group_user_ids)
+
+        if current_user.interaction_type == "final test":
+            round_type = 'Strategy assessment'
+        else:
+            round_type = 'Current lesson'
+
+        response["teammate_1_progress"] = round_type + ' started'
+        response["teammate_2_progress"] = round_type + ' started'
+
+        teammate_id = 1
+        for i in range(len(group_user_ids)):
+            user_id = group_user_ids[i]
+            if user_id != current_user.id and current_group.members_statuses[i] == "joined":
+                
+                ## Based on the user status
+                # other_user = db.session.query(User).filter_by(id=user_id).order_by(User.id.desc()).first()
+                # print('Teammate: ', teammate_id, 'User:', other_user.id, 'Interaction type:', other_user.interaction_type, 'Iteration:', other_user.iteration)
+                
+                # if other_user.interaction_type is not None and other_user.interaction_type != 'survey':
+
+                #     if other_user.interaction_type == "demo":
+                #         other_N_total_iterations = N_demos
+                #     elif other_user.interaction_type == "diagnostic test":
+                #         other_N_total_iterations = N_diagnostic_tests
+                #     elif other_user.interaction_type == "final test":
+                #         other_N_total_iterations = len(updated_round.round_info)
+
+                #     response["teammate_" + str(teammate_id) + "_progress"] = str(other_user.interaction_type) + " " + str(other_user.iteration) + "/" + str(other_N_total_iterations)
+
+                # elif other_user.interaction_type == "survey":
+
+                #     response["teammate_" + str(teammate_id) + "_progress"] = 'Survey'
+                
+
+                ## Based on the group status
+                if current_group.members_EOR[i]:
+                    response["teammate_" + str(teammate_id) + "_progress"] = round_type + ' completed. Waiting for teammate(s).'
+
+                else:
+                    response["teammate_" + str(teammate_id) + "_progress"] = round_type + ' in progress'
+                   
+                teammate_id += 1
+
+
+            elif user_id != current_user.id and current_group.members_statuses[i] == "left":
+                response["teammate_" + str(teammate_id) + "_progress"] = 'Left the study'
+
+                teammate_id += 1
+                
 
         response["domain"] = domain
         response["debug string"] = ''
@@ -1343,8 +1449,9 @@ def login():
             # cond = user.set_condition("in_person" if IS_IN_PERSON else "online")
             
             code = user.set_code()
-            db.session.add(user)
 
+            # with db_lock:
+            db.session.add(user)
             db.session.commit()
 
         print('Logging in user:', user)
@@ -1682,6 +1789,7 @@ def retrieve_next_round(params, current_group) -> dict:
                 min_BEC_constraints = domain_params["min_BEC_constraints"]
             )
 
+            # with db_lock:
             db.session.add(curr_domain_params)
             db.session.commit()
 
@@ -2068,6 +2176,7 @@ def get_test_constraints(domain, trial, traj_record, traj_features_record) -> np
 
 def update_database(updated_data, update_type):
 
+    # with db_lock:
     try:
         db.session.add(updated_data)
         db.session.flush()
@@ -2077,11 +2186,11 @@ def update_database(updated_data, update_type):
         print(f"Error during commit: {e}.", update_type)
         db.session.rollback()
 
-    if update_type == 'Update round data from tests':
-        # Verify if the round is present after the commit
-        all_rounds = db.session.query(Round).filter_by(group_id=updated_data.group_id, round_num=updated_data.round_num).order_by(Round.id.desc()).all()
-        for rnd in all_rounds:
-            print('User:', current_user.id, 'Round info: ', rnd.id, rnd.group_id, rnd.round_num, rnd.status, rnd.domain, rnd.group_knowledge, rnd.kc_id, rnd.min_KC_constraints)
+    # if update_type == 'Update round data from tests':
+    #     # Verify if the round is present after the commit
+    #     all_rounds = db.session.query(Round).filter_by(group_id=updated_data.group_id, round_num=updated_data.round_num).order_by(Round.id.desc()).all()
+    #     for rnd in all_rounds:
+    #         print('User:', current_user.id, 'Round info: ', rnd.id, rnd.group_id, rnd.round_num, rnd.status, rnd.domain, rnd.group_knowledge, rnd.kc_id, rnd.min_KC_constraints)
 
 
 def get_domain():
@@ -2122,6 +2231,8 @@ def add_survey_data(domain, data):
             engagement_short_answer = data["engagement_input"],
             reward_ft_weights = data["reward_ft_weights"]
         )
+    
+    # with db_lock:
     db.session.add(dom)
     db.session.commit()
 
@@ -2151,8 +2262,9 @@ def add_trial_data(domain, data):
         engagement_short_answer = data["engagement_input"],
         improvement_short_answer = data["improvement_input"]
     )
-    db.session.add(trial)
 
+    # with db_lock:
+    db.session.add(trial)
     db.session.commit()
 
 
@@ -2262,4 +2374,6 @@ def get_normalized_trajectories(last_test_trial, domain):
     normalized_opt_actions, normalized_human_actions = normalize_trajectories(opt_locations_tuple, opt_actions, human_locations_tuple, human_actions)
 
     return normalized_opt_actions, normalized_human_actions
+
+
 

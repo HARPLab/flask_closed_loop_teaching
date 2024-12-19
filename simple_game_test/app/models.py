@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from app import db, login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -49,6 +50,11 @@ class User(UserMixin, db.Model):
     iteration = db.Column(db.Integer)
     subiteration = db.Column(db.Integer)
 
+    last_activity = db.Column(db.String(40))
+    last_activity_time = db.Column(db.DateTime)
+    curr_progress_time = db.Column(db.DateTime)
+
+
     # refers to the corresponding number in the round database
     # the round database will have a primary key but it'll also have a column for group number and round number in that group
     # the round attribute for the user will refer to that round number; you can find this by querying the round w/ group number
@@ -70,6 +76,8 @@ class User(UserMixin, db.Model):
 
     def set_curr_progress(self, value):
         self.curr_progress = value
+        utc_now = datetime.now(ZoneInfo("UTC"))
+        self.curr_progress_time = utc_now.astimezone(ZoneInfo("America/New_York"))
         return value
 
     def set_password(self, password):

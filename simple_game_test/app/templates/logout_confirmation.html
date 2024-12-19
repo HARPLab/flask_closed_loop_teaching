@@ -1,6 +1,49 @@
-{% extends "base.html" %} {% block content %}
-<h1>Logged Out</h1>
+{% extends "base.html" %} 
 
-<h3>Thank You for your participation in the study! You have successfully logged out.</h3>
-<!-- <a href="{{ url_for('index') }}">Return to Home</a> -->
+{% block content %}
+<div class="jumbotron jumbotron-fluid">
+    <div class="container text-center">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="card-title" id="logout-header">Logged Out</h1>
+                <p class="card-text" id="logout-message">
+                    You have been logged out due to inactivity. Please contact the research team if you believe this is an error.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Function to dynamically update the logout message based on URL parameter
+    function updateLogoutMessage() {
+        // Parse the URL search parameters
+        const params = new URLSearchParams(window.location.search);
+
+        // Check if the 'reason' parameter exists
+        if (params.has('reason')) {
+            const reason = params.get('reason');
+            const messageElement = document.getElementById('logout-message');
+
+            // Update the message dynamically based on the reason
+            switch (reason) {
+                case 'complete':
+                    messageElement.textContent =
+                        "Thank you for your participation in the study! You have successfully logged out.";
+                    break;
+                default:
+                    messageElement.textContent =
+                        "You have been logged out due to inactivity. Please contact the research team if you believe this is an error.";
+            }
+        }
+    }
+
+    // Call the function on page load
+    document.addEventListener('DOMContentLoaded', updateLogoutMessage);
+</script>
+
+
+
+
 {% endblock %}

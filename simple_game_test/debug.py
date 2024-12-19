@@ -1,46 +1,46 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from app.models import User, Trial, Demo, Survey, Domain, Group, Round, DomainParams, OnlineCondition, InPersonCondition
-import matplotlib.pyplot as plt
-import os, sys
+# from flask import Flask
+# from flask_sqlalchemy import SQLAlchemy
+# from app.models import User, Trial, Demo, Survey, Domain, Group, Round, DomainParams, OnlineCondition, InPersonCondition
+# import matplotlib.pyplot as plt
+# import os, sys
 
-print(os.path.abspath(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching')))
+# print(os.path.abspath(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching')))
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching'))
+# sys.path.append(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching'))
 
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+# project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), 'app', 'group_teaching'))
+# if project_root not in sys.path:
+#     sys.path.insert(0, project_root)
 
-codes_dir = os.path.join(project_root, 'codes')
-if codes_dir not in sys.path:
-    sys.path.insert(0, codes_dir)
+# codes_dir = os.path.join(project_root, 'codes')
+# if codes_dir not in sys.path:
+#     sys.path.insert(0, codes_dir)
 
-# Add the 'packages' directory to sys.path
-packages_dir = os.path.join(project_root, 'packages')
-if packages_dir not in sys.path:
-    sys.path.insert(0, packages_dir)
+# # Add the 'packages' directory to sys.path
+# packages_dir = os.path.join(project_root, 'packages')
+# if packages_dir not in sys.path:
+#     sys.path.insert(0, packages_dir)
 
-# To be removed for final version
-debug_dir = os.path.join(project_root, 'debug_practice')
-if debug_dir not in sys.path:
-    sys.path.insert(0, debug_dir)
+# # To be removed for final version
+# debug_dir = os.path.join(project_root, 'debug_practice')
+# if debug_dir not in sys.path:
+#     sys.path.insert(0, debug_dir)
 
-model_dir = os.path.join(project_root, 'models')
-if model_dir not in sys.path:
-    sys.path.insert(0, model_dir)
+# model_dir = os.path.join(project_root, 'models')
+# if model_dir not in sys.path:
+#     sys.path.insert(0, model_dir)
 
-import teams.particle_filter_team as pf_team
+# import teams.particle_filter_team as pf_team
 
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize the SQLAlchemy object
-db = SQLAlchemy(app)
+# # Initialize the SQLAlchemy object
+# db = SQLAlchemy(app)
 
 
 # @app.route('/rounds')
@@ -114,30 +114,41 @@ db = SQLAlchemy(app)
 
 
 
-def plot_last_few_rounds(group_id):
-    last_few_rounds = Round.query.filter_by(group_id=group_id).order_by().all()
+# def plot_last_few_rounds(group_id):
+#     last_few_rounds = Round.query.filter_by(group_id=group_id).order_by().all()
     
-    for rnd in last_few_rounds:
-        print(rnd.id, rnd.status, rnd.min_KC_constraints, rnd.min_BEC_constraints_running)
+#     for rnd in last_few_rounds:
+#         print(rnd.id, rnd.status, rnd.min_KC_constraints, rnd.min_BEC_constraints_running)
 
-        for model_id in range(len(rnd.ind_member_models_pos)):
-            particles_pos = rnd.ind_member_models_pos[model_id][0]
-            particles_weights = rnd.ind_member_models_weights[model_id][0]
+#         for model_id in range(len(rnd.ind_member_models_pos)):
+#             particles_pos = rnd.ind_member_models_pos[model_id][0]
+#             particles_weights = rnd.ind_member_models_weights[model_id][0]
 
-            # print(particles_pos)
-            # print(particles_weights)
+#             # print(particles_pos)
+#             # print(particles_weights)
             
-            pf = pf_team.Particles_team(particles_pos, 0.8, 36)
-            pf.weights = particles_weights
+#             pf = pf_team.Particles_team(particles_pos, 0.8, 36)
+#             pf.weights = particles_weights
 
-            pf.plot()
-            plt.show()
+#             pf.plot()
+#             plt.show()
 
             
 
 
 
-# Running the Flask app
-if __name__ == '__main__':
-    with app.app_context():
-        plot_last_few_rounds(113)  # Call the function to plot the last 5 rounds
+# # Running the Flask app
+# if __name__ == '__main__':
+#     with app.app_context():
+#         plot_last_few_rounds(113)  # Call the function to plot the last 5 rounds
+
+
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+utc_now = datetime.now(ZoneInfo("UTC"))
+est_time = utc_now.astimezone(ZoneInfo("America/New_York"))
+
+
+print("UTC Time:", utc_now)
+print("Eastern Time:", est_time)

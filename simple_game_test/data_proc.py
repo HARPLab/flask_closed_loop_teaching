@@ -134,113 +134,116 @@ def convert_db_to_excel(database_file, output_excel_file):
 #################################################################
 
 
-# Replace 'app.db' with your database file and 'output.xlsx' with the desired Excel file name
-# convert_db_to_excel('app.db', 'output.xlsx')
+def plot_prob_learning():
+    # # Load the data from the Excel file
+    # file_path = 'output.xlsx'
+    # round_data = pd.read_excel(file_path, sheet_name='round')
+    # domain_params_data = pd.read_excel(file_path, sheet_name='domain_params')
+
+    with open('round.pkl', 'rb') as f:
+        round_data = pickle.load(f)
+
+    with open('domain_params.pkl', 'rb') as f:
+        domain_params_data = pickle.load(f)
+
+    # # Extract 'min_BC_constraints' from the domain_params sheet
+    # domain_params_data['min_BC_constraints'] = domain_params_data['min_BEC_constraints'].apply(
+    #     lambda x: np.array(eval(x)[0]) if isinstance(x, str) else None
+    # )
 
 
-# # Load the data from the Excel file
-# file_path = 'output.xlsx'
-# round_data = pd.read_excel(file_path, sheet_name='round')
-# domain_params_data = pd.read_excel(file_path, sheet_name='domain_params')
+    # Group data by domain, group, and player for separate analysis
+    grouped_round_data = round_data.groupby(['domain', 'group_id'])
 
-with open('round.pkl', 'rb') as f:
-    round_data = pickle.load(f)
+    # Process each group for separate plotting
+    for (domain, group), group_data in grouped_round_data:
+        print(f"\nDomain: {domain}, Group: {group}")
+        if group==18:
+            rounds = group_data['round_num'].tolist()
+            statuses = group_data['status'].tolist()
+            kc_ids = group_data['kc_id'].tolist()
 
-with open('domain_params.pkl', 'rb') as f:
-    domain_params_data = pickle.load(f)
+            prob_unit_learning = {}
+            prob_BEC_learning = {}
+            prob_learning = {}
+            member_info = {}
 
-# # Extract 'min_BC_constraints' from the domain_params sheet
-# domain_params_data['min_BC_constraints'] = domain_params_data['min_BEC_constraints'].apply(
-#     lambda x: np.array(eval(x)[0]) if isinstance(x, str) else None
-# )
+            for rnd_id, rnd in group_data.iterrows():
+                members_statuses = rnd.members_statuses
+                min_kc_constraints = np.array(rnd['min_KC_constraints'])
+                min_bec_constraints = np.array(rnd['min_BEC_constraints_running'])
+                domain_constraints = np.array(domain_params_data[(domain_params_data['domain_name'] == domain)]['min_BEC_constraints'])
 
+                if domain == 'sb':
+                    domain_constraints = np.array([np.array([[5, 2, 5]]), np.array([[ 3, -3,  1]]), np.array([[-6,  4, -3]])])
+                elif domain == 'at':
+                    domain_constraints = np.array([np.array([[1, 1, 0]]), np.array([[ 0, -1, -4]]), np.array([[-1,  0,  2]])])
 
-# Group data by domain, group, and player for separate analysis
-grouped_round_data = round_data.groupby(['domain', 'group_id'])
-
-# Process each group for separate plotting
-for (domain, group), group_data in grouped_round_data:
-    print(f"\nDomain: {domain}, Group: {group}")
-    if group==18:
-        rounds = group_data['round_num'].tolist()
-        statuses = group_data['status'].tolist()
-        kc_ids = group_data['kc_id'].tolist()
-
-        prob_unit_learning = {}
-        prob_BEC_learning = {}
-        prob_learning = {}
-
-        for _, rnd in group_data.iterrows():
-            members_statuses = rnd.members_statuses
-            min_kc_constraints = np.array(rnd['min_KC_constraints'])
-            min_bec_constraints = np.array(rnd['min_BEC_constraints_running'])
-            domain_constraints = np.array(domain_params_data[(domain_params_data['domain_name'] == domain)]['min_BEC_constraints'])
-
-            if domain == 'sb':
-                domain_constraints = np.array([np.array([[5, 2, 5]]), np.array([[ 3, -3,  1]]), np.array([[-6,  4, -3]])])
-            elif domain == 'at':
-                domain_constraints = np.array([np.array([[1, 1, 0]]), np.array([[ 0, -1, -4]]), np.array([[-1,  0,  2]])])
-
-            # print('Domain constraints:', domain_constraints)
+                # print('Domain constraints:', domain_constraints)
 
                 
-            for model_id in range(3):    
-                if members_statuses[model_id] == 'joined':   
-                    particles_pos = np.array(rnd.ind_member_models_pos[0][model_id])
-                    particles_weights = np.array(rnd.ind_member_models_weights[0][model_id])
+                for model_id in range(3):    
+                    if members_statuses[model_id] == 'joined':   
+                        particles_pos = np.array(rnd.ind_member_models_pos[0][model_id])
+                        particles_weights = np.array(rnd.ind_member_models_weights[0][model_id])
 
-                    # print(particles_pos)
-                    # print(particles_weights)
-                    # print(min_kc_constraints)
-                    # print(min_bec_constraints)
-                    # print(domain_constraints)
+                        # print(particles_pos)
+                        # print(particles_weights)
+                        # print(min_kc_constraints)
+                        # print(min_bec_constraints)
+                        # print(domain_constraints)
 
-                    pf = pf_team.Particles_team(particles_pos, 0.8, 36)
-                    pf.weights = particles_weights
+                        member_str = f'Rnd: {rnd_id}, Model: {model_id}'
+
+                        pf = pf_team.Particles_team(particles_pos, 0.8, 36)
+                        pf.weights = particles_weights
+
+                        member_info[model_id] = member_str
+
+                        # Calculate probabilities
+                        if model_id not in prob_unit_learning:
+                            prob_unit_learning[model_id] = []
+                            prob_BEC_learning[model_id] = []
+                            prob_learning[model_id] = []
+                        pf.calc_particles_probability(min_kc_constraints)
+                        prob_unit_learning[model_id].append(pf.particles_prob_correct)
+                        # print('prob_unit_learning:', prob_unit_learning)
+
+                        pf.calc_particles_probability(min_bec_constraints)
+                        prob_BEC_learning[model_id].append(pf.particles_prob_correct)
+                        # print('prob_BEC_learning:', prob_BEC_learning)
+
+                        pf.calc_particles_probability(domain_constraints)
+                        prob_learning[model_id].append(pf.particles_prob_correct)
+                        # print('prob_learning:', prob_learning)
+                    
 
 
-                    # Calculate probabilities
-                    if model_id not in prob_unit_learning:
-                        prob_unit_learning[model_id] = []
-                        prob_BEC_learning[model_id] = []
-                        prob_learning[model_id] = []
-                    pf.calc_particles_probability(min_kc_constraints)
-                    prob_unit_learning[model_id].append(pf.particles_prob_correct)
-                    print('prob_unit_learning:', prob_unit_learning)
-
-                    pf.calc_particles_probability(min_bec_constraints)
-                    prob_BEC_learning[model_id].append(pf.particles_prob_correct)
-                    print('prob_BEC_learning:', prob_BEC_learning)
-
-                    pf.calc_particles_probability(domain_constraints)
-                    prob_learning[model_id].append(pf.particles_prob_correct)
-                    print('prob_learning:', prob_learning)
-                
-
-
-# Plot the probabilities for the current domain, group, and player
-for model_id in range(3):
-    if len(prob_unit_learning[model_id]) > 0:  # Only plot if data exists
-        plt.figure(figsize=(12, 6))
-        plt.plot(rounds, prob_unit_learning[model_id], label=f'Model {model_id} Probability Unit Learning', marker='o', linestyle='-')
-        plt.plot(rounds, prob_BEC_learning[model_id], label=f'Model {model_id} Probability BEC Learning', marker='x', linestyle='--')
-        plt.plot(rounds, prob_learning[model_id], label=f'Model {model_id} Probability BC Learning', marker='s', linestyle=':')
-        plt.xlabel('Round')
-        plt.ylabel('Probability of Learning')
-        plt.title(f'Learning Probabilities for Domain: {domain}, Group: {group}, Player: {model_id}')
-        plt.legend()
-        plt.grid()
-        plt.show()
+    # Plot the probabilities for the current domain, group, and player
+    for model_id in range(3):
+        if len(prob_unit_learning[model_id]) > 0:  # Only plot if data exists
+            plt.figure(figsize=(12, 6))
+            plt.plot(rounds, prob_unit_learning[model_id], label=f'Model {model_id} Probability Unit Learning', marker='o', linestyle='-')
+            plt.plot(rounds, prob_BEC_learning[model_id], label=f'Model {model_id} Probability BEC Learning', marker='x', linestyle='--')
+            plt.plot(rounds, prob_learning[model_id], label=f'Model {model_id} Probability BC Learning', marker='s', linestyle=':')
+            plt.xlabel('Round')
+            plt.ylabel('Probability of Learning')
+            plt.title(f'Learning Probabilities for Domain: {domain}, Group: {group}, Player: {model_id}')
+            plt.legend()
+            plt.grid()
+            plt.show()
 
 #####################################
 
 
 
-# # Replace 'app.db' with your database file and 'output.xlsx' with the desired Excel file name
-# convert_db_to_excel('app.db', 'output.xlsx')
+# Replace 'app.db' with your database file and 'output.xlsx' with the desired Excel file name
+convert_db_to_excel('app_bigfoot.db', 'output_bigfoot.xlsx')
 
-
-# # Replace 'app.db' with your database file path if needed
 # print_table_data('app.db')
+
+# plot_prob_learning()
+
+
 
 
