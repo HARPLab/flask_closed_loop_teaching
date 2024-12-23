@@ -360,8 +360,9 @@ def post_practice():
             "<p>In between demonstrations/lessons, Chip may test your understanding by asking you to predict the best strategy and giving you corrective feedback to help you learn!</p><br>" +
             "<p>Finally, <u>you may navigate back to previous interactions</u> (e.g. demonstrations) to refresh your memory <u>when you're not being tested!</u></p>" + 
             "<p> <b> Remember, you are part of a group </b> and will be learning the same lessons as the group members. This means <b> you may have to wait for all your members to complete a lesson </b> before moving onto the next lesson. </p><br>" +
-            "<p> If any member of your group has not learned the lesson, the entire group will repeat the lesson. This will continue either until everyone in the group learns the lesson or until a set limit is reached, after which the group will move on to the next round. </p><br>" +
+            "<p> If any member of your group has not learned the lesson, the entire group could repeat it. This will continue either until everyone in the group learns the lesson or until a set number of times the lesson is repeated, after which the group will move on to the next lesson. There are totally three lessons for each game. </p><br>" +
             "<p> You will need to successfully complete both games to finish the study</u> and receive your compensation!</p><br>" +
+            "<p> You can track your teammate's proress during each game and even if any of your teammates have left the study, you should continue with the study until you have finished it to earn the full compensation. </p><br>" +
             "<p>Click the Next button when you're ready to start the study!</p>"
         )
     
