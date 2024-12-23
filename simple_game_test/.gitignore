@@ -3,3 +3,4 @@ env/*
 migrations/*
 *.pyc
 *.db
+app_mike_study_3.db

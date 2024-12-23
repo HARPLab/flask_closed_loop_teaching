@@ -76,8 +76,10 @@ CARD_ID_TO_FEATURES = [
 # Timeout for reconnection (in seconds)
 RECONNECT_TIMEOUT = 60  # Change this to the desired time
 
+
 # List to track disconnected users
 disconnected_users = []
+left_users = []
 logout_reason = 'completed'
 
 
@@ -171,10 +173,12 @@ def handle_connect():
 
     print('User:', current_user.id, 'Disconnected users after connect:', disconnected_users)
 
-    # # join the room
-    # if current_user.group is not None:
-    #     rejoin_group()  # just in case the user was disconnected due to waiting too long
-    #     # join_room('room_'+ str(current_user.group))
+    # join the room again
+    if current_user.group is not None:
+        # rejoin_group()  # just in case the user was disconnected due to waiting too long
+        print('Join room:', 'room_'+ str(current_user.group))
+        print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
+        join_room('room_'+ str(current_user.group))
 
 
 @socketio.on("disconnect")
@@ -207,21 +211,30 @@ def handle_disconnect():
 def disconnect_user(data):
     print('User: ', current_user.id, 'disconnecting due to inactivity.')
 
-    current_user.last_activity = data["last_activity"]
-    if current_user.last_activity is not None:
-        last_activity_time_seconds = float(data["last_activity_time"])/1000
-        current_user.last_activity_time = datetime.fromtimestamp(last_activity_time_seconds)
-    else:
-        current_user.last_activity_time = None
+    # If user is still connected and authenticated, log them out
+    if current_user.is_authenticated:
+        current_user.last_activity = data["last_activity"]
+        if current_user.last_activity is not None:
+            last_activity_time_seconds = float(data["last_activity_time"])/1000
+            current_user.last_activity_time = datetime.fromtimestamp(last_activity_time_seconds)
+        else:
+            current_user.last_activity_time = None
 
-    current_user.set_curr_progress("removed_due_to_inactivity")
-    
-    flag_modified(current_user, "last_activity")
-    flag_modified(current_user, "last_activity_time")
-    flag_modified(current_user, "curr_progress")
-    update_database(current_user, str(current_user.username) + ". User logged out due to inactivity")
-    
-    leave_group()
+        current_user.set_curr_progress("removed_due_to_inactivity")
+        
+        flag_modified(current_user, "last_activity")
+        flag_modified(current_user, "last_activity_time")
+        flag_modified(current_user, "curr_progress")
+        update_database(current_user, str(current_user.username) + ". User logged out due to inactivity")
+            
+        # updare the lists
+        user_id = current_user.id
+        if user_id in disconnected_users:
+            disconnected_users.remove(user_id)
+        left_users.append(user_id)
+
+        leave_group()
+
 
     # Notify the client to redirect
     socketio.emit("force_logout", {"reason": 'inactivity'}, to=request.sid)
@@ -430,6 +443,10 @@ def join_group():
             current_user.group = new_group.id
 
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = new_group.groups_push(current_user.username, current_user.id)
+            flag_modified(new_group, "members")
+            flag_modified(new_group, "member_user_ids")
+            flag_modified(new_group, "members_statuses")
+            flag_modified(new_group, "num_active_members")
             print('User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
             print('User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
             num_active_members = 1
@@ -439,9 +456,13 @@ def join_group():
         else:
             print('User:', current_user.id, 'Adding to existing group')
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
+            flag_modified(open_group, "members")
+            flag_modified(open_group, "member_user_ids")
+            flag_modified(open_group, "members_statuses")
+            flag_modified(open_group, "num_active_members")
             current_user.group = open_group.id
             num_active_members += 1
-            print('User:', current_user.id, 'Old group:', 'Group id:', open_group.id, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
+            print('User:', current_user.id, 'Group id:', open_group.id, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
             print('User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
 
             update_database(open_group, 'Member to existing group')
@@ -459,6 +480,7 @@ def join_group():
     print([[g.id, g.members] for g in all_groups])
 
     print('User:', current_user.id, 'Room:', 'room_'+ str(current_user.group))
+    print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
     join_room('room_'+ str(current_user.group))
 
     # if room is None then it gets sent to everyone
@@ -485,10 +507,14 @@ def rejoin_group():
             
             # add the user to the group
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = group_to_rejoin.groups_push_again(current_user.username, current_user.id)
+            flag_modified(group_to_rejoin, "members_statuses")
+            flag_modified(group_to_rejoin, "num_active_members")
             # update the database
             update_database(group_to_rejoin, 'Member rejoined group')
             # join the room
             join_room('room_'+ str(current_user.group))
+            print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
+
             # emit the group joined signal
             socketio.emit("group joined", {"num_members":group_to_rejoin.num_active_members, "max_num_members": group_to_rejoin.num_members, "room_name": 'room_'+ str(current_user.group)}, to='room_'+ str(current_user.group))
         
@@ -530,11 +556,16 @@ def leave_group():
         print('User:', current_user.id, 'Before leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
 
         _ = current_group.groups_remove(current_user.username)
+        flag_modified(current_group, "members_statuses")
+        flag_modified(current_group, "num_active_members")
+        flag_modified(current_group, "members")
 
         update_database(current_group, 'Member left group')
 
         print('User:', current_user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
-        
+        print('Sending signal to members in group:', 'room_'+ str(current_user.group))
+        print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
+
         socketio.emit("member left", {"member code": current_user.group_code}, to='room_'+ str(current_user.group))
         
         
@@ -565,7 +596,6 @@ def leave_group():
 @socketio.on("next domain")
 def next_domain(data):
     
-
     # save remaining data from 
     if len(data["user input"]) !=0:
         domain, _ = get_domain()
@@ -715,6 +745,11 @@ def sb():
 def settings(data):
 
     room_name = data["room_name"]
+    # Ensure that user is in the correct room
+    print('User:', current_user.id, 'Ensuring user is in room:', room_name)
+    print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
+    join_room(room_name)
+    
     domain, mdp_class = get_domain()
     params = get_mdp_parameters(mdp_class)
 
@@ -761,7 +796,8 @@ def settings(data):
             update_database(current_user, 'Current user last activity: ' + current_user.last_activity)
 
 
-
+        response = {}
+        
         ## SAVE TRIAL DATA TO DATABASE
         if current_user.interaction_type == "survey":
             # add_survey_data(domain, data)
@@ -769,8 +805,7 @@ def settings(data):
 
             # end study
         else:
-            response = {}
-
+            
             if current_round is not None:
                 current_mdp_params = current_round.round_info[current_user.iteration - 1]
                 current_user.interaction_type = current_mdp_params["interaction type"]
@@ -943,7 +978,7 @@ def settings(data):
                         # query current group again
                         current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
                         db.session.refresh(current_group)
-                        print('User:', current_user.id, 'Members EOR:', current_group.members_EOR, 'All EOR:', current_group.groups_all_EOR(), 'Member statuses:', current_group.members_statuses)
+                        print('User:', current_user.id, 'Members EOR:', current_group.members_EOR, 'All EOR:', current_group.groups_all_EOR(), 'Member statuses:', current_group.members_statuses, 'Num active members: ', current_group.num_active_members)
 
                         if (current_group.groups_all_EOR()):
                             print("All group members reached EOR, so i'm trying to construct the next round now")
@@ -1111,7 +1146,7 @@ def settings(data):
         next_trial = db.session.query(Trial).filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration).order_by(Trial.id.desc()).first()
         updated_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
 
-        print('User:', current_user.id, 'Next trial: ', next_trial, '. Next_trial.likert:', next_trial.likert, '. Updated round:', updated_round)
+        print('User:', current_user.id, 'Next trial: ', next_trial, '. Updated round:', updated_round)
         ######################
 
 
@@ -1141,6 +1176,8 @@ def settings(data):
             next_already_completed = True
             skip_response = False  # do not skip if the trial has already been completed
             current_user.interaction_type = next_trial.interaction_type
+
+            print('User:', current_user.id, 'Next_trial.likert:', next_trial.likert)
 
             response["params"] = next_trial.mdp_parameters
             response["moves"] = next_trial.moves
@@ -1323,6 +1360,7 @@ def settings(data):
         
         # Ensure that user is in the correct room
         print('User:', current_user.id, 'Ensuring user is in room:', room_name)
+        print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
         join_room(room_name)
 
         socketio.emit("settings configured", response, to=request.sid)
@@ -1358,6 +1396,7 @@ def pass_trajectories():
 @socketio.on("group comm")
 def group_comm(data):
     data["user"] = current_user.username
+    print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
     socketio.emit("incoming group data", data, to='room_'+ str(current_user.group), include_self=False)
 
 @app.route("/intro", methods=["GET", "POST"])
@@ -1951,7 +1990,8 @@ def retrieve_next_round(params, current_group) -> dict:
         ind_member_models_pos = [ind_member_models[i].positions for i in range(len(ind_member_models))]
         ind_member_models_weights = [ind_member_models[i].weights for i in range(len(ind_member_models))]
 
-        print('User:', current_user.id, 'Group curr progress:', current_group.curr_progress)
+        print('User:', current_user.id, 'Group curr progress:', current_group.curr_progress, 'domain:', domain, 'round:', round )
+        print('kc_id: ', kc_id, 'min_KC_constraints:', min_KC_constraints, 'round_status: ', round_status)
         new_round = Round(group_id=current_group.id, 
                         domain_progress = current_group.curr_progress,
                         domain = domain,

@@ -26,10 +26,11 @@
 </div>
 
 <script>
+    var socket = io();
     function go_to_waiting_page() {
 
         // Redirect to waiting_time.html before starting the study
-        window.location.href = '{{ url_for('waiting_room') }}';
+        window.location.href = "{{ url_for('waiting_room') }}";
     }
 </script>
 {% endblock %}

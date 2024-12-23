@@ -186,6 +186,18 @@
         margin: 0; /* Remove margin */
         line-height: 1; /* Reduce line height */
     }
+
+    @keyframes flash {
+        0% { background-color: red; color: white; }
+        50% { background-color: white; color: red; }
+        100% { background-color: red; color: white; }
+    }
+
+    .flash-timer {
+        animation: flash 1s linear infinite;
+        border: 2px solid red;
+        border-radius: 5px;
+    }
 </style>
 
 </head>
@@ -276,6 +288,7 @@
         const inactivityLimit = inactivityLimit_s * 1000; // 2 minutes in milliseconds
         let timerDisplayInterval; // Store the interval for updating the timer display
         let timerSeconds = 0; // Track elapsed time in seconds
+        let isKickedOut = false; // Track if the user has been kicked out due to inactivity
         
         // hide the game instructions and preamble and show a loading screen while waiting to receive the necessary game data
         document.getElementById('instructions').style.display = 'none';
@@ -284,28 +297,8 @@
         document.getElementById('message-container').style.display = 'none';
         document.getElementById('flashMessage').style.display = 'none';
 
-        // var roomIdentifier = localStorage.getItem("username")
-
-        // if (roomIdentifier == null) {
-        //     // the username will available in localStorage after the first page between augmented_taxi2.html, colored_tiles.html, skateboard2.html
-        //     // for the first page, simply make up a placeholder which statistically won't conflict (and the first page of each domain should load instantaneously anyways)
-        //     roomIdentifier = Math.floor(Math.random() * 100000000000000);
-        // }
-
         var socket = io();
-
         const loadingText = document.getElementById('loading-text');
-        // socket.on('message', function(data) {
-        //     if (data === "Progress updates complete") {
-        //         console.log('Progress updates complete');
-        //     } else {
-        //         var progress = parseInt(data);
-        //         if (isNaN(progress)) {
-        //             progress = 0
-        //         }
-        //         loadingText.innerHTML = `Loading the next instruction... ($jq{progress}% completed)`
-        //     }
-        // });
 
         // Function to reset the inactivity timer
         function resetInactivityTimer() {
@@ -322,7 +315,17 @@
                 // Notify the server to disconnect the user
                 console.log("User inactive for ${inactivityLimit_min} minutes. Disconnecting...");
                 final_data = populateData()
+                isKickedOut = true;
+                // Show the alert first
                 alert("You have been disconnected due to inactivity. You are being removed from the study.");
+
+                // Stop the audio and hide the flash message (if active)
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+                document.getElementById("flashMessage").style.display = "none";
+                
                 socket.emit("disconnect_user", final_data);
             }, inactivityLimit);
 
@@ -330,6 +333,19 @@
             timerDisplayInterval = setInterval(() => {
                 timerSeconds--;
                 updateTimerDisplay();
+
+                // Apply flashing effect for the last 10 seconds
+                const timerDisplay = document.getElementById("timer-display");
+                if (timerSeconds <= 10) {
+                    timerDisplay.classList.add("flash-timer");
+                } else {
+                    timerDisplay.classList.remove("flash-timer");
+                }
+
+
+                if (timerSeconds <= 0) {
+                    clearInterval(timerDisplayInterval); // Stop the interval once it reaches zero
+                }
             }, 1000);
 
         }
@@ -387,7 +403,7 @@
         });
 
         socket.on("member joined again", function (data) {
-        console.log(data["user code"] + " has now joined");
+            console.log(data["user code"] + " has now joined");
         });
 
 
@@ -496,19 +512,19 @@
         });
 
 
-
-
-
-
-    
         socket.on("all reached EOR", function (){
             console.log("received all reached EOR message...");
 
-            const now = new Date();
-            start_time = now.toLocaleTimeString(); 
-            console.log("Start time: " + start_time);
-            while (now.toLocaleTimeString() - start_time <= 1500) {
-                console.log("All reached EOR...." + now.toLocaleTimeString());
+            // const now = new Date();
+            // start_time = now.toLocaleTimeString(); 
+            // console.log("Start time: " + start_time);
+            // while (now.toLocaleTimeString() - start_time <= 1500) {
+            //     console.log("All reached EOR...." + now.toLocaleTimeString());
+            // }
+
+            let start_time = Date.now();
+            while (Date.now() - start_time <= 1500) {
+                console.log("All reached EOR...." + Date.now.toLocaleString());
             }
 
             // show the flash message
@@ -545,7 +561,13 @@
         socket.on("force_logout", (data) => {
             console.log("Server forcefully logged out the user. Reason:", data.reason);
             // alert(data.reason); // Show the reason for logout
-            window.location.href = "{{ url_for('logout_confirmation') }}"; // Redirect to the logout confirmation page
+            // window.location.href = "{{ url_for('logout_confirmation') }}"; // Redirect to the logout confirmation page
+
+            // Optionally redirect the user after acknowledgment
+            setTimeout(() => {
+                window.location.href = "{{ url_for('logout_confirmation') }}";
+            }, 3000); // Wait 3 seconds after alert before redirecting
+
         });
         
         
@@ -615,7 +637,7 @@
                 console.log("final test");
                 $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration"))).toString() + '/6)</h1>');
                 // cl, pl, open, wtcl
-                $jq("#info_main").html('<h3>Chip has finished teaching the game play strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3><h4>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)</h4>');
+                $jq("#info_main").html('<h3>Chip has finished teaching the game play strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3><h4>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
                 // wt
                 //$jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
                 //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
@@ -626,10 +648,10 @@
                 console.log("diagnostic test");
                 $jq("#header").html('<h1><b> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Check-in test (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</b></h1>');
                 if (localStorage.getItem("already completed") == 'true') {
-                    $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3><h4>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p></h4>');
+                    $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3><h4>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
                 }
                 else {
-                    $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3><h4>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<h4>');
+                    $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.');
                 }
                 headerElement.style.backgroundColor = colors["diagnostic test"];
 
@@ -862,7 +884,8 @@
         }
         
         addEventListener("beforeunload", (event) => {
-            if (localStorage.getItem("movement") === "false") {
+            console.log("beforeunload event. iskicked out: ", isKickedOut);
+            if (!isKickedOut && localStorage.getItem("movement") === "false") {
                 event.preventDefault();
                 event.returnValue = "Are you sure you want to leave? The task is incomplete.";
             }
@@ -1423,6 +1446,13 @@
                     }
                 }
 
+                // sometimes the mdp_params does not contain all opt params, so do a simple check
+                if (!same_traj){
+                    if (window.moves.length == opt_moves.length){
+                        same_traj = true;
+                    }
+                }
+
                 //console.log('augmented_taxi2_' + mdp_parameters.test_difficulty + '_' + mdp_parameters.tag.toString());
                 //console.log(same_traj);
 
@@ -1440,7 +1470,7 @@
                 });
 
                 var event = new CustomEvent("game-completed", { "detail": "Demonstration has now ended." });
-                enableScroll();
+                // enableScroll();
                 document.dispatchEvent(event);
 
                 localStorage.setItem("user input", final_data);
@@ -2097,7 +2127,6 @@
 
             // Debounce the mousePressed function
             var debouncedMousePressed = _.debounce(mousePressed, 100); // limit consecutive clicks
-            //var debouncedMousePressed = mousePressed;
 
             // Create a new function that calls both functions
             function mousedownHandler(event) {

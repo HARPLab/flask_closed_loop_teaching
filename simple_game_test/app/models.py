@@ -201,11 +201,11 @@ class Group(db.Model):
 
     def groups_all_EOR(self):
         EOR_list = []
-        if self.num_active_members > 0:
-            for idx in range(self.num_members):
-                if self.members_statuses[idx] == "joined":
-                    EOR_list.append(self.members_EOR[idx])
-
+        for idx in range(self.num_members):
+            if self.members_statuses[idx] == "joined":
+                EOR_list.append(self.members_EOR[idx])
+        
+        if len(EOR_list) > 0:
             return all(EOR_list)
         else:
             return False
@@ -230,7 +230,6 @@ class Group(db.Model):
                 self.members[idx] = value
                 self.member_user_ids[idx] = user_id
                 self.members_statuses[idx] = "joined"
-                self.num_active_members += 1
                 ret = int(idx)
 
                 # mark changes
@@ -239,6 +238,13 @@ class Group(db.Model):
                 flag_modified(self, "members_statuses")
                 flag_modified(self, "num_active_members")
                 break
+        
+        num_active = 0
+        for idx in range(self.num_members):
+            if self.members_statuses[idx] == "joined":
+                num_active += 1
+        self.num_active_members = num_active
+        
         if ret == "":
             RuntimeError("Member cannot be added to group")
         
@@ -255,8 +261,14 @@ class Group(db.Model):
         
         idx = self.member_user_ids.index(user_id)
         self.members_statuses[idx] = "joined"
-        self.num_active_members += 1
+        # self.num_active_members += 1
         ret = int(idx)
+
+        num_active = 0
+        for idx in range(self.num_members):
+            if self.members_statuses[idx] == "joined":
+                num_active += 1
+        self.num_active_members = num_active
 
         # mark changes
         flag_modified(self, "members_statuses")
@@ -272,15 +284,21 @@ class Group(db.Model):
 
         ret = ""
         print('num_members:', self.num_members, 'member statuses:', self.members_statuses, 'members:', self.members, 'mber to remove: ', value, 'members EOR:', self.members_EOR, 'members user ids:', self.member_user_ids)
+        num_active = 0
         for idx in range(self.num_members):
             if self.members[idx] == value:
                 self.members_statuses[idx] = "left"
                 ret = int(idx)
-                self.num_active_members -= 1
                 flag_modified(self, "members_statuses")
                 flag_modified(self, "num_active_members")
                 flag_modified(self, "members")
                 break
+        
+        for idx in range(self.num_members):
+            if self.members_statuses[idx] == "joined":
+                num_active += 1
+        
+        self.num_active_members = num_active
 
         if ret == "":
             RuntimeError("No member found to remove")
