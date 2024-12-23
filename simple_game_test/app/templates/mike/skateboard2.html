@@ -163,7 +163,7 @@
         #info_main {
             margin-top: 20px;
             padding: 15px;
-            background-color: #9ca9e4ea;
+            background-color: #fcfdffea;
             border: 1px solid #275c42;
             border-radius: 5px;
             font-size: 16px;
@@ -739,7 +739,11 @@
                 html += `<h3>Please feel free to explain any of your selections above or any comments or thoughts you'd like to share!</h3>
             <textarea id="engagement short answer" rows="4" cols="50"></textarea>`;
 
-                $jq("#non-buttons").html(html);
+                // $jq("#non-buttons").html(html);
+
+                $jq("#header").html('Survey questions for this game');
+                $jq("#info_main").html(html);
+                document.getElementById('team-progress-tracker').style.display = 'none';
             } 
             else if ((interaction_type == "diagnostic test") || (interaction_type == "final test")) {
                 console.log("I am in the diagnostic/final test");
@@ -1334,12 +1338,15 @@
 
                 // record whether the user got the optimal trajectory or not
                 same_traj = false;
+                
                 for (var j = 0; j < mdp_parameters.all_opt_actions.length; j++) {
+                    same_traj_checked = false;
                     opt_moves = mdp_parameters.all_opt_actions[j]
                     if (window.moves.length == opt_moves.length) {
                         for (var k = 0; k < window.moves.length; k++) {
                             if (window.moves[k] != opt_moves[k]) {
                                 // if one move differs, no need to consider other moves. they're not the same trajectory
+                                same_traj_checked = true;
                                 break;
                             }
                         }
@@ -1353,7 +1360,7 @@
                 }
 
                 // sometimes the mdp_params does not contain all opt params, so do a simple check
-                if (!same_traj){
+                if (!same_traj_checked && !same_traj) {
                     if (window.moves.length == opt_moves.length){
                         same_traj = true;
                     }
