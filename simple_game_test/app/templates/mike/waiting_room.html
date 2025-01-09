@@ -52,6 +52,12 @@
     );
     });
 
+    socket.on("force_logout", (data) => {
+        console.log("Server forcefully logged out the user. Reason:", data.reason);
+        // alert(data.reason); // Show the reason for logout
+        window.location.href = "{{ url_for('logout_confirmation') }}"; // Redirect to the logout confirmation page
+    });
+
     addEventListener("beforeunload", (event) => {
     socket.emit("leave group temp");
     });

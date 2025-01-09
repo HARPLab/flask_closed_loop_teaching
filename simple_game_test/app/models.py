@@ -39,9 +39,9 @@ class User(UserMixin, db.Model):
     num_trials_completed = db.Column(db.Integer)
 
     attention_check = db.Column(db.Integer)
-    study_completed = db.Column(db.Integer)
+    study_completed = db.Column(db.Integer, default=0)
 
-    curr_progress = db.Column(db.String(50))
+    curr_progress = db.Column(db.String(50), default="study_not_started")
     loop_condition = db.Column(db.String(4))
     domain_1 = db.Column(db.String(2))
     domain_2 = db.Column(db.String(2))

@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import teams.particle_filter_team as pf_team
 from numpy import array
-
+import os, sys
 
 
 
@@ -238,7 +238,7 @@ def plot_prob_learning():
 
 
 # Replace 'app.db' with your database file and 'output.xlsx' with the desired Excel file name
-convert_db_to_excel('app_mike_study_3.db', 'output_mike_study_3.xlsx')
+convert_db_to_excel('app_study_dropout.db', 'output_study_dropout.xlsx')
 
 # print_table_data('app.db')
 

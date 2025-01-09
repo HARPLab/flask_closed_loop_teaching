@@ -143,12 +143,41 @@
 #         plot_last_few_rounds(113)  # Call the function to plot the last 5 rounds
 
 
-from datetime import datetime
-from zoneinfo import ZoneInfo
+# from datetime import datetime
+# from zoneinfo import ZoneInfo
 
-utc_now = datetime.now(ZoneInfo("UTC"))
-est_time = utc_now.astimezone(ZoneInfo("America/New_York"))
+# utc_now = datetime.now(ZoneInfo("UTC"))
+# est_time = utc_now.astimezone(ZoneInfo("America/New_York"))
 
 
-print("UTC Time:", utc_now)
-print("Eastern Time:", est_time)
+# print("UTC Time:", utc_now)
+# print("Eastern Time:", est_time)
+
+
+########################
+import os, json
+import numpy as np
+
+
+with open(os.path.join(os.path.dirname(__file__), 'app/user_study_dict.json'), 'r') as f:
+    default_rounds = json.load(f)
+
+domain = 'at'
+variable_filter = [[0, 1, 0]]
+
+games = list()
+if domain == 'at':
+    mdp_class = 'augmented_taxi2'
+elif domain == 'sb':
+    mdp_class = 'skateboard2'
+
+interaction_types = ['demo', 'diagnostic test']
+
+for it in interaction_types:
+    for interaction_id in default_rounds[mdp_class][it].keys():
+        mdp_dict = default_rounds[mdp_class][it][interaction_id]
+        # # check if variable filter matches
+        if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
+            games.append({"interaction type": it, "params": mdp_dict})
+
+print(games)

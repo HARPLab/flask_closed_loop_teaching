@@ -303,6 +303,7 @@
         var socket = io();
         const loadingText = document.getElementById('loading-text');
 
+
         // Function to reset the inactivity timer
         function resetInactivityTimer() {
             // Clear any existing timer
@@ -339,7 +340,7 @@
                 
                 // Apply flashing effect for the last 10 seconds
                 const timerDisplay = document.getElementById("timer-display");
-                if (timerSeconds <= 10) {
+                if (timerSeconds <= 20) {
                     timerDisplay.classList.add("flash-timer");
                 } else {
                     timerDisplay.classList.remove("flash-timer");
@@ -386,6 +387,7 @@
             data["room_name"] = localStorage.getItem("room_name");
             data["last_activity"] = localStorage.getItem("last_activity");
             data["last_activity_time"] = localStorage.getItem("last_activity_time");
+            data["new_domain"] = localStorage.getItem("new_domain");
 
             reward_wt_1 = localStorage.getItem("reward_ft_wt_1_field")
             reward_wt_2 = localStorage.getItem("reward_ft_wt_2_field")
@@ -406,6 +408,8 @@
         socket.on("connect", function () {
             data = populateData()
             socket.emit("settings", data);
+            localStorage.setItem("settings emit flag", "true");
+            console.log("settings emit flag on connect", localStorage.getItem("settings emit flag"));
         });
         
         socket.on("member joined again", function (data) {
@@ -416,6 +420,12 @@
 
         socket.on("settings configured", function (data) {
             console.log('Received settings:', data);
+
+            // reset
+            localStorage.setItem("settings emit flag", "false");
+            console.log("settings emit flag after settings configured", localStorage.getItem("settings emit flag"));
+            
+            //set
             localStorage.setItem("survey", "-1");
             localStorage.setItem("movement", "false");
             localStorage.setItem("user input", "{}");
@@ -560,7 +570,7 @@
 
         socket.on("force_logout", (data) => {
             console.log("Server forcefully logged out the user. Reason:", data.reason);
-            // alert(data.reason); // Show the reason for logout
+            alert(data.reason); // Show the reason for logout
             window.location.href = "{{ url_for('logout_confirmation') }}"; // Redirect to the logout confirmation page
         });
         
@@ -850,8 +860,12 @@
 
             }
             
-
+            // send data to server if not already sent after connect
+            // if (localStorage.getItem("settings emit flag") == "false") {
+            localStorage.setItem("settings emit flag", "true");
+            console.log("settings emit flag next", localStorage.getItem("settings emit flag"));
             socket.emit("settings", data);
+            // }
             // reset vars (in case trajectory was not completed)
             window.moves = [];
             window.agent_history = [];
@@ -1338,6 +1352,7 @@
 
                 // record whether the user got the optimal trajectory or not
                 same_traj = false;
+
                 
                 for (var j = 0; j < mdp_parameters.all_opt_actions.length; j++) {
                     same_traj_checked = false;
@@ -1359,12 +1374,12 @@
                     }
                 }
 
-                // sometimes the mdp_params does not contain all opt params, so do a simple check
-                if (!same_traj_checked && !same_traj) {
-                    if (window.moves.length == opt_moves.length){
-                        same_traj = true;
-                    }
-                }
+                // // sometimes the mdp_params does not contain all opt params, so do a simple check
+                // if (!same_traj_checked && !same_traj) {
+                //     if (window.moves.length == opt_moves.length){
+                //         same_traj = true;
+                //     }
+                // }
 
                 //console.log('skateboard2_' + mdp_parameters.test_difficulty + '_' + mdp_parameters.tag.toString());
                 //console.log(same_traj);

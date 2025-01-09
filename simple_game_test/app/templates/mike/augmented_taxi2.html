@@ -299,6 +299,7 @@
 
         var socket = io();
         const loadingText = document.getElementById('loading-text');
+        
 
         // Function to reset the inactivity timer
         function resetInactivityTimer() {
@@ -336,7 +337,7 @@
 
                 // Apply flashing effect for the last 10 seconds
                 const timerDisplay = document.getElementById("timer-display");
-                if (timerSeconds <= 10) {
+                if (timerSeconds <= 20) {
                     timerDisplay.classList.add("flash-timer");
                 } else {
                     timerDisplay.classList.remove("flash-timer");
@@ -381,6 +382,7 @@
             data["room_name"] = localStorage.getItem("room_name");
             data["last_activity"] = localStorage.getItem("last_activity");
             data["last_activity_time"] = localStorage.getItem("last_activity_time");
+            data["new_domain"] = localStorage.getItem("new_domain");
 
             reward_wt_1 = localStorage.getItem("reward_ft_wt_1_field")
             reward_wt_2 = localStorage.getItem("reward_ft_wt_2_field")
@@ -400,6 +402,8 @@
         socket.on("connect", function () {
             data = populateData()
             socket.emit("settings", data);
+            localStorage.setItem("settings emit flag", "true");
+            console.log("settings emit flag on connect", localStorage.getItem("settings emit flag"));
         });
 
         socket.on("member joined again", function (data) {
@@ -409,6 +413,12 @@
 
         socket.on("settings configured", function (data) {
             console.log('Received settings:', data);
+            
+            // reset
+            localStorage.setItem("settings emit flag", "false");
+            console.log("settings emit flag after settings configured", localStorage.getItem("settings emit flag"));
+            
+            //set
             localStorage.setItem("survey", "-1");
             localStorage.setItem("movement", "false");
             localStorage.setItem("user input", "{}");
@@ -864,14 +874,18 @@
                 window.location.href="{{ url_for('at')}}";
             }
             
-
+            // send data to server if not already sent after connect
+            // if (localStorage.getItem("settings emit flag") == "false") {
+            localStorage.setItem("settings emit flag", "true");
+            console.log("settings emit flag next", localStorage.getItem("settings emit flag"));
             socket.emit("settings", data);
+            // }
             // reset vars (in case trajectory was not completed)
             window.moves = [];
             window.agent_history = [];
             window.agent_history_nonoffset = [];
 
-            // update the next button to be disabled
+            // reset the next button to be disabled again
             if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
                 
                 loadingText.innerHTML = `Please wait for all your teammates to complete. Loading the next instruction...)`
@@ -1453,12 +1467,12 @@
                     }
                 }
 
-                // sometimes the mdp_params does not contain all opt params, so do a simple check
-                if (!same_traj_checked && !same_traj) {
-                    if (window.moves.length == opt_moves.length){
-                        same_traj = true;
-                    }
-                }
+                // // sometimes the mdp_params does not contain all opt params, so do a simple check
+                // if (!same_traj_checked && !same_traj) {
+                //     if (window.moves.length == opt_moves.length){
+                //         same_traj = true;
+                //     }
+                // }
 
                 //console.log('augmented_taxi2_' + mdp_parameters.test_difficulty + '_' + mdp_parameters.tag.toString());
                 //console.log(same_traj);
