@@ -75,7 +75,7 @@ CARD_ID_TO_FEATURES = [
 '''
 
 # Timeout for reconnection (in seconds)
-RECONNECT_TIMEOUT = 25  # Change this to the desired time
+RECONNECT_TIMEOUT = 45  # Change this to the desired time
 
 
 # List to track disconnected users
