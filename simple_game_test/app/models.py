@@ -42,6 +42,8 @@ class User(UserMixin, db.Model):
     study_completed = db.Column(db.Integer, default=0)
 
     curr_progress = db.Column(db.String(50), default="study_not_started")
+    curr_progress_time = db.Column(db.DateTime)
+
     loop_condition = db.Column(db.String(4))
     domain_1 = db.Column(db.String(2))
     domain_2 = db.Column(db.String(2))
@@ -50,9 +52,9 @@ class User(UserMixin, db.Model):
     iteration = db.Column(db.Integer)
     subiteration = db.Column(db.Integer)
 
-    last_activity = db.Column(db.String(40))
-    last_activity_time = db.Column(db.DateTime)
-    curr_progress_time = db.Column(db.DateTime)
+    last_activity = db.Column(db.PickleType, default=list)
+    last_activity_time = db.Column(db.PickleType, default=list)
+    
 
 
     # refers to the corresponding number in the round database

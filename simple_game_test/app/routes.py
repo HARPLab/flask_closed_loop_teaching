@@ -705,17 +705,16 @@ def settings(data):
             print('Data received:', data)
             
             ## SAVE USER ACTIVITY DATA
-            current_user.last_activity = data["last_activity"]
-            if current_user.last_activity is not None:
+            
+            print('User:', current_user.id, 'Current user last activity:', data["last_activity"], 'Current user last activity time:', data["last_activity_time"])
+            if data["last_activity"] is not None:
                 last_activity_time_seconds = float(data["last_activity_time"])/1000
-                current_user.last_activity_time = datetime.fromtimestamp(last_activity_time_seconds)
-            else:
-                current_user.last_activity_time = None
+                current_user.last_activity.append(data["last_activity"])
+                current_user.last_activity_time.append(datetime.fromtimestamp(last_activity_time_seconds))
 
-            if current_user.last_activity_time is not None:
                 flag_modified(current_user, "last_activity")
                 flag_modified(current_user, "last_activity_time")
-                update_database(current_user, 'Current user last activity: ' + current_user.last_activity)
+                update_database(current_user, 'Current user last activity: ' + current_user.last_activity[-1])
 
 
             response = {}
@@ -879,7 +878,7 @@ def settings(data):
                         ### Generate next round for the group
                         else:
                             db.session.refresh(current_group)
-                            
+
                             ## Update EOR status for current user
                             print('User:', current_user.id, 'User: ', current_user.username, 'reached last iteration in round')
                             member_idx = current_group.members.index(current_user.username)
