@@ -75,7 +75,7 @@ CARD_ID_TO_FEATURES = [
 '''
 
 # Timeout for reconnection (in seconds)
-RECONNECT_TIMEOUT = 45  # Change this to the desired time
+RECONNECT_TIMEOUT = 120  # Change this to the desired time
 
 
 # List to track disconnected users
@@ -865,11 +865,18 @@ def settings(data):
 
                                 if next_round is None:
                                     while (round_status != "demo_tests_generated") and (round_status != "final_tests_generated"):
+                                        # check if all group members have left
+                                        db.session.refresh(current_group)
+                                        if current_group.num_active_members == 0:
+                                            break
+                                        
                                         next_round_id = current_user.round+1
                                         next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_group.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
                                         if next_round is not None:
                                             db.session.refresh(next_round)
                                             round_status = next_round.status  
+                                        
+                                        time.sleep(2) # a sleep to avoid too many queries
                             
                             # vars for next round
                             next_kc_id = next_round.kc_id
@@ -962,6 +969,11 @@ def settings(data):
 
                                     print('User:', current_user.id, 'Next round:', next_round, 'Current group EOR status:', current_group.groups_all_EOR(), 'group id:', current_user.group, 'Domain progress:', current_user.curr_progress, 'Round num:', current_user.round, 'next_round_id:', next_round_id)
 
+                                    # check if all group members have left
+                                    db.session.refresh(current_group)
+                                    if current_group.num_active_members == 0:
+                                        break
+
 
                                     # if next_round is None:
                                     #     while (round_status != "demo_tests_generated") and (round_status != "final_tests_generated"):
@@ -970,7 +982,7 @@ def settings(data):
                                     #         if next_round is not None:
                                     #             round_status = next_round.status  
 
-                                time.sleep(3)
+                                time.sleep(3)  # a brief sleep to avoid too many queries
                                 
                                 
                             print('User:', current_user.id, 'Interaction type: ', current_mdp_params["interaction type"], 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
