@@ -526,13 +526,6 @@
         socket.on("all reached EOR", function (){
             console.log("received all reached EOR message...");
 
-            // const now = new Date();
-            // start_time = now.toLocaleTimeString(); 
-            // console.log("Start time: " + start_time);
-            // while (now.toLocaleTimeString() - start_time <= 1500) {
-            //     console.log("All reached EOR...." + now.toLocaleTimeString());
-            // }
-
             let start_time = Date.now();
             while (Date.now() - start_time <= 1500) {
                 console.log("All reached EOR...." + Date.now.toLocaleString());
@@ -541,7 +534,7 @@
             // show the flash message
             var flashMessage = document.getElementById("flashMessage");
             flashMessage.style.display = 'block';
-            flashMessage.innerHTML = "Next learning session is available now! Press any key to continue with the study.";
+            flashMessage.innerHTML = "Next session is available now! Press any key to continue with the study.";
 
             // play the audio
             audio = new Audio("/static/audio/mixkit-positive-notification-951.wav");
@@ -559,6 +552,7 @@
 
             //     document.removeEventListener('keydown', arguments.callee);
             // });
+
             document.addEventListener('keydown', handleKeydown);
 
             document.getElementById('wait').style.display = 'none';
