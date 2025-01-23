@@ -2072,8 +2072,8 @@ def retrieve_next_round(params, current_group) -> dict:
                 mdp_class = 'skateboard2'
             
             final_test_id = 1
-            final_tests_to_add = [3, 5, 8, 12, 15, 17] # indices of final tests to add (one for each difficulty level)
-            # final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
+            # final_tests_to_add = [3, 5, 8, 12, 15, 17] # indices of final tests to add (one for each difficulty level)
+            final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
             # final_tests_to_add = [1, 3]
             
             for td in test_difficulty:
