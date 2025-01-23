@@ -14,13 +14,25 @@
     //     });
     // }
 
-    function logout() {
-    $jq.getJSON('/logout', function callback(data) {
-        // Append the reason to the URL before redirecting
-        window.location.href(data['url'] + "?reason=" + data['reason']);
-        // Force refresh if being cached
-        setTimeout(() => window.location.reload(true), 500);
-    });
+    // function logout() {
+    // $jq.getJSON('/logout', function callback(data) {
+    //     // Append the reason to the URL before redirecting
+    //     window.location.href(data['url'] + "?reason=" + data['reason']);
+    //     // Force refresh if being cached
+    //     setTimeout(() => window.location.reload(true), 500);
+    // });
+    // }
+
+    function logout(reason = "complete") {
+        console.log("Logging out... Reason:", reason);
+
+        // Get the base URL dynamically
+        let basePath = window.location.pathname.includes("/flask_closed_loop_teaching") 
+            ? "/flask_closed_loop_teaching" 
+            : "";
+
+        // Redirect with the correct base path
+        window.location.href = `${basePath}/logout?reason=${encodeURIComponent(reason)}`;
     }
 
     console.log('In index.html');

@@ -275,9 +275,6 @@ def handle_connect():
 
 
 
-
-
-
 @socketio.on("disconnect")
 def handle_disconnect():
     """Handles user disconnection and starts a timer to check reconnection"""
@@ -378,19 +375,44 @@ def disconnect_user(data):
 
 
 
+# @app.route('/logout')
+# def logout():
+    
+#     current_user.set_curr_progress("study_completed")
+#     flag_modified(current_user, "curr_progress")
+#     update_database(current_user, str(current_user.username) + ". User progress study completed")
+    
+#     log_print('Logging out user as they completed the study:', current_user.id)
+#     # session.pop("attention_check_rules", None)
+#     logout_user()  # Logs out the user
+    
+#     # return redirect(url_for('logout_confirmation', reason='complete')) # Send redirect URL to frontend
+#     return jsonify({'url': url_for('logout_confirmation'), 'reason': 'complete'})  # Send redirect URL to frontend
+
+
 @app.route('/logout')
 def logout():
-    
+    """
+    Logs out the user and redirects to the logout confirmation page with a reason.
+    """
+    # Get logout reason from query parameter (default: 'complete')
+    reason = request.args.get("reason", "complete")
+
+    # Update progress
     current_user.set_curr_progress("study_completed")
     flag_modified(current_user, "curr_progress")
-    update_database(current_user, str(current_user.username) + ". User progress study completed")
-    
-    log_print('Logging out user as they completed the study:', current_user.id)
-    # session.pop("attention_check_rules", None)
-    logout_user()  # Logs out the user
-    
-    # return redirect(url_for('logout_confirmation', reason='complete')) # Send redirect URL to frontend
-    return jsonify({'url': url_for('logout_confirmation'), 'reason': 'complete'})  # Send redirect URL to frontend
+    update_database(current_user, f"{current_user.username}. User progress study completed")
+
+    log_print(f'Logging out user {current_user.id} as they completed the study. Reason: {reason}')
+
+    # Logout user
+    logout_user()
+
+    # Detect if running behind Nginx and adjust the redirect accordingly
+    flask_prefix = request.headers.get("X-Forwarded-Prefix", "")
+
+    logout_url = flask_prefix + url_for('logout_confirmation', reason=reason)
+    return redirect(logout_url)
 
 
 
