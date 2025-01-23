@@ -77,6 +77,8 @@ CARD_ID_TO_FEATURES = [
 ]
 '''
 
+QUICK_DEBUG_FLAG = True
+
 # Timeout for reconnection (in seconds)
 RECONNECT_TIMEOUT = 60  # Change this to the desired time
 
@@ -514,7 +516,9 @@ def join_group():
     ret = {}
     cond_list = ["individual_belief_low", "individual_belief_high", "common_belief", "joint_belief"]
     domain_list = [["at", "sb"], ["sb", "at"]]
-    # domain_list = [["sb", "at"]]
+
+    if QUICK_DEBUG_FLAG:
+        domain_list = [["sb", "at"]]
 
     
     # cond_list = ["individual_belief_low"]
@@ -1991,9 +1995,10 @@ def retrieve_next_round(params, current_group) -> dict:
         if not np.any(variable_filter) and unit_learning_goal_reached_flag:
             teaching_complete_flag = True
 
-        # # NOTE: Only for Quick Debugging. Having only one knowledge component/round
-        # if round > 0:
-        #     teaching_complete_flag = True
+        # NOTE: Only for Quick Debugging. Having only one knowledge component/round
+        if QUICK_DEBUG_FLAG:
+            if round > 0:
+                teaching_complete_flag = True
 
 
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
@@ -2074,7 +2079,9 @@ def retrieve_next_round(params, current_group) -> dict:
             final_test_id = 1
             # final_tests_to_add = [3, 5, 8, 12, 15, 17] # indices of final tests to add (one for each difficulty level)
             final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
-            # final_tests_to_add = [1, 3]
+            
+            if QUICK_DEBUG_FLAG:
+                final_tests_to_add = [1, 3]
             
             for td in test_difficulty:
                 for mdp_list in default_rounds[mdp_class]["final test"][td]:
