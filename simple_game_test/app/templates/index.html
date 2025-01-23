@@ -17,7 +17,9 @@
     function logout() {
     $jq.getJSON('/logout', function callback(data) {
         // Append the reason to the URL before redirecting
-        window.location.replace(data['url'] + "?reason=" + data['reason']);
+        window.location.href(data['url'] + "?reason=" + data['reason']);
+        // Force refresh if being cached
+        setTimeout(() => window.location.reload(true), 500);
     });
     }
 
