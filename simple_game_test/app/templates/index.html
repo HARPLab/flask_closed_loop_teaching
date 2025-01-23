@@ -7,11 +7,18 @@
 </script>
 
 <script>
+    // function logout() {
+    //     $jq.getJSON('/logout', 
+    //     function callback(data) {
+    //       window.location.replace(data['url']);
+    //     });
+    // }
+
     function logout() {
-        $jq.getJSON('/logout', 
-        function callback(data) {
-          window.location.replace(data['url']);
-        });
+    $jq.getJSON('/logout', function callback(data) {
+        // Append the reason to the URL before redirecting
+        window.location.replace(data['url'] + "?reason=" + data['reason']);
+    });
     }
 
     console.log('In index.html');
