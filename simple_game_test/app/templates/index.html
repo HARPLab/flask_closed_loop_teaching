@@ -7,12 +7,12 @@
 </script>
 
 <script>
-    // function logout() {
-    //     $jq.getJSON('/logout', 
-    //     function callback(data) {
-    //       window.location.replace(data['url']);
-    //     });
-    // }
+    function logout() {
+        $jq.getJSON('/logout', 
+        function callback(data) {
+          window.location.replace(data['url']);
+        });
+    }
 
     // function logout() {
     // $jq.getJSON('/logout', function callback(data) {
@@ -23,17 +23,17 @@
     // });
     // }
 
-    function logout(reason = "complete") {
-        console.log("Logging out... Reason:", reason);
+    // function logout(reason = "complete") {
+    //     console.log("Logging out... Reason:", reason);
 
-        // Get the base URL dynamically
-        let basePath = window.location.pathname.includes("/flask_closed_loop_teaching") 
-            ? "/flask_closed_loop_teaching" 
-            : "";
+    //     // Get the base URL dynamically
+    //     let basePath = window.location.pathname.includes("/flask_closed_loop_teaching") 
+    //         ? "/flask_closed_loop_teaching" 
+    //         : "";
 
-        // Redirect with the correct base path
-        window.location.href = `${basePath}/logout?reason=${encodeURIComponent(reason)}`;
-    }
+    //     // Redirect with the correct base path
+    //     window.location.href = `${basePath}/logout?reason=${encodeURIComponent(reason)}`;
+    // }
 
     console.log('In index.html');
 </script>

@@ -411,7 +411,10 @@ def logout():
     # Detect if running behind Nginx and adjust the redirect accordingly
     flask_prefix = request.headers.get("X-Forwarded-Prefix", "")
 
-    logout_url = flask_prefix + url_for('logout_confirmation', reason=reason)
+    logout_url = f"{flask_prefix}{url_for('logout_confirmation', reason=reason)}"
+
+    log_print(f"Redirecting to logout URL: {logout_url}")
+    
     return redirect(logout_url)
 
 
@@ -419,6 +422,7 @@ def logout():
 @app.route('/logout_confirmation')
 def logout_confirmation():
     return render_template('logout_confirmation.html')  # Render confirmation page
+
                 
 
 @socketio.on("sandbox settings")
