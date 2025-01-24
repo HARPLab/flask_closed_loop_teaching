@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<!-- 
+
 <script>
     // Function to dynamically update the logout message based on URL parameter
     function updateLogoutMessage() {
@@ -29,22 +29,26 @@
             // Update the message dynamically based on the reason
             switch (reason) {
                 case 'complete':
-                    messageElement.textContent =
-                        "Thank you for your participation in the study! You have successfully logged out.";
+                    messageElement.textContent = "Thank you for your participation! You have successfully logged out.";
+                    break;
+                case 'inactivity':
+                    messageElement.textContent = "You were logged out due to inactivity. Please contact the research team if this was unexpected.";
+                    break;
+                case 'disconnected':
+                    messageElement.textContent = "You were disconnected. If you think this is a mistake, please contact the research team.";
                     break;
                 default:
-                    messageElement.textContent =
-                        "You have been logged out due to inactivity. Please contact the research team if you believe this is an error.";
+                    messageElement.textContent = "Thank you for your participation! You have successfully logged out.";
             }
         }
     }
 
     // Call the function on page load
     document.addEventListener('DOMContentLoaded', updateLogoutMessage);
-</script> -->
+</script>
 
 
-<script>
+<!-- <script>
     function getQueryParam(param) {
         let urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
@@ -72,6 +76,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', updateLogoutMessage);
-</script>
+</script> -->
 
 {% endblock %}
