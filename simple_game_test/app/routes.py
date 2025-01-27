@@ -278,28 +278,35 @@ def handle_connect():
 @socketio.on("disconnect")
 def handle_disconnect():
     """Handles user disconnection and starts a timer to check reconnection"""
-    log_print(f"User id: {current_user.id}, {request.sid} disconnected.")
-
+    
     if current_user.is_authenticated:
-        user_id = current_user.id
-        disconnect_time = datetime.now()
-
-        # Initialize tracking if not exists
-        if user_id not in disconnected_users:
-            disconnected_users[user_id] = {
-                "disconnect_times": [],
-                "reconnect_times": []
-            }
         
-        # Track disconnect time
-        disconnected_users[user_id]["disconnect_times"].append(disconnect_time)
-        log_print(f"User {user_id}: Disconnected at {disconnect_time}. Tracking: {disconnected_users[user_id]}")
+        user_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+        user_status = user_group.members_statuses[current_user.group_code]
+        
+        if (user_status != "left"):
+            log_print(f"User id: {current_user.id}, {request.sid} disconnected.")
 
-        # Start a thread-based timer (non-blocking)
-        timer = threading.Timer(RECONNECT_TIMEOUT, check_reconnection, [user_id])
-        timer.start()
-        disconnect_timers[user_id] = timer  # Save the timer reference
+            user_id = current_user.id
+            disconnect_time = datetime.now()
 
+            # Initialize tracking if not exists
+            if user_id not in disconnected_users:
+                disconnected_users[user_id] = {
+                    "disconnect_times": [],
+                    "reconnect_times": []
+                }
+            
+            # Track disconnect time
+            disconnected_users[user_id]["disconnect_times"].append(disconnect_time)
+            log_print(f"User {user_id}: Disconnected at {disconnect_time}. Tracking: {disconnected_users[user_id]}")
+
+            # Start a thread-based timer (non-blocking)
+            timer = threading.Timer(RECONNECT_TIMEOUT, check_reconnection, [user_id])
+            timer.start()
+            disconnect_timers[user_id] = timer  # Save the timer reference
+        else:
+            log_print(f"User id: {current_user.id}, {request.sid} disconnected but has already left the study.")
 
 
 def check_reconnection(user_id):
@@ -349,6 +356,7 @@ def handle_remove_user(data):
 
 @socketio.on("disconnect_user")
 def disconnect_user(data):
+    log_print("User disconnecting due to inactivity....")
     log_print('Group:', current_user.group, 'User: ', current_user.id, 'disconnecting due to inactivity.')
 
     # If user is still connected and authenticated, log them out
@@ -563,7 +571,8 @@ def join_group():
     """ 
 
     ret = {}
-    cond_list = ["individual_belief_low", "individual_belief_high", "common_belief", "joint_belief"]
+    # cond_list = ["individual_belief_low", "individual_belief_high", "common_belief", "joint_belief"]
+    cond_list = ["individual_belief_high", "joint_belief"]
     domain_list = [["at", "sb"], ["sb", "at"]]
 
     if QUICK_DEBUG_FLAG:
