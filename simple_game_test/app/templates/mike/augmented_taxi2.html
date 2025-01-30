@@ -336,12 +336,15 @@
                 timerSeconds--;
                 updateTimerDisplay();
 
-                // Apply flashing effect for the last 10 seconds
+                // Apply flashing effect for the last 20 seconds
                 const timerDisplay = document.getElementById("timer-display");
                 if (timerSeconds <= 20) {
                     timerDisplay.classList.add("flash-timer");
+                    audio.play(); // Play the audio for the last 20 seconds
                 } else {
                     timerDisplay.classList.remove("flash-timer");
+                    audio.pause(); // Pause the audio if not in the last 20 seconds
+                    audio.currentTime = 0; // Reset audio to start position
                 }
 
 
