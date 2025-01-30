@@ -1209,7 +1209,7 @@ def settings(data):
                                     next_round_id = current_user.round+1
                                     next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
 
-                                    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round:', next_round, 'Current group EOR status:', current_group.groups_all_EOR(), 'group id:', current_user.group, 'Domain progress:', current_user.curr_progress, 'Round num:', current_user.round, 'next_round_id:', next_round_id)
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round?', next_round, 'Current group EOR status:', current_group.groups_all_EOR(), 'group id:', current_user.group, 'Domain progress:', current_user.curr_progress, 'Round num:', current_user.round, 'next_round_id:', next_round_id)
 
                                     # check if all group members have left
                                     db.session.refresh(current_group)
@@ -1804,18 +1804,19 @@ def update_learner_models_from_tests(params, current_group, current_round) -> tu
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Username:', username, 'domain:', domain, 'Group code:', group_code, 'round:', current_user.round, 'member statuses:', current_group.members_statuses)
         tests = db.session.query(Trial).filter_by(domain=domain, group=current_user.group, group_code=group_code, round=current_user.round, interaction_type="diagnostic test").all()
         
-        # sometimes the tests are not immediately available in the database, so wait until they are available
-        while len(tests) == 0:
-            tests = db.session.query(Trial).filter_by(domain=domain, group=current_user.group, group_code=group_code, round=current_user.round, interaction_type="diagnostic test").all()
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for tests to be available for user', current_user.id, 'with group code:', group_code)
-            time.sleep(2)
-
         update_model_flag = False
         if current_group.members_statuses[group_code] == 'joined':
             update_model_flag = True
         
         if update_model_flag:
             test_constraints = []
+
+            # sometimes the tests are not immediately available in the database, so wait until they are available
+            while len(tests) == 0:
+                tests = db.session.query(Trial).filter_by(domain=domain, group=current_user.group, group_code=group_code, round=current_user.round, interaction_type="diagnostic test").all()
+                log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for tests to be available for user', current_user.id, 'with group code:', group_code)
+                time.sleep(2)
+
             for test in tests:
                 cur_test_constraints = get_test_constraints(domain, test, current_domain.traj_record, current_domain.traj_features_record)
                 test_constraints.extend(cur_test_constraints)
