@@ -29,16 +29,16 @@
             // Update the message dynamically based on the reason
             switch (reason) {
                 case 'complete':
-                    messageElement.textContent = "Thank you for your participation! You have successfully logged out.";
+                    messageElement.textContent = "Thank you for your participation! You have successfully logged out. Please return the submission, so that we can compensate you.";
                     break;
                 case 'inactivity':
-                    messageElement.textContent = "You were logged out due to inactivity. Please contact the research team if this was unexpected.";
+                    messageElement.textContent = "You were logged out due to inactivity. Please contact the research team if this was unexpected. Please return the submission, so that we can provide partial compensation.";
                     break;
                 case 'disconnected':
-                    messageElement.textContent = "You were disconnected. If you think this is a mistake, please contact the research team.";
+                    messageElement.textContent = "You were disconnected. If you think this is a mistake, please contact the research team. Please return the submission, so that we can provide partial compensation.";
                     break;
                 default:
-                    messageElement.textContent = "Thank you for your participation! You have successfully logged out.";
+                    messageElement.textContent = "Thank you for your participation! You have successfully logged out. Please return the submission, so that we can compensate you.";
             }
         }
     }
