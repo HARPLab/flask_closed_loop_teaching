@@ -284,7 +284,8 @@
     <script>
 
             
-        let audio; // Declare the audio variable globally
+        let audio_new_lesson; // Declare the audio variable globally
+        let audio_timer;
         let inactivityTimeout; // To store the inactivity timeout
         inactivityLimit_min = 2
         inactivityLimit_s = inactivityLimit_min * 60
@@ -303,6 +304,8 @@
         var socket = io();
         const loadingText = document.getElementById('loading-text');
 
+        audio_timer = new Audio("/static/audio/mixkit-ticking-clock-666.wav");
+        audio_timer.loop = true;
 
         // Function to reset the inactivity timer
         function resetInactivityTimer() {
@@ -324,9 +327,9 @@
                 alert("You have been disconnected due to inactivity. You are being removed from the study.");
 
                 // Stop the audio and hide the flash message (if active)
-                if (audio) {
-                    audio.pause();
-                    audio.currentTime = 0;
+                if (audio_new_lesson) {
+                    audio_new_lesson.pause();
+                    audio_new_lesson.currentTime = 0;
                 }
                 document.getElementById("flashMessage").style.display = "none";
                 
@@ -342,11 +345,11 @@
                 const timerDisplay = document.getElementById("timer-display");
                 if (timerSeconds <= 20) {
                     timerDisplay.classList.add("flash-timer");
-                    audio.play(); // Play the audio for the last 20 seconds
+                    audio_timer.play(); // Play the audio for the last 20 seconds
                 } else {
                     timerDisplay.classList.remove("flash-timer");
-                    audio.pause(); // Pause the audio if not in the last 20 seconds
-                    audio.currentTime = 0; // Reset audio to start position
+                    audio_timer.pause(); // Pause the audio if not in the last 20 seconds
+                    audio_timer.currentTime = 0; // Reset audio to start position
                 }
 
 
@@ -546,9 +549,9 @@
             flashMessage.innerHTML = "Next session is available now! Press any key to continue with the study.";
 
             // play the audio
-            audio = new Audio("/static/audio/mixkit-positive-notification-951.wav");
-            audio.loop = true;
-            audio.play();
+            audio_new_lesson = new Audio("/static/audio/mixkit-positive-notification-951.wav");
+            audio_new_lesson.loop = true;
+            audio_new_lesson.play();
 
             // // Add event listener for keypress to hide the message and stop the audio
             // document.addEventListener('keydown', function() {
@@ -607,9 +610,9 @@
             flashMessage.style.display = 'none';
 
             // Stop the audio
-            if (audio) {
-                audio.pause();
-                audio.currentTime = 0; // Reset audio to start position
+            if (audio_new_lesson) {
+                audio_new_lesson.pause();
+                audio_new_lesson.currentTime = 0; // Reset audio to start position
             }
 
             // Remove this listener
@@ -833,9 +836,9 @@
                 document.getElementById('flashMessage').style.display = 'none';
 
                 // if audio is playing, stop it
-                if (audio) {
-                    audio.pause();
-                    audio.currentTime = 0;
+                if (audio_new_lesson) {
+                    audio_new_lesson.pause();
+                    audio_new_lesson.currentTime = 0;
                 }
             }
             
