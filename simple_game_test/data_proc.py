@@ -21,12 +21,22 @@ import os, sys
 
 def print_table_data(database_file):
     try:
+        
+        print("Database file exists:", os.path.exists(database_file))
+
+        
+        
         # Connect to the database
         conn = sqlite3.connect(database_file)
         cursor = conn.cursor()
 
         # Fetch all table names
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        # cursor.execute("SELECT * FROM [group]")   # Since group is a reserved keyword, you need to escape it in queries.
+        # cursor.execute("SELECT * FROM [1]")  
+
+
+
         tables = cursor.fetchall()
 
         if not tables:
@@ -37,16 +47,16 @@ def print_table_data(database_file):
         for table in tables:
             table_name = table[0]
             print(f"\nTable: {table_name}")
-            cursor.execute(f"SELECT * FROM {table_name}")
+            cursor.execute(f"SELECT * FROM [{table_name}]")
             rows = cursor.fetchall()
 
             # Fetch column names
             column_names = [description[0] for description in cursor.description]
             print(" | ".join(column_names))  # Print column headers
 
-            # Print each row
-            for row in rows:
-                print(" | ".join(map(str, row)))
+            # # Print each row
+            # for row in rows:
+            #     print(" | ".join(map(str, row)))
 
     except sqlite3.Error as e:
         print(f"Database error: {e}")
@@ -238,9 +248,9 @@ def plot_prob_learning():
 
 
 # Replace 'app.db' with your database file and 'output.xlsx' with the desired Excel file name
-convert_db_to_excel('app.db', 'output_debug.xlsx')
+convert_db_to_excel('app.db', 'output_debug_feb5.xlsx')
 
-# print_table_data('app.db')
+# print_table_data('app_bf_jan30.db')
 
 # plot_prob_learning()
 

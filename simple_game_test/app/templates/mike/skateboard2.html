@@ -851,7 +851,6 @@
                     localStorage.setItem("new_domain", true);
                     let url = "";
                     if (next_dom_data["domain"].length === 2){
-                        // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
                         if (next_dom_data["domain"] == 'at'){
                             url = "{{ url_for('at_intro') }}";
                         }
