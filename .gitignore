@@ -3,3 +3,4 @@ app.db
 env/
 ./my_env/*
 ./my_env/bin/*
+debug/
