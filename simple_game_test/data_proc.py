@@ -248,7 +248,7 @@ def plot_prob_learning():
 
 
 # Replace 'app.db' with your database file and 'output.xlsx' with the desired Excel file name
-convert_db_to_excel('app.db', 'output_debug_feb5.xlsx')
+convert_db_to_excel('app.db', 'output_debug_feb13.xlsx')
 
 # print_table_data('app_bf_jan30.db')
 

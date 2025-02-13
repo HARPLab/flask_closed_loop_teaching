@@ -388,7 +388,7 @@
             data["room_name"] = localStorage.getItem("room_name");
             data["last_activity"] = localStorage.getItem("last_activity");
             data["last_activity_time"] = localStorage.getItem("last_activity_time");
-            data["new_domain"] = localStorage.getItem("new_domain");
+            // data["new_domain"] = localStorage.getItem("new_domain");
 
             reward_wt_1 = localStorage.getItem("reward_ft_wt_1_field")
             reward_wt_2 = localStorage.getItem("reward_ft_wt_2_field")
@@ -405,11 +405,30 @@
             return data
         }
 
+        // socket.on("connect", function () {
+        //     data = populateData()
+        //     socket.emit("settings", data);
+        //     localStorage.setItem("settings emit flag", "true");
+        //     console.log("settings emit flag on connect", localStorage.getItem("settings emit flag"));
+        // });
+
         socket.on("connect", function () {
-            data = populateData()
-            socket.emit("settings", data);
-            localStorage.setItem("settings emit flag", "true");
-            console.log("settings emit flag on connect", localStorage.getItem("settings emit flag"));
+            // Check if "settings" has already been sent
+            if (!localStorage.getItem("initial_settings_emit_flag")) {
+                let data = populateData();
+                data["new_domain"] = true;
+                socket.emit("settings", data); // Send settings
+
+                // Mark as sent **only after emitting**
+                localStorage.setItem("initial_settings_emit_flag", true);
+                console.log("Settings emitted on first connection.");
+            } else {
+                // console.log("Settings already sent, skipping.");
+                let data = populateData();
+                data["new_domain"] = false;
+                socket.emit("settings", data); // Send settings
+                console.log("Settings emitted on reconnection.");
+            }
         });
 
         socket.on("member joined again", function (data) {
@@ -440,7 +459,7 @@
             localStorage.setItem("lesson id", data["lesson id"]);
             localStorage.setItem("lesson string", data["lesson string"]);
             localStorage.setItem("optimal_traj", false);
-            localStorage.setItem("new_domain", false);
+            // localStorage.setItem("new_domain", false);
             window.domain_completed = false;
             window.start_time_set = false;
 
@@ -468,6 +487,8 @@
             if (data["domain completed"]) {
                 console.log("domain completed");
                 window.domain_completed = true;
+                localStorage.removeItem("initial_settings_emit_flag"); // remove the flag for next domain
+                console.log("Removed initial settings emit flag");
             }
 
             
@@ -852,14 +873,41 @@
                 }
             }
             
+        
             
+            // send data to server if not already sent after connect
+            // if (localStorage.getItem("settings emit flag") == "false") {
+            // localStorage.setItem("settings emit flag", "true");
+            // console.log("settings emit flag next", localStorage.getItem("settings emit flag"));
+            // socket.emit("settings", data);
+            // }
+            // reset vars (in case trajectory was not completed)
+            window.moves = [];
+            window.agent_history = [];
+            window.agent_history_nonoffset = [];
+
+            // reset the next button to be disabled again
+            if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
+                
+                loadingText.innerHTML = `Please wait for all your teammates to complete. Loading the next instruction...)`
+
+                // document.getElementById('wait').style.display = 'block';
+
+                // $jq("#next").replaceWith(`<button type="button" id="next" disabled
+                //     onclick="next()"
+                //     value="next" class="btn btn-primary btn-lg continue">
+                //     Next <span class="glyphicon glyphicon-arrow-right"></span>
+                //     </button>`);
+            }
+
+
             if (window.domain_completed) {
                 // localStorage.setItem("last test", "false");
                 
                 socket.emit("next domain", data);
                 socket.on("next domain is", function(next_dom_data) {
                     console.log("I have received next domain");
-                    localStorage.setItem("new_domain", true);
+                    // localStorage.setItem("new_domain", true);
                     let url = "";
                     if (next_dom_data["domain"].length === 2){
                         // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
@@ -880,31 +928,6 @@
 
             else {
                 window.location.href="{{ url_for('at')}}";
-            }
-            
-            // send data to server if not already sent after connect
-            // if (localStorage.getItem("settings emit flag") == "false") {
-            localStorage.setItem("settings emit flag", "true");
-            console.log("settings emit flag next", localStorage.getItem("settings emit flag"));
-            socket.emit("settings", data);
-            // }
-            // reset vars (in case trajectory was not completed)
-            window.moves = [];
-            window.agent_history = [];
-            window.agent_history_nonoffset = [];
-
-            // reset the next button to be disabled again
-            if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
-                
-                loadingText.innerHTML = `Please wait for all your teammates to complete. Loading the next instruction...)`
-
-                // document.getElementById('wait').style.display = 'block';
-
-                // $jq("#next").replaceWith(`<button type="button" id="next" disabled
-                //     onclick="next()"
-                //     value="next" class="btn btn-primary btn-lg continue">
-                //     Next <span class="glyphicon glyphicon-arrow-right"></span>
-                //     </button>`);
             }
 
         }
