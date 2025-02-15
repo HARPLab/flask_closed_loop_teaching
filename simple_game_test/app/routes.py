@@ -53,7 +53,6 @@ executor = ProcessPoolExecutor()
 from flask import redirect, url_for, jsonify, render_template
 from flask_login import logout_user
 
-print(url_for('login'))  # Check what URL Flask is generating
 
 
 
