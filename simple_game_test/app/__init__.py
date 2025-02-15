@@ -14,11 +14,12 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 app.config.from_object(Config)
-# app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching/'  # Comment this line when running on local host to avoid CSRF token error
-# # app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching'
-# # app.config['SESSION_COOKIE_SECURE'] = True
-# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=2) # Apply ProxyFix middleware for subroutes in externalnginx server
+app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'  # Comment this line when running on local host to avoid CSRF token error
+app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching'
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
+# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=2) # Apply ProxyFix middleware for subroutes in externalnginx server (after update?)
 
 
 # app.config['WTF_CSRF_ENABLED'] = False  # Ensure CSRF protection is explicitly enabled
