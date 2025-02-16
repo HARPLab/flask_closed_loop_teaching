@@ -203,13 +203,13 @@ def handle_connect():
         # check and reroute to logout if they have already completed the study previously or left the study
         if current_user.study_completed:
             # return redirect(url_for('logout_confirmation', reason='complete'))
-            return jsonify({'url': url_for('logout_confirmation'), 'reason': 'complete'})  # Send redirect URL to frontend
+            return jsonify({'url': url_for('logout_confirmation', _external=True), 'reason': 'complete'})  # Send redirect URL to frontend
 
         
         elif current_user.curr_progress == "left_study_or_got_disconnected" or current_user.curr_progress == "removed_due_to_inactivity":
             # socketio.emit("force_logout", {"reason": 'inactivity'}, to=request.sid)
             # return redirect(url_for('logout_confirmation', reason='inactivity'))
-            return jsonify({'url': url_for('logout_confirmation'), 'reason': 'inactivity'})  # Send redirect URL to frontend
+            return jsonify({'url': url_for('logout_confirmation', _external=True), 'reason': 'inactivity'})  # Send redirect URL to frontend
 
 
         # reconnect user
@@ -1487,7 +1487,7 @@ def sign_consent():
     # need to return json since this function is called on button press
     # which replaces the current url with new url
     # sorry trying to work within existing infra
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Url for introduction:', url_for("introduction"))
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Url for introduction:', url_for("introduction", _external=True))
     return {"url":url_for("introduction")}
 
 @app.route("/pass_trajectories", methods=["GET", "POST"])
@@ -1575,7 +1575,7 @@ def login():
         #     next_page = "/flask_closed_loop_teaching/"
 
         # return redirect(next_page or url_for("index"))
-        return redirect(url_for("index"))
+        return redirect(url_for("index", _external=True))
     
     form = LoginForm()
     
@@ -1604,7 +1604,7 @@ def login():
         log_print(f"User is authenticated after login? {current_user.is_authenticated}")
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
-            next_page = url_for("index")
+            next_page = url_for("index", _external=True)
         
         log_print('Next page url:', next_page)
         
@@ -1612,7 +1612,7 @@ def login():
         #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next page is / so redirecting to index')
         #     next_page = '/flask_closed_loop_teaching/'
 
-        return redirect(next_page or url_for("index"))
+        return redirect(next_page or url_for("index", _external=True))
         # return redirect(next_page)
 
     return render_template("login.html", title="Sign In", form=form)
