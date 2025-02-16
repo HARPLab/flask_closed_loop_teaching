@@ -18,7 +18,7 @@ app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'  # Comment this l
 # app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching'
 # app.config['SESSION_COOKIE_SECURE'] = True
 # app.config['PREFERRED_URL_SCHEME'] = 'https'
-# app.static_url_path = '/flask_closed_loop_teaching/static'
+app.static_url_path = '/flask_closed_loop_teaching/static'
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 # app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=2) # Apply ProxyFix middleware for subroutes in externalnginx server (after update?)
 
