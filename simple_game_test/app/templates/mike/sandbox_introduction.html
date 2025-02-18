@@ -14,6 +14,14 @@
   function make_sandbox() {
     console.log("I am getting called!")
     var socket = io();
+
+    // Print the socket connection details
+    socket.on('connect', function () {
+        console.log('Socket connected!');
+        console.log('Socket URL:', socket.io.uri);
+        console.log('Socket path:', socket.io.opts.path);
+    });
+
     socket.emit('make sandbox', {version: 1});
     socket.on('made sandbox', function() {
       console.log('Next url from sandbox 1: ', "{{ url_for('sandbox') }}");

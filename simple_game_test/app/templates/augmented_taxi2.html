@@ -24,8 +24,18 @@
     <script>
     localStorage.setItem("group data", JSON.stringify([]));
     localStorage.setItem("game completed", "false");
+    
     // socket object
     var socket = io();
+
+    // // Automatically determine the correct base URL
+    // var baseUrl = window.location.hostname === 'localhost' 
+    //     ? 'http://localhost:5000'  // Local Flask server
+    //     : '/flask_closed_loop_teaching';  // Server path
+
+    // var socket = io(baseUrl, {
+    //     path: '/flask_closed_loop_teaching/socket.io'
+    // });
 
     socket.on("connect", function() {
         socket.emit("join room");

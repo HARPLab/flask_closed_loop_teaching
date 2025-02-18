@@ -39,6 +39,15 @@
 
 <script>
     var socket = io();
+
+    // Print the socket connection details
+    socket.on('connect', function () {
+        console.log('Socket connected!');
+        console.log('Socket URL:', socket.io.uri);
+        console.log('Socket path:', socket.io.opts.path);
+    });
+
+
     function go_to_waiting_page() {
         // Redirect to waiting_time.html before starting the study
         window.location.href = "{{ url_for('waiting_room') }}";
