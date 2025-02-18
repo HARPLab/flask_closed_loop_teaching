@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<link rel="stylesheet" href="../../static/css/style.css" type="text/css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
 <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 
 <div id="waiting_section" class="text-center">
@@ -22,20 +22,11 @@
         let num_members = data["num_members"];
 
         console.log("Number of members: " + num_members + " Max number of members: " + data['max_num_members']);
-        // const now = new Date();
-        // start_time = now.toLocaleTimeString(); 
-        // console.log("Start time: " + start_time);
-        // while (now.toLocaleTimeString() - start_time <= 1500) {
-        //     console.log("Waiting...." + now.toLocaleTimeString());
-        // }
-
         localStorage.setItem("room_name", data["room_name"]);
 
         if (num_members === data['max_num_members']) {
-            // When 3 members have joined, start the study
             start_study();
         } else {
-            // Update waiting message
             let remaining = data['max_num_members'] - num_members;
             let display_text = "Waiting for " + remaining + " more member" + (remaining > 1 ? "s" : "") + "...";
             $("#waiting").html(display_text);
@@ -43,28 +34,23 @@
     });
 
     socket.on("member left", (data) => {
-    let member_left = data["member code"];
-    setTimeout(
-      () => {
-        $("#waiting").html("Member " + member_left + " left. ");
-      },
-      500
-    );
+        let member_left = data["member code"];
+        setTimeout(() => {
+            $("#waiting").html("Member " + member_left + " left. ");
+        }, 500);
     });
 
     socket.on("force_logout", (data) => {
         console.log("Server forcefully logged out the user. Reason:", data.reason);
-        alert(data.reason); // Show the reason for logout
-        // window.location.href = "{{ url_for('logout_confirmation') }}"; // Redirect to the logout confirmation page
+        alert(data.reason);
         let logoutUrl = "{{ url_for('logout_confirmation') }}?reason=" + encodeURIComponent(data.reason);
         window.location.href = logoutUrl;
     });
 
     addEventListener("beforeunload", (event) => {
-    socket.emit("leave group temp");
+        socket.emit("leave group temp");
     });
 
-    // Function to start the study after waiting for all participants
     function start_study() {
         localStorage.setItem("user input", "{}");
         localStorage.setItem("movement", "next");
@@ -77,33 +63,31 @@
         localStorage.setItem("use3", "-1");
         localStorage.setItem("short answer", "");
 
-        let data = {};
-            data["survey"] = localStorage.getItem("survey")
-            data["user input"] = JSON.parse(localStorage.getItem("user input"));
-            data["movement"] = localStorage.getItem("movement");
-            data["attn1"] = localStorage.getItem("attn1");
-            data["attn2"] = localStorage.getItem("attn2");
-            data["attn3"] = localStorage.getItem("attn3");
-            data["use1"] = localStorage.getItem("use1");
-            data["use2"] = localStorage.getItem("use2");
-            data["use3"] = localStorage.getItem("use3");
-            data["short answer"] = localStorage.getItem("short answer");   
+        let data = {
+            "survey": localStorage.getItem("survey"),
+            "user input": JSON.parse(localStorage.getItem("user input")),
+            "movement": localStorage.getItem("movement"),
+            "attn1": localStorage.getItem("attn1"),
+            "attn2": localStorage.getItem("attn2"),
+            "attn3": localStorage.getItem("attn3"),
+            "use1": localStorage.getItem("use1"),
+            "use2": localStorage.getItem("use2"),
+            "use3": localStorage.getItem("use3"),
+            "short answer": localStorage.getItem("short answer")
+        };
 
         socket.emit("next domain", data);
         socket.on("next domain is", function(data) {
             console.log("I have received next domain: ", data["domain"]);
             let url = "";
-            if (data["domain"].length === 2){
-                // url = "/flask_closed_loop_teaching/".concat(data["domain"], "_intro");
-                if (data["domain"] == 'at'){
+            if (data["domain"].length === 2) {
+                if (data["domain"] == 'at') {
                     url = "{{ url_for('at_intro') }}";
                 }
-                if (data["domain"] == 'sb'){
+                if (data["domain"] == 'sb') {
                     url = "{{ url_for('sb_intro') }}";
                 }
-
-            }
-            else {
+            } else {
                 url = "{{ url_for('final_survey') }}";
             }
             window.location.href = url;

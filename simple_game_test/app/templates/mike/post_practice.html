@@ -1,24 +1,36 @@
 {% extends "base.html" %}
+
 {% block content %}
-<link rel="stylesheet" href="../../static/css/style.css" type="text/css" />
-<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+
+<!-- Corrected static file path -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
+
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" 
+        integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" 
+        crossorigin="anonymous"></script>
 
 <div id="container-instructions" class="text-center">
 
-    {{preamble | safe}}
+    {{ preamble | safe }}
 
     <div class="instructionsnav">
         <div class="row justify-content-between">
             <div class="col-xs-3">
-{#                <button type="button" id="prev" onclick="window.location.href='{{ url_for('sandbox') }}'" value="previous" class="btn btn-primary btn-lg continue"> #}
-{#                    Previous <span class="glyphicon glyphicon-arrow-left"></span> #}
-{#                </button> #}
+                <!-- Previous button commented out -->
+                {# 
+                <button type="button" id="prev" 
+                        onclick="window.location.href='{{ url_for('sandbox') }}'" 
+                        value="previous" 
+                        class="btn btn-primary btn-lg continue"> 
+                    Previous <span class="glyphicon glyphicon-arrow-left"></span>
+                </button>
+                #}
             </div>
             <div class="col-xs-3">
                 <button type="button" id="next" value="next" 
-                onclick="go_to_waiting_page()" 
-                class="btn btn-primary btn-lg continue">
-                Next <span class="glyphicon glyphicon-arrow-right"></span>
+                        onclick="go_to_waiting_page()" 
+                        class="btn btn-primary btn-lg continue">
+                    Next <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>
             </div>
         </div>
@@ -28,9 +40,9 @@
 <script>
     var socket = io();
     function go_to_waiting_page() {
-
         // Redirect to waiting_time.html before starting the study
         window.location.href = "{{ url_for('waiting_room') }}";
     }
 </script>
+
 {% endblock %}

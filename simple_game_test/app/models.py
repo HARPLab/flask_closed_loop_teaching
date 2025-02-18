@@ -164,6 +164,7 @@ class Group(db.Model):
     user_ids = db.Column(MutableList.as_mutable(db.PickleType),
                                     default=[])
     status = db.Column(db.String(10)) # gen_demos, upd_demos, upd_tests, study_end
+    # new_round_generation_started = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     current_round = db.Column(db.Integer, default=0)
     round_data = db.Column(MutableList.as_mutable(db.PickleType),

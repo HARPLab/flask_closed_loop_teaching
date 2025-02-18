@@ -1,126 +1,140 @@
-
 <!DOCTYPE html>
 <html>
   <head>
 
-    <script src="../../static/lib/jquery-min.js" type="text/javascript"> </script>
-    <script src="../../static/lib/underscore-min.js" type="text/javascript"> </script>
-    <script src="../../static/lib/backbone-min.js" type="text/javascript"> </script>
-    <script src="../../static/lib/d3.v3.min.js" type="text/javascript"> </script>
-    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="../../static/css/style.css" type="text/css" />
-    <link rel="stylesheet" href="../../static/css/jspsych.css" type="text/css" />
+    <!-- Corrected static JS file paths -->
+    <script src="{{ url_for('static', filename='lib/jquery-min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='lib/underscore-min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='lib/backbone-min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='lib/d3.v3.min.js') }}" type="text/javascript"></script>
+
+    <!-- External libraries -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" 
+            integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" 
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+          crossorigin="anonymous">
+
+    <!-- Corrected static CSS file paths -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jspsych.css') }}" type="text/css" />
+
     <style type="text/css">
-    
-        .pre_info{
-            float: center;
+        .pre_info {
             text-align: center;
         }
-    
     </style>
 
   </head>
   <body>
+
+    <!-- Corrected static module import -->
     <!-- <script type="module">
         import socket from "/static/lib/socket.js";
         console.log(socket);
         window.socket = socket;
-      </script> -->
+    </script> -->
+
     <div class="container-fluid" style="padding-left: 5%; padding-right: 5%">
         <div id="container-instructions" class="text-center">
-            <div id="preamble" class="pre_info">{{preamble | safe}}</div>
+            <div id="preamble" class="pre_info">{{ preamble | safe }}</div>
+
             <div class="row justify-content-around">
                 <canvas id="game" width="850" height="500"></canvas>
-                <div><br><br><br><br><br>
+                <div>
+                    <br><br><br><br><br>
                     <table width="500">
                         <tr><th>Key</th><th>Action</th></tr>
-                        <tr><td>up/down/left/right arrow keys</td><td>corresponding movement</td></tr>
-                        <tr><td>p</td><td>pick up</td></tr>
-                        <tr><td>d</td><td>drop</td></tr>
-                        <tr><td>r</td><td>reset simulation</td></tr>
+                        <tr><td>Up/Down/Left/Right arrow keys</td><td>Move Chip</td></tr>
+                        <tr><td>P</td><td>Pick up</td></tr>
+                        <tr><td>D</td><td>Drop</td></tr>
+                        <tr><td>R</td><td>Reset simulation</td></tr>
                     </table>
                     <br>
                 </div>
             </div>
-            <br></br> 
-            <hr />
+
+            <br><hr>
+
             <div class="instructionsnav">
                 <div class="row justify-content-between">
                     <div class="col-xs-3">
-                        <button type="button" id="prev" onclick="window.location.href='{{ url_for('sandbox_introduction') }}'" value="previous" class="btn btn-primary btn-lg continue">
+                        <button type="button" id="prev" 
+                                onclick="window.location.href='{{ url_for('sandbox_introduction') }}'" 
+                                value="previous" 
+                                class="btn btn-primary btn-lg continue">
                             Previous <span class="glyphicon glyphicon-arrow-left"></span>
-                            </button>
+                        </button>
                     </div>
                     <div class="col-xs-3">
                         <button type="button" id="next" 
-                        onclick="make_sandbox()"
-                        value="next" class="btn btn-primary btn-lg continue">
-                        Next <span class="glyphicon glyphicon-arrow-right"></span>
-                </button>
+                                onclick="make_sandbox()" 
+                                value="next" 
+                                class="btn btn-primary btn-lg continue">
+                            Next <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>
                     </div>
                 </div>
             </div>
-            <br></br> 
-            </div>
+
+            <br>
+
+        </div>
     </div>
-    
 
     <script>
     var socket = io();
-    socket.on("connect", function() {
-        if (localStorage.getItem("progress") === "sandbox_1"){
-            socket.emit("sandbox settings", {version: 1});
+
+    socket.on("connect", function () {
+        const progress = localStorage.getItem("progress");
+        if (progress === "sandbox_1") {
+            socket.emit("sandbox settings", { version: 1 });
+        } else if (progress === "sandbox_2") {
+            socket.emit("sandbox settings", { version: 2 });
+            $("#next").replaceWith(`<button type="button" disabled id="next" 
+                                     onclick="make_sandbox()" 
+                                     value="next" 
+                                     class="btn btn-primary btn-lg continue">
+                                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                                    </button>`);
         }
-        else if (localStorage.getItem("progress") === "sandbox_2") {
-            socket.emit("sandbox settings", {version: 2});
-            $( "#next" ).replaceWith( `<button type="button" disabled id="next" 
-        onclick="make_sandbox()"
-        value="next" class="btn btn-primary btn-lg continue">
-        Next <span class="glyphicon glyphicon-arrow-right"></span>
-        </button>` );
-        }
-    });
-    
-    socket.on("sandbox configured", function(data) {
-        mdp_parameters = data["params"];
-        console.log(mdp_parameters);
-        console.log(mdp_parameters.agent.x);
-        continue_condition = data["continue_condition"];
-        run_page(mdp_parameters, continue_condition);
     });
 
-    socket.on("attention checked", function(data) {
+    socket.on("sandbox configured", function (data) {
+        console.log("Sandbox configured:", data);
+        run_page(data["params"], data["continue_condition"]);
+    });
+
+    socket.on("attention checked", function (data) {
         if (data["passed"]) {
-            $( "#next" ).replaceWith( `<button type="button" id="next" 
-        onclick="make_sandbox()"
-        value="next" class="btn btn-primary btn-lg continue">
-        Next <span class="glyphicon glyphicon-arrow-right"></span>
-        </button>` );
-                }
+            $("#next").replaceWith(`<button type="button" id="next" 
+                                     onclick="make_sandbox()" 
+                                     value="next" 
+                                     class="btn btn-primary btn-lg continue">
+                                        Next <span class="glyphicon glyphicon-arrow-right"></span>
+                                    </button>`);
         }
-    );
+    });
 
     function make_sandbox() {
-    console.log("I am getting called!")
-    console.log(localStorage.getItem("progress"));
-    if (localStorage.getItem("progress") === "sandbox_1") {
-        localStorage.setItem("progress", "sandbox_2");
-        socket.emit('make sandbox', {version: 2});
-        // socket.on("connect", function() {socket.emit('make sandbox', {version: 1})});
-        socket.on('made sandbox', function() {
-            window.location.assign("{{url_for('sandbox')}}");
-        });
-    }
-    else if (localStorage.getItem("progress") === "sandbox_2") {
+        console.log("Starting sandbox...");
+        const progress = localStorage.getItem("progress");
+        if (progress === "sandbox_1") {
+            localStorage.setItem("progress", "sandbox_2");
+            socket.emit('make sandbox', { version: 2 });
+            socket.on('made sandbox', function () {
+                window.location.assign("{{ url_for('sandbox') }}");
+            });
+        } else if (progress === "sandbox_2") {
             if (localStorage.getItem("passed_attention_check") === "true") {
                 localStorage.setItem("progress", "post_practice");
-                window.location.assign("{{url_for('post_practice')}}");
+                window.location.assign("{{ url_for('post_practice') }}");
             }
-
         }
-  }
-    
+    }
+
+
     function run_page(mdp_parameters, continue_condition) {
     // import {socket} from "sandbox_intro.html";
     var canvas = document.getElementById("game");
