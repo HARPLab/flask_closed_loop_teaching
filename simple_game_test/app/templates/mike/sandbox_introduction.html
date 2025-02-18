@@ -13,17 +13,17 @@
 <script>
   function make_sandbox() {
     console.log("I am getting called!")
-    // var socket = io();
+    var socket = io();
 
-    // Automatically determine the correct base URL
-    var baseUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:5000'  // Local Flask server
-        : '/flask_closed_loop_teaching';  // Server path
+    // // Automatically determine the correct base URL
+    // var baseUrl = window.location.hostname === 'localhost' 
+    //     ? 'http://localhost:5000'  // Local Flask server
+    //     : '/flask_closed_loop_teaching';  // Server path
 
-    var socket = io(baseUrl, {
-        path: '/flask_closed_loop_teaching/socket.io',
-        transports: ['polling']
-    });
+    // var socket = io(baseUrl, {
+    //     path: '/flask_closed_loop_teaching/socket.io',
+    //     transports: ['polling']
+    // });
 
     // Print the socket connection details
     socket.on('connect', function () {
