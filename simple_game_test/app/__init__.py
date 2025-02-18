@@ -37,9 +37,9 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 
-socketio = SocketIO(app)
+# socketio = SocketIO(app)
 # socketio.init_app(app)
-# socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io')
+socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io')
 
 
 # if __name__ == '__main__':
