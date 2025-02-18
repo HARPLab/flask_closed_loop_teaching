@@ -21,7 +21,8 @@
         : '/flask_closed_loop_teaching';  // Server path
 
     var socket = io(baseUrl, {
-        path: '/flask_closed_loop_teaching/socket.io'
+        path: '/flask_closed_loop_teaching/socket.io',
+        transports: ['websocket', 'polling']
     });
 
     // Print the socket connection details
