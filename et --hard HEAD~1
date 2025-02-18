@@ -1,0 +1,122 @@
+[33m41f987b[m[33m ([m[1;36mHEAD -> [m[1;32mteam_teaching[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m1f325e1[m[33m ([m[1;31morigin/team_teaching[m[33m)[m HEAD@{1}: commit: Modular url generation for js scripts
+[33m41f987b[m[33m ([m[1;36mHEAD -> [m[1;32mteam_teaching[m[33m)[m HEAD@{2}: commit: Flask fixes - try 5
+[33mb7e441a[m HEAD@{3}: commit: Flask fixes - try 4
+[33ma4d0197[m HEAD@{4}: commit: Flask fixes - try 3
+[33m8cc093e[m HEAD@{5}: commit: Flask fixes - try 2
+[33m95e2626[m HEAD@{6}: commit: Flask fixes - try 1
+[33m2a9286b[m HEAD@{7}: commit: Updated flask app statis settings
+[33m5215494[m HEAD@{8}: commit: url_for reroutes - flask
+[33md3356af[m HEAD@{9}: commit: Flask fixes
+[33m996c366[m HEAD@{10}: commit: Flask changes for routing webaddress
+[33me3d40aa[m HEAD@{11}: commit (merge): Merge branch 'team_teaching' of github.com:HARPLab/flask_closed_loop_teaching into team_teaching
+[33m8adb921[m HEAD@{12}: reset: moving to HEAD
+[33m8adb921[m HEAD@{13}: commit: flask changes
+[33m1012875[m HEAD@{14}: rebase -i (finish): returning to refs/heads/team_teaching
+[33m1012875[m HEAD@{15}: rebase -i (start): checkout HEAD~4
+[33mde967b9[m HEAD@{16}: pull: Fast-forward
+[33m1012875[m HEAD@{17}: rebase -i (finish): returning to refs/heads/team_teaching
+[33m1012875[m HEAD@{18}: rebase -i (start): checkout HEAD~4
+[33mde967b9[m HEAD@{19}: reset: moving to HEAD
+[33mde967b9[m HEAD@{20}: commit: nginx flask settings updated 2
+[33m487fb64[m HEAD@{21}: rebase -i (finish): returning to refs/heads/team_teaching
+[33m487fb64[m HEAD@{22}: rebase -i (start): checkout HEAD~4
+[33mdd2eaf1[m HEAD@{23}: reset: moving to HEAD
+[33mdd2eaf1[m HEAD@{24}: reset: moving to HEAD
+[33mdd2eaf1[m HEAD@{25}: commit: nginx flask settings updated
+[33m487fb64[m HEAD@{26}: revert: Revert "Rep reorg"
+[33m21a98cb[m HEAD@{27}: reset: moving to HEAD
+[33m21a98cb[m HEAD@{28}: commit: Rep reorg
+[33m1012875[m HEAD@{29}: commit: Streamlined domain transitions
+[33m223f91e[m HEAD@{30}: commit: Updated study flow
+[33m2885e1f[m HEAD@{31}: commit: Reverting study to previous working stage
+[33m3aeab35[m HEAD@{32}: commit: Added a clean db 1
+[33mbc5a477[m HEAD@{33}: commit: Added a clean db
+[33m5a3d401[m HEAD@{34}: commit: Fixed test update while loop issue for disconnected/removed participants
+[33ma7503b6[m HEAD@{35}: commit: Fixed issues with two conflicting alarms
+[33m6c1b78d[m HEAD@{36}: commit: Added Alarm - 1st round and while timer is in last 20 s during
+[33m8109df7[m HEAD@{37}: reset: moving to HEAD
+[33m8109df7[m HEAD@{38}: commit: Semantic Hints for Skateboard
+[33m691554c[m HEAD@{39}: commit: log out logic and flow updated to use socketio
+[33m603ee1f[m HEAD@{40}: commit: Logout page and logic updated 2
+[33mc9a3678[m HEAD@{41}: commit: Logout page and logic updated
+[33m12245b7[m HEAD@{42}: commit: Code for quick debug
+[33m7d33e23[m HEAD@{43}: commit: Logout function changed for nginx server
+[33m3c675c9[m HEAD@{44}: commit: Number of final tests increased
+[33m3e64458[m HEAD@{45}: commit: Improved flow of user study to avoid accidental disconnects
+[33mb7dd621[m HEAD@{46}: commit: Logging disconnect and reconnect times
+[33maa9fa4f[m HEAD@{47}: commit: minor changes
+[33mfd56e0e[m HEAD@{48}: commit: inactivity timer params changed again
+[33meb6dec1[m HEAD@{49}: commit: inactivity timer params changed:
+[33m3af1f7a[m HEAD@{50}: commit: User activity logging updated
+[33mf0c0a6e[m HEAD@{51}: commit: Demo instrauctions update
+[33mc308ec3[m HEAD@{52}: commit: User disconnection issues addressed. Reroutes to logout page
+[33m3684de6[m HEAD@{53}: commit: Increased inactivity time
+[33md2b45ce[m HEAD@{54}: commit: Update study instructions
+[33m612bd47[m HEAD@{55}: commit: minor fixes to same traj logic
+[33m20757af[m HEAD@{56}: commit: Timer logic fixes, flashing timer, Correct Trajectory check at client end fixes
+[33mc102617[m HEAD@{57}: reset: moving to HEAD~2
+[33m3008ecb[m HEAD@{58}: commit: Timer logic fixes, flashing timer, Correct Trajectory check at client end fixes
+[33me244eb4[m HEAD@{59}: commit: Timer logic fixes, flashing timer, Correct Trajectory check at client end fixes
+[33mc102617[m HEAD@{60}: commit: Added timer, timeout logic, teammate progress to Taxi domain
+[33m7a124f0[m HEAD@{61}: commit: Updated consent
+[33m845379e[m HEAD@{62}: commit: Updated consent
+[33mc6f17f9[m HEAD@{63}: commit: Full study complete
+[33m919e16c[m HEAD@{64}: commit: Handling member leaving others are waiting
+[33m5ded12a[m HEAD@{65}: commit: Study flow fixed; round team knowledge data saving issues to SQL db fixed
+[33me7caa5f[m HEAD@{66}: commit: Full study run through
+[33m64eeef2[m HEAD@{67}: commit: Aug taxi full run - debug
+[33m9d87b3b[m HEAD@{68}: commit: Aug taxi full run with UI changes
+[33mccdbf21[m HEAD@{69}: commit: Aug taxi full run removed debugging code
+[33mb8ed227[m HEAD@{70}: commit: Aug taxi full run through check
+[33m7985dc6[m HEAD@{71}: commit: jquery fixes 2
+[33meb0befc[m HEAD@{72}: commit: jquery fixes
+[33m6fd1430[m HEAD@{73}: commit: Augmented taxi run though fixes
+[33mbf5843f[m HEAD@{74}: commit: Augmented taxi run though
+[33m4fab0b7[m HEAD@{75}: commit: Dynamic URL debugging - fixes
+[33mce385bb[m HEAD@{76}: commit: Dynamic URL debugging
+[33m2b46b37[m HEAD@{77}: commit: Dynamic URL updates fixes
+[33m90a29d2[m HEAD@{78}: commit: Dynamic URL updates fixes
+[33m39628de[m HEAD@{79}: commit: Dynamic URL updates
+[33mab60721[m HEAD@{80}: commit: Flask server on local host fixes
+[33m0469e12[m HEAD@{81}: commit: Socketio fixes - app session cookie path set
+[33me04397c[m HEAD@{82}: commit: Socketio fixes - app config
+[33m36303c1[m HEAD@{83}: commit: Sokcetio fixes 1 revert
+[33mabaecc8[m HEAD@{84}: commit: Sokcetio fixes 1
+[33mf37c9bf[m HEAD@{85}: commit: Dynmic URLs for flask app - corrections 3
+[33m4b3bdc1[m HEAD@{86}: commit: Dynmic URLs for flask app - corrections 2
+[33ma15f6e6[m HEAD@{87}: commit: Dynmic URLs for flask app - corrections
+[33maeb10b4[m HEAD@{88}: commit: Dynmic URLs for flask app
+[33m3995793[m HEAD@{89}: commit: Consent button rerouting
+[33meb5dc14[m HEAD@{90}: commit: Reverted login rerouting
+[33me56c99b[m HEAD@{91}: commit: Flask proxy middleware added
+[33m7924280[m HEAD@{92}: commit: Login -> conset redirect updated
+[33m02eab5d[m HEAD@{93}: commit: Changes to login function to redirect to index
+[33md365353[m HEAD@{94}: commit: user study debugging
+[33m8760db0[m HEAD@{95}: commit: Debugging on bridge to run user study
+[33m3c7f9d6[m HEAD@{96}: commit: New logic flow for previous and next buttons
+[33m781d832[m HEAD@{97}: commit: One domain logic working. Previous-Next transition WIP
+[33mc0a9295[m HEAD@{98}: commit: Debugging issues related to new demos for unlearned concepts
+[33m8125e7c[m HEAD@{99}: commit: Other players wait for all for 1st round of demos-tests generation. While loop slows down generation though.
+[33mb814ab3[m HEAD@{100}: commit: user stuyd works for 1st riund
+[33m9b29019[m HEAD@{101}: commit: update submodules url to ssh
+[33m11ed330[m HEAD@{102}: commit: WIP debugging of real-time demo/test trajectory generation function
+[33mc16e944[m HEAD@{103}: pull: Fast-forward
+[33m2451e61[m HEAD@{104}: commit: Updated round info and output from next round interactions generation function
+[33m66d160a[m HEAD@{105}: pull: Merge made by the 'recursive' strategy.
+[33mbc6c9b0[m HEAD@{106}: reset: moving to HEAD
+[33mbc6c9b0[m HEAD@{107}: pull: Merge made by the 'recursive' strategy.
+[33ma0374c0[m HEAD@{108}: reset: moving to HEAD
+[33ma0374c0[m HEAD@{109}: reset: moving to HEAD
+[33ma0374c0[m HEAD@{110}: commit (merge): Merge branch 'team_teaching' of github.com:HARPLab/flask_closed_loop_teaching into team_teaching
+[33m898e6d9[m HEAD@{111}: reset: moving to HEAD
+[33m898e6d9[m HEAD@{112}: pull: Merge made by the 'recursive' strategy.
+[33m8e34bc8[m HEAD@{113}: commit: integrate demo generation function- WIP
+[33m59797c2[m HEAD@{114}: pull: Fast-forward
+[33m644f451[m HEAD@{115}: commit: Demo running variables added to routes.py. Updated user_study_utils functions in group_teaching.
+[33m8f98809[m HEAD@{116}: pull: Fast-forward
+[33m7256b15[m HEAD@{117}: reset: moving to HEAD
+[33m7256b15[m HEAD@{118}: pull: Fast-forward
+[33m75a1e3f[m HEAD@{119}: commit: Updated group_teaching submodule
+[33m415c336[m HEAD@{120}: commit: Previous group-teaching submodule removed
+[33m57264c7[m HEAD@{121}: clone: from git@github.com:HARPLab/flask_closed_loop_teaching.git
