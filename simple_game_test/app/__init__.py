@@ -57,12 +57,17 @@ else:
 
 socketio.init_app(app)  # explicitly initialize the socketio object
 
+
+
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
 # if __name__ == '__main__':
 # 	socketio.run(app)
 
 from app import routes, models
+
+print("Final App url map after socketio initialization.", app.url_map)
+
 
 # comment lines below when creating the database. uncomment lines below when running the app
 from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
