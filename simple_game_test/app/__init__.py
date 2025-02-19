@@ -28,8 +28,6 @@ app.config.from_object(Config)
 # app.static_url_path = '/flask_closed_loop_teaching/static'  # default is APPLICATION_ROOT/static
 # app.config['WTF_CSRF_ENABLED'] = False  # Ensure CSRF protection is explicitly enabled
 
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
-
 
 
 db = SQLAlchemy(app)
@@ -46,7 +44,8 @@ login.login_view = "login"
 
 if os.environ.get("FLASK_ENV") == "development":
 	# socketio = SocketIO(app)  # for running on local host
-    socketio = SocketIO(app,  async_mode="gevent", cors_allowed_origins="*")
+    socketio = SocketIO(app, path='/socket.io/', async_mode="gevent", cors_allowed_origins="*")
+    print("App url map in development mode:", app.url_map)
 else:
     app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
     app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching'
@@ -54,7 +53,11 @@ else:
 	# app.config['PREFERRED_URL_SCHEME'] = 'https'
     socketio = SocketIO(app, async_mode='gevent', path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
     # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
+    print("App url map in production mode:", app.url_map)
 
+
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
 # if __name__ == '__main__':
 # 	socketio.run(app)
