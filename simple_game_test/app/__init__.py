@@ -55,7 +55,7 @@ else:
     # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
     print("App url map in production mode:", app.url_map)
 
-
+socketio.init_app(app)  # explicitly initialize the socketio object
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
