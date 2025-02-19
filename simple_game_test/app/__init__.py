@@ -15,8 +15,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'  # Comment this line when running on local host to avoid CSRF token error
-# app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching' # Comment this line when running on local host to avoid CSRF token error
+app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'  # Comment this line when running on local host to avoid CSRF token error
+app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching' # Comment this line when running on local host to avoid CSRF token error
 # app.config['SESSION_COOKIE_SECURE'] = True  # Needed if running on HTTPS, 
 # app.config['PREFERRED_URL_SCHEME'] = 'https'
 
