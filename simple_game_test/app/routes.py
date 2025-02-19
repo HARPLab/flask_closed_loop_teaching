@@ -1658,16 +1658,18 @@ def login():
             next_page = url_for("index")
         
         log_print('Next page url:', next_page)
+        log_print(f"Redirecting to: {url_for('index', _external=True)}")
+
         
         # if next_page == '/':
         #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next page is / so redirecting to index')
         #     next_page = '/flask_closed_loop_teaching/'
         
-        log_print(f"Next page before redirect: {next_page}")
         return redirect(next_page or url_for("index"))
         # return redirect(next_page)
 
     return render_template("login.html", title="Sign In", form=form)
+
 
 @app.route("/final_survey", methods=["GET", "POST"])
 @login_required

@@ -51,9 +51,16 @@
     <!-- Updated Static Paths for JS -->
     <script src="{{ url_for('static', filename='dragula.js') }}"></script>
 
+    <script>
+        console.log("Base template loaded");
+    </script>
+
     <div class="container-fluid" style="padding-left: 5%; padding-right: 5%">
         {% block content %}{% endblock %}
     </div>
 
 </body>
+
+
+
 </html>
