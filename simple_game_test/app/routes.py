@@ -1662,7 +1662,8 @@ def login():
         # if next_page == '/':
         #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next page is / so redirecting to index')
         #     next_page = '/flask_closed_loop_teaching/'
-
+        
+        log_print(f"Next page before redirect: {next_page}")
         return redirect(next_page or url_for("index"))
         # return redirect(next_page)
 
