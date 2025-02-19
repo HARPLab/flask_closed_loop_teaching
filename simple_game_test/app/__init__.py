@@ -1,39 +1,35 @@
+from gevent import monkey
+# Patch standard libraries for Gevent compatibility
+monkey.patch_all()
+
+print("Monkey patched?", monkey.is_module_patched("socket"))
+
+
 from flask import Flask
+from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from config import Config
 
-from flask_socketio import SocketIO
-from multiprocessing import Manager, Pool, Lock
 import logging, os
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+# from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
+from threading import Lock
+from gevent.pool import Pool
 
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'  # Comment this line when running on local host to avoid CSRF token error
-app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching' # Comment this line when running on local host to avoid CSRF token error
-# app.config['SESSION_COOKIE_SECURE'] = True  # Needed if running on HTTPS, 
-# app.config['PREFERRED_URL_SCHEME'] = 'https'
-
 # app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching' # default is APPLICATION_ROOT
 # app.static_url_path = '/flask_closed_loop_teaching/static'  # default is APPLICATION_ROOT/static
-
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
-# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=2) # Apply ProxyFix middleware for subroutes in externalnginx server (after update?)
-
 # app.config['WTF_CSRF_ENABLED'] = False  # Ensure CSRF protection is explicitly enabled
 
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
-# print('app config session cookie secure:', app.config.get('SESSION_COOKIE_SECURE'))
-# print('app config session cookie path:', app.config.get('SESSION_COOKIE_PATH'))
-# print('app config application root:', app.config.get('APPLICATION_ROOT'))
-# print('app config secret key:', app.config.get('SECRET_KEY'))
-# print('app config wtf csrf enabled:', app.config.get('WTF_CSRF_ENABLED'))
 
 
 db = SQLAlchemy(app)
@@ -41,10 +37,23 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 
-socketio = SocketIO(app)  # for running on local host
+# socketio = SocketIO(app)  # for running on local host
 # socketio.init_app(app)
 
 # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")  # Allow cross-origin for local testing
+# Initialize SocketIO with gevent
+# socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
+
+if os.environ.get("FLASK_ENV") == "development":
+	# socketio = SocketIO(app)  # for running on local host
+    socketio = SocketIO(app,  async_mode="gevent", cors_allowed_origins="*")
+else:
+    app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
+    app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching'
+	# app.config['SESSION_COOKIE_SECURE'] = True  # Needed if running on HTTPS, 
+	# app.config['PREFERRED_URL_SCHEME'] = 'https'
+    socketio = SocketIO(app, async_mode='gevent', path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
+    # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
 
 
 # if __name__ == '__main__':
@@ -56,11 +65,17 @@ from app import routes, models
 from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 
 # Initialize the multiprocessing tools
-manager = Manager()
-lock = manager.Lock()
+# manager = Manager()
+# lock = manager.Lock()
+
+# Lock with threading
+lock = Lock()
+
+# Use the number of CPUs available, but limit to 64
 pool_size = min(os.cpu_count(), 64)
 print(f"Using {pool_size} processes")
-pool = Pool(processes=pool_size)  # Adjust the number of processes as needed
+# pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
+pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -86,3 +101,6 @@ if old_group is None:
 	db.session.add(group)
 
 db.session.commit()
+
+if __name__ == "__main__" and os.environ.get("FLASK_ENV") == "development":
+    socketio.run(app, debug=True, host="127.0.0.1", port=5000, use_reloader=False)
