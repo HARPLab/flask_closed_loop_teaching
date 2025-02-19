@@ -41,10 +41,10 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 
-socketio = SocketIO(app)  # for running on local host
+# socketio = SocketIO(app)  # for running on local host
 # socketio.init_app(app)
 
-# socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")  # Allow cross-origin for local testing
+socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")  # Allow cross-origin for local testing
 
 
 # if __name__ == '__main__':

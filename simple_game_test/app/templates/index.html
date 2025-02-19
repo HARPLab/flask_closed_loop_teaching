@@ -12,7 +12,12 @@
 
 
 <script>
-    let socket = io();
+    // let socket = io();
+
+    let socket = io('/flask_closed_loop_teaching', {
+    path: '/flask_closed_loop_teaching/socket.io',
+    transports: ['polling']  // Ensures only polling is used
+    });
 
     // // Automatically determine the correct base URL
     // var baseUrl = window.location.hostname === 'localhost' 
