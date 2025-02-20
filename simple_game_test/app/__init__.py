@@ -58,7 +58,7 @@ socketio.init_app(app)
 # socketio.init_app(app)  # explicitly initialize the socketio object
 
 
-# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
 # if __name__ == '__main__':
 # 	socketio.run(app)
