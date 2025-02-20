@@ -57,30 +57,6 @@
         console.log("Base template loaded");
     </script>
 
-    <!-- <script>
-        window.onload = function () {
-            console.log("Page fully loaded. Initializing WebSocket.");
-
-            // if (!window.location.pathname.includes("login")) {  
-            let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
-
-            let socket = io.connect(
-                isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
-                { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/", 
-                    transports: ['polling']  // Ensures polling first
-                }
-            );
-
-            socket.on('connect', function () {
-                console.log('Socket connected!');
-                console.log('Socket URL:', socket.io.uri);
-                console.log('Socket path:', socket.io.opts.path);
-            });
-            // } else {
-            //     console.log("Skipping WebSocket initialization on login page.");
-            // }
-        };
-    </script> -->
 
     <div class="container-fluid" style="padding-left: 5%; padding-right: 5%">
         {% block content %}{% endblock %}
