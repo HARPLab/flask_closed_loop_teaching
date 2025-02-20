@@ -82,11 +82,13 @@ print(f"Using {pool_size} processes")
 
 # Lock with threading
 from threading import Lock
-from multiprocessing import Pool
 lock = Lock()
-pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
-# from gevent.pool import Pool
-# pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
+
+# from multiprocessing import Pool
+# pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
+
+from gevent.pool import Pool
+pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
 
 
 
