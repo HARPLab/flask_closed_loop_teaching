@@ -73,17 +73,19 @@ from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 pool_size = min(os.cpu_count(), 64)
 print(f"Using {pool_size} processes")
 
-## Initialize the multiprocessing tools
-from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
-manager = Manager()
-lock = manager.Lock()
+# ## Initialize the multiprocessing tools
+# from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
+# manager = Manager()
+# lock = manager.Lock()
+# pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
+
+
+# Lock with threading
+from threading import Lock
+from multiprocessing import Pool
+lock = Lock()
 pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
-
-
-## Lock with threading
-# from threading import Lock
 # from gevent.pool import Pool
-# lock = Lock()
 # pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
 
 
