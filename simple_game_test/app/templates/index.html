@@ -10,7 +10,7 @@
 <script src="{{ url_for('static', filename='lib/d3.v3.min.js') }}" type="text/javascript"> </script>
 <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 
-<script>
+<!-- <script>
     window.onload = function () {
         console.log("Page fully loaded. Initializing WebSocket.");
 
@@ -33,10 +33,10 @@
             console.log("Skipping WebSocket initialization on login page.");
         }
     };
-</script>
+</script> -->
 
 <script>
-    // let socket = io();
+    let socket = io();
 
     // let socket = io('/flask_closed_loop_teaching', {
     //     path: '/flask_closed_loop_teaching/socket.io',
@@ -55,12 +55,12 @@
     // );
 
 
-    // // Print the socket connection details
-    // socket.on('connect', function () {
-    //     console.log('Socket connected!');
-    //     console.log('Socket URL:', socket.io.uri);
-    //     console.log('Socket path:', socket.io.opts.path);
-    // });
+    // Print the socket connection details
+    socket.on('connect', function () {
+        console.log('Socket connected!');
+        console.log('Socket URL:', socket.io.uri);
+        console.log('Socket path:', socket.io.opts.path);
+    });
 
     function logout() {
         console.log("Logging out...");

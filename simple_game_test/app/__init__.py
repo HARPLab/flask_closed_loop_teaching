@@ -35,31 +35,30 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 
-# socketio = SocketIO(app)  # for running on local host
-# socketio.init_app(app)
+socketio = SocketIO(app)  # for running on local host
+socketio.init_app(app)
 
 # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")  # Allow cross-origin for local testing
 # Initialize SocketIO with gevent
 # socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
 
-if os.environ.get("FLASK_ENV") == "development":
-	# socketio = SocketIO(app)  # for running on local host
-    socketio = SocketIO(app, path='/socket.io/', async_mode="gevent", cors_allowed_origins="*")
-    print("App url map in development mode:", app.url_map)
-else:
-    app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
-    app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching'
-	# app.config['SESSION_COOKIE_SECURE'] = True  # Needed if running on HTTPS, 
-	# app.config['PREFERRED_URL_SCHEME'] = 'https'
-    socketio = SocketIO(app, async_mode='gevent', path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
-    # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
-    print("App url map in production mode:", app.url_map)
+# if os.environ.get("FLASK_ENV") == "development":
+#     socketio = SocketIO(app)  # for running on local host
+#     # socketio = SocketIO(app, path='/socket.io/', async_mode="gevent", cors_allowed_origins="*")
+#     print("App url map in development mode:", app.url_map)
+# else:
+#     app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
+#     app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching'
+# 	# app.config['SESSION_COOKIE_SECURE'] = True  # Needed if running on HTTPS, 
+# 	# app.config['PREFERRED_URL_SCHEME'] = 'https'
+#     socketio = SocketIO(app, async_mode='gevent', path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
+#     # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
+#     print("App url map in production mode:", app.url_map)
 
-socketio.init_app(app)  # explicitly initialize the socketio object
+# socketio.init_app(app)  # explicitly initialize the socketio object
 
 
-
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
+# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
 # if __name__ == '__main__':
 # 	socketio.run(app)
@@ -110,5 +109,5 @@ if old_group is None:
 
 db.session.commit()
 
-if __name__ == "__main__" and os.environ.get("FLASK_ENV") == "development":
-    socketio.run(app, debug=True, host="127.0.0.1", port=5000, use_reloader=False)
+# if __name__ == "__main__" and os.environ.get("FLASK_ENV") == "development":
+#     socketio.run(app, debug=True, host="127.0.0.1", port=5000, use_reloader=False)
