@@ -15,9 +15,7 @@ from config import Config
 import logging, os
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-# from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
-from threading import Lock
-from gevent.pool import Pool
+
 
 
 
@@ -71,18 +69,24 @@ print("Final App url map after socketio initialization.", app.url_map)
 # comment lines below when creating the database. uncomment lines below when running the app
 from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 
-# Initialize the multiprocessing tools
-# manager = Manager()
-# lock = manager.Lock()
 
-# Lock with threading
-lock = Lock()
-
-# Use the number of CPUs available, but limit to 64
 pool_size = min(os.cpu_count(), 64)
 print(f"Using {pool_size} processes")
-# pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
-pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
+
+## Initialize the multiprocessing tools
+from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
+manager = Manager()
+lock = manager.Lock()
+pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
+
+
+## Lock with threading
+# from threading import Lock
+# from gevent.pool import Pool
+# lock = Lock()
+# pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
+
+
 
 logging.basicConfig(level=logging.DEBUG)
 
