@@ -59,7 +59,7 @@
         window.onload = function () {
             console.log("Page fully loaded. Initializing WebSocket.");
 
-            if (window.location.pathname !== "/login") {  
+            if (!window.location.pathname.includes("login")) {  
                 let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
 
                 let socket = io.connect(
