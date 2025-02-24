@@ -12,7 +12,7 @@
 
   let socket = io.connect(
       isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
-      { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
+      { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io",
       transports: ['polling']  // Ensures polling first, then WebSocket
       }
   );
