@@ -310,12 +310,26 @@
         // // Automatically determine the correct base URL
         let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
 
-        let socket = io(
-            isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
-            { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
-            transports: ['polling']  // Ensures polling first, then WebSocket
+        // let socket = io(
+        //     isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
+        //     { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
+        //     transports: ['polling']  // Ensures polling first, then WebSocket
+        //     }
+        // );
+
+        
+        // Create Socket.IO connection
+        const socket = io({
+            // path: '/flask_trial/socket.io',
+            transports: ['polling'],
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            // timeout: 20000
+            EIO: 4,  // Engine.IO protocol version
+            extraHeaders: {
+                "Accept": "application/json"
             }
-        );
+        });
         
         const loadingText = document.getElementById('loading-text');
 

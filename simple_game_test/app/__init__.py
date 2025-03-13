@@ -74,7 +74,7 @@ socketio = SocketIO(app)
 
 from app import routes, models
 
-print("Final App url map after socketio initialization.", app.url_map)
+# print("Final App url map after socketio initialization.", app.url_map)
 
 
 # comment lines below when creating the database. uncomment lines below when running the app

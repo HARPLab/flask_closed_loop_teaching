@@ -109899,3 +109899,258 @@ AttributeError: 'AnonymousUserMixin' object has no attribute 'id'
 2025-02-20 10:11:13,334 [INFO] b'sign_consent          GET, POST  /sign_consent'
 2025-02-20 10:11:13,334 [INFO] b'static                GET        /static/<path:filename>'
 2025-02-20 10:11:13,334 [INFO] b'waiting_room          GET, POST  /waiting_room'
+2025-03-13 01:46:21,628 [INFO] Final App url map after socketio initialization.
+2025-03-13 01:46:21,628 [INFO] Map([<Rule '/static/<filename>' (HEAD, GET, OPTIONS) -> static>,
+ <Rule '/' (HEAD, GET, OPTIONS, POST) -> index>,
+ <Rule '/headers' (HEAD, GET, OPTIONS) -> headers>,
+ <Rule '/introduction' (HEAD, GET, OPTIONS, POST) -> introduction>,
+ <Rule '/overview' (HEAD, GET, OPTIONS, POST) -> overview>,
+ <Rule '/sandbox_introduction' (HEAD, GET, OPTIONS, POST) -> sandbox_introduction>,
+ <Rule '/logout_confirmation' (HEAD, GET, OPTIONS) -> logout_confirmation>,
+ <Rule '/sandbox' (HEAD, GET, OPTIONS, POST) -> sandbox>,
+ <Rule '/post_practice' (HEAD, GET, OPTIONS, POST) -> post_practice>,
+ <Rule '/waiting_room' (HEAD, GET, OPTIONS, POST) -> waiting_room>,
+ <Rule '/at_intro' (HEAD, GET, OPTIONS, POST) -> at_intro>,
+ <Rule '/at' (HEAD, GET, OPTIONS, POST) -> at>,
+ <Rule '/sb_intro' (HEAD, GET, OPTIONS, POST) -> sb_intro>,
+ <Rule '/sb' (HEAD, GET, OPTIONS, POST) -> sb>,
+ <Rule '/sign_consent' (HEAD, GET, OPTIONS, POST) -> sign_consent>,
+ <Rule '/pass_trajectories' (HEAD, GET, OPTIONS, POST) -> pass_trajectories>,
+ <Rule '/intro' (HEAD, GET, OPTIONS, POST) -> intro>,
+ <Rule '/consent' (HEAD, GET, OPTIONS, POST) -> consent>,
+ <Rule '/login' (HEAD, GET, OPTIONS, POST) -> login>,
+ <Rule '/final_survey' (HEAD, GET, OPTIONS, POST) -> final_survey>])
+2025-03-13 01:46:21,628 [INFO] Using 24 processes
+2025-03-13 01:46:21,661 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-13 01:46:21,661 [INFO] [33mPress CTRL+C to quit[0m
+2025-03-13 01:46:37,508 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-03-13 01:46:37,508 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-03-13 01:46:37,509 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:37] "[32mGET / HTTP/1.1[0m" 302 -
+2025-03-13 01:46:37,520 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:37] "GET /login?next=/ HTTP/1.1" 200 -
+2025-03-13 01:46:37,551 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:37] "GET /static/dragula.css HTTP/1.1" 200 -
+2025-03-13 01:46:37,552 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:37] "GET /static/styles.css HTTP/1.1" 200 -
+2025-03-13 01:46:37,552 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:37] "GET /static/dragula.js HTTP/1.1" 200 -
+2025-03-13 01:46:40,881 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:40] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:40,881 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:40] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:48,370 [INFO] Logging in user: <User tst101>
+2025-03-13 01:46:48,370 [INFO] User is authenticated after login? True
+2025-03-13 01:46:48,371 [ERROR] /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py:1657: DeprecationWarning: 'werkzeug.urls.url_parse' is deprecated and will be removed in Werkzeug 3.0. Use 'urllib.parse.urlsplit' instead.
+  if not next_page or url_parse(next_page).netloc != "":
+2025-03-13 01:46:48,371 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/werkzeug/urls.py:545: DeprecationWarning: 'werkzeug.urls.URL' is deprecated and will be removed in Werkzeug 3.0. Use the 'urllib.parse' library instead.
+  return result_type(scheme, netloc, url, query, fragment)
+2025-03-13 01:46:48,372 [INFO] Next page url: /
+2025-03-13 01:46:48,372 [INFO] Redirecting to: http://127.0.0.1:5000/
+2025-03-13 01:46:48,372 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "[32mPOST /login?next=/ HTTP/1.1[0m" 302 -
+2025-03-13 01:46:48,378 [INFO] Index url in index function: http://127.0.0.1:5000/
+2025-03-13 01:46:48,378 [INFO] User is authenticated? True
+2025-03-13 01:46:48,387 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "GET / HTTP/1.1" 200 -
+2025-03-13 01:46:48,407 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:48,411 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "GET /static/lib/d3.v3.min.js HTTP/1.1" 200 -
+2025-03-13 01:46:48,411 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:48,411 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "GET /static/lib/backbone-min.js HTTP/1.1" 200 -
+2025-03-13 01:46:48,412 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "GET /static/lib/underscore-min.js HTTP/1.1" 200 -
+2025-03-13 01:46:48,413 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "GET /static/lib/jquery-min.js HTTP/1.1" 200 -
+2025-03-13 01:46:48,414 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:48,449 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "GET /socket.io/?EIO=4&transport=polling&t=PME2eB- HTTP/1.1" 200 -
+2025-03-13 01:46:48,461 [INFO] User 74 connected with SID skibI5shtBEYkTL_AAAB
+2025-03-13 01:46:48,462 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "POST /socket.io/?EIO=4&transport=polling&t=PME2eC8&sid=1yFZAFiKuUOolrStAAAA HTTP/1.1" 200 -
+2025-03-13 01:46:48,462 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:48] "GET /socket.io/?EIO=4&transport=polling&t=PME2eC9&sid=1yFZAFiKuUOolrStAAAA HTTP/1.1" 200 -
+2025-03-13 01:46:51,866 [INFO] User id: 74, skibI5shtBEYkTL_AAAB disconnected.
+2025-03-13 01:46:51,867 [INFO] User 74: Disconnected at 03-13 01:46:51. Tracking: {'disconnect_times': ['03-13 01:46:51'], 'reconnect_times': [], 'disconnect_pages': ['http://127.0.0.1:5000/'], 'reconnect_pages': []}
+2025-03-13 01:46:51,867 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:51] "POST /socket.io/?EIO=4&transport=polling&t=PME2f1L&sid=1yFZAFiKuUOolrStAAAA HTTP/1.1" 200 -
+2025-03-13 01:46:51,867 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:51] "GET /socket.io/?EIO=4&transport=polling&t=PME2eCG&sid=1yFZAFiKuUOolrStAAAA HTTP/1.1" 200 -
+2025-03-13 01:46:51,880 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:51] "GET /consent HTTP/1.1" 200 -
+2025-03-13 01:46:51,896 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:51] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:51,897 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:51] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:51,898 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:51] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:54,310 [INFO] Group: None User: 74 Entering sign consent
+2025-03-13 01:46:54,314 [INFO] Flush and Commit successful. Remember to commit at the end. tst101. User consent
+2025-03-13 01:46:54,316 [INFO] Group: None User: 74 Url for introduction: /introduction
+2025-03-13 01:46:54,316 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:54] "GET /sign_consent HTTP/1.1" 200 -
+2025-03-13 01:46:54,325 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:54] "GET /introduction HTTP/1.1" 200 -
+2025-03-13 01:46:54,335 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:54] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:54,339 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:54] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:54,339 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:54] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:55,956 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:55] "GET /overview HTTP/1.1" 200 -
+2025-03-13 01:46:55,971 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:55] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:55,976 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:55] "GET /static/img/augmented_taxi2_3.png HTTP/1.1" 200 -
+2025-03-13 01:46:55,976 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:55] "GET /static/img/skateboard2_3.png HTTP/1.1" 200 -
+2025-03-13 01:46:55,977 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:55] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:55,977 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:55] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:57,368 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /sandbox_introduction HTTP/1.1" 200 -
+2025-03-13 01:46:57,386 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-03-13 01:46:57,386 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:57,388 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:57,388 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/star.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,388 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:57,391 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/pentagon.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,391 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /socket.io/?EIO=4&transport=polling&t=PME2gNg HTTP/1.1" 200 -
+2025-03-13 01:46:57,394 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/diamond.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,396 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/wall.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,399 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/sandbox_updated2.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,400 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/sandbox_updated1.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,401 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/sandbox_dropoff1.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,404 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/arrow.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,406 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /static/img/sandbox_dropoff2.png HTTP/1.1" 200 -
+2025-03-13 01:46:57,411 [INFO] User 74 connected with SID vXMiUfb10_RGEl3IAAAD
+2025-03-13 01:46:57,411 [INFO] User 74: Reconnected at 03-13 01:46:57. Tracking: {'disconnect_times': ['03-13 01:46:51'], 'reconnect_times': ['03-13 01:46:57'], 'disconnect_pages': ['http://127.0.0.1:5000/'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction']}
+2025-03-13 01:46:57,411 [INFO] User 74: Timer canceled due to reconnection.
+2025-03-13 01:46:57,412 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "POST /socket.io/?EIO=4&transport=polling&t=PME2gN-&sid=kDT9LCRpxY3mmdCEAAAC HTTP/1.1" 200 -
+2025-03-13 01:46:57,412 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:57] "GET /socket.io/?EIO=4&transport=polling&t=PME2gN-.0&sid=kDT9LCRpxY3mmdCEAAAC HTTP/1.1" 200 -
+2025-03-13 01:46:59,763 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "POST /socket.io/?EIO=4&transport=polling&t=PME2gym&sid=kDT9LCRpxY3mmdCEAAAC HTTP/1.1" 200 -
+2025-03-13 01:46:59,771 [INFO] Flush and Commit successful. Remember to commit at the end. tst101. User progress sandbox
+2025-03-13 01:46:59,772 [INFO] current user progress is: sandbox_1
+2025-03-13 01:46:59,772 [INFO] vXMiUfb10_RGEl3IAAAD
+2025-03-13 01:46:59,772 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "GET /socket.io/?EIO=4&transport=polling&t=PME2gOL&sid=kDT9LCRpxY3mmdCEAAAC HTTP/1.1" 200 -
+2025-03-13 01:46:59,777 [INFO] User id: 74, vXMiUfb10_RGEl3IAAAD disconnected.
+2025-03-13 01:46:59,778 [INFO] User 74: Disconnected at 03-13 01:46:59. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59'], 'reconnect_times': ['03-13 01:46:57'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction']}
+2025-03-13 01:46:59,778 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "POST /socket.io/?EIO=4&transport=polling&t=PME2gy-&sid=kDT9LCRpxY3mmdCEAAAC HTTP/1.1" 200 -
+2025-03-13 01:46:59,778 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "GET /socket.io/?EIO=4&transport=polling&t=PME2gyz&sid=kDT9LCRpxY3mmdCEAAAC HTTP/1.1" 200 -
+2025-03-13 01:46:59,782 [INFO] sandbox_1
+2025-03-13 01:46:59,791 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "GET /sandbox HTTP/1.1" 200 -
+2025-03-13 01:46:59,810 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/lib/jquery-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,811 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/lib/underscore-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,811 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/lib/d3.v3.min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,812 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,812 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/lib/backbone-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,813 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "GET /static/css/jspsych.css HTTP/1.1" 200 -
+2025-03-13 01:46:59,819 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/img/diamond.png HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,819 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/img/star.png HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,819 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/img/wall.png HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,820 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "[36mGET /static/img/pentagon.png HTTP/1.1[0m" 304 -
+2025-03-13 01:46:59,871 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "GET /socket.io/?EIO=4&transport=polling&t=PME2g-T HTTP/1.1" 200 -
+2025-03-13 01:46:59,886 [INFO] User 74 connected with SID Y_8a78Xo1m5hoIIKAAAF
+2025-03-13 01:46:59,886 [INFO] User 74: Reconnected at 03-13 01:46:59. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox']}
+2025-03-13 01:46:59,887 [INFO] User 74: Timer canceled due to reconnection.
+2025-03-13 01:46:59,887 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "POST /socket.io/?EIO=4&transport=polling&t=PME2g-g&sid=1jIfH2hritBtdT16AAAE HTTP/1.1" 200 -
+2025-03-13 01:46:59,887 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "GET /socket.io/?EIO=4&transport=polling&t=PME2g-g.0&sid=1jIfH2hritBtdT16AAAE HTTP/1.1" 200 -
+2025-03-13 01:46:59,894 [INFO] Y_8a78Xo1m5hoIIKAAAF
+2025-03-13 01:46:59,894 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "POST /socket.io/?EIO=4&transport=polling&t=PME2g-q&sid=1jIfH2hritBtdT16AAAE HTTP/1.1" 200 -
+2025-03-13 01:46:59,895 [INFO] 127.0.0.1 - - [13/Mar/2025 01:46:59] "GET /socket.io/?EIO=4&transport=polling&t=PME2g-p&sid=1jIfH2hritBtdT16AAAE HTTP/1.1" 200 -
+2025-03-13 01:47:06,739 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "POST /socket.io/?EIO=4&transport=polling&t=PME2ifm&sid=1jIfH2hritBtdT16AAAE HTTP/1.1" 200 -
+2025-03-13 01:47:06,745 [INFO] Flush and Commit successful. Remember to commit at the end. tst101. User progress sandbox
+2025-03-13 01:47:06,746 [INFO] current user progress is: sandbox_2
+2025-03-13 01:47:06,746 [INFO] Y_8a78Xo1m5hoIIKAAAF
+2025-03-13 01:47:06,747 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /socket.io/?EIO=4&transport=polling&t=PME2g-u&sid=1jIfH2hritBtdT16AAAE HTTP/1.1" 200 -
+2025-03-13 01:47:06,752 [INFO] User id: 74, Y_8a78Xo1m5hoIIKAAAF disconnected.
+2025-03-13 01:47:06,753 [INFO] User 74: Disconnected at 03-13 01:47:06. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59', '03-13 01:47:06'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox']}
+2025-03-13 01:47:06,754 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "POST /socket.io/?EIO=4&transport=polling&t=PME2ify&sid=1jIfH2hritBtdT16AAAE HTTP/1.1" 200 -
+2025-03-13 01:47:06,754 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /socket.io/?EIO=4&transport=polling&t=PME2ifx&sid=1jIfH2hritBtdT16AAAE HTTP/1.1" 200 -
+2025-03-13 01:47:06,754 [INFO] sandbox_2
+2025-03-13 01:47:06,756 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /sandbox HTTP/1.1" 200 -
+2025-03-13 01:47:06,767 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/lib/underscore-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,769 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/lib/backbone-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,769 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/lib/jquery-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,769 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/css/jspsych.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,770 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/lib/d3.v3.min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,772 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/img/sandbox_dropoff1.png HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,773 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,774 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/img/arrow.png HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,778 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "[36mGET /static/img/sandbox_dropoff2.png HTTP/1.1[0m" 304 -
+2025-03-13 01:47:06,781 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /static/img/sandbox_diamond1.png HTTP/1.1" 200 -
+2025-03-13 01:47:06,783 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /static/img/right1.png HTTP/1.1" 200 -
+2025-03-13 01:47:06,784 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /static/img/sandbox_diamond3.png HTTP/1.1" 200 -
+2025-03-13 01:47:06,786 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /static/img/sandbox_diamond2.png HTTP/1.1" 200 -
+2025-03-13 01:47:06,786 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /static/img/right2.png HTTP/1.1" 200 -
+2025-03-13 01:47:06,787 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /socket.io/?EIO=4&transport=polling&t=PME2igS HTTP/1.1" 200 -
+2025-03-13 01:47:06,798 [INFO] User 74 connected with SID gjOWTWtUBSY_eQMvAAAH
+2025-03-13 01:47:06,798 [INFO] User 74: Reconnected at 03-13 01:47:06. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59', '03-13 01:47:06'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59', '03-13 01:47:06'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox']}
+2025-03-13 01:47:06,799 [INFO] User 74: Timer canceled due to reconnection.
+2025-03-13 01:47:06,799 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "POST /socket.io/?EIO=4&transport=polling&t=PME2igg&sid=I3f14cF2R_leWc6vAAAG HTTP/1.1" 200 -
+2025-03-13 01:47:06,799 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /socket.io/?EIO=4&transport=polling&t=PME2igg.0&sid=I3f14cF2R_leWc6vAAAG HTTP/1.1" 200 -
+2025-03-13 01:47:06,805 [INFO] gjOWTWtUBSY_eQMvAAAH
+2025-03-13 01:47:06,806 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "POST /socket.io/?EIO=4&transport=polling&t=PME2igp&sid=I3f14cF2R_leWc6vAAAG HTTP/1.1" 200 -
+2025-03-13 01:47:06,806 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:06] "GET /socket.io/?EIO=4&transport=polling&t=PME2igo&sid=I3f14cF2R_leWc6vAAAG HTTP/1.1" 200 -
+2025-03-13 01:47:15,786 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:15] "POST /socket.io/?EIO=4&transport=polling&t=PME2kt6&sid=I3f14cF2R_leWc6vAAAG HTTP/1.1" 200 -
+2025-03-13 01:47:15,786 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:15] "GET /socket.io/?EIO=4&transport=polling&t=PME2igt&sid=I3f14cF2R_leWc6vAAAG HTTP/1.1" 200 -
+2025-03-13 01:47:15,791 [INFO] Flush and Commit successful. Remember to commit at the end. tst101. User attention check
+2025-03-13 01:47:18,337 [INFO] User id: 74, gjOWTWtUBSY_eQMvAAAH disconnected.
+2025-03-13 01:47:18,337 [INFO] User 74: Disconnected at 03-13 01:47:18. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59', '03-13 01:47:06'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox']}
+2025-03-13 01:47:18,338 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "POST /socket.io/?EIO=4&transport=polling&t=PME2lUy&sid=I3f14cF2R_leWc6vAAAG HTTP/1.1" 200 -
+2025-03-13 01:47:18,338 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "GET /socket.io/?EIO=4&transport=polling&t=PME2ktB&sid=I3f14cF2R_leWc6vAAAG HTTP/1.1" 200 -
+2025-03-13 01:47:18,341 [INFO] I'm in post practice
+2025-03-13 01:47:18,345 [INFO] Flush and Commit successful. Remember to commit at the end. tst101. User progress post practice
+2025-03-13 01:47:18,349 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "GET /post_practice HTTP/1.1" 200 -
+2025-03-13 01:47:18,365 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:18,366 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:18,367 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:18,368 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:18,369 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "[36mGET /static/img/right1.png HTTP/1.1[0m" 304 -
+2025-03-13 01:47:18,370 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "[36mGET /static/img/arrow.png HTTP/1.1[0m" 304 -
+2025-03-13 01:47:18,372 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "[36mGET /static/img/right2.png HTTP/1.1[0m" 304 -
+2025-03-13 01:47:18,383 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "GET /socket.io/?EIO=4&transport=polling&t=PME2lVi HTTP/1.1" 200 -
+2025-03-13 01:47:18,401 [INFO] User 74 connected with SID pYZCLkGNjkem2PBGAAAJ
+2025-03-13 01:47:18,401 [INFO] User 74: Reconnected at 03-13 01:47:18. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/post_practice']}
+2025-03-13 01:47:18,402 [INFO] User 74: Timer canceled due to reconnection.
+2025-03-13 01:47:18,402 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "POST /socket.io/?EIO=4&transport=polling&t=PME2lVx&sid=QLHbSljuZGZaQaKGAAAI HTTP/1.1" 200 -
+2025-03-13 01:47:18,402 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:18] "GET /socket.io/?EIO=4&transport=polling&t=PME2lVx.0&sid=QLHbSljuZGZaQaKGAAAI HTTP/1.1" 200 -
+2025-03-13 01:47:30,324 [INFO] Index url in index function: http://127.0.0.1:5000/
+2025-03-13 01:47:30,325 [INFO] User is authenticated? True
+2025-03-13 01:47:30,326 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "GET / HTTP/1.1" 200 -
+2025-03-13 01:47:30,337 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:30,337 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:30,338 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:30,340 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "[36mGET /static/lib/jquery-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:30,341 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "[36mGET /static/lib/underscore-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:30,343 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "[36mGET /static/lib/backbone-min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:30,344 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "[36mGET /static/lib/d3.v3.min.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:30,368 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "GET /socket.io/?EIO=4&transport=polling&t=PME2oQ- HTTP/1.1" 200 -
+2025-03-13 01:47:30,380 [INFO] User 74 connected with SID zBdq-Zv5k6UxS_Z-AAAL
+2025-03-13 01:47:30,380 [INFO] User 74: Reconnected at 03-13 01:47:30. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18', '03-13 01:47:30'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/post_practice', 'http://127.0.0.1:5000/']}
+2025-03-13 01:47:30,380 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "POST /socket.io/?EIO=4&transport=polling&t=PME2oR7&sid=hN2uDUOmv6TvAMmfAAAK HTTP/1.1" 200 -
+2025-03-13 01:47:30,380 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:30] "GET /socket.io/?EIO=4&transport=polling&t=PME2oR8&sid=hN2uDUOmv6TvAMmfAAAK HTTP/1.1" 200 -
+2025-03-13 01:47:32,540 [INFO] User id: 74, zBdq-Zv5k6UxS_Z-AAAL disconnected.
+2025-03-13 01:47:32,540 [INFO] User 74: Disconnected at 03-13 01:47:32. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18', '03-13 01:47:32'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18', '03-13 01:47:30'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/post_practice', 'http://127.0.0.1:5000/']}
+2025-03-13 01:47:32,541 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:32] "POST /socket.io/?EIO=4&transport=polling&t=PME2oyu&sid=hN2uDUOmv6TvAMmfAAAK HTTP/1.1" 200 -
+2025-03-13 01:47:32,541 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:32] "GET /socket.io/?EIO=4&transport=polling&t=PME2oRD&sid=hN2uDUOmv6TvAMmfAAAK HTTP/1.1" 200 -
+2025-03-13 01:47:43,213 [INFO] User id: 74, pYZCLkGNjkem2PBGAAAJ disconnected.
+2025-03-13 01:47:43,214 [INFO] User 74: Disconnected at 03-13 01:47:43. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18', '03-13 01:47:32', '03-13 01:47:43'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18', '03-13 01:47:30'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/', 'http://127.0.0.1:5000/post_practice'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/post_practice', 'http://127.0.0.1:5000/']}
+2025-03-13 01:47:43,214 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "POST /socket.io/?EIO=4&transport=polling&t=PME2rZf&sid=QLHbSljuZGZaQaKGAAAI HTTP/1.1" 200 -
+2025-03-13 01:47:43,214 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "GET /socket.io/?EIO=4&transport=polling&t=PME2lW4&sid=QLHbSljuZGZaQaKGAAAI HTTP/1.1" 200 -
+2025-03-13 01:47:43,222 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "GET /waiting_room HTTP/1.1" 200 -
+2025-03-13 01:47:43,239 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:43,242 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:43,244 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 01:47:43,245 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 01:47:43,268 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "GET /socket.io/?EIO=4&transport=polling&t=PME2raX HTTP/1.1" 200 -
+2025-03-13 01:47:43,279 [INFO] User 74 connected with SID dx-dSCk14apl7xfwAAAN
+2025-03-13 01:47:43,279 [INFO] User 74: Reconnected at 03-13 01:47:43. Tracking: {'disconnect_times': ['03-13 01:46:51', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18', '03-13 01:47:32', '03-13 01:47:43'], 'reconnect_times': ['03-13 01:46:57', '03-13 01:46:59', '03-13 01:47:06', '03-13 01:47:18', '03-13 01:47:30', '03-13 01:47:43'], 'disconnect_pages': ['http://127.0.0.1:5000/', 'http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/', 'http://127.0.0.1:5000/post_practice'], 'reconnect_pages': ['http://127.0.0.1:5000/sandbox_introduction', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/sandbox', 'http://127.0.0.1:5000/post_practice', 'http://127.0.0.1:5000/', 'http://127.0.0.1:5000/waiting_room']}
+2025-03-13 01:47:43,280 [INFO] User 74: Timer canceled due to reconnection.
+2025-03-13 01:47:43,280 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "POST /socket.io/?EIO=4&transport=polling&t=PME2rag&sid=BZTUcJMxQVLVgwT9AAAM HTTP/1.1" 200 -
+2025-03-13 01:47:43,280 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "GET /socket.io/?EIO=4&transport=polling&t=PME2rag.0&sid=BZTUcJMxQVLVgwT9AAAM HTTP/1.1" 200 -
+2025-03-13 01:47:43,285 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "POST /socket.io/?EIO=4&transport=polling&t=PME2rao.0&sid=BZTUcJMxQVLVgwT9AAAM HTTP/1.1" 200 -
+2025-03-13 01:47:43,294 [INFO] Group: None User: 74 Join group function. Current user group:  None
+2025-03-13 01:47:43,294 [INFO] Group: None User: 74 Old group: Group id: 3 num_active_members: 3 Group members: ['test33', 'test32', 'test31'] Group mem ids: [6, 5, 4] Group status: ['joined', 'joined', 'joined'] Group experimental condition: individual_belief_high
+2025-03-13 01:47:43,294 [INFO] Group: None User: 74 No group yet.. Creating one...
+2025-03-13 01:47:43,302 [INFO] Before. num_members:
+2025-03-13 01:47:43,302 [INFO] 3
+2025-03-13 01:47:43,302 [INFO] member statuses:
+2025-03-13 01:47:43,302 [INFO] ['not joined', 'not joined', 'not joined']
+2025-03-13 01:47:43,302 [INFO] members:
+2025-03-13 01:47:43,302 [INFO] [None, None, None]
+2025-03-13 01:47:43,302 [INFO] members EOR:
+2025-03-13 01:47:43,303 [INFO] [False, False, False]
+2025-03-13 01:47:43,303 [INFO] members user ids:
+2025-03-13 01:47:43,303 [INFO] [None, None, None]
+2025-03-13 01:47:43,303 [INFO] After. num_members:
+2025-03-13 01:47:43,303 [INFO] 3
+2025-03-13 01:47:43,303 [INFO] member statuses:
+2025-03-13 01:47:43,303 [INFO] ['joined', 'not joined', 'not joined']
+2025-03-13 01:47:43,303 [INFO] members:
+2025-03-13 01:47:43,303 [INFO] ['tst101', None, None]
+2025-03-13 01:47:43,303 [INFO] members EOR:
+2025-03-13 01:47:43,303 [INFO] [False, False, False]
+2025-03-13 01:47:43,303 [INFO] members user ids:
+2025-03-13 01:47:43,303 [INFO] [74, None, None]
+2025-03-13 01:47:43,304 [INFO] Group: 19 User: 74 New group: Group id: 19 Group members: ['tst101', None, None] Active members: 1 Group mem ids: [74, None, None] Group status: ['joined', 'not joined', 'not joined'] Group experimental condition: individual_belief_high
+2025-03-13 01:47:43,304 [INFO] Group: 19 User: 74 Current user: tst101 Current user group: 19 Current user group code: 0 Current user domain 1: at Current user domain 2: sb
+2025-03-13 01:47:43,307 [INFO] Flush and Commit successful. Remember to commit at the end. Member to new group
+2025-03-13 01:47:43,309 [INFO] Group: 19 User: 74 Current user: tst101Current user group: 19
+2025-03-13 01:47:43,811 [INFO] [[1, None], [2, ['test23', 'test22', 'test21']], [3, ['test33', 'test32', 'test31']], [4, ['test103', 'test101', 'test102']], [5, ['test108', 'test109', 'test110']], [6, ['test500', 'test501', 'test502']], [7, ['5c532d18b7cf140001d30260', '6685884e6f6e488925ef576b', '654948a3e0214a4aea3e7ce1']], [8, ['5f9f1d991686b653d972d005', '616e5ae706e970fe0aff99b6', '674e79192cd6a534d097fa86']], [9, ['65bbab65afa019b1865a8036', '615a047f08d2a62e66315a7d', '671c12314ce69fb84fedcf00']], [10, ['66b76c1a8425a6fff0ac88d7', '65747e13d749c56ad88d8df1', '60b0ba56f6a2244bbae05690']], [11, ['66ab89b34f0525b16b74e5aa', '666e7d8c6394543fb921d809@email.prolific.com', '61533ead92c280c34cc22482']], [12, ['615ae0deaee8ec0b3178067b', '6168525c53bae852d954b849', '6766c079828cf789045cd811']], [13, ['61179aca78ff4f7877eecfa0', '62df57db36c1085c48f8d86c', '66803d7fa9af397e0517fe47']], [14, ['647f2fc07c3b6f7de0a78b35', '66b4c69f3c1e06623f7e8fba', '66aea8fcd9cd711541bf63e5']], [15, ['test10001', 'cvs14', 'cvs15']], [16, ['cvs16', 'cvs18', 'cvs19']], [17, ['cvs21', 'cvs22', 'cvs23']], [18, ['cvs203', 'awer1', 'test400']], [19, ['tst101', None, None]]]
+2025-03-13 01:47:43,811 [INFO] Group: 19 User: 74 Room: room_19
+2025-03-13 01:47:43,811 [INFO] Rooms for current user: ['dx-dSCk14apl7xfwAAAN']
+2025-03-13 01:47:43,811 [INFO] Group: 19 User: 74 Rooms for current user: ['dx-dSCk14apl7xfwAAAN', 'room_19']
+2025-03-13 01:47:43,818 [INFO] 127.0.0.1 - - [13/Mar/2025 01:47:43] "GET /socket.io/?EIO=4&transport=polling&t=PME2rao&sid=BZTUcJMxQVLVgwT9AAAM HTTP/1.1" 200 -
