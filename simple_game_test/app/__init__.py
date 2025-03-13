@@ -85,15 +85,15 @@ pool_size = min(os.cpu_count(), 64)
 print(f"Using {pool_size} processes")
 
 # ## Initialize the multiprocessing tools
-# from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
-# manager = Manager()
-# lock = manager.Lock()
-# pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
+from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
+manager = Manager()
+lock = manager.Lock()
+pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
 
 
-# Lock with threading
-from threading import Lock
-lock = Lock()
+# # Lock with threading
+# from threading import Lock
+# lock = Lock()
 
 # from multiprocessing import Pool
 # pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
