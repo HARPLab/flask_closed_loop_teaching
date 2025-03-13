@@ -16,7 +16,7 @@
     // // Automatically determine the correct base URL
     let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
 
-    let socket = io.connect(
+    let socket = io(
         isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
         { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
         transports: ['polling']  // Ensures polling first, then WebSocket

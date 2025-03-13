@@ -18,7 +18,7 @@ from datetime import datetime
 import sys, os
 from termcolor import colored
 import logging
-from flask import g
+# from flask import g
 
 
 

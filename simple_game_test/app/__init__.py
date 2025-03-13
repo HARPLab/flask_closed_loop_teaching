@@ -1,8 +1,8 @@
-from gevent import monkey
-# Patch standard libraries for Gevent compatibility
-monkey.patch_all()
+# from gevent import monkey
+# # Patch standard libraries for Gevent compatibility
+# monkey.patch_all()
 
-print("Monkey patched?", monkey.is_module_patched("socket"))
+# print("Monkey patched?", monkey.is_module_patched("socket"))
 
 
 from flask import Flask
@@ -26,6 +26,7 @@ app.config.from_object(Config)
 # app.static_url_path = '/flask_closed_loop_teaching/static'  # default is APPLICATION_ROOT/static
 # app.config['WTF_CSRF_ENABLED'] = False  # Ensure CSRF protection is explicitly enabled
 
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
 
 db = SQLAlchemy(app)
@@ -39,7 +40,7 @@ login.login_view = "login"
 # app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
 # socketio = SocketIO(app, path="/flask_closed_loop_teaching/socket.io", cors_allowed_origins="*")  # Allow cross-origin for local testing
 
-socketio = SocketIO(app, path="/socket.io", cors_allowed_origins="*")  # Allow cross-origin for local testing
+# socketio = SocketIO(app, path="/socket.io", cors_allowed_origins="*")  # Allow cross-origin for local testing
 
 
 # Initialize SocketIO with gevent
@@ -58,10 +59,15 @@ socketio = SocketIO(app, path="/socket.io", cors_allowed_origins="*")  # Allow c
 #     # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
 #     print("App url map in production mode:", app.url_map)
 
-socketio.init_app(app)  # explicitly initialize the socketio object
+# socketio.init_app(app)  # explicitly initialize the socketio object
 
 
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
+
+
+
+socketio = SocketIO(app)
+
+
 
 # if __name__ == '__main__':
 # 	socketio.run(app)
@@ -92,8 +98,8 @@ lock = Lock()
 # from multiprocessing import Pool
 # pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
 
-from gevent.pool import Pool
-pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
+# from gevent.pool import Pool
+# pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
 
 
 
@@ -125,5 +131,5 @@ db.session.commit()
 # if __name__ == "__main__" and os.environ.get("FLASK_ENV") == "development":
 #     socketio.run(app, debug=True, host="127.0.0.1", port=5000, use_reloader=False)
 
-if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000)
+# if __name__ == "__main__":
+#     socketio.run(app, host="0.0.0.0", port=5000)
