@@ -18,6 +18,7 @@ from datetime import datetime
 import sys, os
 from termcolor import colored
 import logging
+import random
 # from flask import g
 
 
@@ -769,7 +770,9 @@ def next_domain(data):
             is_opt_response = data["user input"]["opt_response"],
             mdp_parameters = data["user input"]["mdp_parameters"],
             duration_ms = data["user input"]["simulation_rt"],
-            human_model = None #TODO: later?
+            human_model = None, 
+            final_score = int(data["final_score"]),
+            all_scores = data["final_score_string"]
         )
         # with db_lock:
         db.session.add(trial)
@@ -970,8 +973,11 @@ def settings(data):
                     # if not curr_already_completed and current_user.last_test_in_round:
                     if not curr_already_completed and (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag)) and (check_member_and_group_status() or (domain_order=='1' and current_user.round == 0)):
 
-                        log_print('Group:', current_user.group, 'User:', current_user.id, "Current group status: ", current_group.status, 'Current user round:', current_user.round, 'current_user curr_progress:', current_user.curr_progress)
-                            
+                        log_print('Group:', current_user.group, 'User:', current_user.id, "Current group status: ", current_group.status, 'Current user round:', current_user.round, 'current_user curr_progress:', current_user.curr_progress)                        
+                        
+                        ## add a random wait time to ensure members do not enter at the same time (0 to 1 s)
+                        time.sleep(random.random())
+
                         ### Generate first round for the group
                         if current_user.round == 0:
                             
@@ -1048,9 +1054,11 @@ def settings(data):
                                         # time.sleep(2) # a sleep to avoid too many queries
                                 
                             # vars for next round
-                            next_kc_id = next_round.kc_id
-                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round:', next_round, 'First round status:', next_round.status, 'Next round kc_id:', next_kc_id)
-
+                            if next_round is not None:
+                                next_kc_id = next_round.kc_id
+                                log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round:', next_round, 'First round status:', next_round.status, 'Next round kc_id:', next_kc_id)
+                            else:
+                                next_kc_id = -1
                         ### Generate next round for the group
                         else:
                             db.session.refresh(current_group)
@@ -1119,7 +1127,10 @@ def settings(data):
                                         next_round_id = current_user.round+1
                                         next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
                                         
-                                        next_kc_id = next_round.kc_id
+                                        if next_round is not None:
+                                            next_kc_id = next_round.kc_id
+                                        else:
+                                            next_kc_id = -1
 
                                         log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models from demos...', 'current_group status:', current_group.status)
                                         if current_group.status != "Domain teaching completed":
@@ -1197,7 +1208,7 @@ def settings(data):
                             current_user.last_iter_in_round = True  # update last iteration flag for the user
 
 
-                        break  # break while loop
+                        break  # break main while loop
 
                     elif current_round is not None and current_user.iteration < len(current_round.round_info):
                         log_print('Group:', current_user.group, 'User:', current_user.id, 'Moving for with next iteration in current round if there is any...', 'Iteration:', current_user.iteration)
@@ -1221,21 +1232,11 @@ def settings(data):
                             if current_user.iteration > len(current_round.round_info):
                                 current_user.last_iter_in_round = True  # update last iteration flag for the user
 
-                        break  # break while loop
+                        break  # break main while loop
                     
                     time.sleep(1)  # a brief sleep to avoid too many queries
                     
                     ###########################
-
-
-                # ### update member status for last iteration in round (when new round is generated based on last test)
-                # if current_user.last_iter_in_round and current_user.round != 0:
-                #     log_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.username, 'reached last iteration in round')
-                #     member_idx = current_group.members.index(current_user.username)
-                #     current_group.members_EOR[member_idx] = True
-                #     flag_modified(current_group, "members_EOR")
-                #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Member' + str(member_idx) + ' reached EOR')
-                #################
 
                 
                 ## Check if a new round was generated and wait until it is available (unless a new domain is generated)
@@ -1249,24 +1250,7 @@ def settings(data):
                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round id:', next_round_id, 'group id:', current_user.group, 'domain progress:', current_user.curr_progress)
                     next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
 
-                    # ### IS THIS NEEDED??
-                    # next_round_while_loop_count = 0
-                    # while next_round is None:
-                    #     next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-                    #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round id:', next_round_id, 'group id:', current_user.group, 'domain progress:', current_user.curr_progress)
-                    #     time.sleep(2)  # a brief sleep to avoid too many queries
-
-                    #     db.session.refresh(current_group)
-                    #     db.session.refresh(current_user)
-                    #     if current_group.num_active_members == 0:
-                    #         break
-
-                    #     next_round_while_loop_count += 1
-
-                    #     # close while loop if it takes too long
-                    #     if next_round_while_loop_count > MAX_ITERATIONS:
-                    #         break
-
+                    
                     if next_round is not None:
                         
                         log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round generated...')
@@ -1556,42 +1540,6 @@ def group_comm(data):
     log_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
     socketio.emit("incoming group data", data, to='room_'+ str(current_user.group), include_self=False)
 
-@app.route("/intro", methods=["GET", "POST"])
-@login_required
-def intro():
-    log_print(send_signal(True))
-    # form = LoginForm()
-    # if form.validate_on_submit():
-    #     user = User.query.filter_by(username=form.username.data).first()
-    #
-    #     if user is None:
-    #         user = User(username=form.username.data)
-    #         user.set_num_trials_completed(0)
-    #         user.set_completion(0)
-    #         user.set_attention_check(-1)
-    #
-    #         # Change depending on the study type.
-    #         cond = user.set_condition("in_person" if IS_IN_PERSON else "online")
-    #         code = user.()
-    #
-    #         db.session.add(user)
-    #
-    #         cond.users.append(user)
-    #         cond.count += 1
-    #
-    #         db.session.commit()
-    #
-    #     login_user(user)
-    #     next_page = request.args.get("next")
-    #     if not next_page or url_parse(next_page).netloc != "":
-    #         next_page = url_for("index")
-    #     return redirect(next_page)
-    #
-    # render_template("login.html", title="Sign In", form=form)
-
-    # just testing out my code
-    # return render_template("intro.html")
-    return render_template("augmented_taxi2.html")
 
 
 @app.route("/consent", methods=["GET", "POST"])
@@ -1614,6 +1562,7 @@ def consent():
     else:
         procedure = "This study may take up to 30 minutes."
     return render_template("consent.html", title="Consent", form=form, procedure=procedure)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

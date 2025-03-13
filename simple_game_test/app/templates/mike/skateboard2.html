@@ -305,6 +305,9 @@
         document.getElementById('message-container').style.display = 'none';
         document.getElementById('flashMessage').style.display = 'none';
 
+        localStorage.setItem("final_score", 0);
+        localStorage.setItem("final_score_string", "");
+
         // var socket = io();
 
         // // Automatically determine the correct base URL
@@ -333,7 +336,9 @@
         
         const loadingText = document.getElementById('loading-text');
 
-        audio_timer = new Audio("/static/audio/mixkit-tick-tock-clock-close-up-1059");
+        // audio_timer = new Audio("/static/audio/mixkit-tick-tock-clock-close-up-1059");
+        audio_timer = new Audio("{{ url_for('static', filename='audio/mixkit-tick-tock-clock-close-up-1059.mp3') }}");
+
         audio_timer.loop = true;
 
         // Function to reset the inactivity timer
@@ -423,6 +428,9 @@
             data["last_activity"] = localStorage.getItem("last_activity");
             data["last_activity_time"] = localStorage.getItem("last_activity_time");
             // data["new_domain"] = localStorage.getItem("new_domain");
+
+            data["final_score"] = localStorage.getItem("final_score");
+            data["final_score_string"] = localStorage.getItem("final_score_string");
 
             reward_wt_1 = localStorage.getItem("reward_ft_wt_1_field")
             reward_wt_2 = localStorage.getItem("reward_ft_wt_2_field")
@@ -589,8 +597,8 @@
         socket.on("all reached EOR", function (){
             console.log("received all reached EOR message...");
 
-            let start_time = Date.now();
-            while (Date.now() - start_time <= 1500) {
+            let EOR_start_time = Date.now();
+            while (Date.now() - EOR_start_time <= 1500) {
                 console.log("All reached EOR...." + Date.now.toLocaleString());
             }
 
@@ -1661,6 +1669,11 @@
                                 $jq("#feedback").html('<div class="text-center"><h1>Score Results</h1><p>In order of the tests you took, you scored <p id="score_val"></p>getting <p id="score_val2" style="display:inline"></p> tests correctly out of 6.</p></div>')
                                 document.getElementById('score_val').innerHTML = first + ' + ' + second + ' + ' + third  + ' + ' + fourth  + ' + ' + fifth + ' + ' + sixth + ' = ' + score
                                 document.getElementById('score_val2').innerHTML = score
+
+                                let finalStr = `${first}${second}${third}${fourth}${fifth}${sixth}`; 
+
+                                localStorage.setItem("final_score_string", finalStr);
+                                localStorage.setItem("final_score", score);
 
                                 // exploratory data collection on whether people are able to explicitly predict the weights
                                 // for cl, pl, open,

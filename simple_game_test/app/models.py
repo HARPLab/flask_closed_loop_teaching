@@ -339,6 +339,9 @@ class Trial(db.Model):
     engagement_short_answer = db.Column(db.PickleType)
     improvement_short_answer = db.Column(db.PickleType)
 
+    final_score = db.Column(db.Integer)
+    all_scores = db.Column(db.String(64))
+
 
 
 class Domain(db.Model):
