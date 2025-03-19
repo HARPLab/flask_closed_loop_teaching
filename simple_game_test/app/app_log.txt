@@ -110168,3 +110168,608 @@ AttributeError: 'AnonymousUserMixin' object has no attribute 'id'
 2025-03-13 04:46:13,667 [INFO] done
 2025-03-13 04:46:13,668 [INFO] Please edit configuration/connection/logging settings in
 2025-03-13 04:46:13,668 [INFO] '/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/migrations/alembic.ini' before proceeding.
+2025-03-13 05:29:46,770 [INFO] Creating directory '/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/migrations' ...
+2025-03-13 05:29:46,770 [INFO] done
+2025-03-13 05:29:46,770 [INFO] Creating directory '/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/migrations/versions' ...
+2025-03-13 05:29:46,771 [INFO] done
+2025-03-13 05:29:46,771 [INFO] Generating /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/migrations/README ...
+2025-03-13 05:29:46,771 [INFO] done
+2025-03-13 05:29:46,771 [INFO] Generating /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/migrations/alembic.ini ...
+2025-03-13 05:29:46,774 [INFO] done
+2025-03-13 05:29:46,774 [INFO] Generating /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/migrations/env.py ...
+2025-03-13 05:29:46,774 [INFO] done
+2025-03-13 05:29:46,775 [INFO] Generating /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/migrations/script.py.mako ...
+2025-03-13 05:29:46,775 [INFO] done
+2025-03-13 05:29:46,775 [INFO] Please edit configuration/connection/logging settings in
+2025-03-13 05:29:46,775 [INFO] '/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/migrations/alembic.ini' before proceeding.
+2025-03-13 05:31:11,745 [INFO] Using 24 processes
+2025-03-13 05:31:12,054 [ERROR] Traceback (most recent call last):
+2025-03-13 05:31:12,054 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+2025-03-13 05:31:12,056 [ERROR] self.dialect.do_execute(
+2025-03-13 05:31:12,056 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 719, in do_execute
+2025-03-13 05:31:12,056 [ERROR] cursor.execute(statement, parameters)
+2025-03-13 05:31:12,056 [ERROR] sqlite3
+2025-03-13 05:31:12,056 [ERROR] .
+2025-03-13 05:31:12,056 [ERROR] OperationalError
+2025-03-13 05:31:12,057 [ERROR] :
+2025-03-13 05:31:12,057 [ERROR] no such table: online_condition
+2025-03-13 05:31:12,057 [ERROR] The above exception was the direct cause of the following exception:
+2025-03-13 05:31:12,057 [ERROR] Traceback (most recent call last):
+2025-03-13 05:31:12,057 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+2025-03-13 05:31:12,057 [ERROR] return _run_code(code, main_globals, None,
+2025-03-13 05:31:12,057 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/runpy.py", line 87, in _run_code
+2025-03-13 05:31:12,057 [ERROR] exec(code, run_globals)
+2025-03-13 05:31:12,057 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/__main__.py", line 3, in <module>
+2025-03-13 05:31:12,058 [ERROR] main()
+2025-03-13 05:31:12,058 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 995, in main
+2025-03-13 05:31:12,059 [ERROR] cli.main(args=sys.argv[1:])
+2025-03-13 05:31:12,059 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 601, in main
+2025-03-13 05:31:12,059 [ERROR] return super().main(*args, **kwargs)
+2025-03-13 05:31:12,059 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1055, in main
+2025-03-13 05:31:12,060 [ERROR] rv = self.invoke(ctx)
+2025-03-13 05:31:12,060 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1657, in invoke
+2025-03-13 05:31:12,060 [ERROR] return _process_result(sub_ctx.command.invoke(sub_ctx))
+2025-03-13 05:31:12,060 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1404, in invoke
+2025-03-13 05:31:12,060 [ERROR] return ctx.invoke(self.callback, **ctx.params)
+2025-03-13 05:31:12,060 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 760, in invoke
+2025-03-13 05:31:12,060 [ERROR] return __callback(*args, **kwargs)
+2025-03-13 05:31:12,060 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/decorators.py", line 84, in new_func
+2025-03-13 05:31:12,061 [ERROR] return ctx.invoke(f, obj, *args, **kwargs)
+2025-03-13 05:31:12,061 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 760, in invoke
+2025-03-13 05:31:12,061 [ERROR] return __callback(*args, **kwargs)
+2025-03-13 05:31:12,061 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 850, in run_command
+2025-03-13 05:31:12,061 [ERROR] app = DispatchingApp(info.load_app, use_eager_loading=eager_loading)
+2025-03-13 05:31:12,061 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 325, in __init__
+2025-03-13 05:31:12,062 [ERROR] self._load_unlocked()
+2025-03-13 05:31:12,062 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 351, in _load_unlocked
+2025-03-13 05:31:12,062 [ERROR] self._app = rv = self.loader()
+2025-03-13 05:31:12,062 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 407, in load_app
+2025-03-13 05:31:12,062 [ERROR] app = locate_app(self, import_name, name)
+2025-03-13 05:31:12,062 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 260, in locate_app
+2025-03-13 05:31:12,062 [ERROR] __import__(module_name)
+2025-03-13 05:31:12,062 [ERROR] File "/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/__init__.py", line 108, in <module>
+2025-03-13 05:31:12,062 [ERROR] rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
+2025-03-13 05:31:12,062 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 3145, in count
+2025-03-13 05:31:12,063 [ERROR] return self._from_self(col).enable_eagerloads(False).scalar()
+2025-03-13 05:31:12,063 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2879, in scalar
+2025-03-13 05:31:12,064 [ERROR] ret = self.one()
+2025-03-13 05:31:12,064 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2856, in one
+2025-03-13 05:31:12,064 [ERROR] return self._iter().one()
+2025-03-13 05:31:12,064 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2894, in _iter
+2025-03-13 05:31:12,064 [ERROR] result = self.session.execute(
+2025-03-13 05:31:12,064 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1689, in execute
+2025-03-13 05:31:12,065 [ERROR] result = conn._execute_20(statement, params or {}, execution_options)
+2025-03-13 05:31:12,065 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1614, in _execute_20
+2025-03-13 05:31:12,065 [ERROR] return meth(self, args_10style, kwargs_10style, execution_options)
+2025-03-13 05:31:12,066 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 325, in _execute_on_connection
+2025-03-13 05:31:12,066 [ERROR] return connection._execute_clauseelement(
+2025-03-13 05:31:12,066 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1481, in _execute_clauseelement
+2025-03-13 05:31:12,066 [ERROR] ret = self._execute_context(
+2025-03-13 05:31:12,067 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1845, in _execute_context
+2025-03-13 05:31:12,067 [ERROR] self._handle_dbapi_exception(
+2025-03-13 05:31:12,067 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2026, in _handle_dbapi_exception
+2025-03-13 05:31:12,067 [ERROR] util.raise_(
+2025-03-13 05:31:12,067 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+2025-03-13 05:31:12,067 [ERROR] raise exception
+2025-03-13 05:31:12,068 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+2025-03-13 05:31:12,068 [ERROR] self.dialect.do_execute(
+2025-03-13 05:31:12,068 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 719, in do_execute
+2025-03-13 05:31:12,068 [ERROR] cursor.execute(statement, parameters)
+2025-03-13 05:31:12,068 [ERROR] sqlalchemy.exc
+2025-03-13 05:31:12,068 [ERROR] .
+2025-03-13 05:31:12,068 [ERROR] OperationalError
+2025-03-13 05:31:12,068 [ERROR] :
+2025-03-13 05:31:12,068 [ERROR] (sqlite3.OperationalError) no such table: online_condition
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT online_condition.id AS online_condition_id, online_condition.trials AS online_condition_trials, online_condition.feedback_type AS online_condition_feedback_type, online_condition.no_feedback_trial AS online_condition_no_feedback_trial, online_condition.feedback_trial AS online_condition_feedback_trial, online_condition.count AS online_condition_count 
+FROM online_condition) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+2025-03-13 05:57:56,439 [INFO] Using 24 processes
+2025-03-13 05:57:56,704 [ERROR] Traceback (most recent call last):
+2025-03-13 05:57:56,704 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+2025-03-13 05:57:56,705 [ERROR] self.dialect.do_execute(
+2025-03-13 05:57:56,705 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 719, in do_execute
+2025-03-13 05:57:56,705 [ERROR] cursor.execute(statement, parameters)
+2025-03-13 05:57:56,705 [ERROR] sqlite3
+2025-03-13 05:57:56,705 [ERROR] .
+2025-03-13 05:57:56,705 [ERROR] OperationalError
+2025-03-13 05:57:56,705 [ERROR] :
+2025-03-13 05:57:56,705 [ERROR] no such table: online_condition
+2025-03-13 05:57:56,706 [ERROR] The above exception was the direct cause of the following exception:
+2025-03-13 05:57:56,706 [ERROR] Traceback (most recent call last):
+2025-03-13 05:57:56,706 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/bin/flask", line 8, in <module>
+2025-03-13 05:57:56,706 [ERROR] sys.exit(main())
+2025-03-13 05:57:56,706 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 995, in main
+2025-03-13 05:57:56,706 [ERROR] cli.main(args=sys.argv[1:])
+2025-03-13 05:57:56,706 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 601, in main
+2025-03-13 05:57:56,707 [ERROR] return super().main(*args, **kwargs)
+2025-03-13 05:57:56,707 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1055, in main
+2025-03-13 05:57:56,707 [ERROR] rv = self.invoke(ctx)
+2025-03-13 05:57:56,707 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1651, in invoke
+2025-03-13 05:57:56,708 [ERROR] cmd_name, cmd, args = self.resolve_command(ctx, args)
+2025-03-13 05:57:56,708 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1698, in resolve_command
+2025-03-13 05:57:56,708 [ERROR] cmd = self.get_command(ctx, cmd_name)
+2025-03-13 05:57:56,708 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 557, in get_command
+2025-03-13 05:57:56,708 [ERROR] return info.load_app().cli.get_command(ctx, name)
+2025-03-13 05:57:56,708 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 407, in load_app
+2025-03-13 05:57:56,708 [ERROR] app = locate_app(self, import_name, name)
+2025-03-13 05:57:56,708 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 260, in locate_app
+2025-03-13 05:57:56,709 [ERROR] __import__(module_name)
+2025-03-13 05:57:56,709 [ERROR] File "/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/__init__.py", line 108, in <module>
+2025-03-13 05:57:56,709 [ERROR] rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
+2025-03-13 05:57:56,709 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 3145, in count
+2025-03-13 05:57:56,710 [ERROR] return self._from_self(col).enable_eagerloads(False).scalar()
+2025-03-13 05:57:56,710 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2879, in scalar
+2025-03-13 05:57:56,710 [ERROR] ret = self.one()
+2025-03-13 05:57:56,710 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2856, in one
+2025-03-13 05:57:56,710 [ERROR] return self._iter().one()
+2025-03-13 05:57:56,711 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2894, in _iter
+2025-03-13 05:57:56,711 [ERROR] result = self.session.execute(
+2025-03-13 05:57:56,711 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1689, in execute
+2025-03-13 05:57:56,712 [ERROR] result = conn._execute_20(statement, params or {}, execution_options)
+2025-03-13 05:57:56,712 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1614, in _execute_20
+2025-03-13 05:57:56,712 [ERROR] return meth(self, args_10style, kwargs_10style, execution_options)
+2025-03-13 05:57:56,712 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 325, in _execute_on_connection
+2025-03-13 05:57:56,712 [ERROR] return connection._execute_clauseelement(
+2025-03-13 05:57:56,713 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1481, in _execute_clauseelement
+2025-03-13 05:57:56,713 [ERROR] ret = self._execute_context(
+2025-03-13 05:57:56,713 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1845, in _execute_context
+2025-03-13 05:57:56,713 [ERROR] self._handle_dbapi_exception(
+2025-03-13 05:57:56,713 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2026, in _handle_dbapi_exception
+2025-03-13 05:57:56,713 [ERROR] util.raise_(
+2025-03-13 05:57:56,714 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+2025-03-13 05:57:56,714 [ERROR] raise exception
+2025-03-13 05:57:56,714 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+2025-03-13 05:57:56,714 [ERROR] self.dialect.do_execute(
+2025-03-13 05:57:56,714 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 719, in do_execute
+2025-03-13 05:57:56,714 [ERROR] cursor.execute(statement, parameters)
+2025-03-13 05:57:56,714 [ERROR] sqlalchemy.exc
+2025-03-13 05:57:56,715 [ERROR] .
+2025-03-13 05:57:56,715 [ERROR] OperationalError
+2025-03-13 05:57:56,715 [ERROR] :
+2025-03-13 05:57:56,715 [ERROR] (sqlite3.OperationalError) no such table: online_condition
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT online_condition.id AS online_condition_id, online_condition.trials AS online_condition_trials, online_condition.feedback_type AS online_condition_feedback_type, online_condition.no_feedback_trial AS online_condition_no_feedback_trial, online_condition.feedback_trial AS online_condition_feedback_trial, online_condition.count AS online_condition_count 
+FROM online_condition) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+2025-03-13 06:04:52,830 [INFO] Using 24 processes
+2025-03-13 06:04:53,040 [ERROR] Traceback (most recent call last):
+2025-03-13 06:04:53,040 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+2025-03-13 06:04:53,041 [ERROR] self.dialect.do_execute(
+2025-03-13 06:04:53,041 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 719, in do_execute
+2025-03-13 06:04:53,041 [ERROR] cursor.execute(statement, parameters)
+2025-03-13 06:04:53,041 [ERROR] sqlite3
+2025-03-13 06:04:53,041 [ERROR] .
+2025-03-13 06:04:53,041 [ERROR] OperationalError
+2025-03-13 06:04:53,041 [ERROR] :
+2025-03-13 06:04:53,042 [ERROR] no such table: online_condition
+2025-03-13 06:04:53,042 [ERROR] The above exception was the direct cause of the following exception:
+2025-03-13 06:04:53,042 [ERROR] Traceback (most recent call last):
+2025-03-13 06:04:53,042 [ERROR] File "/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/test.py", line 5, in <module>
+2025-03-13 06:04:53,042 [ERROR] from app import app
+2025-03-13 06:04:53,042 [ERROR] File "/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/__init__.py", line 108, in <module>
+2025-03-13 06:04:53,042 [ERROR] rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
+2025-03-13 06:04:53,042 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 3145, in count
+2025-03-13 06:04:53,043 [ERROR] return self._from_self(col).enable_eagerloads(False).scalar()
+2025-03-13 06:04:53,043 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2879, in scalar
+2025-03-13 06:04:53,043 [ERROR] ret = self.one()
+2025-03-13 06:04:53,043 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2856, in one
+2025-03-13 06:04:53,044 [ERROR] return self._iter().one()
+2025-03-13 06:04:53,044 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2894, in _iter
+2025-03-13 06:04:53,044 [ERROR] result = self.session.execute(
+2025-03-13 06:04:53,044 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1689, in execute
+2025-03-13 06:04:53,045 [ERROR] result = conn._execute_20(statement, params or {}, execution_options)
+2025-03-13 06:04:53,045 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1614, in _execute_20
+2025-03-13 06:04:53,045 [ERROR] return meth(self, args_10style, kwargs_10style, execution_options)
+2025-03-13 06:04:53,045 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 325, in _execute_on_connection
+2025-03-13 06:04:53,046 [ERROR] return connection._execute_clauseelement(
+2025-03-13 06:04:53,046 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1481, in _execute_clauseelement
+2025-03-13 06:04:53,046 [ERROR] ret = self._execute_context(
+2025-03-13 06:04:53,046 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1845, in _execute_context
+2025-03-13 06:04:53,046 [ERROR] self._handle_dbapi_exception(
+2025-03-13 06:04:53,046 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2026, in _handle_dbapi_exception
+2025-03-13 06:04:53,047 [ERROR] util.raise_(
+2025-03-13 06:04:53,047 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+2025-03-13 06:04:53,047 [ERROR] raise exception
+2025-03-13 06:04:53,047 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+2025-03-13 06:04:53,047 [ERROR] self.dialect.do_execute(
+2025-03-13 06:04:53,047 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 719, in do_execute
+2025-03-13 06:04:53,048 [ERROR] cursor.execute(statement, parameters)
+2025-03-13 06:04:53,048 [ERROR] sqlalchemy.exc
+2025-03-13 06:04:53,048 [ERROR] .
+2025-03-13 06:04:53,048 [ERROR] OperationalError
+2025-03-13 06:04:53,048 [ERROR] :
+2025-03-13 06:04:53,048 [ERROR] (sqlite3.OperationalError) no such table: online_condition
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT online_condition.id AS online_condition_id, online_condition.trials AS online_condition_trials, online_condition.feedback_type AS online_condition_feedback_type, online_condition.no_feedback_trial AS online_condition_no_feedback_trial, online_condition.feedback_trial AS online_condition_feedback_trial, online_condition.count AS online_condition_count 
+FROM online_condition) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+2025-03-13 06:06:25,589 [INFO] Using 24 processes
+2025-03-13 06:06:25,792 [ERROR] Traceback (most recent call last):
+2025-03-13 06:06:25,792 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+2025-03-13 06:06:25,793 [ERROR] self.dialect.do_execute(
+2025-03-13 06:06:25,793 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 719, in do_execute
+2025-03-13 06:06:25,793 [ERROR] cursor.execute(statement, parameters)
+2025-03-13 06:06:25,793 [ERROR] sqlite3
+2025-03-13 06:06:25,794 [ERROR] .
+2025-03-13 06:06:25,794 [ERROR] OperationalError
+2025-03-13 06:06:25,794 [ERROR] :
+2025-03-13 06:06:25,794 [ERROR] no such table: online_condition
+2025-03-13 06:06:25,794 [ERROR] The above exception was the direct cause of the following exception:
+2025-03-13 06:06:25,794 [ERROR] Traceback (most recent call last):
+2025-03-13 06:06:25,794 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/bin/flask", line 8, in <module>
+2025-03-13 06:06:25,794 [ERROR] sys.exit(main())
+2025-03-13 06:06:25,794 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 995, in main
+2025-03-13 06:06:25,795 [ERROR] cli.main(args=sys.argv[1:])
+2025-03-13 06:06:25,795 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 601, in main
+2025-03-13 06:06:25,795 [ERROR] return super().main(*args, **kwargs)
+2025-03-13 06:06:25,795 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1055, in main
+2025-03-13 06:06:25,795 [ERROR] rv = self.invoke(ctx)
+2025-03-13 06:06:25,796 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1657, in invoke
+2025-03-13 06:06:25,796 [ERROR] return _process_result(sub_ctx.command.invoke(sub_ctx))
+2025-03-13 06:06:25,796 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 1404, in invoke
+2025-03-13 06:06:25,796 [ERROR] return ctx.invoke(self.callback, **ctx.params)
+2025-03-13 06:06:25,796 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/core.py", line 760, in invoke
+2025-03-13 06:06:25,796 [ERROR] return __callback(*args, **kwargs)
+2025-03-13 06:06:25,796 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/click/decorators.py", line 26, in new_func
+2025-03-13 06:06:25,797 [ERROR] return f(get_current_context(), *args, **kwargs)
+2025-03-13 06:06:25,797 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 444, in decorator
+2025-03-13 06:06:25,797 [ERROR] with __ctx.ensure_object(ScriptInfo).load_app().app_context():
+2025-03-13 06:06:25,797 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 407, in load_app
+2025-03-13 06:06:25,797 [ERROR] app = locate_app(self, import_name, name)
+2025-03-13 06:06:25,797 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask/cli.py", line 260, in locate_app
+2025-03-13 06:06:25,797 [ERROR] __import__(module_name)
+2025-03-13 06:06:25,797 [ERROR] File "/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/__init__.py", line 108, in <module>
+2025-03-13 06:06:25,798 [ERROR] rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
+2025-03-13 06:06:25,798 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 3145, in count
+2025-03-13 06:06:25,798 [ERROR] return self._from_self(col).enable_eagerloads(False).scalar()
+2025-03-13 06:06:25,798 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2879, in scalar
+2025-03-13 06:06:25,799 [ERROR] ret = self.one()
+2025-03-13 06:06:25,799 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2856, in one
+2025-03-13 06:06:25,799 [ERROR] return self._iter().one()
+2025-03-13 06:06:25,799 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2894, in _iter
+2025-03-13 06:06:25,800 [ERROR] result = self.session.execute(
+2025-03-13 06:06:25,800 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1689, in execute
+2025-03-13 06:06:25,800 [ERROR] result = conn._execute_20(statement, params or {}, execution_options)
+2025-03-13 06:06:25,800 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1614, in _execute_20
+2025-03-13 06:06:25,801 [ERROR] return meth(self, args_10style, kwargs_10style, execution_options)
+2025-03-13 06:06:25,801 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 325, in _execute_on_connection
+2025-03-13 06:06:25,801 [ERROR] return connection._execute_clauseelement(
+2025-03-13 06:06:25,801 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1481, in _execute_clauseelement
+2025-03-13 06:06:25,801 [ERROR] ret = self._execute_context(
+2025-03-13 06:06:25,801 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1845, in _execute_context
+2025-03-13 06:06:25,802 [ERROR] self._handle_dbapi_exception(
+2025-03-13 06:06:25,802 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2026, in _handle_dbapi_exception
+2025-03-13 06:06:25,802 [ERROR] util.raise_(
+2025-03-13 06:06:25,802 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+2025-03-13 06:06:25,802 [ERROR] raise exception
+2025-03-13 06:06:25,802 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+2025-03-13 06:06:25,803 [ERROR] self.dialect.do_execute(
+2025-03-13 06:06:25,803 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 719, in do_execute
+2025-03-13 06:06:25,803 [ERROR] cursor.execute(statement, parameters)
+2025-03-13 06:06:25,803 [ERROR] sqlalchemy.exc
+2025-03-13 06:06:25,803 [ERROR] .
+2025-03-13 06:06:25,803 [ERROR] OperationalError
+2025-03-13 06:06:25,803 [ERROR] :
+2025-03-13 06:06:25,803 [ERROR] (sqlite3.OperationalError) no such table: online_condition
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT online_condition.id AS online_condition_id, online_condition.trials AS online_condition_trials, online_condition.feedback_type AS online_condition_feedback_type, online_condition.no_feedback_trial AS online_condition_no_feedback_trial, online_condition.feedback_trial AS online_condition_feedback_trial, online_condition.count AS online_condition_count 
+FROM online_condition) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+2025-03-13 06:07:57,790 [ERROR] Python 3.9.15 | packaged by conda-forge | (main, Nov 22 2022, 08:45:29) 
+[GCC 10.4.0] on linux
+App: app [production]
+Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/instance
+2025-03-13 06:07:57,790 [INFO] >>>
+2025-03-13 06:08:30,467 [ERROR] File "<console>", line 1
+    flask db upgrade
+          ^
+SyntaxError: invalid syntax
+2025-03-13 06:08:30,467 [INFO] >>>
+2025-03-13 06:08:42,366 [ERROR] File "<console>", line 1
+    flask db upgrade
+          ^
+SyntaxError: invalid syntax
+2025-03-13 06:08:42,366 [INFO] >>>
+2025-03-13 06:08:46,474 [ERROR] KeyboardInterrupt
+2025-03-13 06:08:46,475 [INFO] >>>
+2025-03-13 06:08:47,654 [ERROR] KeyboardInterrupt
+2025-03-13 06:08:47,654 [INFO] >>>
+2025-03-13 06:08:48,446 [ERROR] KeyboardInterrupt
+2025-03-13 06:08:48,446 [INFO] >>>
+2025-03-13 06:08:49,078 [ERROR] KeyboardInterrupt
+2025-03-13 06:08:49,078 [INFO] >>>
+2025-03-13 06:08:49,754 [ERROR] KeyboardInterrupt
+2025-03-13 06:08:49,755 [INFO] >>>
+2025-03-13 06:08:51,483 [INFO] Use exit() or Ctrl-D (i.e. EOF) to exit
+2025-03-13 06:08:51,483 [INFO] >>>
+2025-03-13 06:09:18,543 [INFO] Using database:
+2025-03-13 06:09:18,543 [INFO] sqlite:////home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app.db
+2025-03-13 06:10:18,377 [ERROR] Python 3.9.15 | packaged by conda-forge | (main, Nov 22 2022, 08:45:29) 
+[GCC 10.4.0] on linux
+App: app [production]
+Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/instance
+2025-03-13 06:10:18,377 [INFO] >>>
+2025-03-13 06:10:25,627 [INFO] >>>
+2025-03-13 06:10:34,806 [INFO] >>>
+2025-03-13 06:11:57,372 [INFO] Using 24 processes
+2025-03-13 06:11:57,573 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-13 06:11:57,573 [INFO] [33mPress CTRL+C to quit[0m
+2025-03-13 06:18:58,184 [ERROR] Process ForkPoolWorker-18:
+2025-03-13 06:18:58,185 [ERROR] Process ForkPoolWorker-24:
+2025-03-13 06:18:58,185 [ERROR] Process ForkPoolWorker-17:
+2025-03-13 06:18:58,186 [ERROR] Process ForkPoolWorker-16:
+2025-03-13 06:18:58,187 [ERROR] Process ForkPoolWorker-23:
+2025-03-13 06:19:32,899 [INFO] Using 24 processes
+2025-03-13 06:19:33,152 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-13 06:19:33,152 [INFO] [33mPress CTRL+C to quit[0m
+2025-03-13 06:19:46,223 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-03-13 06:19:46,223 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-03-13 06:19:46,225 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:46] "[32mGET /post_practice HTTP/1.1[0m" 302 -
+2025-03-13 06:19:46,237 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:46] "GET /login?next=/post_practice HTTP/1.1" 200 -
+2025-03-13 06:19:46,260 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:46] "GET /static/dragula.css HTTP/1.1" 200 -
+2025-03-13 06:19:46,260 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:46] "GET /static/styles.css HTTP/1.1" 200 -
+2025-03-13 06:19:46,260 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:46] "GET /static/dragula.js HTTP/1.1" 200 -
+2025-03-13 06:19:50,226 [INFO] Logging in user: <User tsts121>
+2025-03-13 06:19:50,226 [INFO] User is authenticated after login? True
+2025-03-13 06:19:50,227 [ERROR] /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py:1606: DeprecationWarning: 'werkzeug.urls.url_parse' is deprecated and will be removed in Werkzeug 3.0. Use 'urllib.parse.urlsplit' instead.
+  if not next_page or url_parse(next_page).netloc != "":
+2025-03-13 06:19:50,228 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/werkzeug/urls.py:545: DeprecationWarning: 'werkzeug.urls.URL' is deprecated and will be removed in Werkzeug 3.0. Use the 'urllib.parse' library instead.
+  return result_type(scheme, netloc, url, query, fragment)
+2025-03-13 06:19:50,228 [INFO] Next page url: /post_practice
+2025-03-13 06:19:50,228 [INFO] Redirecting to: http://127.0.0.1:5000/
+2025-03-13 06:19:50,229 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "[32mPOST /login?next=/post_practice HTTP/1.1[0m" 302 -
+2025-03-13 06:19:50,235 [INFO] I'm in post practice
+2025-03-13 06:19:50,239 [INFO] Flush and Commit successful. Remember to commit at the end. tsts121. User progress post practice
+2025-03-13 06:19:50,243 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "GET /post_practice HTTP/1.1" 200 -
+2025-03-13 06:19:50,259 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:19:50,260 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:19:50,261 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-03-13 06:19:50,263 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:19:50,265 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "GET /static/img/right1.png HTTP/1.1" 200 -
+2025-03-13 06:19:50,267 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "GET /static/img/arrow.png HTTP/1.1" 200 -
+2025-03-13 06:19:50,267 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "GET /static/img/right2.png HTTP/1.1" 200 -
+2025-03-13 06:19:50,272 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:50] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF17fz HTTP/1.1[0m" 404 -
+2025-03-13 06:19:51,460 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:51] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF17yY HTTP/1.1[0m" 404 -
+2025-03-13 06:19:53,494 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:53] "GET /waiting_room HTTP/1.1" 200 -
+2025-03-13 06:19:53,508 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:53] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:19:53,509 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:53] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-13 06:19:53,509 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:53] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:19:53,511 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:53] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:19:53,520 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:53] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF18Sj HTTP/1.1[0m" 404 -
+2025-03-13 06:19:54,580 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:54] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF18jI HTTP/1.1[0m" 404 -
+2025-03-13 06:19:56,722 [INFO] 127.0.0.1 - - [13/Mar/2025 06:19:56] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF19El HTTP/1.1[0m" 404 -
+2025-03-13 06:20:00,543 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:00] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1AAS HTTP/1.1[0m" 404 -
+2025-03-13 06:20:05,555 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:05] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1BOm HTTP/1.1[0m" 404 -
+2025-03-13 06:20:10,628 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:10] "[32mGET /post_practice HTTP/1.1[0m" 302 -
+2025-03-13 06:20:10,632 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:10] "GET /login?next=/post_practice HTTP/1.1" 200 -
+2025-03-13 06:20:10,662 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:10] "GET /static/styles.css HTTP/1.1" 200 -
+2025-03-13 06:20:10,663 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:10] "GET /static/dragula.css HTTP/1.1" 200 -
+2025-03-13 06:20:10,663 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:10] "GET /static/dragula.js HTTP/1.1" 200 -
+2025-03-13 06:20:10,719 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:10] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1CfS HTTP/1.1[0m" 404 -
+2025-03-13 06:20:16,833 [INFO] Logging in user: <User tst122>
+2025-03-13 06:20:16,833 [INFO] User is authenticated after login? True
+2025-03-13 06:20:16,833 [INFO] Next page url: /post_practice
+2025-03-13 06:20:16,833 [INFO] Redirecting to: http://127.0.0.1:5000/
+2025-03-13 06:20:16,834 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "[32mPOST /login?next=/post_practice HTTP/1.1[0m" 302 -
+2025-03-13 06:20:16,837 [INFO] I'm in post practice
+2025-03-13 06:20:16,840 [INFO] Flush and Commit successful. Remember to commit at the end. tst122. User progress post practice
+2025-03-13 06:20:16,841 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "GET /post_practice HTTP/1.1" 200 -
+2025-03-13 06:20:16,857 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:16,857 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "GET /static/img/right1.png HTTP/1.1" 200 -
+2025-03-13 06:20:16,858 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:20:16,858 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:16,860 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "GET /static/img/arrow.png HTTP/1.1" 200 -
+2025-03-13 06:20:16,860 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-03-13 06:20:16,862 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "GET /static/img/right2.png HTTP/1.1" 200 -
+2025-03-13 06:20:16,872 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:16] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1E9b HTTP/1.1[0m" 404 -
+2025-03-13 06:20:18,179 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:18] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1EU0 HTTP/1.1[0m" 404 -
+2025-03-13 06:20:19,250 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:19] "GET /waiting_room HTTP/1.1" 200 -
+2025-03-13 06:20:19,261 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:19] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:19,263 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:19] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:19,263 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:19] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:19,264 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:19] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:20:19,272 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:19] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1El6 HTTP/1.1[0m" 404 -
+2025-03-13 06:20:19,884 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:19] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1Eug HTTP/1.1[0m" 404 -
+2025-03-13 06:20:22,723 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:22] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1Fb1 HTTP/1.1[0m" 404 -
+2025-03-13 06:20:24,015 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:24] "[32mGET /post_practice HTTP/1.1[0m" 302 -
+2025-03-13 06:20:24,019 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:24] "GET /login?next=/post_practice HTTP/1.1" 200 -
+2025-03-13 06:20:24,048 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:24] "GET /static/styles.css HTTP/1.1" 200 -
+2025-03-13 06:20:24,049 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:24] "GET /static/dragula.js HTTP/1.1" 200 -
+2025-03-13 06:20:24,049 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:24] "GET /static/dragula.css HTTP/1.1" 200 -
+2025-03-13 06:20:25,724 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:25] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1GJv HTTP/1.1[0m" 404 -
+2025-03-13 06:20:27,974 [INFO] Logging in user: <User tsts123>
+2025-03-13 06:20:27,974 [INFO] User is authenticated after login? True
+2025-03-13 06:20:27,974 [INFO] Next page url: /post_practice
+2025-03-13 06:20:27,975 [INFO] Redirecting to: http://127.0.0.1:5000/
+2025-03-13 06:20:27,975 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:27] "[32mPOST /login?next=/post_practice HTTP/1.1[0m" 302 -
+2025-03-13 06:20:27,978 [INFO] I'm in post practice
+2025-03-13 06:20:27,981 [INFO] Flush and Commit successful. Remember to commit at the end. tsts123. User progress post practice
+2025-03-13 06:20:27,982 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:27] "GET /post_practice HTTP/1.1" 200 -
+2025-03-13 06:20:28,000 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:28,000 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:20:28,000 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:28,000 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-03-13 06:20:28,001 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "GET /static/img/right1.png HTTP/1.1" 200 -
+2025-03-13 06:20:28,002 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "GET /static/img/arrow.png HTTP/1.1" 200 -
+2025-03-13 06:20:28,003 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "GET /static/img/right2.png HTTP/1.1" 200 -
+2025-03-13 06:20:28,013 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1Gti HTTP/1.1[0m" 404 -
+2025-03-13 06:20:28,628 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:28] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1H1I HTTP/1.1[0m" 404 -
+2025-03-13 06:20:29,749 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:29] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1HIo HTTP/1.1[0m" 404 -
+2025-03-13 06:20:30,851 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:30] "GET /waiting_room HTTP/1.1" 200 -
+2025-03-13 06:20:30,863 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:30] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:30,864 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:30] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:20:30,864 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:30] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:30,865 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:30] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-13 06:20:30,873 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:30] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1HaN HTTP/1.1[0m" 404 -
+2025-03-13 06:20:31,726 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:31] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1Hni HTTP/1.1[0m" 404 -
+2025-03-13 06:20:32,255 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:32] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1Hvz HTTP/1.1[0m" 404 -
+2025-03-13 06:20:34,247 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:34] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1IP5 HTTP/1.1[0m" 404 -
+2025-03-13 06:20:36,939 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:36] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1J38 HTTP/1.1[0m" 404 -
+2025-03-13 06:20:37,730 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:37] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1JFV HTTP/1.1[0m" 404 -
+2025-03-13 06:20:41,946 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:41] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1KHN HTTP/1.1[0m" 404 -
+2025-03-13 06:20:46,959 [INFO] 127.0.0.1 - - [13/Mar/2025 06:20:46] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF1LVi HTTP/1.1[0m" 404 -
+2025-03-13 06:20:56,296 [ERROR] Process ForkPoolWorker-25:
+2025-03-13 06:20:56,297 [ERROR] Process ForkPoolWorker-23:
+2025-03-13 06:20:56,298 [ERROR] Process ForkPoolWorker-18:
+2025-03-13 06:20:56,298 [ERROR] Process ForkPoolWorker-24:
+2025-03-13 06:20:56,298 [ERROR] Process ForkPoolWorker-16:
+2025-03-13 06:20:56,299 [ERROR] Traceback (most recent call last):
+2025-03-13 06:20:56,299 [ERROR] Traceback (most recent call last):
+2025-03-13 06:20:56,299 [ERROR] Traceback (most recent call last):
+2025-03-13 06:20:56,299 [ERROR] Traceback (most recent call last):
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-03-13 06:20:56,299 [ERROR] Traceback (most recent call last):
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-03-13 06:20:56,299 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-03-13 06:20:56,299 [ERROR] Process ForkPoolWorker-15:
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-03-13 06:20:56,299 [ERROR] KeyboardInterrupt
+2025-03-13 06:20:56,299 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-03-13 06:20:56,299 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-03-13 06:20:56,299 [ERROR] KeyboardInterrupt
+2025-03-13 06:20:56,299 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-03-13 06:20:56,299 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-03-13 06:20:56,299 [ERROR] KeyboardInterrupt
+2025-03-13 06:20:56,299 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-03-13 06:20:56,299 [ERROR] KeyboardInterrupt
+2025-03-13 06:20:56,300 [ERROR] KeyboardInterrupt
+2025-03-13 06:24:32,183 [INFO] Using 24 processes
+2025-03-13 06:24:32,404 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-13 06:24:32,405 [INFO] [33mPress CTRL+C to quit[0m
+2025-03-13 06:24:34,371 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-03-13 06:24:34,371 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-03-13 06:24:34,373 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:34] "[32mGET /post_practice HTTP/1.1[0m" 302 -
+2025-03-13 06:24:34,386 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:34] "GET /login?next=/post_practice HTTP/1.1" 200 -
+2025-03-13 06:24:34,411 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:34] "GET /static/dragula.css HTTP/1.1" 200 -
+2025-03-13 06:24:34,412 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:34] "GET /static/styles.css HTTP/1.1" 200 -
+2025-03-13 06:24:34,412 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:34] "GET /static/dragula.js HTTP/1.1" 200 -
+2025-03-13 06:24:40,406 [INFO] Logging in user: <User tst125>
+2025-03-13 06:24:40,406 [INFO] User is authenticated after login? True
+2025-03-13 06:24:40,407 [ERROR] /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py:1606: DeprecationWarning: 'werkzeug.urls.url_parse' is deprecated and will be removed in Werkzeug 3.0. Use 'urllib.parse.urlsplit' instead.
+  if not next_page or url_parse(next_page).netloc != "":
+2025-03-13 06:24:40,408 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/werkzeug/urls.py:545: DeprecationWarning: 'werkzeug.urls.URL' is deprecated and will be removed in Werkzeug 3.0. Use the 'urllib.parse' library instead.
+  return result_type(scheme, netloc, url, query, fragment)
+2025-03-13 06:24:40,408 [INFO] Next page url: /post_practice
+2025-03-13 06:24:40,408 [INFO] Redirecting to: http://127.0.0.1:5000/
+2025-03-13 06:24:40,408 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "[32mPOST /login?next=/post_practice HTTP/1.1[0m" 302 -
+2025-03-13 06:24:40,414 [INFO] I'm in post practice
+2025-03-13 06:24:40,418 [INFO] Flush and Commit successful. Remember to commit at the end. tst125. User progress post practice
+2025-03-13 06:24:40,422 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "GET /post_practice HTTP/1.1" 200 -
+2025-03-13 06:24:40,441 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:40,442 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:40,443 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "GET /static/img/right1.png HTTP/1.1" 200 -
+2025-03-13 06:24:40,444 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:24:40,444 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-03-13 06:24:40,447 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "GET /static/img/arrow.png HTTP/1.1" 200 -
+2025-03-13 06:24:40,447 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "GET /static/img/right2.png HTTP/1.1" 200 -
+2025-03-13 06:24:40,457 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:40] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2EW6 HTTP/1.1[0m" 404 -
+2025-03-13 06:24:41,433 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:41] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2ElM HTTP/1.1[0m" 404 -
+2025-03-13 06:24:43,412 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:43] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2FEH HTTP/1.1[0m" 404 -
+2025-03-13 06:24:50,661 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "[32mGET /login HTTP/1.1[0m" 302 -
+2025-03-13 06:24:50,664 [INFO] Index url in index function: http://127.0.0.1:5000/
+2025-03-13 06:24:50,664 [INFO] User is authenticated? True
+2025-03-13 06:24:50,671 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "GET / HTTP/1.1" 200 -
+2025-03-13 06:24:50,689 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:50,692 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:50,693 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "GET /static/lib/d3.v3.min.js HTTP/1.1" 200 -
+2025-03-13 06:24:50,694 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "GET /static/lib/jquery-min.js HTTP/1.1" 200 -
+2025-03-13 06:24:50,694 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "GET /static/lib/underscore-min.js HTTP/1.1" 200 -
+2025-03-13 06:24:50,695 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:24:50,695 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "GET /static/lib/backbone-min.js HTTP/1.1" 200 -
+2025-03-13 06:24:50,711 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:50] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2H0K HTTP/1.1[0m" 404 -
+2025-03-13 06:24:51,683 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:51] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2HFW HTTP/1.1[0m" 404 -
+2025-03-13 06:24:52,450 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:52] "GET /consent HTTP/1.1" 200 -
+2025-03-13 06:24:52,465 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:52] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:52,467 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:52] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:24:52,468 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:52] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:55,409 [INFO] Group: None User: 4 Entering sign consent
+2025-03-13 06:24:55,412 [INFO] Flush and Commit successful. Remember to commit at the end. tst125. User consent
+2025-03-13 06:24:55,413 [INFO] Group: None User: 4 Url for introduction: /introduction
+2025-03-13 06:24:55,413 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:55] "GET /sign_consent HTTP/1.1" 200 -
+2025-03-13 06:24:55,423 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:55] "GET /introduction HTTP/1.1" 200 -
+2025-03-13 06:24:55,433 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:55] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:55,436 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:55] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:55,436 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:55] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:24:57,555 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:57] "GET /overview HTTP/1.1" 200 -
+2025-03-13 06:24:57,571 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:57] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:24:57,572 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:57] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:57,572 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:57] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:57,573 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:57] "GET /static/img/augmented_taxi2_3.png HTTP/1.1" 200 -
+2025-03-13 06:24:57,573 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:57] "GET /static/img/skateboard2_3.png HTTP/1.1" 200 -
+2025-03-13 06:24:58,880 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /sandbox_introduction HTTP/1.1" 200 -
+2025-03-13 06:24:58,895 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2J07 HTTP/1.1[0m" 404 -
+2025-03-13 06:24:58,897 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:58,897 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:58,900 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-03-13 06:24:58,901 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /static/img/star.png HTTP/1.1" 200 -
+2025-03-13 06:24:58,901 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-03-13 06:24:58,903 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /static/img/pentagon.png HTTP/1.1" 200 -
+2025-03-13 06:24:58,904 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /static/img/diamond.png HTTP/1.1" 200 -
+2025-03-13 06:24:58,908 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /static/img/sandbox_updated1.png HTTP/1.1" 200 -
+2025-03-13 06:24:58,910 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /static/img/wall.png HTTP/1.1" 200 -
+2025-03-13 06:24:58,911 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /static/img/sandbox_updated2.png HTTP/1.1" 200 -
+2025-03-13 06:24:58,911 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /static/img/sandbox_dropoff1.png HTTP/1.1" 200 -
+2025-03-13 06:24:58,913 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "[36mGET /static/img/arrow.png HTTP/1.1[0m" 304 -
+2025-03-13 06:24:58,914 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:58] "GET /static/img/sandbox_dropoff2.png HTTP/1.1" 200 -
+2025-03-13 06:24:59,981 [INFO] 127.0.0.1 - - [13/Mar/2025 06:24:59] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2JHA HTTP/1.1[0m" 404 -
+2025-03-13 06:25:01,506 [INFO] 127.0.0.1 - - [13/Mar/2025 06:25:01] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2Je_ HTTP/1.1[0m" 404 -
+2025-03-13 06:25:05,894 [INFO] 127.0.0.1 - - [13/Mar/2025 06:25:05] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2KjZ HTTP/1.1[0m" 404 -
+2025-03-13 06:25:10,898 [INFO] 127.0.0.1 - - [13/Mar/2025 06:25:10] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2Lxl HTTP/1.1[0m" 404 -
+2025-03-13 06:25:15,903 [INFO] 127.0.0.1 - - [13/Mar/2025 06:25:15] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PMF2N9z HTTP/1.1[0m" 404 -
+2025-03-13 06:25:35,568 [ERROR] Process ForkPoolWorker-17:
+2025-03-13 06:25:35,569 [ERROR] Process ForkPoolWorker-15:
+2025-03-13 06:25:35,570 [ERROR] Process ForkPoolWorker-23:

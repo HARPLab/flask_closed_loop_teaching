@@ -975,90 +975,80 @@ def settings(data):
 
                         log_print('Group:', current_user.group, 'User:', current_user.id, "Current group status: ", current_group.status, 'Current user round:', current_user.round, 'current_user curr_progress:', current_user.curr_progress)                        
                         
-                        ## add a random wait time to ensure members do not enter at the same time (0 to 1 s)
+                        ## add a random wait time to ensure members do not enter the following loop at the same time (0 to 1 s)
                         time.sleep(random.random())
 
                         ### Generate first round for the group
                         if current_user.round == 0:
-                            
-                            if (db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=1).count() == 0 and 
-                                current_group.status != "gen_demos" and not new_round_generation_started):
 
-                                new_round_generation_started = True
+                            next_round_id = current_user.round+1
+                            next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
 
-                                log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating first round...')
-                                current_group.status = "gen_demos"
-                                flag_modified(current_group, "status")
-                                # flag_modified(current_group, "new_round_generation_started")
-                                update_database(current_group, 'Group status: gen_demos; in retrieve next round')
-                                db.session.refresh(current_group)
-                                
-                                retrieve_next_round(params, current_group)
-                                db.session.refresh(current_group)
-                                
-                                next_round_id = current_user.round+1
-                                print('Group:', current_user.group, 'User:', current_user.id, 'First round generated. Next round id:', next_round_id, 'User progress: ', current_user.curr_progress)
-                                next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-                                
+                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Waiting for first round to be generated...')
 
-                                if current_group.status != "Domain teaching completed":
-                                    update_learner_models_from_demos(params, current_group, next_round)
-                                db.session.refresh(current_group)
-                                current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
+                            while next_round is None:     
 
-                                # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
-                                find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
+                                if (db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=1).count() == 0 and 
+                                    current_group.status != "gen_demos" and not new_round_generation_started):
 
-                            else:
-                                round_status = ""
-                                log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for first round to be generated...')
-                                next_round_id = current_user.round+1
-                                next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
+                                    new_round_generation_started = True
 
-                                if next_round is not None:
-                                    round_status = next_round.status
-
-                                    if round_status == "demo_tests_generated" or round_status == "final_tests_generated" or round_status == "demos_updated":
-                                        break
-
-                                    # check if all group members have left
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating first round...')
+                                    current_group.status = "gen_demos"
+                                    flag_modified(current_group, "status")
+                                    # flag_modified(current_group, "new_round_generation_started")
+                                    update_database(current_group, 'Group status: gen_demos; in retrieve next round')
                                     db.session.refresh(current_group)
-                                    if current_group.num_active_members == 0:
-                                        break
+                                    
+                                    retrieve_next_round(params, current_group)
+                                    db.session.refresh(current_group)
+                                    
+                                    next_round_id = current_user.round+1
+                                    print('Group:', current_user.group, 'User:', current_user.id, 'First round generated. Next round id:', next_round_id, 'User progress: ', current_user.curr_progress)
+                                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
+                                    
 
-                                new_round_generation_started = False
-                                # flag_modified(current_group, "new_round_generation_started")
-                                update_database(current_group, 'New round generation not yet started..')
+                                    if current_group.status != "Domain teaching completed":
+                                        update_learner_models_from_demos(params, current_group, next_round)
+                                    db.session.refresh(current_group)
+                                    current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
 
-                                log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for first round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
-                                time.sleep(2) # a sleep to avoid too many queries
-
-
-                                ####### (Not using this)
-                                # if next_round is None:
-                                    # while True:
-                                        
-                                        # next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-                                        # if next_round is not None:
-                                        #     round_status = next_round.status  
-                                        
-                                        # if round_status == "demo_tests_generated" or round_status == "final_tests_generated" or round_status == "demos_updated":
-                                        #     break
-
-                                        # # check if all group members have left
-                                        # db.session.refresh(current_group)
-                                        # if current_group.num_active_members == 0:
-                                        #     break
-                                        
-                                        # log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for first round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
-                                        # time.sleep(2) # a sleep to avoid too many queries
+                                    # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
+                                    find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
+                                    
+                                    break
                                 
-                            # vars for next round
-                            if next_round is not None:
-                                next_kc_id = next_round.kc_id
-                                log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round:', next_round, 'First round status:', next_round.status, 'Next round kc_id:', next_kc_id)
-                            else:
-                                next_kc_id = -1
+                                else:
+                                    round_status = ""
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for first round to be generated...')
+                                    next_round_id = current_user.round+1
+                                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
+
+                                    if next_round is not None:
+                                        round_status = next_round.status
+
+                                        if round_status == "demo_tests_generated" or round_status == "final_tests_generated" or round_status == "demos_updated":
+                                            break
+
+                                        # check if all group members have left
+                                        db.session.refresh(current_group)
+                                        if current_group.num_active_members == 0:
+                                            break
+
+                                    new_round_generation_started = False
+                                    # flag_modified(current_group, "new_round_generation_started")
+                                    update_database(current_group, 'New round generation not yet started..')
+
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for first round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
+                                    time.sleep(2) # a sleep to avoid too many queries
+
+                                # vars for next round
+                                if next_round is not None:
+                                    next_kc_id = next_round.kc_id
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round:', next_round, 'First round status:', next_round.status, 'Next round kc_id:', next_kc_id)
+                                else:
+                                    next_kc_id = -1
+                        
                         ### Generate next round for the group
                         else:
                             db.session.refresh(current_group)
@@ -1082,7 +1072,6 @@ def settings(data):
 
                             log_print('Group:', current_user.group, 'User:', current_user.id, 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Waiting for next round to be generated...')
 
-                            next_round_while_loop_count = 0
                             while next_round is None:
                                 
                                 # query current group again
@@ -1173,33 +1162,6 @@ def settings(data):
                                     log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for next round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
                                     time.sleep(2) # a sleep to avoid too many queries
 
-
-                                    # if next_round is None:
-                                    #     while True:                                        
-                                    #         next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-                                    #         if next_round is not None:
-                                    #             round_status = next_round.status  
-
-                                    #         log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for next round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
-
-                                            
-                                    #         if round_status == "demo_tests_generated" or round_status == "final_tests_generated" or round_status == "demos_updated":
-                                    #             break
-
-                                    #         # check if all group members have left
-                                    #         db.session.refresh(current_group)
-                                    #         if current_group.num_active_members == 0:
-                                    #             break
-                                            
-                                    #         time.sleep(2) # a sleep to avoid too many queries
-
-                                # time.sleep(3)  # a brief sleep to avoid too many queries
-                                # next_round_while_loop_count += 1
-
-                                # # close while loop if it takes too long
-                                # if next_round_while_loop_count > MAX_ITERATIONS:
-                                #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Reached max iterations for while loop waiting for next round')
-                                #     break
                                 
                             log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Interaction type: ', current_mdp_params["interaction type"], 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
 
