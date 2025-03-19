@@ -334,7 +334,6 @@ def disconnect_user(data):
 
     # If user is still connected and authenticated, log them out
     if current_user.is_authenticated:
-        current_user.last_activity = data["last_activity"]
         if current_user.last_activity is not None:
             last_activity_time_seconds = float(data["last_activity_time"])/1000
             current_user.last_activity.append(data["last_activity"])
@@ -2453,7 +2452,12 @@ def get_normalized_trajectories(last_test_trial, domain):
                                     human_location in human_locations]
 
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Opt locations:', opt_locations_tuple, 'Human locations:', human_locations_tuple, 'Opt actions:', opt_actions, 'Human actions:', human_actions) 
-    normalized_opt_actions, normalized_human_actions = normalize_trajectories(opt_locations_tuple, opt_actions, human_locations_tuple, human_actions)
+    
+    try:
+        normalized_opt_actions, normalized_human_actions = normalize_trajectories(opt_locations_tuple, opt_actions, human_locations_tuple, human_actions)
+    except:
+        # give original trajectories if normalization fails
+        normalized_opt_actions, normalized_human_actions = opt_actions, human_actions
 
     return normalized_opt_actions, normalized_human_actions
 
