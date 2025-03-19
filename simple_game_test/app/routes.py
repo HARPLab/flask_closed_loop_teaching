@@ -280,6 +280,14 @@ def handle_disconnect():
             log_print(f"User id: {current_user.id}, {request.sid} disconnected but has already left the study.")
 
 
+@socketio.on('heartbeat')
+def handle_heartbeat(data):
+    # Log if needed
+    log_print(f"Received heartbeat from {request.sid}")
+    # You can respond if you want
+    socketio.emit('heartbeat_response', {'server_time': time.time()}, to=request.sid)
+
+
 def check_reconnection(user_id):
     """Checks if user is still disconnected after timeout"""
     

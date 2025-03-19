@@ -65,7 +65,7 @@ login.login_view = "login"
 
 
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, ping_timeout=60, ping_interval=25)
 
 
 
