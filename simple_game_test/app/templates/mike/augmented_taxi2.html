@@ -316,7 +316,7 @@
         
         // Create Socket.IO connection
         const socket = io({
-            path: '/flask_closed_loop_teaching/socket.io',
+            path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
             transports: ['websocket', 'polling'],
             reconnectionAttempts: 5,
             reconnectionDelay: 1000,

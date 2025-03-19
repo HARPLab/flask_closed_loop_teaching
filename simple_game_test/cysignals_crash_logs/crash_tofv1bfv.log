@@ -1,0 +1,1237 @@
+GNU gdb (GDB) 11.2
+Copyright (C) 2022 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-conda-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+[New LWP 4103]
+[New LWP 4104]
+[New LWP 4105]
+[New LWP 4106]
+[New LWP 4107]
+[New LWP 4108]
+[New LWP 4109]
+[New LWP 4110]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x00007fa4e36b732a in waitpid () from /lib/x86_64-linux-gnu/libpthread.so.0
+
+Stack backtrace
+---------------
+No symbol table info available.
+#1  0x00007fa396551071 in print_enhanced_backtrace ()
+   from /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/cysignals/signals.cpython-39-x86_64-linux-gnu.so
+No symbol table info available.
+#2  0x00007fa3965511eb in sigdie ()
+   from /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/cysignals/signals.cpython-39-x86_64-linux-gnu.so
+No symbol table info available.
+#3  0x00007fa3965538f5 in cysigs_signal_handler ()
+   from /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/cysignals/signals.cpython-39-x86_64-linux-gnu.so
+No symbol table info available.
+#4  <signal handler called>
+No symbol table info available.
+#5  0x00007fa4e29e6d58 in ?? () from /lib/x86_64-linux-gnu/libc.so.6
+No symbol table info available.
+#6  0x00007fa4e29e6923 in readdir64 () from /lib/x86_64-linux-gnu/libc.so.6
+No symbol table info available.
+#7  0x000055afb9c9e9ef in ScandirIterator_iternext (iterator=0x7fa132adb0a0)
+    at /usr/local/src/conda/python-3.9.15/Modules/posixmodule.c:13986
+        _save = 0x55afe6a98200
+        direntp = <optimized out>
+        name_len = <optimized out>
+        is_dot = <optimized out>
+        entry = <optimized out>
+#8  0x000055afb9bc8ed9 in list_extend (self=0x7fa4496be7c0, 
+    iterable=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Objects/listobject.c:934
+        item = <optimized out>
+        it = <posix.ScandirIterator at remote 0x7fa132adb0a0>
+        m = <optimized out>
+        n = <optimized out>
+        mn = <optimized out>
+        i = <optimized out>
+        iternext = 0x55afb9c9e9b0 <ScandirIterator_iternext>
+#9  0x000055afb9c0eedb in list___init___impl (
+    iterable=<posix.ScandirIterator at remote 0x7fa132adb0a0>, 
+    self=0x7fa4496be7c0)
+    at /usr/local/src/conda/python-3.9.15/Objects/listobject.c:2725
+        rv = <optimized out>
+#10 list_vectorcall (type=<optimized out>, args=<optimized out>, 
+    nargsf=<optimized out>, kwnames=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Objects/listobject.c:2751
+        nargs = <optimized out>
+        list = []
+#11 0x000055afb9b9bc4f in _PyObject_VectorcallTstate (kwnames=0x0, 
+    nargsf=<optimized out>, args=0x55afeed74748, 
+    callable=<type at remote 0x55afb9dffee0>, tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = <optimized out>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#12 PyObject_Vectorcall (kwnames=0x0, nargsf=<optimized out>, 
+    args=0x55afeed74748, callable=<type at remote 0x55afb9dffee0>)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+        tstate = 0x55afe6a98200
+        tstate = <optimized out>
+#13 call_function (kwnames=0x0, oparg=<optimized out>, 
+    pp_stack=<synthetic pointer>, tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+        func = <type at remote 0x55afb9dffee0>
+        w = <optimized out>
+        nkwargs = 0
+        nargs = <optimized out>
+        pfunc = 0x55afeed74740
+        x = <optimized out>
+        stack = 0x55afeed74748
+        pfunc = <optimized out>
+        func = <optimized out>
+        x = <optimized out>
+        w = <optimized out>
+        nkwargs = <optimized out>
+        nargs = <optimized out>
+        stack = <optimized out>
+#14 _PyEval_EvalFrameDefault (tstate=<optimized out>, f=<optimized out>, 
+    throwflag=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3520
+        sp = <optimized out>
+        res = <optimized out>
+        __atomic_load_ptr = <optimized out>
+        __atomic_load_tmp = <optimized out>
+        stack_pointer = <optimized out>
+        next_instr = 0x55afe6c39324
+        opcode = <optimized out>
+        oparg = <optimized out>
+        fastlocals = 0x55afeed746d8
+        freevars = 0x55afeed74738
+        retval = <optimized out>
+        ceval2 = 0x55afe6a988f0
+        eval_breaker = 0x55afe6a988f8
+        co = 0x7fa4e22eb7c0
+        instr_ub = -1
+        instr_lb = <optimized out>
+        instr_prev = -1
+        first_instr = 0x55afe6c39310
+        names = ('os', 'scandir', 'list', 'OSError', 'filename', 'sys', 'exc_info', 'path', 'join', 'name', 'is_dir', 'stat', 'S_ISDIR', 'st_mode', 'lstat', 'open', 'O_RDONLY', 'samestat', 'fstat', '_rmtree_safe_fd', 'close', 'rmdir', 'islink', 'unlink')
+        consts = (None, False, ('follow_symlinks',), ('dir_fd',), True, 'Cannot call rmtree on a symbolic link')
+        co_opcache = <optimized out>
+        main_loop = <optimized out>
+        fast_next_opcode = <optimized out>
+        exception_unwind = <optimized out>
+        __func__ = "_PyEval_EvalFrameDefault"
+        opcode_targets = {0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9c148 <_PyEval_EvalFrameDefault+2232>, 
+          0x55afb9b9d218 <_PyEval_EvalFrameDefault+6536>, 
+          0x55afb9b9cf29 <_PyEval_EvalFrameDefault+5785>, 
+          0x55afb9b9c7dd <_PyEval_EvalFrameDefault+3917>, 
+          0x55afb9b9e6bf <_PyEval_EvalFrameDefault+11823>, 
+          0x55afb9ba0179 <_PyEval_EvalFrameDefault+18665>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad8497 <_PyEval_EvalFrameDefault-799737>, 
+          0x55afb9b9eda2 <_PyEval_EvalFrameDefault+13586>, 
+          0x55afb9b9dae7 <_PyEval_EvalFrameDefault+8791>, 
+          0x55afb9b9e017 <_PyEval_EvalFrameDefault+10119>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f4e0 <_PyEval_EvalFrameDefault+15440>, 
+          0x55afb9b9f44b <_PyEval_EvalFrameDefault+15291>, 
+          0x55afb9ad992a <_PyEval_EvalFrameDefault-794470>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9cda4 <_PyEval_EvalFrameDefault+5396>, 
+          0x55afb9b9c730 <_PyEval_EvalFrameDefault+3744>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9d753 <_PyEval_EvalFrameDefault+7875>, 
+          0x55afb9b9c4d5 <_PyEval_EvalFrameDefault+3141>, 
+          0x55afb9b9c578 <_PyEval_EvalFrameDefault+3304>, 
+          0x55afb9b9c37b <_PyEval_EvalFrameDefault+2795>, 
+          0x55afb9b9db62 <_PyEval_EvalFrameDefault+8914>, 
+          0x55afb9b9cf81 <_PyEval_EvalFrameDefault+5873>, 
+          0x55afb9b9dede <_PyEval_EvalFrameDefault+9806>, 
+          0x55afb9b9f3b6 <_PyEval_EvalFrameDefault+15142>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488> <repeats 18 times>, 
+          0x55afb9b9f667 <_PyEval_EvalFrameDefault+15831>, 
+          0x55afb9b9f27b <_PyEval_EvalFrameDefault+14827>, 
+          0x55afb9ad7c92 <_PyEval_EvalFrameDefault-801790>, 
+          0x55afb9ad7bd6 <_PyEval_EvalFrameDefault-801978>, 
+          0x55afb9ad9227 <_PyEval_EvalFrameDefault-796265>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad9192 <_PyEval_EvalFrameDefault-796414>, 
+          0x55afb9b9cc1c <_PyEval_EvalFrameDefault+5004>, 
+          0x55afb9b9e4ca <_PyEval_EvalFrameDefault+11322>, 
+          0x55afb9b9e572 <_PyEval_EvalFrameDefault+11490>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9ec2c <_PyEval_EvalFrameDefault+13212>, 
+          0x55afb9b9c876 <_PyEval_EvalFrameDefault+4070>, 
+          0x55afb9b9df87 <_PyEval_EvalFrameDefault+9975>, 
+          0x55afb9b9d9dc <_PyEval_EvalFrameDefault+8524>, 
+          0x55afb9b9d4ca <_PyEval_EvalFrameDefault+7226>, 
+          0x55afb9b9d037 <_PyEval_EvalFrameDefault+6055>, 
+          0x55afb9b9e436 <_PyEval_EvalFrameDefault+11174>, 
+          0x55afb9b9d92a <_PyEval_EvalFrameDefault+8346>, 
+          0x55afb9b9f9d6 <_PyEval_EvalFrameDefault+16710>, 
+          0x55afb9b9ce4c <_PyEval_EvalFrameDefault+5564>, 
+          0x55afb9b9f1ec <_PyEval_EvalFrameDefault+14684>, 
+          0x55afb9b9ee1b <_PyEval_EvalFrameDefault+13707>, 
+          0x55afb9b9fce3 <_PyEval_EvalFrameDefault+17491>, 
+          0x55afb9b9d433 <_PyEval_EvalFrameDefault+7075>, 
+          0x55afb9b9fe80 <_PyEval_EvalFrameDefault+17904>, 
+          0x55afb9b9ecc1 <_PyEval_EvalFrameDefault+13361>, 
+          0x55afb9b9d6ab <_PyEval_EvalFrameDefault+7707>, 
+          0x55afb9b9eeaf <_PyEval_EvalFrameDefault+13855>, 
+          0x55afb9b9eb94 <_PyEval_EvalFrameDefault+13060>, 
+          0x55afb9b9e117 <_PyEval_EvalFrameDefault+10375>, 
+          0x55afb9b9eb00 <_PyEval_EvalFrameDefault+12912>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f332 <_PyEval_EvalFrameDefault+15010>, 
+          0x55afb9b9bd71 <_PyEval_EvalFrameDefault+1249>, 
+          0x55afb9b9e875 <_PyEval_EvalFrameDefault+12261>, 
+          0x55afb9b9e7b1 <_PyEval_EvalFrameDefault+12065>, 
+          0x55afb9b9ccbb <_PyEval_EvalFrameDefault+5163>, 
+          0x55afb9b9cec6 <_PyEval_EvalFrameDefault+5686>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9dd5f <_PyEval_EvalFrameDefault+9423>, 
+          0x55afb9b9e34d <_PyEval_EvalFrameDefault+10941>, 
+          0x55afb9b9fc6c <_PyEval_EvalFrameDefault+17372>, 
+          0x55afb9b9c61e <_PyEval_EvalFrameDefault+3470>, 
+          0x55afb9b9c199 <_PyEval_EvalFrameDefault+2313>, 
+          0x55afb9b9f0c5 <_PyEval_EvalFrameDefault+14389>, 
+          0x55afb9b9c431 <_PyEval_EvalFrameDefault+2977>, 
+          0x55afb9b9d8a2 <_PyEval_EvalFrameDefault+8210>, 
+          0x55afb9b9f161 <_PyEval_EvalFrameDefault+14545>, 
+          0x55afb9ad806f <_PyEval_EvalFrameDefault-800801>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9ba43 <_PyEval_EvalFrameDefault+435>, 
+          0x55afb9b9de46 <_PyEval_EvalFrameDefault+9654>, 
+          0x55afb9b9cb20 <_PyEval_EvalFrameDefault+4752>, 
+          0x55afb9b9d3bc <_PyEval_EvalFrameDefault+6956>, 
+          0x55afb9b9efc6 <_PyEval_EvalFrameDefault+14134>, 
+          0x55afb9b9d161 <_PyEval_EvalFrameDefault+6353>, 
+          0x55afb9b9bfb0 <_PyEval_EvalFrameDefault+1824>, 
+          0x55afb9b9c035 <_PyEval_EvalFrameDefault+1957>, 
+          0x55afb9b9f55a <_PyEval_EvalFrameDefault+15562>, 
+          0x55afb9b9e718 <_PyEval_EvalFrameDefault+11912>, 
+          0x55afb9b9c82d <_PyEval_EvalFrameDefault+3997>, 
+          0x55afb9b9d56c <_PyEval_EvalFrameDefault+7388>, 
+          0x55afb9b9d80c <_PyEval_EvalFrameDefault+8060>, 
+          0x55afb9b9c29f <_PyEval_EvalFrameDefault+2575>, 
+          0x55afb9b9bcf7 <_PyEval_EvalFrameDefault+1127>, 
+          0x55afb9b9c0d0 <_PyEval_EvalFrameDefault+2112>, 
+          0x55afb9b9bb00 <_PyEval_EvalFrameDefault+624>, 
+          0x55afb9b9c2f8 <_PyEval_EvalFrameDefault+2664>, 
+          0x55afb9b9c924 <_PyEval_EvalFrameDefault+4244>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9dc04 <_PyEval_EvalFrameDefault+9076>, 
+          0x55afb9b9cd10 <_PyEval_EvalFrameDefault+5248>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9b9e3 <_PyEval_EvalFrameDefault+339>, 
+          0x55afb9b9ba9a <_PyEval_EvalFrameDefault+522>, 
+          0x55afb9b9fd68 <_PyEval_EvalFrameDefault+17624>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f7bc <_PyEval_EvalFrameDefault+16172>, 
+          0x55afb9b9bbe3 <_PyEval_EvalFrameDefault+851>, 
+          0x55afb9b9d5cc <_PyEval_EvalFrameDefault+7484>, 
+          0x55afb9b9d268 <_PyEval_EvalFrameDefault+6616>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9da7f <_PyEval_EvalFrameDefault+8687>, 
+          0x55afb9b9c22b <_PyEval_EvalFrameDefault+2459>, 
+          0x55afb9b9e0a4 <_PyEval_EvalFrameDefault+10260>, 
+          0x55afb9b9f744 <_PyEval_EvalFrameDefault+16052>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9c9e1 <_PyEval_EvalFrameDefault+4433>, 
+          0x55afb9b9f86b <_PyEval_EvalFrameDefault+16347>, 
+          0x55afb9b9e1d1 <_PyEval_EvalFrameDefault+10561>, 
+          0x55afb9b9c415 <_PyEval_EvalFrameDefault+2949>, 
+          0x55afb9b9d0d9 <_PyEval_EvalFrameDefault+6217>, 
+          0x55afb9b9d32d <_PyEval_EvalFrameDefault+6813>, 
+          0x55afb9b9fddf <_PyEval_EvalFrameDefault+17743>, 
+          0x55afb9ba00b7 <_PyEval_EvalFrameDefault+18471>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad97f9 <_PyEval_EvalFrameDefault-794775>, 
+          0x55afb9b9e607 <_PyEval_EvalFrameDefault+11639>, 
+          0x55afb9b9fa72 <_PyEval_EvalFrameDefault+16866>, 
+          0x55afb9b9ff1d <_PyEval_EvalFrameDefault+18061>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9bdd1 <_PyEval_EvalFrameDefault+1345>, 
+          0x55afb9b9be76 <_PyEval_EvalFrameDefault+1510>, 
+          0x55afb9b9ed13 <_PyEval_EvalFrameDefault+13443>, 
+          0x55afb9b9f040 <_PyEval_EvalFrameDefault+14256>, 
+          0x55afb9b9dcd6 <_PyEval_EvalFrameDefault+9286>, 
+          0x55afb9b9ef43 <_PyEval_EvalFrameDefault+14003>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488> <repeats 90 times>}
+        PyId_displayhook = {next = 0x0, string = 0x55afb9cf302c "displayhook", 
+          object = 0x0}
+        PyId_send = {next = 0x0, string = 0x55afb9cfadcf "send", object = 0x0}
+        PyId___build_class__ = {
+          next = 0x55afb9e00640 <PyId___builtins__.lto_priv.0>, 
+          string = 0x55afb9cfaa80 "__build_class__", 
+          object = '__build_class__'}
+        PyId___annotations__ = {next = 0x55afb9df7d00 <PyId___next__.29>, 
+          string = 0x55afb9cf3a9b "__annotations__", 
+          object = '__annotations__'}
+        PyId___aenter__ = {next = 0x0, string = 0x55afb9cfdd75 "__aenter__", 
+          object = 0x0}
+        PyId___aexit__ = {next = 0x0, string = 0x55afb9cfdd6b "__aexit__", 
+          object = 0x0}
+        PyId___enter__ = {next = 0x55afb9df4c00 <PyId__find_and_load.7>, 
+          string = 0x55afb9cfb71e "__enter__", object = '__enter__'}
+        PyId___exit__ = {next = 0x55afb9df50c0 <PyId___enter__.6>, 
+          string = 0x55afb9cfb728 "__exit__", object = '__exit__'}
+#15 0x000055afb9bad113 in _PyEval_EvalFrame (throwflag=0, 
+    f=Frame 0x55afeed74570, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py, line 639, in _rmtree_safe_fd (topfd=7, path='/home/sureshkj/.sage/temp/SURESH-MURI/4050/ecl', onerror=<function at remote 0x7fa4e1e5da60>, scandir_it=<posix.ScandirIterator at remote 0x7fa132adb0a0>), 
+    tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+No locals.
+#16 function_code_fastcall (tstate=0x55afe6a98200, co=<optimized out>, 
+    args=<optimized out>, nargs=<optimized out>, 
+    globals={'__name__': 'shutil', '__doc__': "Utility functions for copying and archiving files and directory trees.\n\nXXX The functions here don't copy the resource fork or other metadata on Mac.\n\n", '__package__': '', '__loader__': <SourceFileLoader(name='shutil', path='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py') at remote 0x7fa4e22df940>, '__spec__': <ModuleSpec(name='shutil', loader=<...>, origin='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py', loader_state=None, submodule_search_locations=None, _set_fileattr=True, _cached='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/__pycache__/shutil.cpython-39.pyc', _initializing=False) at remote 0x7fa4e22df8e0>, '__file__': '/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py', '__cached__': '/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/__pycache__/shutil.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' obje...(truncated)) at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+        f = Frame 0x55afeed74570, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py, line 639, in _rmtree_safe_fd (topfd=7, path='/home/sureshkj/.sage/temp/SURESH-MURI/4050/ecl', onerror=<function at remote 0x7fa4e1e5da60>, scandir_it=<posix.ScandirIterator at remote 0x7fa132adb0a0>)
+        fastlocals = 0x55afeed746d8
+        result = <optimized out>
+#17 0x000055afb9b9bc4f in _PyObject_VectorcallTstate (kwnames=0x0, 
+    nargsf=<optimized out>, args=0x55afef36d228, 
+    callable=<function at remote 0x7fa4e230c8b0>, tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = <optimized out>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#18 PyObject_Vectorcall (kwnames=0x0, nargsf=<optimized out>, 
+    args=0x55afef36d228, callable=<function at remote 0x7fa4e230c8b0>)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+        tstate = 0x55afe6a98200
+        tstate = <optimized out>
+#19 call_function (kwnames=0x0, oparg=<optimized out>, 
+    pp_stack=<synthetic pointer>, tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+        func = <function at remote 0x7fa4e230c8b0>
+        w = <optimized out>
+        nkwargs = 0
+        nargs = <optimized out>
+        pfunc = 0x55afef36d220
+        x = <optimized out>
+        stack = 0x55afef36d228
+        pfunc = <optimized out>
+        func = <optimized out>
+        x = <optimized out>
+        w = <optimized out>
+        nkwargs = <optimized out>
+        nargs = <optimized out>
+        stack = <optimized out>
+#20 _PyEval_EvalFrameDefault (tstate=<optimized out>, f=<optimized out>, 
+    throwflag=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3520
+        sp = <optimized out>
+        res = <optimized out>
+        __atomic_load_ptr = <optimized out>
+        __atomic_load_tmp = <optimized out>
+        stack_pointer = <optimized out>
+        next_instr = 0x55afe6c39482
+        opcode = <optimized out>
+        oparg = <optimized out>
+        fastlocals = 0x55afef36d1b8
+        freevars = 0x55afef36d218
+        retval = <optimized out>
+        ceval2 = 0x55afe6a988f0
+        eval_breaker = 0x55afe6a988f8
+        co = 0x7fa4e22eb7c0
+        instr_ub = -1
+        instr_lb = <optimized out>
+        instr_prev = -1
+        first_instr = 0x55afe6c39310
+        names = ('os', 'scandir', 'list', 'OSError', 'filename', 'sys', 'exc_info', 'path', 'join', 'name', 'is_dir', 'stat', 'S_ISDIR', 'st_mode', 'lstat', 'open', 'O_RDONLY', 'samestat', 'fstat', '_rmtree_safe_fd', 'close', 'rmdir', 'islink', 'unlink')
+        consts = (None, False, ('follow_symlinks',), ('dir_fd',), True, 'Cannot call rmtree on a symbolic link')
+        co_opcache = <optimized out>
+        main_loop = <optimized out>
+        fast_next_opcode = <optimized out>
+        exception_unwind = <optimized out>
+        __func__ = "_PyEval_EvalFrameDefault"
+        opcode_targets = {0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9c148 <_PyEval_EvalFrameDefault+2232>, 
+          0x55afb9b9d218 <_PyEval_EvalFrameDefault+6536>, 
+          0x55afb9b9cf29 <_PyEval_EvalFrameDefault+5785>, 
+          0x55afb9b9c7dd <_PyEval_EvalFrameDefault+3917>, 
+          0x55afb9b9e6bf <_PyEval_EvalFrameDefault+11823>, 
+          0x55afb9ba0179 <_PyEval_EvalFrameDefault+18665>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad8497 <_PyEval_EvalFrameDefault-799737>, 
+          0x55afb9b9eda2 <_PyEval_EvalFrameDefault+13586>, 
+          0x55afb9b9dae7 <_PyEval_EvalFrameDefault+8791>, 
+          0x55afb9b9e017 <_PyEval_EvalFrameDefault+10119>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f4e0 <_PyEval_EvalFrameDefault+15440>, 
+          0x55afb9b9f44b <_PyEval_EvalFrameDefault+15291>, 
+          0x55afb9ad992a <_PyEval_EvalFrameDefault-794470>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9cda4 <_PyEval_EvalFrameDefault+5396>, 
+          0x55afb9b9c730 <_PyEval_EvalFrameDefault+3744>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9d753 <_PyEval_EvalFrameDefault+7875>, 
+          0x55afb9b9c4d5 <_PyEval_EvalFrameDefault+3141>, 
+          0x55afb9b9c578 <_PyEval_EvalFrameDefault+3304>, 
+          0x55afb9b9c37b <_PyEval_EvalFrameDefault+2795>, 
+          0x55afb9b9db62 <_PyEval_EvalFrameDefault+8914>, 
+          0x55afb9b9cf81 <_PyEval_EvalFrameDefault+5873>, 
+          0x55afb9b9dede <_PyEval_EvalFrameDefault+9806>, 
+          0x55afb9b9f3b6 <_PyEval_EvalFrameDefault+15142>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488> <repeats 18 times>, 
+          0x55afb9b9f667 <_PyEval_EvalFrameDefault+15831>, 
+          0x55afb9b9f27b <_PyEval_EvalFrameDefault+14827>, 
+          0x55afb9ad7c92 <_PyEval_EvalFrameDefault-801790>, 
+          0x55afb9ad7bd6 <_PyEval_EvalFrameDefault-801978>, 
+          0x55afb9ad9227 <_PyEval_EvalFrameDefault-796265>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad9192 <_PyEval_EvalFrameDefault-796414>, 
+          0x55afb9b9cc1c <_PyEval_EvalFrameDefault+5004>, 
+          0x55afb9b9e4ca <_PyEval_EvalFrameDefault+11322>, 
+          0x55afb9b9e572 <_PyEval_EvalFrameDefault+11490>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9ec2c <_PyEval_EvalFrameDefault+13212>, 
+          0x55afb9b9c876 <_PyEval_EvalFrameDefault+4070>, 
+          0x55afb9b9df87 <_PyEval_EvalFrameDefault+9975>, 
+          0x55afb9b9d9dc <_PyEval_EvalFrameDefault+8524>, 
+          0x55afb9b9d4ca <_PyEval_EvalFrameDefault+7226>, 
+          0x55afb9b9d037 <_PyEval_EvalFrameDefault+6055>, 
+          0x55afb9b9e436 <_PyEval_EvalFrameDefault+11174>, 
+          0x55afb9b9d92a <_PyEval_EvalFrameDefault+8346>, 
+          0x55afb9b9f9d6 <_PyEval_EvalFrameDefault+16710>, 
+          0x55afb9b9ce4c <_PyEval_EvalFrameDefault+5564>, 
+          0x55afb9b9f1ec <_PyEval_EvalFrameDefault+14684>, 
+          0x55afb9b9ee1b <_PyEval_EvalFrameDefault+13707>, 
+          0x55afb9b9fce3 <_PyEval_EvalFrameDefault+17491>, 
+          0x55afb9b9d433 <_PyEval_EvalFrameDefault+7075>, 
+          0x55afb9b9fe80 <_PyEval_EvalFrameDefault+17904>, 
+          0x55afb9b9ecc1 <_PyEval_EvalFrameDefault+13361>, 
+          0x55afb9b9d6ab <_PyEval_EvalFrameDefault+7707>, 
+          0x55afb9b9eeaf <_PyEval_EvalFrameDefault+13855>, 
+          0x55afb9b9eb94 <_PyEval_EvalFrameDefault+13060>, 
+          0x55afb9b9e117 <_PyEval_EvalFrameDefault+10375>, 
+          0x55afb9b9eb00 <_PyEval_EvalFrameDefault+12912>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f332 <_PyEval_EvalFrameDefault+15010>, 
+          0x55afb9b9bd71 <_PyEval_EvalFrameDefault+1249>, 
+          0x55afb9b9e875 <_PyEval_EvalFrameDefault+12261>, 
+          0x55afb9b9e7b1 <_PyEval_EvalFrameDefault+12065>, 
+          0x55afb9b9ccbb <_PyEval_EvalFrameDefault+5163>, 
+          0x55afb9b9cec6 <_PyEval_EvalFrameDefault+5686>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9dd5f <_PyEval_EvalFrameDefault+9423>, 
+          0x55afb9b9e34d <_PyEval_EvalFrameDefault+10941>, 
+          0x55afb9b9fc6c <_PyEval_EvalFrameDefault+17372>, 
+          0x55afb9b9c61e <_PyEval_EvalFrameDefault+3470>, 
+          0x55afb9b9c199 <_PyEval_EvalFrameDefault+2313>, 
+          0x55afb9b9f0c5 <_PyEval_EvalFrameDefault+14389>, 
+          0x55afb9b9c431 <_PyEval_EvalFrameDefault+2977>, 
+          0x55afb9b9d8a2 <_PyEval_EvalFrameDefault+8210>, 
+          0x55afb9b9f161 <_PyEval_EvalFrameDefault+14545>, 
+          0x55afb9ad806f <_PyEval_EvalFrameDefault-800801>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9ba43 <_PyEval_EvalFrameDefault+435>, 
+          0x55afb9b9de46 <_PyEval_EvalFrameDefault+9654>, 
+          0x55afb9b9cb20 <_PyEval_EvalFrameDefault+4752>, 
+          0x55afb9b9d3bc <_PyEval_EvalFrameDefault+6956>, 
+          0x55afb9b9efc6 <_PyEval_EvalFrameDefault+14134>, 
+          0x55afb9b9d161 <_PyEval_EvalFrameDefault+6353>, 
+          0x55afb9b9bfb0 <_PyEval_EvalFrameDefault+1824>, 
+          0x55afb9b9c035 <_PyEval_EvalFrameDefault+1957>, 
+          0x55afb9b9f55a <_PyEval_EvalFrameDefault+15562>, 
+          0x55afb9b9e718 <_PyEval_EvalFrameDefault+11912>, 
+          0x55afb9b9c82d <_PyEval_EvalFrameDefault+3997>, 
+          0x55afb9b9d56c <_PyEval_EvalFrameDefault+7388>, 
+          0x55afb9b9d80c <_PyEval_EvalFrameDefault+8060>, 
+          0x55afb9b9c29f <_PyEval_EvalFrameDefault+2575>, 
+          0x55afb9b9bcf7 <_PyEval_EvalFrameDefault+1127>, 
+          0x55afb9b9c0d0 <_PyEval_EvalFrameDefault+2112>, 
+          0x55afb9b9bb00 <_PyEval_EvalFrameDefault+624>, 
+          0x55afb9b9c2f8 <_PyEval_EvalFrameDefault+2664>, 
+          0x55afb9b9c924 <_PyEval_EvalFrameDefault+4244>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9dc04 <_PyEval_EvalFrameDefault+9076>, 
+          0x55afb9b9cd10 <_PyEval_EvalFrameDefault+5248>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9b9e3 <_PyEval_EvalFrameDefault+339>, 
+          0x55afb9b9ba9a <_PyEval_EvalFrameDefault+522>, 
+          0x55afb9b9fd68 <_PyEval_EvalFrameDefault+17624>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f7bc <_PyEval_EvalFrameDefault+16172>, 
+          0x55afb9b9bbe3 <_PyEval_EvalFrameDefault+851>, 
+          0x55afb9b9d5cc <_PyEval_EvalFrameDefault+7484>, 
+          0x55afb9b9d268 <_PyEval_EvalFrameDefault+6616>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9da7f <_PyEval_EvalFrameDefault+8687>, 
+          0x55afb9b9c22b <_PyEval_EvalFrameDefault+2459>, 
+          0x55afb9b9e0a4 <_PyEval_EvalFrameDefault+10260>, 
+          0x55afb9b9f744 <_PyEval_EvalFrameDefault+16052>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9c9e1 <_PyEval_EvalFrameDefault+4433>, 
+          0x55afb9b9f86b <_PyEval_EvalFrameDefault+16347>, 
+          0x55afb9b9e1d1 <_PyEval_EvalFrameDefault+10561>, 
+          0x55afb9b9c415 <_PyEval_EvalFrameDefault+2949>, 
+          0x55afb9b9d0d9 <_PyEval_EvalFrameDefault+6217>, 
+          0x55afb9b9d32d <_PyEval_EvalFrameDefault+6813>, 
+          0x55afb9b9fddf <_PyEval_EvalFrameDefault+17743>, 
+          0x55afb9ba00b7 <_PyEval_EvalFrameDefault+18471>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad97f9 <_PyEval_EvalFrameDefault-794775>, 
+          0x55afb9b9e607 <_PyEval_EvalFrameDefault+11639>, 
+          0x55afb9b9fa72 <_PyEval_EvalFrameDefault+16866>, 
+          0x55afb9b9ff1d <_PyEval_EvalFrameDefault+18061>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9bdd1 <_PyEval_EvalFrameDefault+1345>, 
+          0x55afb9b9be76 <_PyEval_EvalFrameDefault+1510>, 
+          0x55afb9b9ed13 <_PyEval_EvalFrameDefault+13443>, 
+          0x55afb9b9f040 <_PyEval_EvalFrameDefault+14256>, 
+          0x55afb9b9dcd6 <_PyEval_EvalFrameDefault+9286>, 
+          0x55afb9b9ef43 <_PyEval_EvalFrameDefault+14003>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488> <repeats 90 times>}
+        PyId_displayhook = {next = 0x0, string = 0x55afb9cf302c "displayhook", 
+          object = 0x0}
+        PyId_send = {next = 0x0, string = 0x55afb9cfadcf "send", object = 0x0}
+        PyId___build_class__ = {
+          next = 0x55afb9e00640 <PyId___builtins__.lto_priv.0>, 
+          string = 0x55afb9cfaa80 "__build_class__", 
+          object = '__build_class__'}
+        PyId___annotations__ = {next = 0x55afb9df7d00 <PyId___next__.29>, 
+          string = 0x55afb9cf3a9b "__annotations__", 
+          object = '__annotations__'}
+        PyId___aenter__ = {next = 0x0, string = 0x55afb9cfdd75 "__aenter__", 
+          object = 0x0}
+        PyId___aexit__ = {next = 0x0, string = 0x55afb9cfdd6b "__aexit__", 
+          object = 0x0}
+        PyId___enter__ = {next = 0x55afb9df4c00 <PyId__find_and_load.7>, 
+          string = 0x55afb9cfb71e "__enter__", object = '__enter__'}
+        PyId___exit__ = {next = 0x55afb9df50c0 <PyId___enter__.6>, 
+          string = 0x55afb9cfb728 "__exit__", object = '__exit__'}
+#21 0x000055afb9bad113 in _PyEval_EvalFrame (throwflag=0, 
+    f=Frame 0x55afef36d050, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py, line 667, in _rmtree_safe_fd (topfd=6, path='/home/sureshkj/.sage/temp/SURESH-MURI/4050', onerror=<function at remote 0x7fa4e1e5da60>, scandir_it=<posix.ScandirIterator at remote 0x7fa4e14211f0>, entries=[<posix.DirEntry at remote 0x7fa440ea18a0>], entry=<...>, fullname='/home/sureshkj/.sage/temp/SURESH-MURI/4050/ecl', is_dir=True, orig_st=<os.stat_result at remote 0x7fa438759700>, dirfd=7, dirfd_closed=False), tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+No locals.
+#22 function_code_fastcall (tstate=0x55afe6a98200, co=<optimized out>, 
+    args=<optimized out>, nargs=<optimized out>, 
+    globals={'__name__': 'shutil', '__doc__': "Utility functions for copying and archiving files and directory trees.\n\nXXX The functions here don't copy the resource fork or other metadata on Mac.\n\n", '__package__': '', '__loader__': <SourceFileLoader(name='shutil', path='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py') at remote 0x7fa4e22df940>, '__spec__': <ModuleSpec(name='shutil', loader=<...>, origin='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py', loader_state=None, submodule_search_locations=None, _set_fileattr=True, _cached='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/__pycache__/shutil.cpython-39.pyc', _initializing=False) at remote 0x7fa4e22df8e0>, '__file__': '/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py', '__cached__': '/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/__pycache__/shutil.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' obje...(truncated)) at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+        f = Frame 0x55afef36d050, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py, line 667, in _rmtree_safe_fd (topfd=6, path='/home/sureshkj/.sage/temp/SURESH-MURI/4050', onerror=<function at remote 0x7fa4e1e5da60>, scandir_it=<posix.ScandirIterator at remote 0x7fa4e14211f0>, entries=[<posix.DirEntry at remote 0x7fa440ea18a0>], entry=<...>, fullname='/home/sureshkj/.sage/temp/SURESH-MURI/4050/ecl', is_dir=True, orig_st=<os.stat_result at remote 0x7fa438759700>, dirfd=7, dirfd_closed=False)
+        fastlocals = 0x55afef36d1b8
+        result = <optimized out>
+#23 0x000055afb9b9bc4f in _PyObject_VectorcallTstate (kwnames=0x0, 
+    nargsf=<optimized out>, args=0x55afeee76260, 
+    callable=<function at remote 0x7fa4e230c8b0>, tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = <optimized out>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#24 PyObject_Vectorcall (kwnames=0x0, nargsf=<optimized out>, 
+    args=0x55afeee76260, callable=<function at remote 0x7fa4e230c8b0>)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+        tstate = 0x55afe6a98200
+        tstate = <optimized out>
+#25 call_function (kwnames=0x0, oparg=<optimized out>, 
+    pp_stack=<synthetic pointer>, tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+        func = <function at remote 0x7fa4e230c8b0>
+        w = <optimized out>
+        nkwargs = 0
+        nargs = <optimized out>
+        pfunc = 0x55afeee76258
+        x = <optimized out>
+        stack = 0x55afeee76260
+        pfunc = <optimized out>
+        func = <optimized out>
+        x = <optimized out>
+        w = <optimized out>
+        nkwargs = <optimized out>
+        nargs = <optimized out>
+        stack = <optimized out>
+#26 _PyEval_EvalFrameDefault (tstate=<optimized out>, f=<optimized out>, 
+    throwflag=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3520
+        sp = <optimized out>
+        res = <optimized out>
+        __atomic_load_ptr = <optimized out>
+        __atomic_load_tmp = <optimized out>
+        stack_pointer = <optimized out>
+        next_instr = 0x7fa4e23a492a
+        opcode = <optimized out>
+        oparg = <optimized out>
+        fastlocals = 0x55afeee76228
+        freevars = 0x55afeee76258
+        retval = <optimized out>
+        ceval2 = 0x55afe6a988f0
+        eval_breaker = 0x55afe6a988f8
+        co = 0x7fa4e22eb9d0
+        instr_ub = -1
+        instr_lb = <optimized out>
+        instr_prev = -1
+        first_instr = 0x7fa4e23a4850
+        names = ('sys', 'audit', '_use_fd_functions', 'isinstance', 'bytes', 'os', 'fsdecode', 'lstat', 'Exception', 'exc_info', 'open', 'O_RDONLY', 'path', 'samestat', 'fstat', '_rmtree_safe_fd', 'close', 'rmdir', 'OSError', 'islink', '_rmtree_islink', '_rmtree_unsafe')
+        consts = ('Recursively delete a directory tree.\n\n    If ignore_errors is set, errors are ignored; otherwise, if onerror\n    is set, it is called to handle the error with arguments (func,\n    path, exc_info) where func is platform and implementation dependent;\n    path is the argument to that function that caused it to fail; and\n    exc_info is a tuple returned by sys.exc_info().  If ignore_errors\n    is false and onerror is None, an exception is raised.\n\n    ', 'shutil.rmtree', <code at remote 0x7fa4e22eb870>, 'rmtree.<locals>.onerror', None, <code at remote 0x7fa4e22eb920>, False, True, 'Cannot call rmtree on a symbolic link')
+        co_opcache = <optimized out>
+        main_loop = <optimized out>
+        fast_next_opcode = <optimized out>
+        exception_unwind = <optimized out>
+        __func__ = "_PyEval_EvalFrameDefault"
+        opcode_targets = {0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9c148 <_PyEval_EvalFrameDefault+2232>, 
+          0x55afb9b9d218 <_PyEval_EvalFrameDefault+6536>, 
+          0x55afb9b9cf29 <_PyEval_EvalFrameDefault+5785>, 
+          0x55afb9b9c7dd <_PyEval_EvalFrameDefault+3917>, 
+          0x55afb9b9e6bf <_PyEval_EvalFrameDefault+11823>, 
+          0x55afb9ba0179 <_PyEval_EvalFrameDefault+18665>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad8497 <_PyEval_EvalFrameDefault-799737>, 
+          0x55afb9b9eda2 <_PyEval_EvalFrameDefault+13586>, 
+          0x55afb9b9dae7 <_PyEval_EvalFrameDefault+8791>, 
+          0x55afb9b9e017 <_PyEval_EvalFrameDefault+10119>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f4e0 <_PyEval_EvalFrameDefault+15440>, 
+          0x55afb9b9f44b <_PyEval_EvalFrameDefault+15291>, 
+          0x55afb9ad992a <_PyEval_EvalFrameDefault-794470>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9cda4 <_PyEval_EvalFrameDefault+5396>, 
+          0x55afb9b9c730 <_PyEval_EvalFrameDefault+3744>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9d753 <_PyEval_EvalFrameDefault+7875>, 
+          0x55afb9b9c4d5 <_PyEval_EvalFrameDefault+3141>, 
+          0x55afb9b9c578 <_PyEval_EvalFrameDefault+3304>, 
+          0x55afb9b9c37b <_PyEval_EvalFrameDefault+2795>, 
+          0x55afb9b9db62 <_PyEval_EvalFrameDefault+8914>, 
+          0x55afb9b9cf81 <_PyEval_EvalFrameDefault+5873>, 
+          0x55afb9b9dede <_PyEval_EvalFrameDefault+9806>, 
+          0x55afb9b9f3b6 <_PyEval_EvalFrameDefault+15142>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488> <repeats 18 times>, 
+          0x55afb9b9f667 <_PyEval_EvalFrameDefault+15831>, 
+          0x55afb9b9f27b <_PyEval_EvalFrameDefault+14827>, 
+          0x55afb9ad7c92 <_PyEval_EvalFrameDefault-801790>, 
+          0x55afb9ad7bd6 <_PyEval_EvalFrameDefault-801978>, 
+          0x55afb9ad9227 <_PyEval_EvalFrameDefault-796265>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad9192 <_PyEval_EvalFrameDefault-796414>, 
+          0x55afb9b9cc1c <_PyEval_EvalFrameDefault+5004>, 
+          0x55afb9b9e4ca <_PyEval_EvalFrameDefault+11322>, 
+          0x55afb9b9e572 <_PyEval_EvalFrameDefault+11490>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9ec2c <_PyEval_EvalFrameDefault+13212>, 
+          0x55afb9b9c876 <_PyEval_EvalFrameDefault+4070>, 
+          0x55afb9b9df87 <_PyEval_EvalFrameDefault+9975>, 
+          0x55afb9b9d9dc <_PyEval_EvalFrameDefault+8524>, 
+          0x55afb9b9d4ca <_PyEval_EvalFrameDefault+7226>, 
+          0x55afb9b9d037 <_PyEval_EvalFrameDefault+6055>, 
+          0x55afb9b9e436 <_PyEval_EvalFrameDefault+11174>, 
+          0x55afb9b9d92a <_PyEval_EvalFrameDefault+8346>, 
+          0x55afb9b9f9d6 <_PyEval_EvalFrameDefault+16710>, 
+          0x55afb9b9ce4c <_PyEval_EvalFrameDefault+5564>, 
+          0x55afb9b9f1ec <_PyEval_EvalFrameDefault+14684>, 
+          0x55afb9b9ee1b <_PyEval_EvalFrameDefault+13707>, 
+          0x55afb9b9fce3 <_PyEval_EvalFrameDefault+17491>, 
+          0x55afb9b9d433 <_PyEval_EvalFrameDefault+7075>, 
+          0x55afb9b9fe80 <_PyEval_EvalFrameDefault+17904>, 
+          0x55afb9b9ecc1 <_PyEval_EvalFrameDefault+13361>, 
+          0x55afb9b9d6ab <_PyEval_EvalFrameDefault+7707>, 
+          0x55afb9b9eeaf <_PyEval_EvalFrameDefault+13855>, 
+          0x55afb9b9eb94 <_PyEval_EvalFrameDefault+13060>, 
+          0x55afb9b9e117 <_PyEval_EvalFrameDefault+10375>, 
+          0x55afb9b9eb00 <_PyEval_EvalFrameDefault+12912>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f332 <_PyEval_EvalFrameDefault+15010>, 
+          0x55afb9b9bd71 <_PyEval_EvalFrameDefault+1249>, 
+          0x55afb9b9e875 <_PyEval_EvalFrameDefault+12261>, 
+          0x55afb9b9e7b1 <_PyEval_EvalFrameDefault+12065>, 
+          0x55afb9b9ccbb <_PyEval_EvalFrameDefault+5163>, 
+          0x55afb9b9cec6 <_PyEval_EvalFrameDefault+5686>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9dd5f <_PyEval_EvalFrameDefault+9423>, 
+          0x55afb9b9e34d <_PyEval_EvalFrameDefault+10941>, 
+          0x55afb9b9fc6c <_PyEval_EvalFrameDefault+17372>, 
+          0x55afb9b9c61e <_PyEval_EvalFrameDefault+3470>, 
+          0x55afb9b9c199 <_PyEval_EvalFrameDefault+2313>, 
+          0x55afb9b9f0c5 <_PyEval_EvalFrameDefault+14389>, 
+          0x55afb9b9c431 <_PyEval_EvalFrameDefault+2977>, 
+          0x55afb9b9d8a2 <_PyEval_EvalFrameDefault+8210>, 
+          0x55afb9b9f161 <_PyEval_EvalFrameDefault+14545>, 
+          0x55afb9ad806f <_PyEval_EvalFrameDefault-800801>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9ba43 <_PyEval_EvalFrameDefault+435>, 
+          0x55afb9b9de46 <_PyEval_EvalFrameDefault+9654>, 
+          0x55afb9b9cb20 <_PyEval_EvalFrameDefault+4752>, 
+          0x55afb9b9d3bc <_PyEval_EvalFrameDefault+6956>, 
+          0x55afb9b9efc6 <_PyEval_EvalFrameDefault+14134>, 
+          0x55afb9b9d161 <_PyEval_EvalFrameDefault+6353>, 
+          0x55afb9b9bfb0 <_PyEval_EvalFrameDefault+1824>, 
+          0x55afb9b9c035 <_PyEval_EvalFrameDefault+1957>, 
+          0x55afb9b9f55a <_PyEval_EvalFrameDefault+15562>, 
+          0x55afb9b9e718 <_PyEval_EvalFrameDefault+11912>, 
+          0x55afb9b9c82d <_PyEval_EvalFrameDefault+3997>, 
+          0x55afb9b9d56c <_PyEval_EvalFrameDefault+7388>, 
+          0x55afb9b9d80c <_PyEval_EvalFrameDefault+8060>, 
+          0x55afb9b9c29f <_PyEval_EvalFrameDefault+2575>, 
+          0x55afb9b9bcf7 <_PyEval_EvalFrameDefault+1127>, 
+          0x55afb9b9c0d0 <_PyEval_EvalFrameDefault+2112>, 
+          0x55afb9b9bb00 <_PyEval_EvalFrameDefault+624>, 
+          0x55afb9b9c2f8 <_PyEval_EvalFrameDefault+2664>, 
+          0x55afb9b9c924 <_PyEval_EvalFrameDefault+4244>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9dc04 <_PyEval_EvalFrameDefault+9076>, 
+          0x55afb9b9cd10 <_PyEval_EvalFrameDefault+5248>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9b9e3 <_PyEval_EvalFrameDefault+339>, 
+          0x55afb9b9ba9a <_PyEval_EvalFrameDefault+522>, 
+          0x55afb9b9fd68 <_PyEval_EvalFrameDefault+17624>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f7bc <_PyEval_EvalFrameDefault+16172>, 
+          0x55afb9b9bbe3 <_PyEval_EvalFrameDefault+851>, 
+          0x55afb9b9d5cc <_PyEval_EvalFrameDefault+7484>, 
+          0x55afb9b9d268 <_PyEval_EvalFrameDefault+6616>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9da7f <_PyEval_EvalFrameDefault+8687>, 
+          0x55afb9b9c22b <_PyEval_EvalFrameDefault+2459>, 
+          0x55afb9b9e0a4 <_PyEval_EvalFrameDefault+10260>, 
+          0x55afb9b9f744 <_PyEval_EvalFrameDefault+16052>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9c9e1 <_PyEval_EvalFrameDefault+4433>, 
+          0x55afb9b9f86b <_PyEval_EvalFrameDefault+16347>, 
+          0x55afb9b9e1d1 <_PyEval_EvalFrameDefault+10561>, 
+          0x55afb9b9c415 <_PyEval_EvalFrameDefault+2949>, 
+          0x55afb9b9d0d9 <_PyEval_EvalFrameDefault+6217>, 
+          0x55afb9b9d32d <_PyEval_EvalFrameDefault+6813>, 
+          0x55afb9b9fddf <_PyEval_EvalFrameDefault+17743>, 
+          0x55afb9ba00b7 <_PyEval_EvalFrameDefault+18471>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad97f9 <_PyEval_EvalFrameDefault-794775>, 
+          0x55afb9b9e607 <_PyEval_EvalFrameDefault+11639>, 
+          0x55afb9b9fa72 <_PyEval_EvalFrameDefault+16866>, 
+          0x55afb9b9ff1d <_PyEval_EvalFrameDefault+18061>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9bdd1 <_PyEval_EvalFrameDefault+1345>, 
+          0x55afb9b9be76 <_PyEval_EvalFrameDefault+1510>, 
+          0x55afb9b9ed13 <_PyEval_EvalFrameDefault+13443>, 
+          0x55afb9b9f040 <_PyEval_EvalFrameDefault+14256>, 
+          0x55afb9b9dcd6 <_PyEval_EvalFrameDefault+9286>, 
+          0x55afb9b9ef43 <_PyEval_EvalFrameDefault+14003>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488> <repeats 90 times>}
+        PyId_displayhook = {next = 0x0, string = 0x55afb9cf302c "displayhook", 
+          object = 0x0}
+        PyId_send = {next = 0x0, string = 0x55afb9cfadcf "send", object = 0x0}
+        PyId___build_class__ = {
+          next = 0x55afb9e00640 <PyId___builtins__.lto_priv.0>, 
+          string = 0x55afb9cfaa80 "__build_class__", 
+          object = '__build_class__'}
+        PyId___annotations__ = {next = 0x55afb9df7d00 <PyId___next__.29>, 
+          string = 0x55afb9cf3a9b "__annotations__", 
+          object = '__annotations__'}
+        PyId___aenter__ = {next = 0x0, string = 0x55afb9cfdd75 "__aenter__", 
+          object = 0x0}
+        PyId___aexit__ = {next = 0x0, string = 0x55afb9cfdd6b "__aexit__", 
+          object = 0x0}
+        PyId___enter__ = {next = 0x55afb9df4c00 <PyId__find_and_load.7>, 
+          string = 0x55afb9cfb71e "__enter__", object = '__enter__'}
+        PyId___exit__ = {next = 0x55afb9df50c0 <PyId___enter__.6>, 
+          string = 0x55afb9cfb728 "__exit__", object = '__exit__'}
+#27 0x000055afb9b9a8b7 in _PyEval_EvalFrame (throwflag=0, 
+    f=Frame 0x55afeee760c0, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/shutil.py, line 734, in rmtree (path='/home/sureshkj/.sage/temp/SURESH-MURI/4050', ignore_errors=True, onerror=<function at remote 0x7fa4e1e5da60>, orig_st=<os.stat_result at remote 0x7fa449854580>, fd=6, fd_closed=False), 
+    tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+No locals.
+#28 _PyEval_EvalCode (tstate=<optimized out>, 
+    _co=<code at remote 0x7fa4e22eb9d0>, globals=<optimized out>, 
+    locals=<optimized out>, args=<optimized out>, argcount=<optimized out>, 
+    kwnames=<optimized out>, kwargs=<optimized out>, kwcount=<optimized out>, 
+    kwstep=<optimized out>, defs=<optimized out>, defcount=<optimized out>, 
+    kwdefs=<optimized out>, closure=<optimized out>, name=<optimized out>, 
+    qualname=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:4329
+        co = 0x7fa4e22eb9d0
+        f = <optimized out>
+        retval = 0x0
+        fastlocals = <optimized out>
+        freevars = <optimized out>
+        x = <optimized out>
+        u = <optimized out>
+        total_args = <optimized out>
+        i = <optimized out>
+        j = <optimized out>
+        n = <optimized out>
+        kwdict = <optimized out>
+#29 0x000055afb9bace09 in _PyFunction_Vectorcall (func=<optimized out>, 
+    stack=<optimized out>, nargsf=<optimized out>, kwnames=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Objects/call.c:396
+        nargs = <optimized out>
+        nkwargs = <optimized out>
+        tstate = <optimized out>
+        co = <optimized out>
+        globals = <optimized out>
+        argdefs = <optimized out>
+        kwdefs = <optimized out>
+        closure = <optimized out>
+        name = <optimized out>
+        qualname = <optimized out>
+        d = <optimized out>
+        nd = <optimized out>
+#30 0x000055afb9b9ca70 in _PyObject_VectorcallTstate (
+    kwnames=('ignore_errors',), nargsf=<optimized out>, args=<optimized out>, 
+    callable=<function at remote 0x7fa4e230c940>, tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = <optimized out>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#31 PyObject_Vectorcall (kwnames=('ignore_errors',), nargsf=<optimized out>, 
+    args=<optimized out>, callable=<function at remote 0x7fa4e230c940>)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+        tstate = 0x55afe6a98200
+        tstate = <optimized out>
+#32 call_function (kwnames=('ignore_errors',), oparg=<optimized out>, 
+    pp_stack=<synthetic pointer>, tstate=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+        func = <function at remote 0x7fa4e230c940>
+        w = <optimized out>
+        nkwargs = <optimized out>
+        nargs = <optimized out>
+        pfunc = 0x55afeee64298
+        x = <optimized out>
+        stack = <optimized out>
+        pfunc = <optimized out>
+        func = <optimized out>
+        x = <optimized out>
+        w = <optimized out>
+        nkwargs = <optimized out>
+        nargs = <optimized out>
+        stack = <optimized out>
+#33 _PyEval_EvalFrameDefault (tstate=<optimized out>, f=<optimized out>, 
+    throwflag=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3537
+        __atomic_load_ptr = <optimized out>
+        sp = 0x55afeee642b0
+        res = <optimized out>
+        names = ('ignore_errors',)
+        __atomic_load_tmp = <optimized out>
+        stack_pointer = 0x55afeee642b0
+        next_instr = 0x7fa4de7c6614
+        opcode = <optimized out>
+        oparg = <optimized out>
+        fastlocals = 0x55afeee64288
+        freevars = 0x55afeee64298
+        retval = <optimized out>
+        ceval2 = 0x55afe6a988f0
+        eval_breaker = 0x55afe6a988f8
+        co = 0x7fa4de7c7500
+        instr_ub = -1
+        instr_lb = <optimized out>
+        instr_prev = -1
+        first_instr = 0x7fa4de7c65f0
+        names = ('shutil', 'sage.misc.misc', 'SAGE_TMP', 'rmtree', 'str')
+        consts = ('\n    Remove the directory ``SAGE_TMP``.\n\n    TESTS:\n\n    This is automatically run when Sage exits, test this by running a\n    separate session of Sage::\n\n        sage: from sage.tests.cmdline import test_executable\n        sage: child_SAGE_TMP, err, ret = test_executable(["sage", "-c", "print(SAGE_TMP)"])\n        sage: err, ret\n        (\'\', 0)\n        sage: os.path.exists(child_SAGE_TMP)  # indirect doctest\n        False\n\n    The parent directory should exist::\n\n        sage: parent_SAGE_TMP = os.path.normpath(child_SAGE_TMP + \'/..\')\n        sage: os.path.isdir(parent_SAGE_TMP)\n        True\n    ', 0, None, ('SAGE_TMP',), True, ('ignore_errors',))
+        co_opcache = <optimized out>
+        main_loop = <optimized out>
+        fast_next_opcode = <optimized out>
+        exception_unwind = <optimized out>
+        __func__ = "_PyEval_EvalFrameDefault"
+        opcode_targets = {0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9c148 <_PyEval_EvalFrameDefault+2232>, 
+          0x55afb9b9d218 <_PyEval_EvalFrameDefault+6536>, 
+          0x55afb9b9cf29 <_PyEval_EvalFrameDefault+5785>, 
+          0x55afb9b9c7dd <_PyEval_EvalFrameDefault+3917>, 
+          0x55afb9b9e6bf <_PyEval_EvalFrameDefault+11823>, 
+          0x55afb9ba0179 <_PyEval_EvalFrameDefault+18665>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad8497 <_PyEval_EvalFrameDefault-799737>, 
+          0x55afb9b9eda2 <_PyEval_EvalFrameDefault+13586>, 
+          0x55afb9b9dae7 <_PyEval_EvalFrameDefault+8791>, 
+          0x55afb9b9e017 <_PyEval_EvalFrameDefault+10119>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f4e0 <_PyEval_EvalFrameDefault+15440>, 
+          0x55afb9b9f44b <_PyEval_EvalFrameDefault+15291>, 
+          0x55afb9ad992a <_PyEval_EvalFrameDefault-794470>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9cda4 <_PyEval_EvalFrameDefault+5396>, 
+          0x55afb9b9c730 <_PyEval_EvalFrameDefault+3744>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9d753 <_PyEval_EvalFrameDefault+7875>, 
+          0x55afb9b9c4d5 <_PyEval_EvalFrameDefault+3141>, 
+          0x55afb9b9c578 <_PyEval_EvalFrameDefault+3304>, 
+          0x55afb9b9c37b <_PyEval_EvalFrameDefault+2795>, 
+          0x55afb9b9db62 <_PyEval_EvalFrameDefault+8914>, 
+          0x55afb9b9cf81 <_PyEval_EvalFrameDefault+5873>, 
+          0x55afb9b9dede <_PyEval_EvalFrameDefault+9806>, 
+          0x55afb9b9f3b6 <_PyEval_EvalFrameDefault+15142>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488> <repeats 18 times>, 
+          0x55afb9b9f667 <_PyEval_EvalFrameDefault+15831>, 
+          0x55afb9b9f27b <_PyEval_EvalFrameDefault+14827>, 
+          0x55afb9ad7c92 <_PyEval_EvalFrameDefault-801790>, 
+          0x55afb9ad7bd6 <_PyEval_EvalFrameDefault-801978>, 
+          0x55afb9ad9227 <_PyEval_EvalFrameDefault-796265>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad9192 <_PyEval_EvalFrameDefault-796414>, 
+          0x55afb9b9cc1c <_PyEval_EvalFrameDefault+5004>, 
+          0x55afb9b9e4ca <_PyEval_EvalFrameDefault+11322>, 
+          0x55afb9b9e572 <_PyEval_EvalFrameDefault+11490>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9ec2c <_PyEval_EvalFrameDefault+13212>, 
+          0x55afb9b9c876 <_PyEval_EvalFrameDefault+4070>, 
+          0x55afb9b9df87 <_PyEval_EvalFrameDefault+9975>, 
+          0x55afb9b9d9dc <_PyEval_EvalFrameDefault+8524>, 
+          0x55afb9b9d4ca <_PyEval_EvalFrameDefault+7226>, 
+          0x55afb9b9d037 <_PyEval_EvalFrameDefault+6055>, 
+          0x55afb9b9e436 <_PyEval_EvalFrameDefault+11174>, 
+          0x55afb9b9d92a <_PyEval_EvalFrameDefault+8346>, 
+          0x55afb9b9f9d6 <_PyEval_EvalFrameDefault+16710>, 
+          0x55afb9b9ce4c <_PyEval_EvalFrameDefault+5564>, 
+          0x55afb9b9f1ec <_PyEval_EvalFrameDefault+14684>, 
+          0x55afb9b9ee1b <_PyEval_EvalFrameDefault+13707>, 
+          0x55afb9b9fce3 <_PyEval_EvalFrameDefault+17491>, 
+          0x55afb9b9d433 <_PyEval_EvalFrameDefault+7075>, 
+          0x55afb9b9fe80 <_PyEval_EvalFrameDefault+17904>, 
+          0x55afb9b9ecc1 <_PyEval_EvalFrameDefault+13361>, 
+          0x55afb9b9d6ab <_PyEval_EvalFrameDefault+7707>, 
+          0x55afb9b9eeaf <_PyEval_EvalFrameDefault+13855>, 
+          0x55afb9b9eb94 <_PyEval_EvalFrameDefault+13060>, 
+          0x55afb9b9e117 <_PyEval_EvalFrameDefault+10375>, 
+          0x55afb9b9eb00 <_PyEval_EvalFrameDefault+12912>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f332 <_PyEval_EvalFrameDefault+15010>, 
+          0x55afb9b9bd71 <_PyEval_EvalFrameDefault+1249>, 
+          0x55afb9b9e875 <_PyEval_EvalFrameDefault+12261>, 
+          0x55afb9b9e7b1 <_PyEval_EvalFrameDefault+12065>, 
+          0x55afb9b9ccbb <_PyEval_EvalFrameDefault+5163>, 
+          0x55afb9b9cec6 <_PyEval_EvalFrameDefault+5686>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9dd5f <_PyEval_EvalFrameDefault+9423>, 
+          0x55afb9b9e34d <_PyEval_EvalFrameDefault+10941>, 
+          0x55afb9b9fc6c <_PyEval_EvalFrameDefault+17372>, 
+          0x55afb9b9c61e <_PyEval_EvalFrameDefault+3470>, 
+          0x55afb9b9c199 <_PyEval_EvalFrameDefault+2313>, 
+          0x55afb9b9f0c5 <_PyEval_EvalFrameDefault+14389>, 
+          0x55afb9b9c431 <_PyEval_EvalFrameDefault+2977>, 
+          0x55afb9b9d8a2 <_PyEval_EvalFrameDefault+8210>, 
+          0x55afb9b9f161 <_PyEval_EvalFrameDefault+14545>, 
+          0x55afb9ad806f <_PyEval_EvalFrameDefault-800801>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9ba43 <_PyEval_EvalFrameDefault+435>, 
+          0x55afb9b9de46 <_PyEval_EvalFrameDefault+9654>, 
+          0x55afb9b9cb20 <_PyEval_EvalFrameDefault+4752>, 
+          0x55afb9b9d3bc <_PyEval_EvalFrameDefault+6956>, 
+          0x55afb9b9efc6 <_PyEval_EvalFrameDefault+14134>, 
+          0x55afb9b9d161 <_PyEval_EvalFrameDefault+6353>, 
+          0x55afb9b9bfb0 <_PyEval_EvalFrameDefault+1824>, 
+          0x55afb9b9c035 <_PyEval_EvalFrameDefault+1957>, 
+          0x55afb9b9f55a <_PyEval_EvalFrameDefault+15562>, 
+          0x55afb9b9e718 <_PyEval_EvalFrameDefault+11912>, 
+          0x55afb9b9c82d <_PyEval_EvalFrameDefault+3997>, 
+          0x55afb9b9d56c <_PyEval_EvalFrameDefault+7388>, 
+          0x55afb9b9d80c <_PyEval_EvalFrameDefault+8060>, 
+          0x55afb9b9c29f <_PyEval_EvalFrameDefault+2575>, 
+          0x55afb9b9bcf7 <_PyEval_EvalFrameDefault+1127>, 
+          0x55afb9b9c0d0 <_PyEval_EvalFrameDefault+2112>, 
+          0x55afb9b9bb00 <_PyEval_EvalFrameDefault+624>, 
+          0x55afb9b9c2f8 <_PyEval_EvalFrameDefault+2664>, 
+          0x55afb9b9c924 <_PyEval_EvalFrameDefault+4244>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9dc04 <_PyEval_EvalFrameDefault+9076>, 
+          0x55afb9b9cd10 <_PyEval_EvalFrameDefault+5248>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9b9e3 <_PyEval_EvalFrameDefault+339>, 
+          0x55afb9b9ba9a <_PyEval_EvalFrameDefault+522>, 
+          0x55afb9b9fd68 <_PyEval_EvalFrameDefault+17624>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9f7bc <_PyEval_EvalFrameDefault+16172>, 
+          0x55afb9b9bbe3 <_PyEval_EvalFrameDefault+851>, 
+          0x55afb9b9d5cc <_PyEval_EvalFrameDefault+7484>, 
+          0x55afb9b9d268 <_PyEval_EvalFrameDefault+6616>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9da7f <_PyEval_EvalFrameDefault+8687>, 
+          0x55afb9b9c22b <_PyEval_EvalFrameDefault+2459>, 
+          0x55afb9b9e0a4 <_PyEval_EvalFrameDefault+10260>, 
+          0x55afb9b9f744 <_PyEval_EvalFrameDefault+16052>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9c9e1 <_PyEval_EvalFrameDefault+4433>, 
+          0x55afb9b9f86b <_PyEval_EvalFrameDefault+16347>, 
+          0x55afb9b9e1d1 <_PyEval_EvalFrameDefault+10561>, 
+          0x55afb9b9c415 <_PyEval_EvalFrameDefault+2949>, 
+          0x55afb9b9d0d9 <_PyEval_EvalFrameDefault+6217>, 
+          0x55afb9b9d32d <_PyEval_EvalFrameDefault+6813>, 
+          0x55afb9b9fddf <_PyEval_EvalFrameDefault+17743>, 
+          0x55afb9ba00b7 <_PyEval_EvalFrameDefault+18471>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad97f9 <_PyEval_EvalFrameDefault-794775>, 
+          0x55afb9b9e607 <_PyEval_EvalFrameDefault+11639>, 
+          0x55afb9b9fa72 <_PyEval_EvalFrameDefault+16866>, 
+          0x55afb9b9ff1d <_PyEval_EvalFrameDefault+18061>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x55afb9b9bdd1 <_PyEval_EvalFrameDefault+1345>, 
+          0x55afb9b9be76 <_PyEval_EvalFrameDefault+1510>, 
+          0x55afb9b9ed13 <_PyEval_EvalFrameDefault+13443>, 
+          0x55afb9b9f040 <_PyEval_EvalFrameDefault+14256>, 
+          0x55afb9b9dcd6 <_PyEval_EvalFrameDefault+9286>, 
+          0x55afb9b9ef43 <_PyEval_EvalFrameDefault+14003>, 
+          0x55afb9ad81a8 <_PyEval_EvalFrameDefault-800488> <repeats 90 times>}
+        PyId_displayhook = {next = 0x0, string = 0x55afb9cf302c "displayhook", 
+          object = 0x0}
+        PyId_send = {next = 0x0, string = 0x55afb9cfadcf "send", object = 0x0}
+        PyId___build_class__ = {
+          next = 0x55afb9e00640 <PyId___builtins__.lto_priv.0>, 
+          string = 0x55afb9cfaa80 "__build_class__", 
+          object = '__build_class__'}
+        PyId___annotations__ = {next = 0x55afb9df7d00 <PyId___next__.29>, 
+          string = 0x55afb9cf3a9b "__annotations__", 
+          object = '__annotations__'}
+        PyId___aenter__ = {next = 0x0, string = 0x55afb9cfdd75 "__aenter__", 
+          object = 0x0}
+        PyId___aexit__ = {next = 0x0, string = 0x55afb9cfdd6b "__aexit__", 
+          object = 0x0}
+        PyId___enter__ = {next = 0x55afb9df4c00 <PyId__find_and_load.7>, 
+          string = 0x55afb9cfb71e "__enter__", object = '__enter__'}
+        PyId___exit__ = {next = 0x55afb9df50c0 <PyId___enter__.6>, 
+          string = 0x55afb9cfb728 "__exit__", object = '__exit__'}
+#34 0x000055afb9bad113 in _PyEval_EvalFrame (throwflag=0, 
+    f=Frame 0x55afeee64120, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sage/misc/temporary_file.py, line 54, in delete_tmpfiles (shutil=<module at remote 0x7fa4e22e3860>, SAGE_TMP=<sage.misc.lazy_string._LazyString at remote 0x7fa395afe3c0>), tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+No locals.
+#35 function_code_fastcall (tstate=0x55afe6a98200, co=<optimized out>, 
+    args=<optimized out>, nargs=<optimized out>, 
+    globals={'__name__': 'sage.misc.temporary_file', '__doc__': '\nTemporary file handling\n\nAUTHORS:\n\n- Volker Braun, Jeroen Demeyer (2012-10-18): move these functions here\n  from sage/misc/misc.py and make them secure, see :trac:`13579`.\n\n- Jeroen Demeyer (2013-03-17): add :class:`atomic_write`,\n  see :trac:`14292`.\n', '__package__': 'sage.misc', '__loader__': <SourceFileLoader(name='sage.misc.temporary_file', path='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sage/misc/temporary_file.py') at remote 0x7fa4de7c0460>, '__spec__': <ModuleSpec(name='sage.misc.temporary_file', loader=<...>, origin='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sage/misc/temporary_file.py', loader_state=None, submodule_search_locations=None, _set_fileattr=True, _cached='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sage/misc/__pycache__/temporary_file.cpython-39.pyc', _initializing=False) at remote 0x7fa4de7c03d0>, '__file__': '/home/sureshkj/anaconda3/envs/aug_taxi/lib/...(truncated)) at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+        f = Frame 0x55afeee64120, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/sage/misc/temporary_file.py, line 54, in delete_tmpfiles (shutil=<module at remote 0x7fa4e22e3860>, SAGE_TMP=<sage.misc.lazy_string._LazyString at remote 0x7fa395afe3c0>)
+        fastlocals = 0x55afeee64288
+        result = <optimized out>
+#36 0x000055afb9ca2698 in atexit_callfuncs (module=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Modules/atexitmodule.c:93
+        exc_type = 0x0
+        exc_value = <unknown at remote 0x81f503f89d15e400>
+        exc_tb = <function at remote 0x7fa4e1e5da60>
+        r = <optimized out>
+        cb = <optimized out>
+        modstate = 0x7fa4e2890aa0
+        i = 3
+#37 0x000055afb9c83ffe in call_py_exitfuncs (tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Python/pylifecycle.c:2377
+        interp = <optimized out>
+#38 0x000055afb9c83721 in Py_FinalizeEx ()
+    at /usr/local/src/conda/python-3.9.15/Python/pylifecycle.c:1376
+        status = 0
+        runtime = 0x55afb9e08cc0 <_PyRuntime>
+        tstate = 0x55afe6a98200
+        malloc_stats = <optimized out>
+#39 0x000055afb9c84598 in Py_Exit (sts=0)
+    at /usr/local/src/conda/python-3.9.15/Python/pylifecycle.c:2436
+No locals.
+#40 0x000055afb9c818cb in handle_system_exit ()
+    at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:723
+        exitcode = 0
+#41 0x000055afb9c81592 in _PyErr_PrintEx (set_sys_last_vars=1, 
+    tstate=0x55afe6a98200)
+    at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:733
+        exception = <optimized out>
+        tb = <optimized out>
+        done = <optimized out>
+        v = <optimized out>
+        hook = <optimized out>
+        exception = <optimized out>
+        v = <optimized out>
+        tb = <optimized out>
+        hook = <optimized out>
+        done = <optimized out>
+        stack = <optimized out>
+        result = <optimized out>
+        exception2 = <optimized out>
+        v2 = <optimized out>
+        tb2 = <optimized out>
+#42 PyErr_PrintEx (set_sys_last_vars=1)
+    at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:828
+        tstate = 0x55afe6a98200
+#43 0x000055afb9c81577 in PyErr_Print ()
+    at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:834
+No locals.
+#44 0x000055afb9c79f24 in pyrun_simple_file (flags=0x7ffeaee61d68, 
+    closeit=<optimized out>, 
+    filename='/home/sureshkj/anaconda3/envs/aug_taxi/bin/gunicorn', 
+    fp=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:456
+        m = 0x0
+        set_file_name = 1
+        ret = -1
+        done = <optimized out>
+        d = {'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': <SourceFileLoader(name='__main__', path='/home/sureshkj/anaconda3/envs/aug_taxi/bin/gunicorn') at remote 0x7fa4e28abc40>, '__spec__': None, '__annotations__': {}, '__builtins__': <module at remote 0x7fa4e2896ae0>, '__file__': '/home/sureshkj/anaconda3/envs/aug_taxi/bin/gunicorn', '__cached__': None, 're': <module at remote 0x7fa4e274f310>, 'sys': <module at remote 0x7fa4e288f860>, 'run': <function at remote 0x7fa4e268de50>}
+        v = <optimized out>
+        pyc = <optimized out>
+        m = <optimized out>
+        d = <optimized out>
+        v = <optimized out>
+        set_file_name = <optimized out>
+        ret = <optimized out>
+        done = <optimized out>
+        pyc = <optimized out>
+        pyc_fp = <optimized out>
+        _py_tmp = <optimized out>
+#45 PyRun_SimpleFileExFlags (fp=<optimized out>, filename=<optimized out>, 
+    closeit=<optimized out>, flags=0x7ffeaee61d68)
+    at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:483
+        filename_obj = '/home/sureshkj/anaconda3/envs/aug_taxi/bin/gunicorn'
+        res = <optimized out>
+#46 0x000055afb9c77263 in pymain_run_file (cf=0x7ffeaee61d68, 
+    config=0x55afe6a98c80)
+    at /usr/local/src/conda/python-3.9.15/Modules/main.c:377
+        fp = 0x55afe6afdf70
+        unicode = '/home/sureshkj/anaconda3/envs/aug_taxi/bin/gunicorn'
+        bytes = b'/home/sureshkj/anaconda3/envs/aug_taxi/bin/gunicorn'
+        run = <optimized out>
+        filename = <optimized out>
+        sb = {st_dev = 2080, st_ino = 977794, st_nlink = 1, st_mode = 33261, 
+          st_uid = 1000, st_gid = 1000, __pad0 = 0, st_rdev = 0, 
+          st_size = 253, st_blksize = 4096, st_blocks = 8, st_atim = {
+            tv_sec = 1742416827, tv_nsec = 858522320}, st_mtim = {
+            tv_sec = 1739974526, tv_nsec = 596232568}, st_ctim = {
+            tv_sec = 1739974526, tv_nsec = 596232568}, __unused = {0, 0, 0}}
+        filename_str = <optimized out>
+        filename = <optimized out>
+        fp = <optimized out>
+        sb = <optimized out>
+        unicode = <optimized out>
+        bytes = <optimized out>
+        filename_str = <optimized out>
+        run = <optimized out>
+        cfilename_buffer = <optimized out>
+        cfilename = <optimized out>
+        err = <optimized out>
+        ch = <optimized out>
+#47 pymain_run_python (exitcode=0x7ffeaee61d60)
+    at /usr/local/src/conda/python-3.9.15/Modules/main.c:602
+        interp = 0x55afe6a988b0
+        config = 0x55afe6a98c80
+        main_importer_path = <optimized out>
+        cf = {cf_flags = 0, cf_feature_version = 9}
+        interp = <optimized out>
+        config = <optimized out>
+        main_importer_path = <optimized out>
+        error = <optimized out>
+        cf = <optimized out>
+        done = <optimized out>
+        path0 = <optimized out>
+        res = <optimized out>
+#48 Py_RunMain () at /usr/local/src/conda/python-3.9.15/Modules/main.c:681
+        exitcode = 0
+#49 0x000055afb9c49979 in Py_BytesMain (argc=<optimized out>, 
+    argv=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Modules/main.c:1101
+        args = {argc = 7, use_bytes_argv = 1, bytes_argv = 0x7ffeaee61f68, 
+          wchar_argv = 0x0}
+#50 0x00007fa4e2928c87 in __libc_start_main ()
+   from /lib/x86_64-linux-gnu/libc.so.6
+No symbol table info available.
+#51 0x000055afb9c49881 in _start ()
+No symbol table info available.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+Cython backtrace
+----------------
+#0  0x00007fa4e36b72e0 in waitpid ()
+#1  0x00007fa396551010 in print_enhanced_backtrace ()
+#2  0x00007fa396551170 in sigdie ()
+#3  0x00007fa3965536e0 in cysigs_signal_handler ()
+#4  0x00007fa4e36b7980 in __restore_rt ()
+#5  0x0000000000000000 in ?? ()
+#6  0x00007fa4e29e6890 in readdir64 ()
+#7  0x000055afb9c9e9b0 in ScandirIterator_iternext () at /usr/local/src/conda/python-3.9.15/Modules/posixmodule.c:13986
+#8  0x000055afb9bc8c90 in list_extend () at /usr/local/src/conda/python-3.9.15/Objects/listobject.c:934
+#9  0x000055afb9c0ee05 in list___init___impl () at /usr/local/src/conda/python-3.9.15/Objects/listobject.c:2725
+#10 0x000055afb9c0ec80 in list_vectorcall () at /usr/local/src/conda/python-3.9.15/Objects/listobject.c:2751
+#11 0x000055afb9b9bc1c in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#12 0x000055afb9b9bc07 in PyObject_Vectorcall () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+#13 0x000055afb9b9bbe6 in call_function () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+#14 0x000055afb9b9b890 in _PyEval_EvalFrameDefault () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3520
+#15 0x000055afb9bad100 in _PyEval_EvalFrame () at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+#16 0x000055afb9bacfd0 in function_code_fastcall () at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+#17 0x000055afb9b9bc1c in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#18 0x000055afb9b9bc07 in PyObject_Vectorcall () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+#19 0x000055afb9b9bbe6 in call_function () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+#20 0x000055afb9b9b890 in _PyEval_EvalFrameDefault () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3520
+#21 0x000055afb9bad100 in _PyEval_EvalFrame () at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+#22 0x000055afb9bacfd0 in function_code_fastcall () at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+#23 0x000055afb9b9bc1c in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#24 0x000055afb9b9bc07 in PyObject_Vectorcall () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+#25 0x000055afb9b9bbe6 in call_function () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+#26 0x000055afb9b9b890 in _PyEval_EvalFrameDefault () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3520
+#27 0x000055afb9b9a89e in _PyEval_EvalFrame () at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+#28 0x000055afb9b9a580 in _PyEval_EvalCode () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:4329
+#29 0x000055afb9bacd50 in _PyFunction_Vectorcall () at /usr/local/src/conda/python-3.9.15/Objects/call.c:396
+#30 0x000055afb9b9ca3b in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#31 0x000055afb9b9ca23 in PyObject_Vectorcall () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+#32 0x000055afb9b9c9ec in call_function () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+#33 0x000055afb9b9b890 in _PyEval_EvalFrameDefault () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3537
+#34 0x000055afb9bad100 in _PyEval_EvalFrame () at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+#35 0x000055afb9bacfd0 in function_code_fastcall () at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+#36 0x000055afb9ca2630 in atexit_callfuncs () at /usr/local/src/conda/python-3.9.15/Modules/atexitmodule.c:93
+#37 0x000055afb9c83fe0 in call_py_exitfuncs () at /usr/local/src/conda/python-3.9.15/Python/pylifecycle.c:2377
+#38 0x000055afb9c836d0 in Py_FinalizeEx () at /usr/local/src/conda/python-3.9.15/Python/pylifecycle.c:1376
+#39 0x000055afb9c84590 in Py_Exit () at /usr/local/src/conda/python-3.9.15/Python/pylifecycle.c:2436
+#40 0x000055afb9c818a0 in handle_system_exit () at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:723
+#41 0x000055afb9c8158d in _PyErr_PrintEx () at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:733
+#42 0x000055afb9c81580 in PyErr_PrintEx () at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:828
+#43 0x000055afb9c81570 in PyErr_Print () at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:834
+#44 0x000055afb9c79d89 in pyrun_simple_file () at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:456
+#45 0x000055afb9c79d50 in PyRun_SimpleFileExFlags () at /usr/local/src/conda/python-3.9.15/Python/pythonrun.c:483
+#46 0x000055afb9c7717e in pymain_run_file () at /usr/local/src/conda/python-3.9.15/Modules/main.c:377
+#47 0x000055afb9c76efb in pymain_run_python () at /usr/local/src/conda/python-3.9.15/Modules/main.c:602
+#48 0x000055afb9c76ed0 in Py_RunMain () at /usr/local/src/conda/python-3.9.15/Modules/main.c:681
+#49 0x000055afb9c49940 in Py_BytesMain () at /usr/local/src/conda/python-3.9.15/Modules/main.c:1101
+#50 0x00007fa4e2928ba0 in __libc_start_main ()
+#51 0x000055afb9c49858 in _start ()
+
+[Inferior 1 (process 4050) detached]
