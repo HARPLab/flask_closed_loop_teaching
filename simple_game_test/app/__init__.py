@@ -62,10 +62,28 @@ login.login_view = "login"
 # socketio.init_app(app)  # explicitly initialize the socketio object
 
 
-
-
-
 socketio = SocketIO(app, ping_timeout=60, ping_interval=25)
+
+
+# Standardized Socket.IO configuration for both development and production
+socketio_config = {
+    'ping_timeout': 60,
+    'ping_interval': 25,
+    'cors_allowed_origins': '*',  # In production, restrict this to specific domains
+    'logger': True,
+    'engineio_logger': True
+}
+
+# Add path configuration when running behind a proxy
+if os.environ.get("FLASK_ENV") != "development":
+    socketio_config.update({
+        'path': '/flask_closed_loop_teaching/socket.io',
+        'async_mode': 'eventlet'  # Use eventlet for better performance in production
+    })
+
+# Initialize Socket.IO with the configuration
+socketio = SocketIO(app, **socketio_config)
+
 
 
 

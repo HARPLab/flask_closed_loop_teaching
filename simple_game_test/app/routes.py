@@ -253,6 +253,8 @@ def handle_disconnect():
             
         if (user_group is None or user_status != "left"):
             log_print(f"User id: {current_user.id}, {request.sid} disconnected.")
+            user_agent = request.headers.get('User-Agent', '')
+            log_print(f"Client disconnected with SID {request.sid} using {user_agent}, reason: {request.event['message']}")
 
             user_id = current_user.id
             disconnect_time = datetime.now().strftime("%m-%d %H:%M:%S")
@@ -287,6 +289,11 @@ def handle_heartbeat(data):
     # You can respond if you want
     socketio.emit('heartbeat_response', {'server_time': time.time()}, to=request.sid)
 
+@socketio.on('firefox_keepalive')
+def handle_firefox_keepalive(data):
+    # Just respond to keep the connection alive
+    socketio.emit('firefox_keepalive_ack', to=request.sid)
+    
 
 def check_reconnection(user_id):
     """Checks if user is still disconnected after timeout"""
