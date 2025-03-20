@@ -125739,3 +125739,1417 @@ Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/in
 2025-03-20 07:18:30,446 [INFO] Use exit() or Ctrl-D (i.e. EOF) to exit
 2025-03-20 07:18:30,446 [INFO] >>>
 2025-03-20 07:18:33,829 [ERROR] now exiting InteractiveConsole...
+2025-03-20 11:11:13,936 [INFO] Using 24 processes
+2025-03-20 11:11:22,467 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:22,467 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:22,469 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-03-20 11:11:22,469 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-03-20 11:11:22,470 [INFO] 127.0.0.1 - - [2025-03-20 11:11:22] "GET /post_practice HTTP/1.1" 302 634 0.002804
+2025-03-20 11:11:22,475 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:22,475 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:22,484 [INFO] 127.0.0.1 - - [2025-03-20 11:11:22] "GET /login?next=%2Fpost_practice HTTP/1.1" 200 3331 0.009480
+2025-03-20 11:11:22,499 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:22,499 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:22,502 [INFO] 127.0.0.1 - - [2025-03-20 11:11:22] "GET /static/dragula.css HTTP/1.1" 200 816 0.003671
+2025-03-20 11:11:22,503 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:22,503 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:22,504 [INFO] 127.0.0.1 - - [2025-03-20 11:11:22] "GET /static/styles.css HTTP/1.1" 200 5572 0.001145
+2025-03-20 11:11:22,505 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:22,505 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:22,507 [INFO] 127.0.0.1 - - [2025-03-20 11:11:22] "GET /static/dragula.js HTTP/1.1" 200 80941 0.001970
+2025-03-20 11:11:22,657 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:22,658 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:22,658 [INFO] 127.0.0.1 - - [2025-03-20 11:11:22] "GET /favicon.ico HTTP/1.1" 404 331 0.000894
+2025-03-20 11:11:25,852 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:25,852 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:25,852 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:11:25,853 [INFO] The CSRF tokens do not match.
+2025-03-20 11:11:25,855 [INFO] 127.0.0.1 - - [2025-03-20 11:11:25] "POST /login?next=%2Fpost_practice HTTP/1.1" 200 3338 0.002989
+2025-03-20 11:11:25,862 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:25,863 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:25,863 [INFO] 127.0.0.1 - - [2025-03-20 11:11:25] "GET /static/dragula.css HTTP/1.1" 304 142 0.000902
+2025-03-20 11:11:25,864 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:25,864 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:25,864 [INFO] 127.0.0.1 - - [2025-03-20 11:11:25] "GET /static/dragula.js HTTP/1.1" 304 141 0.000737
+2025-03-20 11:11:25,865 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:25,865 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:25,865 [INFO] 127.0.0.1 - - [2025-03-20 11:11:25] "GET /static/styles.css HTTP/1.1" 304 141 0.000573
+2025-03-20 11:11:29,084 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:29,084 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:29,084 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:11:29,085 [INFO] The CSRF tokens do not match.
+2025-03-20 11:11:29,086 [INFO] 127.0.0.1 - - [2025-03-20 11:11:29] "POST /login?next=%2Fpost_practice HTTP/1.1" 200 3338 0.001935
+2025-03-20 11:11:29,095 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:29,095 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:29,096 [INFO] 127.0.0.1 - - [2025-03-20 11:11:29] "GET /static/dragula.css HTTP/1.1" 304 142 0.001002
+2025-03-20 11:11:29,096 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:29,096 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:29,096 [INFO] 127.0.0.1 - - [2025-03-20 11:11:29] "GET /static/dragula.js HTTP/1.1" 304 141 0.000579
+2025-03-20 11:11:29,097 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:29,097 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:29,097 [INFO] 127.0.0.1 - - [2025-03-20 11:11:29] "GET /static/styles.css HTTP/1.1" 304 141 0.000564
+2025-03-20 11:11:30,860 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:30,860 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:30,860 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:11:30,861 [INFO] The CSRF tokens do not match.
+2025-03-20 11:11:30,862 [INFO] 127.0.0.1 - - [2025-03-20 11:11:30] "POST /login?next=%2Fpost_practice HTTP/1.1" 200 3338 0.002020
+2025-03-20 11:11:30,870 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:30,870 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:30,871 [INFO] 127.0.0.1 - - [2025-03-20 11:11:30] "GET /static/dragula.css HTTP/1.1" 304 142 0.001075
+2025-03-20 11:11:30,871 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:30,871 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:30,872 [INFO] 127.0.0.1 - - [2025-03-20 11:11:30] "GET /static/dragula.js HTTP/1.1" 304 141 0.000596
+2025-03-20 11:11:30,872 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:30,872 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:30,873 [INFO] 127.0.0.1 - - [2025-03-20 11:11:30] "GET /static/styles.css HTTP/1.1" 304 141 0.000568
+2025-03-20 11:11:31,668 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:31,668 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:31,668 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:11:31,669 [INFO] The CSRF tokens do not match.
+2025-03-20 11:11:31,669 [INFO] 127.0.0.1 - - [2025-03-20 11:11:31] "POST /login?next=%2Fpost_practice HTTP/1.1" 200 3338 0.001748
+2025-03-20 11:11:31,677 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:31,678 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:31,678 [INFO] 127.0.0.1 - - [2025-03-20 11:11:31] "GET /static/styles.css HTTP/1.1" 304 141 0.001208
+2025-03-20 11:11:31,679 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:31,679 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:31,679 [INFO] 127.0.0.1 - - [2025-03-20 11:11:31] "GET /static/dragula.js HTTP/1.1" 304 141 0.000570
+2025-03-20 11:11:31,680 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:31,680 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:31,680 [INFO] 127.0.0.1 - - [2025-03-20 11:11:31] "GET /static/dragula.css HTTP/1.1" 304 142 0.000540
+2025-03-20 11:11:32,739 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:32,739 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:32,739 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:11:32,740 [INFO] The CSRF tokens do not match.
+2025-03-20 11:11:32,741 [INFO] 127.0.0.1 - - [2025-03-20 11:11:32] "POST /login?next=%2Fpost_practice HTTP/1.1" 200 3338 0.001882
+2025-03-20 11:11:32,750 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:32,750 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:32,751 [INFO] 127.0.0.1 - - [2025-03-20 11:11:32] "GET /static/dragula.css HTTP/1.1" 304 142 0.001113
+2025-03-20 11:11:32,751 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:32,751 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:32,752 [INFO] 127.0.0.1 - - [2025-03-20 11:11:32] "GET /static/dragula.js HTTP/1.1" 304 141 0.000597
+2025-03-20 11:11:32,752 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:32,752 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:32,753 [INFO] 127.0.0.1 - - [2025-03-20 11:11:32] "GET /static/styles.css HTTP/1.1" 304 141 0.000552
+2025-03-20 11:11:33,371 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:33,371 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:33,371 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:11:33,372 [INFO] The CSRF tokens do not match.
+2025-03-20 11:11:33,373 [INFO] 127.0.0.1 - - [2025-03-20 11:11:33] "POST /login?next=%2Fpost_practice HTTP/1.1" 200 3338 0.001827
+2025-03-20 11:11:33,381 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:33,382 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:33,382 [INFO] 127.0.0.1 - - [2025-03-20 11:11:33] "GET /static/dragula.css HTTP/1.1" 304 142 0.000935
+2025-03-20 11:11:33,383 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:33,383 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:33,383 [INFO] 127.0.0.1 - - [2025-03-20 11:11:33] "GET /static/dragula.js HTTP/1.1" 304 141 0.000577
+2025-03-20 11:11:33,384 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:33,384 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:33,384 [INFO] 127.0.0.1 - - [2025-03-20 11:11:33] "GET /static/styles.css HTTP/1.1" 304 141 0.000537
+2025-03-20 11:11:34,051 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:34,051 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:34,051 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:11:34,052 [INFO] The CSRF tokens do not match.
+2025-03-20 11:11:34,053 [INFO] 127.0.0.1 - - [2025-03-20 11:11:34] "POST /login?next=%2Fpost_practice HTTP/1.1" 200 3338 0.001863
+2025-03-20 11:11:34,061 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:34,062 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:34,062 [INFO] 127.0.0.1 - - [2025-03-20 11:11:34] "GET /static/dragula.css HTTP/1.1" 304 142 0.001505
+2025-03-20 11:11:34,063 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:34,063 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:34,064 [INFO] 127.0.0.1 - - [2025-03-20 11:11:34] "GET /static/dragula.js HTTP/1.1" 304 141 0.000725
+2025-03-20 11:11:34,064 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:34,064 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:34,065 [INFO] 127.0.0.1 - - [2025-03-20 11:11:34] "GET /static/styles.css HTTP/1.1" 304 141 0.000787
+2025-03-20 11:11:37,058 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:37,058 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:37,059 [INFO] 127.0.0.1 - - [2025-03-20 11:11:37] "GET /static/dragula.css HTTP/1.1" 304 142 0.001031
+2025-03-20 11:11:37,059 [DEBUG] Initializing WebSocket
+2025-03-20 11:11:37,059 [DEBUG] Validating WebSocket request
+2025-03-20 11:11:37,060 [INFO] 127.0.0.1 - - [2025-03-20 11:11:37] "GET /static/styles.css HTTP/1.1" 304 141 0.000591
+2025-03-20 11:30:58,444 [INFO] Using 24 processes
+2025-03-20 11:31:27,362 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:27,362 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:27,434 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-03-20 11:31:27,435 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-03-20 11:31:27,436 [INFO] 127.0.0.1 - - [2025-03-20 11:31:27] "GET /post_practice HTTP/1.1" 302 586 0.073725
+2025-03-20 11:31:27,437 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:27,438 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:27,447 [INFO] 127.0.0.1 - - [2025-03-20 11:31:27] "GET /login?next=%2Fpost_practice HTTP/1.1" 200 3441 0.009259
+2025-03-20 11:31:27,462 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:27,462 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:27,465 [INFO] 127.0.0.1 - - [2025-03-20 11:31:27] "GET /static/dragula.css HTTP/1.1" 200 816 0.003526
+2025-03-20 11:31:27,466 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:27,466 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:27,467 [INFO] 127.0.0.1 - - [2025-03-20 11:31:27] "GET /static/styles.css HTTP/1.1" 200 5572 0.001395
+2025-03-20 11:31:27,468 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:27,468 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:27,469 [INFO] 127.0.0.1 - - [2025-03-20 11:31:27] "GET /static/dragula.js HTTP/1.1" 200 80941 0.001647
+2025-03-20 11:31:32,549 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,550 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,550 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:31:32,591 [INFO] Logging in user: <User ttt1>
+2025-03-20 11:31:32,591 [INFO] User is authenticated after login? True
+2025-03-20 11:31:32,592 [ERROR] /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py:1591: DeprecationWarning: 'werkzeug.urls.url_parse' is deprecated and will be removed in Werkzeug 3.0. Use 'urllib.parse.urlsplit' instead.
+  if not next_page or url_parse(next_page).netloc != "":
+2025-03-20 11:31:32,593 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/werkzeug/urls.py:545: DeprecationWarning: 'werkzeug.urls.URL' is deprecated and will be removed in Werkzeug 3.0. Use the 'urllib.parse' library instead.
+  return result_type(scheme, netloc, url, query, fragment)
+2025-03-20 11:31:32,593 [INFO] Next page url: /post_practice
+2025-03-20 11:31:32,593 [INFO] Redirecting to: /
+2025-03-20 11:31:32,594 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "POST /login?next=%2Fpost_practice HTTP/1.1" 302 675 0.044638
+2025-03-20 11:31:32,596 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,596 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,599 [INFO] I'm in post practice
+2025-03-20 11:31:32,617 [INFO] Flush and Commit successful. Remember to commit at the end. ttt1. User progress post practice
+2025-03-20 11:31:32,622 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "GET /post_practice HTTP/1.1" 200 7314 0.025633
+2025-03-20 11:31:32,642 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,642 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,643 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "GET /static/dragula.css HTTP/1.1" 304 142 0.001467
+2025-03-20 11:31:32,644 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,644 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,644 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "GET /static/dragula.js HTTP/1.1" 304 141 0.000714
+2025-03-20 11:31:32,645 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,645 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,645 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "GET /static/styles.css HTTP/1.1" 304 141 0.000661
+2025-03-20 11:31:32,646 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,646 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,647 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "GET /static/css/style.css HTTP/1.1" 200 8426 0.001067
+2025-03-20 11:31:32,647 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,647 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,648 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "GET /static/img/right1.png HTTP/1.1" 200 10027 0.000995
+2025-03-20 11:31:32,648 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,648 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,649 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "GET /static/img/arrow.png HTTP/1.1" 200 13289 0.000954
+2025-03-20 11:31:32,650 [DEBUG] Initializing WebSocket
+2025-03-20 11:31:32,650 [DEBUG] Validating WebSocket request
+2025-03-20 11:31:32,651 [INFO] 127.0.0.1 - - [2025-03-20 11:31:32] "GET /static/img/right2.png HTTP/1.1" 200 10086 0.001589
+2025-03-20 11:38:38,893 [ERROR] Traceback (most recent call last):
+2025-03-20 11:38:59,839 [INFO] Using 24 processes
+2025-03-20 11:39:02,367 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:02,367 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:02,399 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-03-20 11:39:02,399 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-03-20 11:39:02,400 [INFO] 127.0.0.1 - - [2025-03-20 11:39:02] "GET /post_practice HTTP/1.1" 302 586 0.033559
+2025-03-20 11:39:02,403 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:02,403 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:02,412 [INFO] 127.0.0.1 - - [2025-03-20 11:39:02] "GET /login?next=%2Fpost_practice HTTP/1.1" 200 3447 0.008627
+2025-03-20 11:39:02,425 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:02,425 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:02,429 [INFO] 127.0.0.1 - - [2025-03-20 11:39:02] "GET /static/dragula.css HTTP/1.1" 200 816 0.003418
+2025-03-20 11:39:02,429 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:02,429 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:02,430 [INFO] 127.0.0.1 - - [2025-03-20 11:39:02] "GET /static/styles.css HTTP/1.1" 200 5572 0.001036
+2025-03-20 11:39:02,430 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:02,430 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:02,432 [INFO] 127.0.0.1 - - [2025-03-20 11:39:02] "GET /static/dragula.js HTTP/1.1" 200 80941 0.001331
+2025-03-20 11:39:07,970 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:07,971 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:07,971 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:39:07,983 [INFO] Logging in user: <User ttt2>
+2025-03-20 11:39:07,983 [INFO] User is authenticated after login? True
+2025-03-20 11:39:07,984 [ERROR] /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py:1591: DeprecationWarning: 'werkzeug.urls.url_parse' is deprecated and will be removed in Werkzeug 3.0. Use 'urllib.parse.urlsplit' instead.
+  if not next_page or url_parse(next_page).netloc != "":
+2025-03-20 11:39:07,984 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/werkzeug/urls.py:545: DeprecationWarning: 'werkzeug.urls.URL' is deprecated and will be removed in Werkzeug 3.0. Use the 'urllib.parse' library instead.
+  return result_type(scheme, netloc, url, query, fragment)
+2025-03-20 11:39:07,984 [INFO] Next page url: /post_practice
+2025-03-20 11:39:07,984 [INFO] Redirecting to: /
+2025-03-20 11:39:07,985 [INFO] 127.0.0.1 - - [2025-03-20 11:39:07] "POST /login?next=%2Fpost_practice HTTP/1.1" 302 673 0.014661
+2025-03-20 11:39:07,987 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:07,987 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:07,990 [INFO] I'm in post practice
+2025-03-20 11:39:07,994 [INFO] Flush and Commit successful. Remember to commit at the end. ttt2. User progress post practice
+2025-03-20 11:39:07,998 [INFO] 127.0.0.1 - - [2025-03-20 11:39:07] "GET /post_practice HTTP/1.1" 200 7320 0.010440
+2025-03-20 11:39:08,011 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:08,011 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:08,012 [INFO] 127.0.0.1 - - [2025-03-20 11:39:08] "GET /static/dragula.css HTTP/1.1" 304 142 0.001247
+2025-03-20 11:39:08,012 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:08,012 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:08,013 [INFO] 127.0.0.1 - - [2025-03-20 11:39:08] "GET /static/css/style.css HTTP/1.1" 200 8426 0.000684
+2025-03-20 11:39:08,013 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:08,013 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:08,014 [INFO] 127.0.0.1 - - [2025-03-20 11:39:08] "GET /static/styles.css HTTP/1.1" 304 141 0.000661
+2025-03-20 11:39:08,014 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:08,014 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:08,015 [INFO] 127.0.0.1 - - [2025-03-20 11:39:08] "GET /static/dragula.js HTTP/1.1" 304 141 0.000672
+2025-03-20 11:39:08,015 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:08,015 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:08,016 [INFO] 127.0.0.1 - - [2025-03-20 11:39:08] "GET /static/img/right1.png HTTP/1.1" 200 10027 0.000683
+2025-03-20 11:39:08,016 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:08,016 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:08,017 [INFO] 127.0.0.1 - - [2025-03-20 11:39:08] "GET /static/img/arrow.png HTTP/1.1" 200 13289 0.000714
+2025-03-20 11:39:08,017 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:08,017 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:08,018 [INFO] 127.0.0.1 - - [2025-03-20 11:39:08] "GET /static/img/right2.png HTTP/1.1" 200 10086 0.000659
+2025-03-20 11:39:08,024 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:08,025 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:08,025 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:39:08,025 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:39:08,026 [INFO] lU5Sg5O-VmRV5RfQAAAA: Sending packet OPEN data {'sid': 'lU5Sg5O-VmRV5RfQAAAA', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:39:08,026 [INFO] lU5Sg5O-VmRV5RfQAAAA: Received request to upgrade to websocket
+2025-03-20 11:39:08,026 [INFO] lU5Sg5O-VmRV5RfQAAAA: Upgrade to websocket successful
+2025-03-20 11:39:08,040 [INFO] lU5Sg5O-VmRV5RfQAAAA: Received packet MESSAGE data 0
+2025-03-20 11:39:08,042 [INFO] User 14 connected with SID bjkw-yMyV3VnCueSAAAB
+2025-03-20 11:39:08,042 [INFO] lU5Sg5O-VmRV5RfQAAAA: Sending packet MESSAGE data 0{"sid":"bjkw-yMyV3VnCueSAAAB"}
+2025-03-20 11:39:22,893 [DEBUG] Closed WebSocket
+2025-03-20 11:39:22,897 [INFO] User id: 14, bjkw-yMyV3VnCueSAAAB disconnected.
+2025-03-20 11:39:22,897 [INFO] Client disconnected with SID bjkw-yMyV3VnCueSAAAB using Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36, reason: disconnect
+2025-03-20 11:39:22,898 [INFO] User 14: Disconnected at 03-20 11:39:22. Tracking: {'disconnect_times': ['03-20 11:39:22'], 'reconnect_times': [], 'disconnect_pages': [None], 'reconnect_pages': []}
+2025-03-20 11:39:22,899 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:22,900 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:22,904 [INFO] 127.0.0.1 - - [2025-03-20 11:39:22] "GET /waiting_room HTTP/1.1" 200 7497 0.004782
+2025-03-20 11:39:22,916 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:22,917 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:22,918 [INFO] 127.0.0.1 - - [2025-03-20 11:39:22] "GET /static/dragula.css HTTP/1.1" 304 142 0.001236
+2025-03-20 11:39:22,918 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:22,918 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:22,919 [INFO] 127.0.0.1 - - [2025-03-20 11:39:22] "GET /static/css/style.css HTTP/1.1" 304 140 0.000665
+2025-03-20 11:39:22,919 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:22,919 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:22,920 [INFO] 127.0.0.1 - - [2025-03-20 11:39:22] "GET /static/dragula.js HTTP/1.1" 304 141 0.000657
+2025-03-20 11:39:22,920 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:22,920 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:22,921 [INFO] 127.0.0.1 - - [2025-03-20 11:39:22] "GET /static/styles.css HTTP/1.1" 304 141 0.000656
+2025-03-20 11:39:22,927 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:22,927 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:22,928 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:39:22,928 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:39:22,928 [INFO] srN5LNlLr2uHkKA8AAAC: Sending packet OPEN data {'sid': 'srN5LNlLr2uHkKA8AAAC', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:39:22,928 [INFO] srN5LNlLr2uHkKA8AAAC: Received request to upgrade to websocket
+2025-03-20 11:39:22,928 [INFO] srN5LNlLr2uHkKA8AAAC: Upgrade to websocket successful
+2025-03-20 11:39:22,929 [INFO] srN5LNlLr2uHkKA8AAAC: Received packet MESSAGE data 0
+2025-03-20 11:39:22,931 [INFO] User 14 connected with SID Z8EX5wmDUDa1F8iKAAAD
+2025-03-20 11:39:22,932 [INFO] User 14: Reconnected at 03-20 11:39:22. Tracking: {'disconnect_times': ['03-20 11:39:22'], 'reconnect_times': ['03-20 11:39:22'], 'disconnect_pages': [None], 'reconnect_pages': [None]}
+2025-03-20 11:39:22,932 [INFO] User 14: Timer canceled due to reconnection.
+2025-03-20 11:39:22,932 [INFO] srN5LNlLr2uHkKA8AAAC: Sending packet MESSAGE data 0{"sid":"Z8EX5wmDUDa1F8iKAAAD"}
+2025-03-20 11:39:22,933 [INFO] srN5LNlLr2uHkKA8AAAC: Received packet MESSAGE data 2["join group"]
+2025-03-20 11:39:22,933 [INFO] received event "join group" from Z8EX5wmDUDa1F8iKAAAD [/]
+2025-03-20 11:39:22,938 [INFO] Group: None User: 14 Join group function. Current user group:  None
+2025-03-20 11:39:22,938 [INFO] Group: None User: 14 No group yet.. Creating one...
+2025-03-20 11:39:22,940 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:39:22,940 [DEBUG] Closed WebSocket
+2025-03-20 11:39:22,947 [INFO] Before. num_members:
+2025-03-20 11:39:22,947 [INFO] 3
+2025-03-20 11:39:22,947 [INFO] member statuses:
+2025-03-20 11:39:22,947 [INFO] ['not joined', 'not joined', 'not joined']
+2025-03-20 11:39:22,947 [INFO] members:
+2025-03-20 11:39:22,947 [INFO] [None, None, None]
+2025-03-20 11:39:22,948 [INFO] members EOR:
+2025-03-20 11:39:22,948 [INFO] [False, False, False]
+2025-03-20 11:39:22,948 [INFO] members user ids:
+2025-03-20 11:39:22,948 [INFO] [None, None, None]
+2025-03-20 11:39:22,948 [INFO] After. num_members:
+2025-03-20 11:39:22,948 [INFO] 3
+2025-03-20 11:39:22,948 [INFO] member statuses:
+2025-03-20 11:39:22,948 [INFO] ['joined', 'not joined', 'not joined']
+2025-03-20 11:39:22,948 [INFO] members:
+2025-03-20 11:39:22,948 [INFO] ['ttt2', None, None]
+2025-03-20 11:39:22,948 [INFO] members EOR:
+2025-03-20 11:39:22,948 [INFO] [False, False, False]
+2025-03-20 11:39:22,948 [INFO] members user ids:
+2025-03-20 11:39:22,949 [INFO] [14, None, None]
+2025-03-20 11:39:22,949 [INFO] Group: 3 User: 14 New group: Group id: 3 Group members: ['ttt2', None, None] Active members: 1 Group mem ids: [14, None, None] Group status: ['joined', 'not joined', 'not joined'] Group experimental condition: individual_belief_high
+2025-03-20 11:39:22,949 [INFO] Group: 3 User: 14 Current user: ttt2 Current user group: 3 Current user group code: 0 Current user domain 1: at Current user domain 2: sb
+2025-03-20 11:39:22,952 [INFO] Flush and Commit successful. Remember to commit at the end. Member to new group
+2025-03-20 11:39:22,953 [INFO] Group: 3 User: 14 Current user: ttt2Current user group: 3
+2025-03-20 11:39:22,969 [INFO] [[1, None], [2, ['test713', 'test712', 'test711']], [3, ['ttt2', None, None]]]
+2025-03-20 11:39:22,969 [INFO] Group: 3 User: 14 Room: room_3
+2025-03-20 11:39:22,969 [INFO] Rooms for current user: ['Z8EX5wmDUDa1F8iKAAAD']
+2025-03-20 11:39:22,969 [INFO] Z8EX5wmDUDa1F8iKAAAD is entering room room_3 [/]
+2025-03-20 11:39:22,970 [INFO] Group: 3 User: 14 Rooms for current user: ['Z8EX5wmDUDa1F8iKAAAD', 'room_3']
+2025-03-20 11:39:22,970 [INFO] emitting event "group joined" to room_3 [/]
+2025-03-20 11:39:22,970 [INFO] srN5LNlLr2uHkKA8AAAC: Sending packet MESSAGE data 2["group joined",{"num_members":1,"max_num_members":3,"room_name":"room_3"}]
+2025-03-20 11:39:42,963 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:42,963 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:42,965 [INFO] 127.0.0.1 - - [2025-03-20 11:39:42] "GET /post_practice HTTP/1.1" 302 586 0.001673
+2025-03-20 11:39:42,967 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:42,967 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:42,968 [INFO] 127.0.0.1 - - [2025-03-20 11:39:42] "GET /login?next=%2Fpost_practice HTTP/1.1" 200 3447 0.001694
+2025-03-20 11:39:42,974 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:42,974 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:42,976 [INFO] 127.0.0.1 - - [2025-03-20 11:39:42] "GET /static/dragula.css HTTP/1.1" 200 816 0.001834
+2025-03-20 11:39:42,976 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:42,977 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:42,978 [INFO] 127.0.0.1 - - [2025-03-20 11:39:42] "GET /static/styles.css HTTP/1.1" 200 5572 0.001169
+2025-03-20 11:39:42,978 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:42,978 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:42,979 [INFO] 127.0.0.1 - - [2025-03-20 11:39:42] "GET /static/dragula.js HTTP/1.1" 200 80941 0.001364
+2025-03-20 11:39:43,052 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:43,052 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:43,053 [INFO] 127.0.0.1 - - [2025-03-20 11:39:43] "GET /favicon.ico HTTP/1.1" 404 331 0.001019
+2025-03-20 11:39:46,674 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,675 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,675 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:39:46,683 [INFO] Logging in user: <User ttt3>
+2025-03-20 11:39:46,683 [INFO] User is authenticated after login? True
+2025-03-20 11:39:46,684 [INFO] Next page url: /post_practice
+2025-03-20 11:39:46,684 [INFO] Redirecting to: /
+2025-03-20 11:39:46,684 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "POST /login?next=%2Fpost_practice HTTP/1.1" 302 674 0.009944
+2025-03-20 11:39:46,686 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,686 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,688 [INFO] I'm in post practice
+2025-03-20 11:39:46,690 [INFO] Flush and Commit successful. Remember to commit at the end. ttt3. User progress post practice
+2025-03-20 11:39:46,692 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "GET /post_practice HTTP/1.1" 200 7320 0.005378
+2025-03-20 11:39:46,699 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,699 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,700 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "GET /static/dragula.css HTTP/1.1" 304 142 0.001255
+2025-03-20 11:39:46,701 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,701 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,702 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "GET /static/styles.css HTTP/1.1" 304 141 0.000794
+2025-03-20 11:39:46,702 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,702 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,703 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "GET /static/css/style.css HTTP/1.1" 200 8426 0.001024
+2025-03-20 11:39:46,703 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,703 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,704 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "GET /static/dragula.js HTTP/1.1" 304 141 0.000693
+2025-03-20 11:39:46,704 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,704 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,705 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "GET /static/img/right1.png HTTP/1.1" 200 10027 0.001212
+2025-03-20 11:39:46,706 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,706 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,707 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "GET /static/img/arrow.png HTTP/1.1" 200 13289 0.001136
+2025-03-20 11:39:46,707 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,707 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,708 [INFO] 127.0.0.1 - - [2025-03-20 11:39:46] "GET /static/img/right2.png HTTP/1.1" 200 10086 0.000916
+2025-03-20 11:39:46,715 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:46,715 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:46,716 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:39:46,716 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:39:46,716 [INFO] -PMrrO0gZwGeEs8xAAAE: Sending packet OPEN data {'sid': '-PMrrO0gZwGeEs8xAAAE', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:39:46,716 [INFO] -PMrrO0gZwGeEs8xAAAE: Received request to upgrade to websocket
+2025-03-20 11:39:46,716 [INFO] -PMrrO0gZwGeEs8xAAAE: Upgrade to websocket successful
+2025-03-20 11:39:46,733 [INFO] -PMrrO0gZwGeEs8xAAAE: Received packet MESSAGE data 0
+2025-03-20 11:39:46,735 [INFO] User 15 connected with SID pgx75ebaQl-NHzy6AAAF
+2025-03-20 11:39:46,735 [INFO] -PMrrO0gZwGeEs8xAAAE: Sending packet MESSAGE data 0{"sid":"pgx75ebaQl-NHzy6AAAF"}
+2025-03-20 11:39:47,929 [INFO] srN5LNlLr2uHkKA8AAAC: Sending packet PING data None
+2025-03-20 11:39:47,931 [INFO] srN5LNlLr2uHkKA8AAAC: Received packet PONG data 
+2025-03-20 11:39:48,901 [DEBUG] Closed WebSocket
+2025-03-20 11:39:48,903 [INFO] User id: 15, pgx75ebaQl-NHzy6AAAF disconnected.
+2025-03-20 11:39:48,903 [INFO] Client disconnected with SID pgx75ebaQl-NHzy6AAAF using Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0, reason: disconnect
+2025-03-20 11:39:48,904 [INFO] User 15: Disconnected at 03-20 11:39:48. Tracking: {'disconnect_times': ['03-20 11:39:48'], 'reconnect_times': [], 'disconnect_pages': [None], 'reconnect_pages': []}
+2025-03-20 11:39:48,909 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:48,909 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:48,911 [INFO] 127.0.0.1 - - [2025-03-20 11:39:48] "GET /waiting_room HTTP/1.1" 200 7497 0.002371
+2025-03-20 11:39:48,915 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:48,915 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:48,916 [INFO] 127.0.0.1 - - [2025-03-20 11:39:48] "GET /static/dragula.css HTTP/1.1" 304 142 0.001285
+2025-03-20 11:39:48,916 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:48,917 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:48,918 [INFO] 127.0.0.1 - - [2025-03-20 11:39:48] "GET /static/css/style.css HTTP/1.1" 304 140 0.001178
+2025-03-20 11:39:48,918 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:48,918 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:48,919 [INFO] 127.0.0.1 - - [2025-03-20 11:39:48] "GET /static/dragula.js HTTP/1.1" 304 141 0.000860
+2025-03-20 11:39:48,919 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:48,919 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:48,920 [INFO] 127.0.0.1 - - [2025-03-20 11:39:48] "GET /static/styles.css HTTP/1.1" 304 141 0.000680
+2025-03-20 11:39:48,934 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:48,935 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:48,935 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:39:48,935 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:39:48,935 [INFO] HlZ7XUPAiQeaqgArAAAG: Sending packet OPEN data {'sid': 'HlZ7XUPAiQeaqgArAAAG', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:39:48,935 [INFO] HlZ7XUPAiQeaqgArAAAG: Received request to upgrade to websocket
+2025-03-20 11:39:48,935 [INFO] HlZ7XUPAiQeaqgArAAAG: Upgrade to websocket successful
+2025-03-20 11:39:48,936 [INFO] HlZ7XUPAiQeaqgArAAAG: Received packet MESSAGE data 0
+2025-03-20 11:39:48,938 [INFO] User 15 connected with SID 5xIFlE_DYjSdPqLDAAAH
+2025-03-20 11:39:48,938 [INFO] User 15: Reconnected at 03-20 11:39:48. Tracking: {'disconnect_times': ['03-20 11:39:48'], 'reconnect_times': ['03-20 11:39:48'], 'disconnect_pages': [None], 'reconnect_pages': [None]}
+2025-03-20 11:39:48,938 [INFO] User 15: Timer canceled due to reconnection.
+2025-03-20 11:39:48,939 [INFO] HlZ7XUPAiQeaqgArAAAG: Sending packet MESSAGE data 0{"sid":"5xIFlE_DYjSdPqLDAAAH"}
+2025-03-20 11:39:48,939 [INFO] HlZ7XUPAiQeaqgArAAAG: Received packet MESSAGE data 2["join group"]
+2025-03-20 11:39:48,940 [INFO] received event "join group" from 5xIFlE_DYjSdPqLDAAAH [/]
+2025-03-20 11:39:48,942 [INFO] Group: None User: 15 Join group function. Current user group:  None
+2025-03-20 11:39:48,942 [INFO] Group: None User: 15 Old group: Group id: 3 num_active_members: 1 Group members: ['ttt2', None, None] Group mem ids: [14, None, None] Group status: ['joined', 'not joined', 'not joined'] Group experimental condition: individual_belief_high
+2025-03-20 11:39:48,942 [INFO] Group: None User: 15 Adding to existing group
+2025-03-20 11:39:48,942 [INFO] Before. num_members:
+2025-03-20 11:39:48,942 [INFO] 3
+2025-03-20 11:39:48,943 [INFO] member statuses:
+2025-03-20 11:39:48,943 [INFO] ['joined', 'not joined', 'not joined']
+2025-03-20 11:39:48,943 [INFO] members:
+2025-03-20 11:39:48,943 [INFO] ['ttt2', None, None]
+2025-03-20 11:39:48,943 [INFO] members EOR:
+2025-03-20 11:39:48,943 [INFO] [False, False, False]
+2025-03-20 11:39:48,943 [INFO] members user ids:
+2025-03-20 11:39:48,943 [INFO] [14, None, None]
+2025-03-20 11:39:48,943 [INFO] After. num_members:
+2025-03-20 11:39:48,943 [INFO] 3
+2025-03-20 11:39:48,943 [INFO] member statuses:
+2025-03-20 11:39:48,943 [INFO] ['joined', 'joined', 'not joined']
+2025-03-20 11:39:48,943 [INFO] members:
+2025-03-20 11:39:48,944 [INFO] ['ttt2', 'ttt3', None]
+2025-03-20 11:39:48,944 [INFO] members EOR:
+2025-03-20 11:39:48,944 [INFO] [False, False, False]
+2025-03-20 11:39:48,944 [INFO] members user ids:
+2025-03-20 11:39:48,944 [INFO] [14, 15, None]
+2025-03-20 11:39:48,944 [INFO] Group: 3 User: 15 Group id: 3 Group members: ['ttt2', 'ttt3', None] Group mem ids: [14, 15, None] Group status: ['joined', 'joined', 'not joined'] Group experimental condition: individual_belief_high
+2025-03-20 11:39:48,944 [INFO] Group: 3 User: 15 Current user: ttt3 Current user group: 3 Current user group code: 1 Current user domain 1: at Current user domain 2: sb
+2025-03-20 11:39:48,948 [INFO] Flush and Commit successful. Remember to commit at the end. Member to existing group
+2025-03-20 11:39:48,949 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:39:48,950 [DEBUG] Closed WebSocket
+2025-03-20 11:39:48,950 [INFO] Group: 3 User: 15 Current user: ttt3Current user group: 3
+2025-03-20 11:39:48,963 [INFO] [[1, None], [2, ['test713', 'test712', 'test711']], [3, ['ttt2', 'ttt3', None]]]
+2025-03-20 11:39:48,963 [INFO] Group: 3 User: 15 Room: room_3
+2025-03-20 11:39:48,963 [INFO] Rooms for current user: ['5xIFlE_DYjSdPqLDAAAH']
+2025-03-20 11:39:48,964 [INFO] 5xIFlE_DYjSdPqLDAAAH is entering room room_3 [/]
+2025-03-20 11:39:48,964 [INFO] Group: 3 User: 15 Rooms for current user: ['room_3', '5xIFlE_DYjSdPqLDAAAH']
+2025-03-20 11:39:48,964 [INFO] emitting event "group joined" to room_3 [/]
+2025-03-20 11:39:48,964 [INFO] srN5LNlLr2uHkKA8AAAC: Sending packet MESSAGE data 2["group joined",{"num_members":2,"max_num_members":3,"room_name":"room_3"}]
+2025-03-20 11:39:48,964 [INFO] HlZ7XUPAiQeaqgArAAAG: Sending packet MESSAGE data 2["group joined",{"num_members":2,"max_num_members":3,"room_name":"room_3"}]
+2025-03-20 11:39:52,933 [INFO] srN5LNlLr2uHkKA8AAAC: Received packet MESSAGE data 2["heartbeat",{"timestamp":1742485192932}]
+2025-03-20 11:39:52,933 [INFO] received event "heartbeat" from Z8EX5wmDUDa1F8iKAAAD [/]
+2025-03-20 11:39:52,933 [INFO] Received heartbeat from Z8EX5wmDUDa1F8iKAAAD
+2025-03-20 11:39:52,934 [INFO] emitting event "heartbeat_response" to Z8EX5wmDUDa1F8iKAAAD [/]
+2025-03-20 11:39:52,934 [INFO] srN5LNlLr2uHkKA8AAAC: Sending packet MESSAGE data 2["heartbeat_response",{"server_time":1742485192.9340253}]
+2025-03-20 11:39:59,180 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:59,180 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:59,181 [INFO] 127.0.0.1 - - [2025-03-20 11:39:59] "GET /post_practice HTTP/1.1" 302 586 0.001378
+2025-03-20 11:39:59,193 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:59,193 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:59,195 [INFO] 127.0.0.1 - - [2025-03-20 11:39:59] "GET /login?next=%2Fpost_practice HTTP/1.1" 200 3447 0.001653
+2025-03-20 11:39:59,264 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:59,264 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:59,266 [INFO] 127.0.0.1 - - [2025-03-20 11:39:59] "GET /static/dragula.css HTTP/1.1" 200 816 0.001509
+2025-03-20 11:39:59,266 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:59,266 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:59,267 [INFO] 127.0.0.1 - - [2025-03-20 11:39:59] "GET /static/styles.css HTTP/1.1" 200 5572 0.000949
+2025-03-20 11:39:59,267 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:59,267 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:59,268 [INFO] 127.0.0.1 - - [2025-03-20 11:39:59] "GET /static/dragula.js HTTP/1.1" 200 80941 0.001015
+2025-03-20 11:39:59,360 [DEBUG] Initializing WebSocket
+2025-03-20 11:39:59,360 [DEBUG] Validating WebSocket request
+2025-03-20 11:39:59,361 [INFO] 127.0.0.1 - - [2025-03-20 11:39:59] "GET /favicon.ico HTTP/1.1" 404 331 0.001168
+2025-03-20 11:40:03,617 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,618 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,618 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 11:40:03,636 [INFO] Logging in user: <User ttt4>
+2025-03-20 11:40:03,636 [INFO] User is authenticated after login? True
+2025-03-20 11:40:03,636 [INFO] Next page url: /post_practice
+2025-03-20 11:40:03,636 [INFO] Redirecting to: /
+2025-03-20 11:40:03,637 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "POST /login?next=%2Fpost_practice HTTP/1.1" 302 674 0.019263
+2025-03-20 11:40:03,638 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,638 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,639 [INFO] I'm in post practice
+2025-03-20 11:40:03,642 [INFO] Flush and Commit successful. Remember to commit at the end. ttt4. User progress post practice
+2025-03-20 11:40:03,644 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /post_practice HTTP/1.1" 200 7320 0.005444
+2025-03-20 11:40:03,654 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,654 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,655 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /static/dragula.css HTTP/1.1" 200 816 0.001169
+2025-03-20 11:40:03,656 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,656 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,657 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /static/dragula.js HTTP/1.1" 304 141 0.000888
+2025-03-20 11:40:03,657 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,657 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,658 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /static/styles.css HTTP/1.1" 200 5572 0.000760
+2025-03-20 11:40:03,658 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,658 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,659 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /static/css/style.css HTTP/1.1" 200 8426 0.000741
+2025-03-20 11:40:03,659 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,659 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,660 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /static/img/arrow.png HTTP/1.1" 200 13289 0.000759
+2025-03-20 11:40:03,660 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,660 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,661 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /static/img/right2.png HTTP/1.1" 200 10086 0.000707
+2025-03-20 11:40:03,661 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,661 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,662 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /static/img/right1.png HTTP/1.1" 200 10027 0.000744
+2025-03-20 11:40:03,672 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,672 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,672 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:40:03,672 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:40:03,672 [INFO] SXzJOdIcapfcVP8zAAAI: Sending packet OPEN data {'sid': 'SXzJOdIcapfcVP8zAAAI', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:40:03,673 [INFO] SXzJOdIcapfcVP8zAAAI: Received request to upgrade to websocket
+2025-03-20 11:40:03,673 [INFO] SXzJOdIcapfcVP8zAAAI: Upgrade to websocket successful
+2025-03-20 11:40:03,673 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:03,673 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:03,674 [INFO] 127.0.0.1 - - [2025-03-20 11:40:03] "GET /favicon.ico HTTP/1.1" 404 331 0.000784
+2025-03-20 11:40:03,675 [INFO] SXzJOdIcapfcVP8zAAAI: Received packet MESSAGE data 0
+2025-03-20 11:40:03,677 [INFO] User 16 connected with SID 9KintT4euADb8stsAAAJ
+2025-03-20 11:40:03,677 [INFO] SXzJOdIcapfcVP8zAAAI: Sending packet MESSAGE data 0{"sid":"9KintT4euADb8stsAAAJ"}
+2025-03-20 11:40:05,125 [DEBUG] Closed WebSocket
+2025-03-20 11:40:05,128 [INFO] User id: 16, 9KintT4euADb8stsAAAJ disconnected.
+2025-03-20 11:40:05,128 [INFO] Client disconnected with SID 9KintT4euADb8stsAAAJ using Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0, reason: disconnect
+2025-03-20 11:40:05,128 [INFO] User 16: Disconnected at 03-20 11:40:05. Tracking: {'disconnect_times': ['03-20 11:40:05'], 'reconnect_times': [], 'disconnect_pages': [None], 'reconnect_pages': []}
+2025-03-20 11:40:05,129 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,129 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,131 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /waiting_room HTTP/1.1" 200 7497 0.002079
+2025-03-20 11:40:05,139 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,140 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,140 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/dragula.css HTTP/1.1" 304 142 0.000975
+2025-03-20 11:40:05,141 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,141 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,142 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/css/style.css HTTP/1.1" 304 140 0.000780
+2025-03-20 11:40:05,142 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,142 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,143 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/dragula.js HTTP/1.1" 304 141 0.000737
+2025-03-20 11:40:05,143 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,143 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,144 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/styles.css HTTP/1.1" 304 141 0.000793
+2025-03-20 11:40:05,158 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,158 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,158 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:40:05,158 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:40:05,159 [INFO] lwpNo2iK_9KsKOxHAAAK: Sending packet OPEN data {'sid': 'lwpNo2iK_9KsKOxHAAAK', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:40:05,159 [INFO] lwpNo2iK_9KsKOxHAAAK: Received request to upgrade to websocket
+2025-03-20 11:40:05,159 [INFO] lwpNo2iK_9KsKOxHAAAK: Upgrade to websocket successful
+2025-03-20 11:40:05,160 [INFO] lwpNo2iK_9KsKOxHAAAK: Received packet MESSAGE data 0
+2025-03-20 11:40:05,162 [INFO] User 16 connected with SID AvOfIpHRhanwLYaGAAAL
+2025-03-20 11:40:05,162 [INFO] User 16: Reconnected at 03-20 11:40:05. Tracking: {'disconnect_times': ['03-20 11:40:05'], 'reconnect_times': ['03-20 11:40:05'], 'disconnect_pages': [None], 'reconnect_pages': [None]}
+2025-03-20 11:40:05,162 [INFO] User 16: Timer canceled due to reconnection.
+2025-03-20 11:40:05,163 [INFO] lwpNo2iK_9KsKOxHAAAK: Sending packet MESSAGE data 0{"sid":"AvOfIpHRhanwLYaGAAAL"}
+2025-03-20 11:40:05,164 [INFO] lwpNo2iK_9KsKOxHAAAK: Received packet MESSAGE data 2["join group"]
+2025-03-20 11:40:05,164 [INFO] received event "join group" from AvOfIpHRhanwLYaGAAAL [/]
+2025-03-20 11:40:05,167 [INFO] Group: None User: 16 Join group function. Current user group:  None
+2025-03-20 11:40:05,167 [INFO] Group: None User: 16 Old group: Group id: 3 num_active_members: 2 Group members: ['ttt2', 'ttt3', None] Group mem ids: [14, 15, None] Group status: ['joined', 'joined', 'not joined'] Group experimental condition: individual_belief_high
+2025-03-20 11:40:05,167 [INFO] Group: None User: 16 Adding to existing group
+2025-03-20 11:40:05,167 [INFO] Before. num_members:
+2025-03-20 11:40:05,167 [INFO] 3
+2025-03-20 11:40:05,167 [INFO] member statuses:
+2025-03-20 11:40:05,167 [INFO] ['joined', 'joined', 'not joined']
+2025-03-20 11:40:05,168 [INFO] members:
+2025-03-20 11:40:05,168 [INFO] ['ttt2', 'ttt3', None]
+2025-03-20 11:40:05,168 [INFO] members EOR:
+2025-03-20 11:40:05,168 [INFO] [False, False, False]
+2025-03-20 11:40:05,168 [INFO] members user ids:
+2025-03-20 11:40:05,168 [INFO] [14, 15, None]
+2025-03-20 11:40:05,168 [INFO] After. num_members:
+2025-03-20 11:40:05,168 [INFO] 3
+2025-03-20 11:40:05,168 [INFO] member statuses:
+2025-03-20 11:40:05,168 [INFO] ['joined', 'joined', 'joined']
+2025-03-20 11:40:05,168 [INFO] members:
+2025-03-20 11:40:05,168 [INFO] ['ttt2', 'ttt3', 'ttt4']
+2025-03-20 11:40:05,168 [INFO] members EOR:
+2025-03-20 11:40:05,169 [INFO] [False, False, False]
+2025-03-20 11:40:05,169 [INFO] members user ids:
+2025-03-20 11:40:05,169 [INFO] [14, 15, 16]
+2025-03-20 11:40:05,169 [INFO] Group: 3 User: 16 Group id: 3 Group members: ['ttt2', 'ttt3', 'ttt4'] Group mem ids: [14, 15, 16] Group status: ['joined', 'joined', 'joined'] Group experimental condition: individual_belief_high
+2025-03-20 11:40:05,169 [INFO] Group: 3 User: 16 Current user: ttt4 Current user group: 3 Current user group code: 2 Current user domain 1: at Current user domain 2: sb
+2025-03-20 11:40:05,174 [INFO] Flush and Commit successful. Remember to commit at the end. Member to existing group
+2025-03-20 11:40:05,175 [INFO] Group: 3 User: 16 Current user: ttt4Current user group: 3
+2025-03-20 11:40:05,177 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:40:05,177 [DEBUG] Closed WebSocket
+2025-03-20 11:40:05,183 [INFO] [[1, None], [2, ['test713', 'test712', 'test711']], [3, ['ttt2', 'ttt3', 'ttt4']]]
+2025-03-20 11:40:05,184 [INFO] Group: 3 User: 16 Room: room_3
+2025-03-20 11:40:05,184 [INFO] Rooms for current user: ['AvOfIpHRhanwLYaGAAAL']
+2025-03-20 11:40:05,184 [INFO] AvOfIpHRhanwLYaGAAAL is entering room room_3 [/]
+2025-03-20 11:40:05,184 [INFO] Group: 3 User: 16 Rooms for current user: ['room_3', 'AvOfIpHRhanwLYaGAAAL']
+2025-03-20 11:40:05,184 [INFO] emitting event "group joined" to room_3 [/]
+2025-03-20 11:40:05,184 [INFO] srN5LNlLr2uHkKA8AAAC: Sending packet MESSAGE data 2["group joined",{"num_members":3,"max_num_members":3,"room_name":"room_3"}]
+2025-03-20 11:40:05,184 [INFO] HlZ7XUPAiQeaqgArAAAG: Sending packet MESSAGE data 2["group joined",{"num_members":3,"max_num_members":3,"room_name":"room_3"}]
+2025-03-20 11:40:05,184 [INFO] lwpNo2iK_9KsKOxHAAAK: Sending packet MESSAGE data 2["group joined",{"num_members":3,"max_num_members":3,"room_name":"room_3"}]
+2025-03-20 11:40:05,187 [INFO] HlZ7XUPAiQeaqgArAAAG: Received packet MESSAGE data 2["next domain",{"survey":"-1","user input":{},"movement":"next","attn1":"-1","attn2":"-1","attn3":"-1","use1":"-1","use2":"-1","use3":"-1","short answer":""}]
+2025-03-20 11:40:05,187 [INFO] received event "next domain" from 5xIFlE_DYjSdPqLDAAAH [/]
+2025-03-20 11:40:05,187 [INFO] srN5LNlLr2uHkKA8AAAC: Received packet MESSAGE data 2["next domain",{"survey":"-1","user input":{},"movement":"next","attn1":"-1","attn2":"-1","attn3":"-1","use1":"-1","use2":"-1","use3":"-1","short answer":""}]
+2025-03-20 11:40:05,187 [INFO] received event "next domain" from Z8EX5wmDUDa1F8iKAAAD [/]
+2025-03-20 11:40:05,189 [INFO] current_user.curr_progress post practice
+2025-03-20 11:40:05,189 [INFO] emitting event "next domain is" to 5xIFlE_DYjSdPqLDAAAH [/]
+2025-03-20 11:40:05,189 [INFO] HlZ7XUPAiQeaqgArAAAG: Sending packet MESSAGE data 2["next domain is",{"domain":"at"}]
+2025-03-20 11:40:05,190 [INFO] current_user.curr_progress post practice
+2025-03-20 11:40:05,190 [INFO] emitting event "next domain is" to Z8EX5wmDUDa1F8iKAAAD [/]
+2025-03-20 11:40:05,191 [INFO] srN5LNlLr2uHkKA8AAAC: Sending packet MESSAGE data 2["next domain is",{"domain":"at"}]
+2025-03-20 11:40:05,191 [INFO] lwpNo2iK_9KsKOxHAAAK: Received packet MESSAGE data 2["next domain",{"survey":"-1","user input":{},"movement":"next","attn1":"-1","attn2":"-1","attn3":"-1","use1":"-1","use2":"-1","use3":"-1","short answer":""}]
+2025-03-20 11:40:05,191 [INFO] received event "next domain" from AvOfIpHRhanwLYaGAAAL [/]
+2025-03-20 11:40:05,192 [INFO] current_user.curr_progress post practice
+2025-03-20 11:40:05,192 [INFO] emitting event "next domain is" to AvOfIpHRhanwLYaGAAAL [/]
+2025-03-20 11:40:05,193 [INFO] lwpNo2iK_9KsKOxHAAAK: Sending packet MESSAGE data 2["next domain is",{"domain":"at"}]
+2025-03-20 11:40:05,193 [DEBUG] Closed WebSocket
+2025-03-20 11:40:05,193 [DEBUG] Closed WebSocket
+2025-03-20 11:40:05,196 [INFO] User id: 15, 5xIFlE_DYjSdPqLDAAAH disconnected.
+2025-03-20 11:40:05,196 [INFO] Client disconnected with SID 5xIFlE_DYjSdPqLDAAAH using Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0, reason: disconnect
+2025-03-20 11:40:05,196 [INFO] User 15: Disconnected at 03-20 11:40:05. Tracking: {'disconnect_times': ['03-20 11:39:48', '03-20 11:40:05'], 'reconnect_times': ['03-20 11:39:48'], 'disconnect_pages': [None, None], 'reconnect_pages': [None]}
+2025-03-20 11:40:05,198 [INFO] User id: 14, Z8EX5wmDUDa1F8iKAAAD disconnected.
+2025-03-20 11:40:05,198 [INFO] Client disconnected with SID Z8EX5wmDUDa1F8iKAAAD using Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36, reason: disconnect
+2025-03-20 11:40:05,198 [INFO] User 14: Disconnected at 03-20 11:40:05. Tracking: {'disconnect_times': ['03-20 11:39:22', '03-20 11:40:05'], 'reconnect_times': ['03-20 11:39:22'], 'disconnect_pages': [None, None], 'reconnect_pages': [None]}
+2025-03-20 11:40:05,199 [DEBUG] Closed WebSocket
+2025-03-20 11:40:05,201 [INFO] User id: 16, AvOfIpHRhanwLYaGAAAL disconnected.
+2025-03-20 11:40:05,201 [INFO] Client disconnected with SID AvOfIpHRhanwLYaGAAAL using Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0, reason: disconnect
+2025-03-20 11:40:05,201 [INFO] User 16: Disconnected at 03-20 11:40:05. Tracking: {'disconnect_times': ['03-20 11:40:05', '03-20 11:40:05'], 'reconnect_times': ['03-20 11:40:05'], 'disconnect_pages': [None, None], 'reconnect_pages': [None]}
+2025-03-20 11:40:05,202 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,202 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,212 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /at_intro HTTP/1.1" 200 7714 0.010319
+2025-03-20 11:40:05,212 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,213 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,215 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /at_intro HTTP/1.1" 200 7714 0.002592
+2025-03-20 11:40:05,215 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,216 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,218 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /at_intro HTTP/1.1" 200 7714 0.002331
+2025-03-20 11:40:05,218 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,218 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,219 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/dragula.css HTTP/1.1" 304 142 0.000972
+2025-03-20 11:40:05,219 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,220 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,221 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_2.png HTTP/1.1" 200 39399 0.001456
+2025-03-20 11:40:05,222 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,222 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,223 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/css/style.css HTTP/1.1" 304 140 0.001039
+2025-03-20 11:40:05,223 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,223 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,224 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi.png HTTP/1.1" 200 24546 0.001418
+2025-03-20 11:40:05,225 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,225 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,226 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/dragula.js HTTP/1.1" 304 141 0.001091
+2025-03-20 11:40:05,226 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,226 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,227 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/styles.css HTTP/1.1" 304 141 0.001023
+2025-03-20 11:40:05,228 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,228 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,229 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_3.png HTTP/1.1" 200 44258 0.001609
+2025-03-20 11:40:05,230 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,230 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,231 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi_dropoff1.png HTTP/1.1" 200 9628 0.001090
+2025-03-20 11:40:05,231 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,231 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,232 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/arrow.png HTTP/1.1" 304 140 0.000845
+2025-03-20 11:40:05,232 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,232 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,233 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi_dropoff2.png HTTP/1.1" 200 11157 0.000989
+2025-03-20 11:40:05,234 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,234 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,235 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_toll1.png HTTP/1.1" 200 1474 0.001024
+2025-03-20 11:40:05,235 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,235 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,236 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_toll2.png HTTP/1.1" 200 1473 0.001047
+2025-03-20 11:40:05,236 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,236 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,237 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery1.png HTTP/1.1" 200 1927 0.000949
+2025-03-20 11:40:05,238 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,238 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,239 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery2.png HTTP/1.1" 200 1782 0.000991
+2025-03-20 11:40:05,239 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,239 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,240 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery3.png HTTP/1.1" 200 1741 0.001020
+2025-03-20 11:40:05,240 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,240 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,241 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/right1.png HTTP/1.1" 304 141 0.000971
+2025-03-20 11:40:05,242 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,242 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,242 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/css/style.css HTTP/1.1" 304 140 0.000680
+2025-03-20 11:40:05,243 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,243 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,243 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/dragula.js HTTP/1.1" 304 141 0.000661
+2025-03-20 11:40:05,244 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,244 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,244 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/css/style.css HTTP/1.1" 304 140 0.000681
+2025-03-20 11:40:05,245 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,245 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,245 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_2.png HTTP/1.1" 200 39399 0.000730
+2025-03-20 11:40:05,246 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,246 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,246 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/dragula.js HTTP/1.1" 304 141 0.000675
+2025-03-20 11:40:05,247 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,247 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,247 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi.png HTTP/1.1" 200 24546 0.000698
+2025-03-20 11:40:05,248 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,248 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,248 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/styles.css HTTP/1.1" 304 141 0.000661
+2025-03-20 11:40:05,248 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,249 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,249 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/styles.css HTTP/1.1" 304 141 0.000652
+2025-03-20 11:40:05,249 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,249 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,250 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/dragula.css HTTP/1.1" 304 142 0.000648
+2025-03-20 11:40:05,250 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,250 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,251 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/dragula.css HTTP/1.1" 304 142 0.000643
+2025-03-20 11:40:05,251 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,251 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,252 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/right2.png HTTP/1.1" 304 141 0.000641
+2025-03-20 11:40:05,252 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,252 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,252 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:40:05,253 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:40:05,253 [INFO] bU8LiT_1oTSDNxyRAAAM: Sending packet OPEN data {'sid': 'bU8LiT_1oTSDNxyRAAAM', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:40:05,253 [INFO] bU8LiT_1oTSDNxyRAAAM: Received request to upgrade to websocket
+2025-03-20 11:40:05,253 [INFO] bU8LiT_1oTSDNxyRAAAM: Upgrade to websocket successful
+2025-03-20 11:40:05,254 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,254 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,255 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi.png HTTP/1.1" 200 24546 0.000962
+2025-03-20 11:40:05,255 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,255 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,256 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi_dropoff1.png HTTP/1.1" 200 9628 0.000747
+2025-03-20 11:40:05,256 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,256 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,257 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_3.png HTTP/1.1" 200 44258 0.000746
+2025-03-20 11:40:05,257 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,257 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,258 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery1.png HTTP/1.1" 200 1927 0.000672
+2025-03-20 11:40:05,258 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,258 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,259 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_3.png HTTP/1.1" 200 44258 0.000854
+2025-03-20 11:40:05,259 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,259 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,260 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi_dropoff1.png HTTP/1.1" 200 9628 0.000685
+2025-03-20 11:40:05,260 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,260 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,261 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/arrow.png HTTP/1.1" 304 140 0.000779
+2025-03-20 11:40:05,261 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,261 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,262 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi_dropoff2.png HTTP/1.1" 200 11157 0.000677
+2025-03-20 11:40:05,262 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,262 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,263 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery2.png HTTP/1.1" 200 1782 0.000664
+2025-03-20 11:40:05,263 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,263 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,264 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_toll1.png HTTP/1.1" 200 1474 0.000641
+2025-03-20 11:40:05,264 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,264 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,265 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_2.png HTTP/1.1" 200 39399 0.000687
+2025-03-20 11:40:05,265 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,265 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,266 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_toll2.png HTTP/1.1" 200 1473 0.000648
+2025-03-20 11:40:05,266 [INFO] bU8LiT_1oTSDNxyRAAAM: Received packet MESSAGE data 0
+2025-03-20 11:40:05,268 [INFO] User 15 connected with SID I-Y4VsVkbK8DtPmQAAAN
+2025-03-20 11:40:05,269 [INFO] User 15: Reconnected at 03-20 11:40:05. Tracking: {'disconnect_times': ['03-20 11:39:48', '03-20 11:40:05'], 'reconnect_times': ['03-20 11:39:48', '03-20 11:40:05'], 'disconnect_pages': [None, None], 'reconnect_pages': [None, None]}
+2025-03-20 11:40:05,269 [INFO] User 15: Timer canceled due to reconnection.
+2025-03-20 11:40:05,269 [INFO] User:
+2025-03-20 11:40:05,269 [INFO] 15
+2025-03-20 11:40:05,269 [INFO] Joining room on connect:
+2025-03-20 11:40:05,269 [INFO] room_3
+2025-03-20 11:40:05,269 [INFO] I-Y4VsVkbK8DtPmQAAAN is entering room room_3 [/]
+2025-03-20 11:40:05,270 [INFO] bU8LiT_1oTSDNxyRAAAM: Sending packet MESSAGE data 0{"sid":"I-Y4VsVkbK8DtPmQAAAN"}
+2025-03-20 11:40:05,270 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,270 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,272 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery3.png HTTP/1.1" 200 1741 0.001219
+2025-03-20 11:40:05,272 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,272 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,273 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi_dropoff2.png HTTP/1.1" 200 11157 0.001003
+2025-03-20 11:40:05,273 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,273 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,274 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_toll1.png HTTP/1.1" 200 1474 0.000762
+2025-03-20 11:40:05,274 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,274 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,275 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_toll2.png HTTP/1.1" 200 1473 0.000700
+2025-03-20 11:40:05,275 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,275 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,276 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery1.png HTTP/1.1" 200 1927 0.000694
+2025-03-20 11:40:05,276 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,276 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,277 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery2.png HTTP/1.1" 200 1782 0.000885
+2025-03-20 11:40:05,278 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,278 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,279 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/augmented_taxi2_battery3.png HTTP/1.1" 200 1741 0.000950
+2025-03-20 11:40:05,279 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,279 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,280 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/right1.png HTTP/1.1" 304 141 0.001013
+2025-03-20 11:40:05,280 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,281 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,281 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/right2.png HTTP/1.1" 304 141 0.000956
+2025-03-20 11:40:05,282 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,282 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,282 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:40:05,282 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:40:05,283 [INFO] CkD02kfhp0-abVUWAAAO: Sending packet OPEN data {'sid': 'CkD02kfhp0-abVUWAAAO', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:40:05,283 [INFO] CkD02kfhp0-abVUWAAAO: Received request to upgrade to websocket
+2025-03-20 11:40:05,283 [INFO] CkD02kfhp0-abVUWAAAO: Upgrade to websocket successful
+2025-03-20 11:40:05,284 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,284 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,285 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/right1.png HTTP/1.1" 304 141 0.001276
+2025-03-20 11:40:05,286 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,286 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,287 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/arrow.png HTTP/1.1" 304 140 0.000925
+2025-03-20 11:40:05,287 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,287 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,288 [INFO] 127.0.0.1 - - [2025-03-20 11:40:05] "GET /static/img/right2.png HTTP/1.1" 304 141 0.000894
+2025-03-20 11:40:05,288 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:05,289 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:05,289 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:40:05,289 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:40:05,289 [INFO] nkcVj3OqRxMo_qfbAAAP: Sending packet OPEN data {'sid': 'nkcVj3OqRxMo_qfbAAAP', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:40:05,289 [INFO] nkcVj3OqRxMo_qfbAAAP: Received request to upgrade to websocket
+2025-03-20 11:40:05,289 [INFO] nkcVj3OqRxMo_qfbAAAP: Upgrade to websocket successful
+2025-03-20 11:40:05,290 [INFO] CkD02kfhp0-abVUWAAAO: Received packet MESSAGE data 0
+2025-03-20 11:40:05,293 [INFO] User 14 connected with SID 6OzO82EprG4BUidkAAAQ
+2025-03-20 11:40:05,293 [INFO] User 14: Reconnected at 03-20 11:40:05. Tracking: {'disconnect_times': ['03-20 11:39:22', '03-20 11:40:05'], 'reconnect_times': ['03-20 11:39:22', '03-20 11:40:05'], 'disconnect_pages': [None, None], 'reconnect_pages': [None, None]}
+2025-03-20 11:40:05,293 [INFO] User 14: Timer canceled due to reconnection.
+2025-03-20 11:40:05,293 [INFO] User:
+2025-03-20 11:40:05,293 [INFO] 14
+2025-03-20 11:40:05,293 [INFO] Joining room on connect:
+2025-03-20 11:40:05,294 [INFO] room_3
+2025-03-20 11:40:05,294 [INFO] 6OzO82EprG4BUidkAAAQ is entering room room_3 [/]
+2025-03-20 11:40:05,295 [INFO] CkD02kfhp0-abVUWAAAO: Sending packet MESSAGE data 0{"sid":"6OzO82EprG4BUidkAAAQ"}
+2025-03-20 11:40:05,297 [INFO] nkcVj3OqRxMo_qfbAAAP: Received packet MESSAGE data 0
+2025-03-20 11:40:05,300 [INFO] User 16 connected with SID hEtM3c4S8lMvDYWoAAAR
+2025-03-20 11:40:05,300 [INFO] User 16: Reconnected at 03-20 11:40:05. Tracking: {'disconnect_times': ['03-20 11:40:05', '03-20 11:40:05'], 'reconnect_times': ['03-20 11:40:05', '03-20 11:40:05'], 'disconnect_pages': [None, None], 'reconnect_pages': [None, None]}
+2025-03-20 11:40:05,300 [INFO] User 16: Timer canceled due to reconnection.
+2025-03-20 11:40:05,301 [INFO] User:
+2025-03-20 11:40:05,301 [INFO] 16
+2025-03-20 11:40:05,301 [INFO] Joining room on connect:
+2025-03-20 11:40:05,301 [INFO] room_3
+2025-03-20 11:40:05,301 [INFO] hEtM3c4S8lMvDYWoAAAR is entering room room_3 [/]
+2025-03-20 11:40:05,301 [INFO] nkcVj3OqRxMo_qfbAAAP: Sending packet MESSAGE data 0{"sid":"hEtM3c4S8lMvDYWoAAAR"}
+2025-03-20 11:40:06,749 [DEBUG] Closed WebSocket
+2025-03-20 11:40:06,752 [INFO] User id: 16, hEtM3c4S8lMvDYWoAAAR disconnected.
+2025-03-20 11:40:06,752 [INFO] Client disconnected with SID hEtM3c4S8lMvDYWoAAAR using Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0, reason: disconnect
+2025-03-20 11:40:06,752 [INFO] User 16: Disconnected at 03-20 11:40:06. Tracking: {'disconnect_times': ['03-20 11:40:05', '03-20 11:40:05', '03-20 11:40:06'], 'reconnect_times': ['03-20 11:40:05', '03-20 11:40:05'], 'disconnect_pages': [None, None, None], 'reconnect_pages': [None, None]}
+2025-03-20 11:40:06,753 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,753 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,779 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:40:06,779 [DEBUG] Closed WebSocket
+2025-03-20 11:40:06,787 [INFO] 127.0.0.1 - - [2025-03-20 11:40:06] "GET /at HTTP/1.1" 200 103140 0.034174
+2025-03-20 11:40:06,798 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,798 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,800 [INFO] 127.0.0.1 - - [2025-03-20 11:40:06] "GET /static/lib/jquery-min.js HTTP/1.1" 200 93363 0.002125
+2025-03-20 11:40:06,800 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,800 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,801 [INFO] 127.0.0.1 - - [2025-03-20 11:40:06] "GET /static/css/jspsych.css HTTP/1.1" 200 2974 0.001079
+2025-03-20 11:40:06,802 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,802 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,802 [INFO] 127.0.0.1 - - [2025-03-20 11:40:06] "GET /static/css/style.css HTTP/1.1" 304 140 0.000735
+2025-03-20 11:40:06,803 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,803 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,804 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,804 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,806 [INFO] 127.0.0.1 - - [2025-03-20 11:40:06] "GET /static/lib/backbone-min.js HTTP/1.1" 200 19715 0.001304
+2025-03-20 11:40:06,806 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,806 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,807 [INFO] 127.0.0.1 - - [2025-03-20 11:40:06] "GET /static/lib/underscore-min.js HTTP/1.1" 200 14359 0.001109
+2025-03-20 11:40:06,807 [INFO] 127.0.0.1 - - [2025-03-20 11:40:06] "GET /static/lib/d3.v3.min.js HTTP/1.1" 200 145001 0.004818
+2025-03-20 11:40:06,858 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,858 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,858 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:40:06,858 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:40:06,858 [INFO] ou79K8KLsw6lrwhlAAAS: Sending packet OPEN data {'sid': 'ou79K8KLsw6lrwhlAAAS', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:40:06,859 [INFO] ou79K8KLsw6lrwhlAAAS: Received request to upgrade to websocket
+2025-03-20 11:40:06,859 [INFO] ou79K8KLsw6lrwhlAAAS: Upgrade to websocket successful
+2025-03-20 11:40:06,859 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:06,859 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:06,860 [INFO] 127.0.0.1 - - [2025-03-20 11:40:06] "GET /static/audio/mixkit-tick-tock-clock-close-up-1059.mp3 HTTP/1.1" 404 331 0.000995
+2025-03-20 11:40:06,860 [INFO] ou79K8KLsw6lrwhlAAAS: Received packet MESSAGE data 0
+2025-03-20 11:40:06,862 [INFO] User 16 connected with SID p2Uv_Cu-isAIqZMMAAAT
+2025-03-20 11:40:06,863 [INFO] User 16: Reconnected at 03-20 11:40:06. Tracking: {'disconnect_times': ['03-20 11:40:05', '03-20 11:40:05', '03-20 11:40:06'], 'reconnect_times': ['03-20 11:40:05', '03-20 11:40:05', '03-20 11:40:06'], 'disconnect_pages': [None, None, None], 'reconnect_pages': [None, None, None]}
+2025-03-20 11:40:06,863 [INFO] User 16: Timer canceled due to reconnection.
+2025-03-20 11:40:06,863 [INFO] User:
+2025-03-20 11:40:06,863 [INFO] 16
+2025-03-20 11:40:06,863 [INFO] Joining room on connect:
+2025-03-20 11:40:06,863 [INFO] room_3
+2025-03-20 11:40:06,863 [INFO] p2Uv_Cu-isAIqZMMAAAT is entering room room_3 [/]
+2025-03-20 11:40:06,864 [INFO] ou79K8KLsw6lrwhlAAAS: Sending packet MESSAGE data 0{"sid":"p2Uv_Cu-isAIqZMMAAAT"}
+2025-03-20 11:40:06,865 [INFO] ou79K8KLsw6lrwhlAAAS: Received packet MESSAGE data 2["settings",{"domain":null,"interaction type":null,"survey":"-1","iteration":0,"subiteration":0,"user input":{},"movement":"next","attn1":"-1","attn2":"-1","attn3":"-1","use1":"-1","use2":"-1","use3":"-1","understanding":null,"engagement_input":null,"improvement_input":null,"already completed":null,"room_name":"room_3","last_activity":null,"last_activity_time":null,"final_score":"0","final_score_string":"","reward_ft_weights":[],"new_domain":true}]
+2025-03-20 11:40:06,865 [INFO] received event "settings" from p2Uv_Cu-isAIqZMMAAAT [/]
+2025-03-20 11:40:06,866 [INFO] Data received: {'domain': None, 'interaction type': None, 'survey': '-1', 'iteration': 0, 'subiteration': 0, 'user input': {}, 'movement': 'next', 'attn1': '-1', 'attn2': '-1', 'attn3': '-1', 'use1': '-1', 'use2': '-1', 'use3': '-1', 'understanding': None, 'engagement_input': None, 'improvement_input': None, 'already completed': None, 'room_name': 'room_3', 'last_activity': None, 'last_activity_time': None, 'final_score': '0', 'final_score_string': '', 'reward_ft_weights': [], 'new_domain': True}
+2025-03-20 11:40:06,867 [INFO] Group: 3 User: 16 curr_progress: post practice curr_domain: 1
+2025-03-20 11:40:06,867 [INFO] Group: 3 User: 16 Group: 3 Room name: room_3 domain: at mdp class: augmented_taxi2
+2025-03-20 11:40:06,872 [INFO] Group: 3 User: 16 current_user progress:  post practice current_group progress:  domain_1 Round_num: 0 current_round: None None None
+2025-03-20 11:40:06,873 [INFO] Group: 3 User: 16 User:  16 Next movement. Checking if current trial was already completed..
+2025-03-20 11:40:06,877 [INFO] New domain? : True
+2025-03-20 11:40:06,878 [INFO] Updating domain in backend and database...
+2025-03-20 11:40:06,878 [INFO] Group: 3 User: 16 Updating domain of user and reset vars...
+2025-03-20 11:40:06,882 [INFO] Flush and Commit successful. Remember to commit at the end. New domain for user db: domain_1
+2025-03-20 11:40:06,883 [INFO] Group: 3 User: 16 curr_progress: domain_1 curr_domain: 1
+2025-03-20 11:40:06,883 [INFO] Group: 3 User: 16 Updated Domain: at Domain order: 1 mdp class: augmented_taxi2
+2025-03-20 11:40:06,885 [INFO] Group: 3 User: 16 Next movement. Current trial already completed? False . Current user last iter in round? True opt_response_flag: False
+2025-03-20 11:40:06,886 [INFO] Group: 3 User: 16 Waiting for team status to update, mainly all members to be in same game/domain...
+2025-03-20 11:40:06,888 [INFO] Group: 3 User: 16 Checking member and group status. Group id: 3 Group progress: domain_1 Current user progress: domain_1 Group members: ['ttt2', 'ttt3', 'ttt4']
+2025-03-20 11:40:06,888 [INFO] Group: 3 User: 16 Member id: 14 Member group: 3 Member curr progress: post practice Group progress: domain_1
+2025-03-20 11:40:06,888 [INFO] Group: 3 User: 16 Member id: 15 Member group: 3 Member curr progress: post practice Group progress: domain_1
+2025-03-20 11:40:06,888 [INFO] Group: 3 User: 16 Member id: 16 Member group: 3 Member curr progress: domain_1 Group progress: domain_1
+2025-03-20 11:40:06,888 [INFO] Group: 3 User: 16 Current group status:  study_not_start Current user round: 0 current_user curr_progress: domain_1
+2025-03-20 11:40:07,458 [INFO] Group: 3 User: 16 Next Round id: 1 Next round: None Waiting for first round to be generated...
+2025-03-20 11:40:07,461 [INFO] Group: 3 User: 16 Generating first round...
+2025-03-20 11:40:07,465 [INFO] Flush and Commit successful. Remember to commit at the end. Group status: gen_demos; in retrieve next round
+2025-03-20 11:40:07,467 [INFO] Group: 3 User: 16 round: 0 Group status: gen_demos Group experimental condition: individual_belief_high Group members: ['ttt2', 'ttt3', 'ttt4']
+2025-03-20 11:40:07,467 [INFO] Group: 3 User: 16 Member statuses retrive next round: ['joined', 'joined', 'joined']
+2025-03-20 11:40:07,467 [INFO] Group: 3 User: 16 Group experimental condition: individual_belief_high Group status: gen_demos Group id: 3 Group members: ['ttt2', 'ttt3', 'ttt4']
+2025-03-20 11:40:07,467 [INFO] Initializing teaching for this group...
+2025-03-20 11:40:07,467 [INFO] Solving for the optimal policy in each environment:
+2025-03-20 11:40:07,469 [ERROR] 0it [00:00, ?it/s]
+2025-03-20 11:40:07,469 [ERROR] 0it [00:00, ?it/s]
+2025-03-20 11:40:07,662 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:40:07,662 [DEBUG] Closed WebSocket
+2025-03-20 11:40:07,662 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:40:07,662 [DEBUG] Closed WebSocket
+2025-03-20 11:40:07,663 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:40:07,663 [DEBUG] Closed WebSocket
+2025-03-20 11:40:09,070 [INFO] 3
+2025-03-20 11:40:09,071 [INFO] 500
+2025-03-20 11:40:09,071 [INFO] [[-0.63599873  0.74199852 -0.21199958]]
+2025-03-20 11:40:09,072 [INFO] False
+2025-03-20 11:40:09,072 [INFO] [0.8, 0.8, 0.8]
+2025-03-20 11:40:09,072 [INFO] {'p1': [[array([[ 0,  0, -1]])]], 'p2': [[array([[ 0,  0, -1]])]], 'p3': [[array([[ 0,  0, -1]])]]}
+2025-03-20 11:40:09,072 [INFO] med_noise
+2025-03-20 11:40:09,109 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:09,109 [INFO] [[ 0  0 -1]]
+2025-03-20 11:40:09,109 [INFO] and lf:
+2025-03-20 11:40:09,109 [INFO] 1
+2025-03-20 11:40:09,110 [INFO] N_particles:
+2025-03-20 11:40:09,110 [INFO] 500
+2025-03-20 11:40:09,110 [INFO] n_eff:
+2025-03-20 11:40:09,110 [INFO] 250.00000000000097
+2025-03-20 11:40:09,111 [INFO] N:
+2025-03-20 11:40:09,111 [INFO] 500
+2025-03-20 11:40:09,123 [INFO] N:
+2025-03-20 11:40:09,123 [INFO] 500
+2025-03-20 11:40:09,134 [INFO] N:
+2025-03-20 11:40:09,134 [INFO] 500
+2025-03-20 11:40:09,134 [INFO] Resampling....
+2025-03-20 11:40:09,181 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:09,181 [INFO] [[ 0  0 -1]]
+2025-03-20 11:40:09,182 [INFO] and lf:
+2025-03-20 11:40:09,182 [INFO] 1
+2025-03-20 11:40:09,183 [INFO] N_particles:
+2025-03-20 11:40:09,183 [INFO] 500
+2025-03-20 11:40:09,183 [INFO] n_eff:
+2025-03-20 11:40:09,183 [INFO] 250.00000000000097
+2025-03-20 11:40:09,183 [INFO] N:
+2025-03-20 11:40:09,183 [INFO] 500
+2025-03-20 11:40:09,192 [INFO] N:
+2025-03-20 11:40:09,192 [INFO] 500
+2025-03-20 11:40:09,200 [INFO] N:
+2025-03-20 11:40:09,200 [INFO] 500
+2025-03-20 11:40:09,201 [INFO] Resampling....
+2025-03-20 11:40:09,247 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:09,248 [INFO] [[ 0  0 -1]]
+2025-03-20 11:40:09,248 [INFO] and lf:
+2025-03-20 11:40:09,248 [INFO] 1
+2025-03-20 11:40:09,249 [INFO] N_particles:
+2025-03-20 11:40:09,249 [INFO] 500
+2025-03-20 11:40:09,249 [INFO] n_eff:
+2025-03-20 11:40:09,249 [INFO] 250.00000000000097
+2025-03-20 11:40:09,250 [INFO] N:
+2025-03-20 11:40:09,250 [INFO] 500
+2025-03-20 11:40:09,258 [INFO] N:
+2025-03-20 11:40:09,258 [INFO] 500
+2025-03-20 11:40:09,267 [INFO] N:
+2025-03-20 11:40:09,267 [INFO] 500
+2025-03-20 11:40:09,267 [INFO] Resampling....
+2025-03-20 11:40:09,311 [INFO] Team knowledge:
+2025-03-20 11:40:09,311 [INFO] {'p1': [[array([[ 0,  0, -1]])]], 'p2': [[array([[ 0,  0, -1]])]], 'p3': [[array([[ 0,  0, -1]])]]}
+2025-03-20 11:40:09,311 [INFO] member_id:
+2025-03-20 11:40:09,311 [INFO] p1
+2025-03-20 11:40:09,311 [INFO] kc_id:
+2025-03-20 11:40:09,311 [INFO] 0
+2025-03-20 11:40:09,312 [INFO] member_id:
+2025-03-20 11:40:09,312 [INFO] p2
+2025-03-20 11:40:09,312 [INFO] kc_id:
+2025-03-20 11:40:09,312 [INFO] 0
+2025-03-20 11:40:09,312 [INFO] member_id:
+2025-03-20 11:40:09,312 [INFO] p3
+2025-03-20 11:40:09,312 [INFO] kc_id:
+2025-03-20 11:40:09,312 [INFO] 0
+2025-03-20 11:40:09,329 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:09,330 [INFO] [[ 0  0 -1]]
+2025-03-20 11:40:09,330 [INFO] and lf:
+2025-03-20 11:40:09,330 [INFO] 1
+2025-03-20 11:40:09,331 [INFO] N_particles:
+2025-03-20 11:40:09,331 [INFO] 500
+2025-03-20 11:40:09,331 [INFO] n_eff:
+2025-03-20 11:40:09,331 [INFO] 250.00000000000097
+2025-03-20 11:40:09,332 [INFO] N:
+2025-03-20 11:40:09,332 [INFO] 500
+2025-03-20 11:40:09,340 [INFO] N:
+2025-03-20 11:40:09,340 [INFO] 500
+2025-03-20 11:40:09,348 [INFO] N:
+2025-03-20 11:40:09,348 [INFO] 500
+2025-03-20 11:40:09,349 [INFO] Resampling....
+2025-03-20 11:40:09,407 [INFO] Group: 3 User: 16 nonzero counter: [ 9480.    inf 15979.] round: 0 variable filter: [[0. 1. 0.]]
+2025-03-20 11:40:11,850 [INFO] Group: 3 User: 16 Creating folder for this run:  /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/group_teaching/results/augmented_taxi2/ind_sim_trials/2025-03-20_group_3
+2025-03-20 11:40:11,853 [INFO] N KC rounds: 0
+2025-03-20 11:40:11,853 [INFO] Group: 3 User: 16 Current group sttatus: gen_demos
+2025-03-20 11:40:11,854 [INFO] Group: 3 User: 16 Current variable filter:  [[0. 1. 0.]]  with nonzero counter:  [ 9480.    inf 15979.]
+2025-03-20 11:40:11,854 [INFO] Group: 3 User: 16 min BEC constraints: [array([[ 0,  0, -1]])] prior min BEC constraints: [array([[ 0,  0, -1]])]
+2025-03-20 11:40:11,854 [INFO] Group: 3 User: 16 Teaching complete flag before generating demos: False
+2025-03-20 11:40:11,967 [INFO] Getting next round data for exp cond
+2025-03-20 11:40:11,967 [INFO] individual_belief_high
+2025-03-20 11:40:11,967 [INFO] Statuses of members:
+2025-03-20 11:40:11,967 [INFO] ['joined', 'joined', 'joined']
+2025-03-20 11:40:11,967 [INFO] Individual models:
+2025-03-20 11:40:11,967 [INFO] [<teams.particle_filter_team.Particles_team object at 0x7fea6c2a3940>, <teams.particle_filter_team.Particles_team object at 0x7fea6c2a3ee0>, <teams.particle_filter_team.Particles_team object at 0x7fea63cb0610>]
+2025-03-20 11:40:11,968 [INFO] Finding the learner model for next teaching session/round...
+2025-03-20 11:40:11,968 [INFO] min_BEC_constraints_running:
+2025-03-20 11:40:11,968 [INFO] [array([[ 0,  0, -1]])]
+2025-03-20 11:40:11,975 [INFO] Prob of learning, models:
+2025-03-20 11:40:11,975 [INFO] [1. 1. 1.]
+2025-03-20 11:40:11,975 [INFO] Model ids:
+2025-03-20 11:40:11,975 [INFO] [0, 1, 2]
+2025-03-20 11:40:12,001 [INFO] Model category for this teaching session/round:
+2025-03-20 11:40:12,001 [INFO] 0
+2025-03-20 11:40:12,001 [INFO] Solving for the optimal policy in each environment:
+2025-03-20 11:40:12,001 [ERROR] 0it [00:00, ?it/s]
+2025-03-20 11:40:12,002 [ERROR] 0it [00:00, ?it/s]
+2025-03-20 11:40:14,490 [INFO] Generating demonstration summary...
+2025-03-20 11:40:14,498 [INFO] Sampling human models from the particle filter...
+2025-03-20 11:40:14,498 [INFO] N_particles_demo:
+2025-03-20 11:40:14,498 [INFO] 1013
+2025-03-20 11:40:14,498 [INFO] N_human_models:
+2025-03-20 11:40:14,498 [INFO] 24
+2025-03-20 11:40:14,565 [INFO] Length of summary: 0
+2025-03-20 11:40:14,570 [ERROR] 0%|          | 0/64 [00:00<?, ?it/s]
+2025-03-20 11:40:15,682 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:15,682 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:15,684 [INFO] 127.0.0.1 - - [2025-03-20 11:40:15] "GET /at HTTP/1.1" 200 103140 0.002526
+2025-03-20 11:40:15,684 [DEBUG] Closed WebSocket
+2025-03-20 11:40:15,685 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:15,685 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:15,687 [INFO] 127.0.0.1 - - [2025-03-20 11:40:15] "GET /at HTTP/1.1" 200 103140 0.001974
+2025-03-20 11:40:15,687 [DEBUG] Closed WebSocket
+2025-03-20 11:40:15,687 [ERROR] 39%|###9      | 25/64 [00:01<00:01, 22.39it/s]
+2025-03-20 11:40:17,026 [INFO] User id: 14, 6OzO82EprG4BUidkAAAQ disconnected.
+2025-03-20 11:40:17,026 [INFO] Client disconnected with SID 6OzO82EprG4BUidkAAAQ using Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36, reason: disconnect
+2025-03-20 11:40:17,027 [INFO] User 14: Disconnected at 03-20 11:40:17. Tracking: {'disconnect_times': ['03-20 11:39:22', '03-20 11:40:05', '03-20 11:40:17'], 'reconnect_times': ['03-20 11:39:22', '03-20 11:40:05'], 'disconnect_pages': [None, None, None], 'reconnect_pages': [None, None]}
+2025-03-20 11:40:17,028 [INFO] User id: 15, I-Y4VsVkbK8DtPmQAAAN disconnected.
+2025-03-20 11:40:17,028 [INFO] Client disconnected with SID I-Y4VsVkbK8DtPmQAAAN using Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0, reason: disconnect
+2025-03-20 11:40:17,028 [INFO] User 15: Disconnected at 03-20 11:40:17. Tracking: {'disconnect_times': ['03-20 11:39:48', '03-20 11:40:05', '03-20 11:40:17'], 'reconnect_times': ['03-20 11:39:48', '03-20 11:40:05'], 'disconnect_pages': [None, None, None], 'reconnect_pages': [None, None]}
+2025-03-20 11:40:17,029 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,029 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,030 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/css/style.css HTTP/1.1" 304 140 0.000814
+2025-03-20 11:40:17,030 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,030 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,031 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/css/jspsych.css HTTP/1.1" 200 2974 0.000660
+2025-03-20 11:40:17,031 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,031 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,032 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,032 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,032 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/lib/backbone-min.js HTTP/1.1" 200 19715 0.000694
+2025-03-20 11:40:17,033 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,033 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,033 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/lib/underscore-min.js HTTP/1.1" 200 14359 0.000686
+2025-03-20 11:40:17,034 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,034 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,034 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/css/style.css HTTP/1.1" 304 140 0.000675
+2025-03-20 11:40:17,035 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,035 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,035 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/css/jspsych.css HTTP/1.1" 200 2974 0.000636
+2025-03-20 11:40:17,036 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,036 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,037 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,037 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,037 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/lib/backbone-min.js HTTP/1.1" 200 19715 0.000918
+2025-03-20 11:40:17,038 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,038 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,039 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/lib/underscore-min.js HTTP/1.1" 200 14359 0.000740
+2025-03-20 11:40:17,039 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,039 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,040 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:17,040 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:17,041 [INFO] 127.0.0.1 - - [2025-03-20 11:40:17] "GET /static/lib/jquery-min.js HTTP/1.1" 200 93363 0.000746
+2025-03-20 11:40:17,041 [ERROR] 77%|#######6  | 49/64 [00:02<00:00, 19.43it/s]
+2025-03-20 11:40:17,041 [ERROR] 100%|##########| 64/64 [00:02<00:00, 25.90it/s]
+2025-03-20 11:40:17,044 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:40:17,044 [DEBUG] Closed WebSocket
+2025-03-20 11:40:17,044 [DEBUG] Failed to write closing frame -> closing socket
+2025-03-20 11:40:17,044 [DEBUG] Closed WebSocket
+2025-03-20 11:40:18,420 [INFO] Updating summary demo particles...
+2025-03-20 11:40:18,426 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:18,426 [INFO] [[-1  0  0]]
+2025-03-20 11:40:18,426 [INFO] and lf:
+2025-03-20 11:40:18,426 [INFO] 0.8
+2025-03-20 11:40:18,429 [INFO] N_particles:
+2025-03-20 11:40:18,429 [INFO] 1013
+2025-03-20 11:40:18,429 [INFO] n_eff:
+2025-03-20 11:40:18,429 [INFO] 506.00000000000495
+2025-03-20 11:40:18,429 [INFO] N:
+2025-03-20 11:40:18,429 [INFO] 1013
+2025-03-20 11:40:18,443 [INFO] Resampling....
+2025-03-20 11:40:18,459 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:18,459 [INFO] [[-1  0  2]]
+2025-03-20 11:40:18,459 [INFO] and lf:
+2025-03-20 11:40:18,459 [INFO] 0.8
+2025-03-20 11:40:18,461 [INFO] N_particles:
+2025-03-20 11:40:18,461 [INFO] 821
+2025-03-20 11:40:18,461 [INFO] n_eff:
+2025-03-20 11:40:18,462 [INFO] 247.0000000000003
+2025-03-20 11:40:18,462 [INFO] N:
+2025-03-20 11:40:18,462 [INFO] 821
+2025-03-20 11:40:18,468 [INFO] Resampling....
+2025-03-20 11:40:18,473 [INFO] Updated summary demo particles...
+2025-03-20 11:40:18,562 [INFO] Sampling human models from the particle filter...
+2025-03-20 11:40:18,562 [INFO] N_particles_demo:
+2025-03-20 11:40:18,563 [INFO] 339
+2025-03-20 11:40:18,563 [INFO] N_human_models:
+2025-03-20 11:40:18,563 [INFO] 24
+2025-03-20 11:40:18,570 [INFO] Length of summary: 1
+2025-03-20 11:40:18,575 [ERROR] 0%|          | 0/64 [00:00<?, ?it/s]
+2025-03-20 11:40:18,576 [INFO] 127.0.0.1 - - [2025-03-20 11:40:18] "GET /static/lib/d3.v3.min.js HTTP/1.1" 200 145001 1.544784
+2025-03-20 11:40:18,576 [INFO] 127.0.0.1 - - [2025-03-20 11:40:18] "GET /static/lib/d3.v3.min.js HTTP/1.1" 200 145001 1.540238
+2025-03-20 11:40:18,576 [INFO] 127.0.0.1 - - [2025-03-20 11:40:18] "GET /static/lib/jquery-min.js HTTP/1.1" 200 93363 1.537261
+2025-03-20 11:40:19,482 [ERROR] 39%|###9      | 25/64 [00:00<00:01, 27.57it/s]
+2025-03-20 11:40:19,483 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:19,483 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:19,484 [INFO] 127.0.0.1 - - [2025-03-20 11:40:19] "GET /static/audio/mixkit-tick-tock-clock-close-up-1059.mp3 HTTP/1.1" 404 331 0.000932
+2025-03-20 11:40:19,484 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:19,484 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:19,485 [INFO] 127.0.0.1 - - [2025-03-20 11:40:19] "GET /static/audio/mixkit-tick-tock-clock-close-up-1059.mp3 HTTP/1.1" 404 331 0.000643
+2025-03-20 11:40:20,316 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:20,316 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:20,316 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:40:20,316 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:40:20,317 [INFO] y0qhMncaXhaIH7i8AAAU: Sending packet OPEN data {'sid': 'y0qhMncaXhaIH7i8AAAU', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:40:20,317 [INFO] y0qhMncaXhaIH7i8AAAU: Received request to upgrade to websocket
+2025-03-20 11:40:20,317 [INFO] y0qhMncaXhaIH7i8AAAU: Upgrade to websocket successful
+2025-03-20 11:40:20,317 [DEBUG] Initializing WebSocket
+2025-03-20 11:40:20,317 [DEBUG] Validating WebSocket request
+2025-03-20 11:40:20,317 [DEBUG] Attempting to upgrade connection
+2025-03-20 11:40:20,317 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 11:40:20,318 [INFO] zBNzScIHjGZyIxXJAAAV: Sending packet OPEN data {'sid': 'zBNzScIHjGZyIxXJAAAV', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 11:40:20,318 [INFO] zBNzScIHjGZyIxXJAAAV: Received request to upgrade to websocket
+2025-03-20 11:40:20,318 [INFO] zBNzScIHjGZyIxXJAAAV: Upgrade to websocket successful
+2025-03-20 11:40:20,318 [ERROR] 77%|#######6  | 49/64 [00:01<00:00, 28.21it/s]
+2025-03-20 11:40:20,319 [ERROR] 100%|##########| 64/64 [00:01<00:00, 36.71it/s]
+2025-03-20 11:40:20,911 [INFO] Updating summary demo particles...
+2025-03-20 11:40:20,913 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:20,913 [INFO] [[ 1  0 -4]]
+2025-03-20 11:40:20,914 [INFO] and lf:
+2025-03-20 11:40:20,914 [INFO] 0.8
+2025-03-20 11:40:20,915 [INFO] N_particles:
+2025-03-20 11:40:20,915 [INFO] 339
+2025-03-20 11:40:20,915 [INFO] n_eff:
+2025-03-20 11:40:20,915 [INFO] 165.00000000000088
+2025-03-20 11:40:20,915 [INFO] N:
+2025-03-20 11:40:20,915 [INFO] 339
+2025-03-20 11:40:20,919 [INFO] Resampling....
+2025-03-20 11:40:20,923 [INFO] Updated summary demo particles...
+2025-03-20 11:40:21,019 [INFO] Sampling human models from the particle filter...
+2025-03-20 11:40:21,019 [INFO] N_particles_demo:
+2025-03-20 11:40:21,019 [INFO] 246
+2025-03-20 11:40:21,019 [INFO] N_human_models:
+2025-03-20 11:40:21,019 [INFO] 24
+2025-03-20 11:40:21,023 [INFO] Length of summary: 2
+2025-03-20 11:40:21,029 [ERROR] 0%|          | 0/64 [00:00<?, ?it/s]
+2025-03-20 11:40:21,302 [INFO] y0qhMncaXhaIH7i8AAAU: Received packet MESSAGE data 0
+2025-03-20 11:40:21,304 [INFO] User 15 connected with SID ATtKOuWtWe0FaTIsAAAW
+2025-03-20 11:40:21,304 [INFO] User 15: Reconnected at 03-20 11:40:21. Tracking: {'disconnect_times': ['03-20 11:39:48', '03-20 11:40:05', '03-20 11:40:17'], 'reconnect_times': ['03-20 11:39:48', '03-20 11:40:05', '03-20 11:40:21'], 'disconnect_pages': [None, None, None], 'reconnect_pages': [None, None, None]}
+2025-03-20 11:40:21,304 [INFO] User 15: Timer canceled due to reconnection.
+2025-03-20 11:40:21,304 [INFO] User:
+2025-03-20 11:40:21,304 [INFO] 15
+2025-03-20 11:40:21,304 [INFO] Joining room on connect:
+2025-03-20 11:40:21,305 [INFO] room_3
+2025-03-20 11:40:21,305 [INFO] ATtKOuWtWe0FaTIsAAAW is entering room room_3 [/]
+2025-03-20 11:40:21,305 [INFO] y0qhMncaXhaIH7i8AAAU: Sending packet MESSAGE data 0{"sid":"ATtKOuWtWe0FaTIsAAAW"}
+2025-03-20 11:40:21,305 [INFO] zBNzScIHjGZyIxXJAAAV: Received packet MESSAGE data 0
+2025-03-20 11:40:21,306 [INFO] User 14 connected with SID -TZ2YVALq_1nEqe8AAAX
+2025-03-20 11:40:21,306 [INFO] User 14: Reconnected at 03-20 11:40:21. Tracking: {'disconnect_times': ['03-20 11:39:22', '03-20 11:40:05', '03-20 11:40:17'], 'reconnect_times': ['03-20 11:39:22', '03-20 11:40:05', '03-20 11:40:21'], 'disconnect_pages': [None, None, None], 'reconnect_pages': [None, None, None]}
+2025-03-20 11:40:21,306 [INFO] User 14: Timer canceled due to reconnection.
+2025-03-20 11:40:21,307 [INFO] User:
+2025-03-20 11:40:21,307 [INFO] 14
+2025-03-20 11:40:21,307 [INFO] Joining room on connect:
+2025-03-20 11:40:21,307 [INFO] room_3
+2025-03-20 11:40:21,307 [INFO] -TZ2YVALq_1nEqe8AAAX is entering room room_3 [/]
+2025-03-20 11:40:21,307 [INFO] zBNzScIHjGZyIxXJAAAV: Sending packet MESSAGE data 0{"sid":"-TZ2YVALq_1nEqe8AAAX"}
+2025-03-20 11:40:21,925 [ERROR] 39%|###9      | 25/64 [00:00<00:01, 27.89it/s]
+2025-03-20 11:40:22,029 [INFO] y0qhMncaXhaIH7i8AAAU: Received packet MESSAGE data 2["settings",{"domain":null,"interaction type":null,"survey":"-1","iteration":0,"subiteration":0,"user input":{},"movement":"next","attn1":"-1","attn2":"-1","attn3":"-1","use1":"-1","use2":"-1","use3":"-1","understanding":null,"engagement_input":null,"improvement_input":null,"already completed":null,"room_name":"room_3","last_activity":null,"last_activity_time":null,"final_score":"0","final_score_string":"","reward_ft_weights":[],"new_domain":true}]
+2025-03-20 11:40:22,030 [INFO] received event "settings" from ATtKOuWtWe0FaTIsAAAW [/]
+2025-03-20 11:40:22,030 [INFO] zBNzScIHjGZyIxXJAAAV: Received packet MESSAGE data 2["settings",{"domain":null,"interaction type":null,"survey":"-1","iteration":0,"subiteration":0,"user input":{},"movement":"next","attn1":"-1","attn2":"-1","attn3":"-1","use1":"-1","use2":"-1","use3":"-1","understanding":null,"engagement_input":null,"improvement_input":null,"already completed":null,"room_name":"room_3","last_activity":null,"last_activity_time":null,"final_score":"0","final_score_string":"","reward_ft_weights":[],"new_domain":true}]
+2025-03-20 11:40:22,030 [INFO] received event "settings" from -TZ2YVALq_1nEqe8AAAX [/]
+2025-03-20 11:40:22,782 [INFO] Data received: {'domain': None, 'interaction type': None, 'survey': '-1', 'iteration': 0, 'subiteration': 0, 'user input': {}, 'movement': 'next', 'attn1': '-1', 'attn2': '-1', 'attn3': '-1', 'use1': '-1', 'use2': '-1', 'use3': '-1', 'understanding': None, 'engagement_input': None, 'improvement_input': None, 'already completed': None, 'room_name': 'room_3', 'last_activity': None, 'last_activity_time': None, 'final_score': '0', 'final_score_string': '', 'reward_ft_weights': [], 'new_domain': True}
+2025-03-20 11:40:22,783 [INFO] Group: 3 User: 15 curr_progress: post practice curr_domain: 1
+2025-03-20 11:40:22,783 [INFO] Group: 3 User: 15 Group: 3 Room name: room_3 domain: at mdp class: augmented_taxi2
+2025-03-20 11:40:22,785 [INFO] Group: 3 User: 15 current_user progress:  post practice current_group progress:  domain_1 Round_num: 0 current_round: None None None
+2025-03-20 11:40:22,785 [INFO] Group: 3 User: 15 User:  15 Next movement. Checking if current trial was already completed..
+2025-03-20 11:40:22,785 [INFO] New domain? : True
+2025-03-20 11:40:22,785 [INFO] Updating domain in backend and database...
+2025-03-20 11:40:22,786 [INFO] Group: 3 User: 15 Updating domain of user and reset vars...
+2025-03-20 11:40:22,791 [INFO] Flush and Commit successful. Remember to commit at the end. New domain for user db: domain_1
+2025-03-20 11:40:22,792 [INFO] Group: 3 User: 15 curr_progress: domain_1 curr_domain: 1
+2025-03-20 11:40:22,792 [INFO] Group: 3 User: 15 Updated Domain: at Domain order: 1 mdp class: augmented_taxi2
+2025-03-20 11:40:22,793 [INFO] Group: 3 User: 15 Next movement. Current trial already completed? False . Current user last iter in round? True opt_response_flag: False
+2025-03-20 11:40:22,794 [INFO] Group: 3 User: 15 Waiting for team status to update, mainly all members to be in same game/domain...
+2025-03-20 11:40:22,795 [INFO] Group: 3 User: 15 Checking member and group status. Group id: 3 Group progress: domain_1 Current user progress: domain_1 Group members: ['ttt2', 'ttt3', 'ttt4']
+2025-03-20 11:40:22,795 [INFO] Group: 3 User: 15 Member id: 14 Member group: 3 Member curr progress: post practice Group progress: domain_1
+2025-03-20 11:40:22,795 [INFO] Group: 3 User: 15 Member id: 15 Member group: 3 Member curr progress: domain_1 Group progress: domain_1
+2025-03-20 11:40:22,795 [INFO] Group: 3 User: 15 Member id: 16 Member group: 3 Member curr progress: domain_1 Group progress: domain_1
+2025-03-20 11:40:22,795 [INFO] Group: 3 User: 15 Current group status:  gen_demos Current user round: 0 current_user curr_progress: domain_1
+2025-03-20 11:40:22,796 [INFO] Data received: {'domain': None, 'interaction type': None, 'survey': '-1', 'iteration': 0, 'subiteration': 0, 'user input': {}, 'movement': 'next', 'attn1': '-1', 'attn2': '-1', 'attn3': '-1', 'use1': '-1', 'use2': '-1', 'use3': '-1', 'understanding': None, 'engagement_input': None, 'improvement_input': None, 'already completed': None, 'room_name': 'room_3', 'last_activity': None, 'last_activity_time': None, 'final_score': '0', 'final_score_string': '', 'reward_ft_weights': [], 'new_domain': True}
+2025-03-20 11:40:22,797 [INFO] Group: 3 User: 14 curr_progress: post practice curr_domain: 1
+2025-03-20 11:40:22,797 [INFO] Group: 3 User: 14 Group: 3 Room name: room_3 domain: at mdp class: augmented_taxi2
+2025-03-20 11:40:22,798 [INFO] Group: 3 User: 14 current_user progress:  post practice current_group progress:  domain_1 Round_num: 0 current_round: None None None
+2025-03-20 11:40:22,798 [INFO] Group: 3 User: 14 User:  14 Next movement. Checking if current trial was already completed..
+2025-03-20 11:40:22,798 [INFO] New domain? : True
+2025-03-20 11:40:22,799 [INFO] Updating domain in backend and database...
+2025-03-20 11:40:22,799 [INFO] Group: 3 User: 14 Updating domain of user and reset vars...
+2025-03-20 11:40:22,802 [INFO] Flush and Commit successful. Remember to commit at the end. New domain for user db: domain_1
+2025-03-20 11:40:22,803 [INFO] Group: 3 User: 14 curr_progress: domain_1 curr_domain: 1
+2025-03-20 11:40:22,803 [INFO] Group: 3 User: 14 Updated Domain: at Domain order: 1 mdp class: augmented_taxi2
+2025-03-20 11:40:22,804 [INFO] Group: 3 User: 14 Next movement. Current trial already completed? False . Current user last iter in round? True opt_response_flag: False
+2025-03-20 11:40:22,804 [INFO] Group: 3 User: 14 Waiting for team status to update, mainly all members to be in same game/domain...
+2025-03-20 11:40:22,805 [INFO] Group: 3 User: 14 Checking member and group status. Group id: 3 Group progress: domain_1 Current user progress: domain_1 Group members: ['ttt2', 'ttt3', 'ttt4']
+2025-03-20 11:40:22,806 [INFO] Group: 3 User: 14 Member id: 14 Member group: 3 Member curr progress: domain_1 Group progress: domain_1
+2025-03-20 11:40:22,806 [INFO] Group: 3 User: 14 Member id: 15 Member group: 3 Member curr progress: domain_1 Group progress: domain_1
+2025-03-20 11:40:22,806 [INFO] Group: 3 User: 14 Member id: 16 Member group: 3 Member curr progress: domain_1 Group progress: domain_1
+2025-03-20 11:40:22,806 [INFO] Group: 3 User: 14 Current group status:  gen_demos Current user round: 0 current_user curr_progress: domain_1
+2025-03-20 11:40:22,806 [ERROR] 77%|#######6  | 49/64 [00:01<00:00, 27.51it/s]
+2025-03-20 11:40:22,806 [ERROR] 100%|##########| 64/64 [00:01<00:00, 36.00it/s]
+2025-03-20 11:40:23,321 [INFO] Did not find any more informative demonstrations. Moving onto next unit, if applicable.
+2025-03-20 11:40:23,648 [INFO] Generated demos and tests for the next interaction round...
+2025-03-20 11:40:23,649 [INFO] Group: 3 User: 16 Adding particle filter models to group
+2025-03-20 11:40:23,862 [INFO] Flush and Commit successful. Remember to commit at the end. PF models, teaching status updated
+2025-03-20 11:40:23,875 [INFO] Group: 3 User: 16 Group curr progress: domain_1 domain: at round: 0
+2025-03-20 11:40:23,875 [INFO] kc_id:  0 min_KC_constraints: [array([[ 1,  0, -4]]), array([[-1,  0,  2]])] round_status:  demo_tests_generated
+2025-03-20 11:40:23,883 [INFO] Flush and Commit successful. Remember to commit at the end. New round data generated
+2025-03-20 11:40:23,971 [INFO] Group:
+2025-03-20 11:40:23,971 [INFO] 3
+2025-03-20 11:40:23,971 [INFO] User:
+2025-03-20 11:40:23,971 [INFO] 16
+2025-03-20 11:40:23,972 [INFO] First round generated. Next round id:
+2025-03-20 11:40:23,972 [INFO] 1
+2025-03-20 11:40:23,972 [INFO] User progress:
+2025-03-20 11:40:23,972 [INFO] domain_1
+2025-03-20 11:40:23,973 [INFO] Group: 3 User: 16 Updating learner models based on demos...
+2025-03-20 11:40:23,986 [INFO] Prob of learning for constraints:
+2025-03-20 11:40:23,986 [INFO] [array([[-1,  0,  2]]), array([[ 1,  0, -4]])] models:  [0.07008885 0.07699901 0.07502468] Model ids:  [0, 1, 2]
+2025-03-20 11:40:24,105 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:24,106 [INFO] [[ 1  0 -4]]
+2025-03-20 11:40:24,106 [INFO] and lf:
+2025-03-20 11:40:24,106 [INFO] 0.8
+2025-03-20 11:40:24,108 [INFO] N_particles:
+2025-03-20 11:40:24,108 [INFO] 1013
+2025-03-20 11:40:24,108 [INFO] n_eff:
+2025-03-20 11:40:24,108 [INFO] 931.0000000000181
+2025-03-20 11:40:24,109 [INFO] N:
+2025-03-20 11:40:24,109 [INFO] 1013
+2025-03-20 11:40:24,126 [INFO] N:
+2025-03-20 11:40:24,126 [INFO] 1013
+2025-03-20 11:40:24,134 [INFO] Resampling....
+2025-03-20 11:40:24,161 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:24,162 [INFO] [[-1  0  2]]
+2025-03-20 11:40:24,162 [INFO] and lf:
+2025-03-20 11:40:24,162 [INFO] 0.8
+2025-03-20 11:40:24,165 [INFO] N_particles:
+2025-03-20 11:40:24,165 [INFO] 1469
+2025-03-20 11:40:24,165 [INFO] n_eff:
+2025-03-20 11:40:24,165 [INFO] 117.00000000000013
+2025-03-20 11:40:24,166 [INFO] N:
+2025-03-20 11:40:24,166 [INFO] 1469
+2025-03-20 11:40:24,169 [INFO] Resampling....
+2025-03-20 11:40:24,177 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:24,177 [INFO] [[ 1  0 -4]]
+2025-03-20 11:40:24,178 [INFO] and lf:
+2025-03-20 11:40:24,178 [INFO] 0.8
+2025-03-20 11:40:24,180 [INFO] N_particles:
+2025-03-20 11:40:24,180 [INFO] 1013
+2025-03-20 11:40:24,180 [INFO] n_eff:
+2025-03-20 11:40:24,180 [INFO] 939.0000000000183
+2025-03-20 11:40:24,181 [INFO] N:
+2025-03-20 11:40:24,181 [INFO] 1013
+2025-03-20 11:40:24,197 [INFO] N:
+2025-03-20 11:40:24,198 [INFO] 1013
+2025-03-20 11:40:24,205 [INFO] Resampling....
+2025-03-20 11:40:24,233 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:24,233 [INFO] [[-1  0  2]]
+2025-03-20 11:40:24,233 [INFO] and lf:
+2025-03-20 11:40:24,233 [INFO] 0.8
+2025-03-20 11:40:24,237 [INFO] N_particles:
+2025-03-20 11:40:24,237 [INFO] 1473
+2025-03-20 11:40:24,237 [INFO] n_eff:
+2025-03-20 11:40:24,237 [INFO] 260.99999999999835
+2025-03-20 11:40:24,237 [INFO] N:
+2025-03-20 11:40:24,237 [INFO] 1473
+2025-03-20 11:40:24,251 [INFO] Resampling....
+2025-03-20 11:40:24,268 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:24,268 [INFO] [[ 1  0 -4]]
+2025-03-20 11:40:24,268 [INFO] and lf:
+2025-03-20 11:40:24,268 [INFO] 0.8
+2025-03-20 11:40:24,271 [INFO] N_particles:
+2025-03-20 11:40:24,271 [INFO] 1013
+2025-03-20 11:40:24,271 [INFO] n_eff:
+2025-03-20 11:40:24,271 [INFO] 937.0000000000181
+2025-03-20 11:40:24,271 [INFO] N:
+2025-03-20 11:40:24,271 [INFO] 1013
+2025-03-20 11:40:24,288 [INFO] N:
+2025-03-20 11:40:24,289 [INFO] 1013
+2025-03-20 11:40:24,296 [INFO] Resampling....
+2025-03-20 11:40:24,324 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:24,324 [INFO] [[-1  0  2]]
+2025-03-20 11:40:24,324 [INFO] and lf:
+2025-03-20 11:40:24,324 [INFO] 0.8
+2025-03-20 11:40:24,328 [INFO] N_particles:
+2025-03-20 11:40:24,328 [INFO] 1465
+2025-03-20 11:40:24,328 [INFO] n_eff:
+2025-03-20 11:40:24,328 [INFO] 251.99999999999991
+2025-03-20 11:40:24,328 [INFO] N:
+2025-03-20 11:40:24,328 [INFO] 1465
+2025-03-20 11:40:24,342 [INFO] Resampling....
+2025-03-20 11:40:24,358 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:24,358 [INFO] [[ 1  0 -4]]
+2025-03-20 11:40:24,358 [INFO] and lf:
+2025-03-20 11:40:24,359 [INFO] 0.8
+2025-03-20 11:40:24,361 [INFO] N_particles:
+2025-03-20 11:40:24,361 [INFO] 1013
+2025-03-20 11:40:24,361 [INFO] n_eff:
+2025-03-20 11:40:24,361 [INFO] 936.0000000000182
+2025-03-20 11:40:24,362 [INFO] N:
+2025-03-20 11:40:24,362 [INFO] 1013
+2025-03-20 11:40:24,378 [INFO] N:
+2025-03-20 11:40:24,379 [INFO] 1013
+2025-03-20 11:40:24,388 [INFO] Resampling....
+2025-03-20 11:40:24,417 [INFO] Reweight pf with constraint:
+2025-03-20 11:40:24,418 [INFO] [[-1  0  2]]
+2025-03-20 11:40:24,418 [INFO] and lf:
+2025-03-20 11:40:24,418 [INFO] 0.8
+2025-03-20 11:40:24,421 [INFO] N_particles:
+2025-03-20 11:40:24,421 [INFO] 1462
+2025-03-20 11:40:24,421 [INFO] n_eff:
+2025-03-20 11:40:24,421 [INFO] 234.99999999999807
+2025-03-20 11:40:24,421 [INFO] N:
+2025-03-20 11:40:24,421 [INFO] 1462
+2025-03-20 11:40:24,435 [INFO] Resampling....
+2025-03-20 11:40:24,456 [INFO] N:
+2025-03-20 11:40:24,456 [INFO] 500
+2025-03-20 11:40:24,458 [INFO] Resampling...
+2025-03-20 11:40:24,467 [INFO] Prob of learning for constraints:
+2025-03-20 11:40:24,467 [INFO] [array([[-1,  0,  2]]), array([[ 1,  0, -4]])] models:  [0.6        0.24357405 0.20754717] Model ids:  [0, 1, 2]
+2025-03-20 11:40:24,488 [INFO] Flush and Commit successful. Remember to commit at the end. Update learner models from demos
+2025-03-20 11:40:24,623 [INFO] Flush and Commit successful. Remember to commit at the end. Update learner models from demos
+2025-03-20 11:40:24,653 [INFO] Prob of learning for constraints:
+2025-03-20 11:40:24,653 [INFO] [array([[-1,  0,  2]]), array([[ 1,  0, -4]])] models:  [0.6        0.24357405 0.20754717] Model ids:  [0, 1, 2]
+2025-03-20 11:40:24,653 [INFO] Group: 3 User: 16 next_round: <Round 19> current_user.last_iter_in_round True
+2025-03-20 11:40:24,653 [INFO] Group: 3 User: 16 Checking if new round is already generated...
+2025-03-20 11:40:24,654 [INFO] Group: 3 User: 16 Next round id: 1 group id: 3 domain progress: domain_1
+2025-03-20 11:40:24,654 [INFO] Group: 3 User: 16 Next round generated...
+2025-03-20 11:40:24,669 [INFO] Flush and Commit successful. Remember to commit at the end. Reset EOR and last test flags for user 16
+2025-03-20 11:40:24,685 [INFO] Group: 3 User: 16 Updated group members EOR: [False, False, False]
+2025-03-20 11:40:24,686 [INFO] Group: 3 User: 16 group_id: 3 Current user round: 1 current_user_progress:  domain_1 current_group progress: domain_1 Current user iteration: 1
+2025-03-20 11:40:24,688 [INFO] Group: 3 User: 16 current_user.iteration: 1 Last test iteration: 3
+2025-03-20 11:40:24,688 [INFO] Group: 3 User: 16 Response params from MDP params for new trial...
+2025-03-20 11:40:24,688 [INFO] Group: 3 User: 16 data movement:  next current user iteration: 1 current user round: 1 current user interaction type: demo next already completed: False
+2025-03-20 11:40:24,692 [INFO] Flush and Commit successful. Remember to commit at the end. ttt4. User progress in settings
+2025-03-20 11:40:24,693 [INFO] Group: 3 User: 16 current_user.round: 1 current_user.iteration: 1 current_user.interaction_type: demo next already_completed: False
+2025-03-20 11:40:24,694 [INFO] Group: 3 User: 16 Go prev for this iteration: False Updated round: <Round 20> Next round: <Round 20> Current round: None
+2025-03-20 11:40:24,694 [INFO] Group: 3 User: 16 current_kc_id: -2 next_kc_id: 0 first_demo_string: Starting with the first game lesson.
+2025-03-20 11:40:24,694 [INFO] Group: 3 User: 16 current_user.interaction_type:  demo current_user.iteration:  1
+2025-03-20 11:40:24,702 [INFO] Group user ids: [14, 15, 16]
+2025-03-20 11:40:24,702 [INFO] Group: 3 User: 16 Settings response: {'params': {'agent': {'x': 3, 'y': 3, 'has_passenger': 0}, 'walls': [{'x': 1, 'y': 3}, {'x': 1, 'y': 2}], 'passengers': [{'x': 3, 'y': 1, 'dest_x': 1, 'dest_y': 1, 'in_taxi': 0}], 'tolls': [{'x': 3, 'y': 2}], 'available_tolls': [{'x': 3, 'y': 3}, {'x': 2, 'y': 2}, {'x': 3, 'y': 2}, {'x': 4, 'y': 2}, {'x': 3, 'y': 1}], 'traffic': [], 'fuel_station': [], 'hotswap_station': [], 'available_hotswap_stations': [{'x': 4, 'y': 3}], 'width': 4, 'height': 3, 'gamma': 1, 'env_code': [0, 0, 1, 0, 0, 0], 'opt_locations': [[3, 3, 0], [2, 3, 0], [2, 2, 0], [2, 1, 0], [3, 1, 0], [3, 1, 1], [2, 1, 1], [1, 1, 1], [1, 1, 0]], 'opt_actions': ['left', 'down', 'down', 'right', 'pickup', 'left', 'left', 'dropoff'], 'opt_traj_length': 8, 'opt_traj_reward': -1.695996608010176, 'test_difficulty': 'none', 'tag': -1, 'all_opt_actions': [['left', 'down', 'down', 'right', 'pickup', 'left', 'left', 'dropoff'], ['right', 'down', 'down', 'left', 'pickup', 'left', 'left', 'dropoff']], 'normalized_opt_actions': [], 'normalized_human_actions': [], 'human_actions': [], 'env_traj_idxs': [8, 0], 'variable_filter': [[0.0, 1.0, 0.0]], 'constraints': [[[-1, 0, 0]], [[-1, 0, 2]]]}, 'teammate_1_progress': 'Current lesson in progress', 'teammate_2_progress': 'Current lesson in progress', 'domain': 'at', 'debug string': '', 'last iteration': False, 'last test': False, 'interaction type': 'demo', 'already completed': False, 'go prev': False, 'iteration': 1, 'total iterations': 2, 'lesson id': 1, 'lesson string': 'Starting with the first game lesson.', 'domain completed': False}
+2025-03-20 11:40:24,702 [INFO] emitting event "settings configured" to p2Uv_Cu-isAIqZMMAAAT [/]
+2025-03-20 11:40:24,703 [INFO] ou79K8KLsw6lrwhlAAAS: Sending packet MESSAGE data 2["settings configured",{"params":{"agent":{"x":3,"y":3,"has_passenger":0},"walls":[{"x":1,"y":3},{"x":1,"y":2}],"passengers":[{"x":3,"y":1,"dest_x":1,"dest_y":1,"in_taxi":0}],"tolls":[{"x":3,"y":2}],"available_tolls":[{"x":3,"y":3},{"x":2,"y":2},{"x":3,"y":2},{"x":4,"y":2},{"x":3,"y":1}],"traffic":[],"fuel_station":[],"hotswap_station":[],"available_hotswap_stations":[{"x":4,"y":3}],"width":4,"height":3,"gamma":1,"env_code":[0,0,1,0,0,0],"opt_locations":[[3,3,0],[2,3,0],[2,2,0],[2,1,0],[3,1,0],[3,1,1],[2,1,1],[1,1,1],[1,1,0]],"opt_actions":["left","down","down","right","pickup","left","left","dropoff"],"opt_traj_length":8,"opt_traj_reward":-1.695996608010176,"test_difficulty":"none","tag":-1,"all_opt_actions":[["left","down","down","right","pickup","left","left","dropoff"],["right","down","down","left","pickup","left","left","dropoff"]],"normalized_opt_actions":[],"normalized_human_actions":[],"human_actions":[],"env_traj_idxs":[8,0],"variable_filter":[[0.0,1.0,0.0]],"constraints":[[[-1,0,0]],[[-1,0,2]]]},"teammate_1_progress":"Current lesson in progress","teammate_2_progress":"Current lesson in progress","domain":"at","debug string":"","last iteration":false,"last test":false,"interaction type":"demo","already completed":false,"go prev":false,"iteration":1,"total iterations":2,"lesson id":1,"lesson string":"Starting with the first game lesson.","domain completed":false}]
+2025-03-20 11:40:24,703 [INFO] Group: 3 User: 16 Next trial:  None . Updated round: <Round 20>
+2025-03-20 11:40:24,705 [INFO] Group: 3 User: 15 Next Round id: 1 Next round: <Round 20> Waiting for first round to be generated...
+2025-03-20 11:40:24,705 [INFO] Group: 3 User: 15 next_round: <Round 20> current_user.last_iter_in_round True
+2025-03-20 11:40:24,705 [INFO] Group: 3 User: 15 Checking if new round is already generated...
+2025-03-20 11:40:24,706 [INFO] Group: 3 User: 15 Next round id: 1 group id: 3 domain progress: domain_1
+2025-03-20 11:40:24,706 [INFO] Group: 3 User: 15 Next round generated...
+2025-03-20 11:40:24,721 [INFO] Flush and Commit successful. Remember to commit at the end. Reset EOR and last test flags for user 15
+2025-03-20 11:40:24,738 [INFO] Group: 3 User: 15 Updated group members EOR: [False, False, False]
+2025-03-20 11:40:24,739 [INFO] Group: 3 User: 15 group_id: 3 Current user round: 1 current_user_progress:  domain_1 current_group progress: domain_1 Current user iteration: 1
+2025-03-20 11:40:24,740 [INFO] Group: 3 User: 15 current_user.iteration: 1 Last test iteration: 3
+2025-03-20 11:40:24,740 [INFO] Group: 3 User: 15 Response params from MDP params for new trial...
+2025-03-20 11:40:24,740 [INFO] Group: 3 User: 15 data movement:  next current user iteration: 1 current user round: 1 current user interaction type: demo next already completed: False
+2025-03-20 11:40:24,745 [INFO] Flush and Commit successful. Remember to commit at the end. ttt3. User progress in settings
+2025-03-20 11:40:24,746 [INFO] Group: 3 User: 15 current_user.round: 1 current_user.iteration: 1 current_user.interaction_type: demo next already_completed: False
+2025-03-20 11:40:24,746 [INFO] Group: 3 User: 15 Go prev for this iteration: False Updated round: <Round 20> Next round: <Round 20> Current round: None
+2025-03-20 11:40:24,747 [INFO] Group: 3 User: 15 current_kc_id: -2 next_kc_id: 0 first_demo_string: Starting with the first game lesson.
+2025-03-20 11:40:24,747 [INFO] Group: 3 User: 15 current_user.interaction_type:  demo current_user.iteration:  1
+2025-03-20 11:40:24,755 [INFO] Group user ids: [14, 15, 16]
+2025-03-20 11:40:24,755 [INFO] Group: 3 User: 15 Settings response: {'params': {'agent': {'x': 3, 'y': 3, 'has_passenger': 0}, 'walls': [{'x': 1, 'y': 3}, {'x': 1, 'y': 2}], 'passengers': [{'x': 3, 'y': 1, 'dest_x': 1, 'dest_y': 1, 'in_taxi': 0}], 'tolls': [{'x': 3, 'y': 2}], 'available_tolls': [{'x': 3, 'y': 3}, {'x': 2, 'y': 2}, {'x': 3, 'y': 2}, {'x': 4, 'y': 2}, {'x': 3, 'y': 1}], 'traffic': [], 'fuel_station': [], 'hotswap_station': [], 'available_hotswap_stations': [{'x': 4, 'y': 3}], 'width': 4, 'height': 3, 'gamma': 1, 'env_code': [0, 0, 1, 0, 0, 0], 'opt_locations': [[3, 3, 0], [2, 3, 0], [2, 2, 0], [2, 1, 0], [3, 1, 0], [3, 1, 1], [2, 1, 1], [1, 1, 1], [1, 1, 0]], 'opt_actions': ['left', 'down', 'down', 'right', 'pickup', 'left', 'left', 'dropoff'], 'opt_traj_length': 8, 'opt_traj_reward': -1.695996608010176, 'test_difficulty': 'none', 'tag': -1, 'all_opt_actions': [['left', 'down', 'down', 'right', 'pickup', 'left', 'left', 'dropoff'], ['right', 'down', 'down', 'left', 'pickup', 'left', 'left', 'dropoff']], 'normalized_opt_actions': [], 'normalized_human_actions': [], 'human_actions': [], 'env_traj_idxs': [8, 0], 'variable_filter': [[0.0, 1.0, 0.0]], 'constraints': [[[-1, 0, 0]], [[-1, 0, 2]]]}, 'teammate_1_progress': 'Current lesson in progress', 'teammate_2_progress': 'Current lesson in progress', 'domain': 'at', 'debug string': '', 'last iteration': False, 'last test': False, 'interaction type': 'demo', 'already completed': False, 'go prev': False, 'iteration': 1, 'total iterations': 2, 'lesson id': 1, 'lesson string': 'Starting with the first game lesson.', 'domain completed': False}
+2025-03-20 11:40:24,755 [INFO] emitting event "settings configured" to ATtKOuWtWe0FaTIsAAAW [/]
+2025-03-20 11:40:24,756 [INFO] y0qhMncaXhaIH7i8AAAU: Sending packet MESSAGE data 2["settings configured",{"params":{"agent":{"x":3,"y":3,"has_passenger":0},"walls":[{"x":1,"y":3},{"x":1,"y":2}],"passengers":[{"x":3,"y":1,"dest_x":1,"dest_y":1,"in_taxi":0}],"tolls":[{"x":3,"y":2}],"available_tolls":[{"x":3,"y":3},{"x":2,"y":2},{"x":3,"y":2},{"x":4,"y":2},{"x":3,"y":1}],"traffic":[],"fuel_station":[],"hotswap_station":[],"available_hotswap_stations":[{"x":4,"y":3}],"width":4,"height":3,"gamma":1,"env_code":[0,0,1,0,0,0],"opt_locations":[[3,3,0],[2,3,0],[2,2,0],[2,1,0],[3,1,0],[3,1,1],[2,1,1],[1,1,1],[1,1,0]],"opt_actions":["left","down","down","right","pickup","left","left","dropoff"],"opt_traj_length":8,"opt_traj_reward":-1.695996608010176,"test_difficulty":"none","tag":-1,"all_opt_actions":[["left","down","down","right","pickup","left","left","dropoff"],["right","down","down","left","pickup","left","left","dropoff"]],"normalized_opt_actions":[],"normalized_human_actions":[],"human_actions":[],"env_traj_idxs":[8,0],"variable_filter":[[0.0,1.0,0.0]],"constraints":[[[-1,0,0]],[[-1,0,2]]]},"teammate_1_progress":"Current lesson in progress","teammate_2_progress":"Current lesson in progress","domain":"at","debug string":"","last iteration":false,"last test":false,"interaction type":"demo","already completed":false,"go prev":false,"iteration":1,"total iterations":2,"lesson id":1,"lesson string":"Starting with the first game lesson.","domain completed":false}]
+2025-03-20 11:40:24,756 [INFO] Group: 3 User: 15 Next trial:  None . Updated round: <Round 20>
+2025-03-20 11:40:24,758 [INFO] Group: 3 User: 14 Next Round id: 1 Next round: <Round 20> Waiting for first round to be generated...
+2025-03-20 11:40:24,759 [INFO] Group: 3 User: 14 next_round: <Round 20> current_user.last_iter_in_round True
+2025-03-20 11:40:24,759 [INFO] Group: 3 User: 14 Checking if new round is already generated...
+2025-03-20 11:40:24,759 [INFO] Group: 3 User: 14 Next round id: 1 group id: 3 domain progress: domain_1
+2025-03-20 11:40:24,760 [INFO] Group: 3 User: 14 Next round generated...
+2025-03-20 11:40:24,773 [INFO] Flush and Commit successful. Remember to commit at the end. Reset EOR and last test flags for user 14
+2025-03-20 11:40:24,791 [INFO] Group: 3 User: 14 Updated group members EOR: [False, False, False]
+2025-03-20 11:40:24,791 [INFO] Group: 3 User: 14 group_id: 3 Current user round: 1 current_user_progress:  domain_1 current_group progress: domain_1 Current user iteration: 1
+2025-03-20 11:40:24,793 [INFO] Group: 3 User: 14 current_user.iteration: 1 Last test iteration: 3
+2025-03-20 11:40:24,793 [INFO] Group: 3 User: 14 Response params from MDP params for new trial...
+2025-03-20 11:40:24,793 [INFO] Group: 3 User: 14 data movement:  next current user iteration: 1 current user round: 1 current user interaction type: demo next already completed: False
+2025-03-20 11:40:24,800 [INFO] Flush and Commit successful. Remember to commit at the end. ttt2. User progress in settings
+2025-03-20 11:40:24,801 [INFO] Group: 3 User: 14 current_user.round: 1 current_user.iteration: 1 current_user.interaction_type: demo next already_completed: False
+2025-03-20 11:40:24,801 [INFO] Group: 3 User: 14 Go prev for this iteration: False Updated round: <Round 20> Next round: <Round 20> Current round: None
+2025-03-20 11:40:24,802 [INFO] Group: 3 User: 14 current_kc_id: -2 next_kc_id: 0 first_demo_string: Starting with the first game lesson.
+2025-03-20 11:40:24,802 [INFO] Group: 3 User: 14 current_user.interaction_type:  demo current_user.iteration:  1
+2025-03-20 11:40:24,811 [INFO] Group user ids: [14, 15, 16]
+2025-03-20 11:40:24,811 [INFO] Group: 3 User: 14 Settings response: {'params': {'agent': {'x': 3, 'y': 3, 'has_passenger': 0}, 'walls': [{'x': 1, 'y': 3}, {'x': 1, 'y': 2}], 'passengers': [{'x': 3, 'y': 1, 'dest_x': 1, 'dest_y': 1, 'in_taxi': 0}], 'tolls': [{'x': 3, 'y': 2}], 'available_tolls': [{'x': 3, 'y': 3}, {'x': 2, 'y': 2}, {'x': 3, 'y': 2}, {'x': 4, 'y': 2}, {'x': 3, 'y': 1}], 'traffic': [], 'fuel_station': [], 'hotswap_station': [], 'available_hotswap_stations': [{'x': 4, 'y': 3}], 'width': 4, 'height': 3, 'gamma': 1, 'env_code': [0, 0, 1, 0, 0, 0], 'opt_locations': [[3, 3, 0], [2, 3, 0], [2, 2, 0], [2, 1, 0], [3, 1, 0], [3, 1, 1], [2, 1, 1], [1, 1, 1], [1, 1, 0]], 'opt_actions': ['left', 'down', 'down', 'right', 'pickup', 'left', 'left', 'dropoff'], 'opt_traj_length': 8, 'opt_traj_reward': -1.695996608010176, 'test_difficulty': 'none', 'tag': -1, 'all_opt_actions': [['left', 'down', 'down', 'right', 'pickup', 'left', 'left', 'dropoff'], ['right', 'down', 'down', 'left', 'pickup', 'left', 'left', 'dropoff']], 'normalized_opt_actions': [], 'normalized_human_actions': [], 'human_actions': [], 'env_traj_idxs': [8, 0], 'variable_filter': [[0.0, 1.0, 0.0]], 'constraints': [[[-1, 0, 0]], [[-1, 0, 2]]]}, 'teammate_1_progress': 'Current lesson in progress', 'teammate_2_progress': 'Current lesson in progress', 'domain': 'at', 'debug string': '', 'last iteration': False, 'last test': False, 'interaction type': 'demo', 'already completed': False, 'go prev': False, 'iteration': 1, 'total iterations': 2, 'lesson id': 1, 'lesson string': 'Starting with the first game lesson.', 'domain completed': False}
+2025-03-20 11:40:24,811 [INFO] emitting event "settings configured" to -TZ2YVALq_1nEqe8AAAX [/]
+2025-03-20 11:40:24,811 [INFO] zBNzScIHjGZyIxXJAAAV: Sending packet MESSAGE data 2["settings configured",{"params":{"agent":{"x":3,"y":3,"has_passenger":0},"walls":[{"x":1,"y":3},{"x":1,"y":2}],"passengers":[{"x":3,"y":1,"dest_x":1,"dest_y":1,"in_taxi":0}],"tolls":[{"x":3,"y":2}],"available_tolls":[{"x":3,"y":3},{"x":2,"y":2},{"x":3,"y":2},{"x":4,"y":2},{"x":3,"y":1}],"traffic":[],"fuel_station":[],"hotswap_station":[],"available_hotswap_stations":[{"x":4,"y":3}],"width":4,"height":3,"gamma":1,"env_code":[0,0,1,0,0,0],"opt_locations":[[3,3,0],[2,3,0],[2,2,0],[2,1,0],[3,1,0],[3,1,1],[2,1,1],[1,1,1],[1,1,0]],"opt_actions":["left","down","down","right","pickup","left","left","dropoff"],"opt_traj_length":8,"opt_traj_reward":-1.695996608010176,"test_difficulty":"none","tag":-1,"all_opt_actions":[["left","down","down","right","pickup","left","left","dropoff"],["right","down","down","left","pickup","left","left","dropoff"]],"normalized_opt_actions":[],"normalized_human_actions":[],"human_actions":[],"env_traj_idxs":[8,0],"variable_filter":[[0.0,1.0,0.0]],"constraints":[[[-1,0,0]],[[-1,0,2]]]},"teammate_1_progress":"Current lesson in progress","teammate_2_progress":"Current lesson in progress","domain":"at","debug string":"","last iteration":false,"last test":false,"interaction type":"demo","already completed":false,"go prev":false,"iteration":1,"total iterations":2,"lesson id":1,"lesson string":"Starting with the first game lesson.","domain completed":false}]
+2025-03-20 11:40:24,812 [INFO] Group: 3 User: 14 Next trial:  None . Updated round: <Round 20>
+2025-03-20 11:40:27,549 [ERROR] Traceback (most recent call last):
