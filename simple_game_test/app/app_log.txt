@@ -125639,3 +125639,70 @@ Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/in
 2025-03-19 18:11:50,978 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
 2025-03-19 18:11:50,978 [ERROR] KeyboardInterrupt
 2025-03-19 18:11:50,979 [ERROR] 2025-03-19T22:11:50Z
+2025-03-20 06:35:45,650 [INFO] Using 24 processes
+2025-03-20 06:35:53,833 [DEBUG] Initializing WebSocket
+2025-03-20 06:35:53,833 [DEBUG] Validating WebSocket request
+2025-03-20 06:35:53,835 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-03-20 06:35:53,835 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-03-20 06:35:53,836 [INFO] 127.0.0.1 - - [2025-03-20 06:35:53] "GET /post_practice HTTP/1.1" 302 586 0.003905
+2025-03-20 06:35:53,838 [DEBUG] Initializing WebSocket
+2025-03-20 06:35:53,838 [DEBUG] Validating WebSocket request
+2025-03-20 06:35:53,847 [INFO] 127.0.0.1 - - [2025-03-20 06:35:53] "GET /login?next=%2Fpost_practice HTTP/1.1" 200 3441 0.009443
+2025-03-20 06:35:53,858 [DEBUG] Initializing WebSocket
+2025-03-20 06:35:53,859 [DEBUG] Validating WebSocket request
+2025-03-20 06:35:53,862 [INFO] 127.0.0.1 - - [2025-03-20 06:35:53] "GET /static/dragula.css HTTP/1.1" 200 816 0.003804
+2025-03-20 06:35:53,863 [DEBUG] Initializing WebSocket
+2025-03-20 06:35:53,863 [DEBUG] Validating WebSocket request
+2025-03-20 06:35:53,864 [INFO] 127.0.0.1 - - [2025-03-20 06:35:53] "GET /static/styles.css HTTP/1.1" 200 5572 0.001013
+2025-03-20 06:35:53,864 [DEBUG] Initializing WebSocket
+2025-03-20 06:35:53,864 [DEBUG] Validating WebSocket request
+2025-03-20 06:35:53,865 [INFO] 127.0.0.1 - - [2025-03-20 06:35:53] "GET /static/dragula.js HTTP/1.1" 200 80941 0.001228
+2025-03-20 06:35:53,972 [DEBUG] Initializing WebSocket
+2025-03-20 06:35:53,972 [DEBUG] Validating WebSocket request
+2025-03-20 06:35:53,973 [INFO] 127.0.0.1 - - [2025-03-20 06:35:53] "GET /favicon.ico HTTP/1.1" 404 331 0.001131
+2025-03-20 06:35:56,972 [DEBUG] Initializing WebSocket
+2025-03-20 06:35:56,973 [DEBUG] Validating WebSocket request
+2025-03-20 06:35:56,974 [INFO] 127.0.0.1 - - [2025-03-20 06:35:56] "GET /static/dragula.css HTTP/1.1" 304 142 0.001146
+2025-03-20 06:35:56,974 [DEBUG] Initializing WebSocket
+2025-03-20 06:35:56,974 [DEBUG] Validating WebSocket request
+2025-03-20 06:35:56,975 [INFO] 127.0.0.1 - - [2025-03-20 06:35:56] "GET /static/styles.css HTTP/1.1" 304 141 0.000683
+2025-03-20 06:36:06,784 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,784 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,784 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 06:36:06,798 [INFO] Logging in user: <User test1000>
+2025-03-20 06:36:06,798 [INFO] User is authenticated after login? True
+2025-03-20 06:36:06,799 [ERROR] /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py:1582: DeprecationWarning: 'werkzeug.urls.url_parse' is deprecated and will be removed in Werkzeug 3.0. Use 'urllib.parse.urlsplit' instead.
+  if not next_page or url_parse(next_page).netloc != "":
+2025-03-20 06:36:06,800 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/werkzeug/urls.py:545: DeprecationWarning: 'werkzeug.urls.URL' is deprecated and will be removed in Werkzeug 3.0. Use the 'urllib.parse' library instead.
+  return result_type(scheme, netloc, url, query, fragment)
+2025-03-20 06:36:06,800 [INFO] Next page url: /post_practice
+2025-03-20 06:36:06,800 [INFO] Redirecting to: http://127.0.0.1:5000/
+2025-03-20 06:36:06,801 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "POST /login?next=%2Fpost_practice HTTP/1.1" 302 673 0.016810
+2025-03-20 06:36:06,802 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,802 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,805 [INFO] I'm in post practice
+2025-03-20 06:36:06,810 [INFO] Flush and Commit successful. Remember to commit at the end. test1000. User progress post practice
+2025-03-20 06:36:06,815 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /post_practice HTTP/1.1" 200 7314 0.012205
+2025-03-20 06:36:06,831 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,832 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,833 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /static/dragula.css HTTP/1.1" 304 142 0.001230
+2025-03-20 06:36:06,833 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,833 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,834 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /static/css/style.css HTTP/1.1" 200 8426 0.001148
+2025-03-20 06:36:06,834 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,834 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,835 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /static/img/arrow.png HTTP/1.1" 200 13289 0.001065
+2025-03-20 06:36:06,836 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,836 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,837 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /static/dragula.js HTTP/1.1" 304 141 0.001059
+2025-03-20 06:36:06,837 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,837 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,838 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /static/styles.css HTTP/1.1" 304 141 0.000747
+2025-03-20 06:36:06,838 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,839 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,840 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /static/img/right1.png HTTP/1.1" 200 10027 0.001112
+2025-03-20 06:36:06,840 [DEBUG] Initializing WebSocket
+2025-03-20 06:36:06,840 [DEBUG] Validating WebSocket request
+2025-03-20 06:36:06,841 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /static/img/right2.png HTTP/1.1" 200 10086 0.001012

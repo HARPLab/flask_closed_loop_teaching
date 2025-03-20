@@ -1551,6 +1551,16 @@ def login():
         #     next_page = "/flask_closed_loop_teaching/"
 
         # return redirect(next_page or url_for("index"))
+
+        if request.method == "POST":
+            print("[FLASK] Received Login Form Submission.")
+            print("[FLASK] Form Data:", request.form)
+        
+        print("[FLASK] Current User Authenticated:", current_user.is_authenticated)
+    
+    return render_template("login.html")
+
+
         return redirect(url_for("index"))
     
     form = LoginForm()
