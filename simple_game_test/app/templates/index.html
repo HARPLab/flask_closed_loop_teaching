@@ -54,6 +54,8 @@
     //     }
     // );
 
+    Debug.log("Is Local: " + isLocal);
+
     // Create Socket.IO connection
     const socket = io({
         path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
