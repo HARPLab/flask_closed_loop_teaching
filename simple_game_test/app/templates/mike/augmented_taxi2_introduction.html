@@ -87,7 +87,7 @@
         <div class="row justify-content-between">
             <div class="col-xs-3"></div>
             <div class="col-xs-3">
-                <button type="button" id="next" onclick="window.location.href='{{ url_for('at') }}'" value="next"
+                <button type="button" id="next" onclick="window.location.href='{{ url_for('at', _external=True) }}'" value="next"
                     class="btn btn-primary btn-lg continue">
                     Next <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>

@@ -94,7 +94,7 @@
 
 <script>
     function hideconsent() {
-        $.getJSON("{{ url_for('sign_consent') }}", 
+        $.getJSON("{{ url_for('sign_consent', _external=True) }}", 
         function callback(data) {
           console.log(data)
           window.location.replace(data['url']);
