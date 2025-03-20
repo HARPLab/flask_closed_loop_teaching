@@ -98,7 +98,7 @@
         socket.on("logout_response", function(data) {
             console.log("Received response from backend:", data);
             if (data.reason) {
-                let logoutUrl = "{{ url_for('logout_confirmation', _external=True) }}?reason=" + encodeURIComponent(data.reason);
+                let logoutUrl = "{{ url_for('logout_confirmation') }}?reason=" + encodeURIComponent(data.reason);
                 window.location.href = logoutUrl;
             } else {
                 console.error("Logout failed: No redirect URL received");
