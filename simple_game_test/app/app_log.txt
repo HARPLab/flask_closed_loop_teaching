@@ -125706,3 +125706,36 @@ Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/in
 2025-03-20 06:36:06,840 [DEBUG] Initializing WebSocket
 2025-03-20 06:36:06,840 [DEBUG] Validating WebSocket request
 2025-03-20 06:36:06,841 [INFO] 127.0.0.1 - - [2025-03-20 06:36:06] "GET /static/img/right2.png HTTP/1.1" 200 10086 0.001012
+2025-03-20 07:18:07,439 [INFO] Using 24 processes
+2025-03-20 07:18:07,479 [ERROR] Python 3.9.15 | packaged by conda-forge | (main, Nov 22 2022, 08:45:29) 
+[GCC 10.4.0] on linux
+App: app [production]
+Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/instance
+2025-03-20 07:18:07,479 [INFO] >>>
+2025-03-20 07:18:22,766 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:22,766 [INFO] >>>
+2025-03-20 07:18:24,639 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:24,639 [INFO] >>>
+2025-03-20 07:18:26,071 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:26,071 [INFO] >>>
+2025-03-20 07:18:26,566 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:26,567 [INFO] >>>
+2025-03-20 07:18:26,734 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:26,734 [INFO] >>>
+2025-03-20 07:18:26,966 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:26,966 [INFO] >>>
+2025-03-20 07:18:27,198 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:27,199 [INFO] >>>
+2025-03-20 07:18:27,395 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:27,395 [INFO] >>>
+2025-03-20 07:18:27,631 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:27,631 [INFO] >>>
+2025-03-20 07:18:27,814 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:27,814 [INFO] >>>
+2025-03-20 07:18:28,006 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:28,007 [INFO] >>>
+2025-03-20 07:18:28,191 [ERROR] KeyboardInterrupt
+2025-03-20 07:18:28,191 [INFO] >>>
+2025-03-20 07:18:30,446 [INFO] Use exit() or Ctrl-D (i.e. EOF) to exit
+2025-03-20 07:18:30,446 [INFO] >>>
+2025-03-20 07:18:33,829 [ERROR] now exiting InteractiveConsole...
