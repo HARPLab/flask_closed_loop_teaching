@@ -55,6 +55,8 @@
 
     <script>
         console.log("Base template loaded");
+        let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+        console.log("Is Local: " + isLocal);
     </script>
 
 
