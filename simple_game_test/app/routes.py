@@ -1589,7 +1589,8 @@ def login():
         log_print(f"User is authenticated after login? {current_user.is_authenticated}")
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
-            next_page = url_for("index")
+            # next_page = url_for("index")
+            next_page = url_for("introduction")
         
         log_print('Next page url:', next_page)
         log_print(f"Redirecting to: {url_for('index')}")
