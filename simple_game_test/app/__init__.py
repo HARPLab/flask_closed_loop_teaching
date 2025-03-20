@@ -18,9 +18,9 @@ app.config.from_object(Config)
 # app.static_url_path = '/flask_closed_loop_teaching/static'  # default is APPLICATION_ROOT/static
 # app.config['WTF_CSRF_ENABLED'] = False  # Ensure CSRF protection is explicitly enabled
 
-# app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching' # default is APPLICATION_ROOT
-# app.config["SESSION_COOKIE_SECURE"] = True  # Ensures cookies are set over HTTPS
-# app.config["SESSION_COOKIE_SAMESITE"] = "Lax"  # Prevents browser blocking of session cookies
+app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching' # default is APPLICATION_ROOT
+app.config["SESSION_COOKIE_SECURE"] = True  # Ensures cookies are set over HTTPS
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"  # Prevents browser blocking of session cookies
 
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
