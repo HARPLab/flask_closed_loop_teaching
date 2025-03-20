@@ -156,7 +156,7 @@
         <hr class="my-4">
         <p class="lead">Please complete the study by clicking below.</p>
         <p class="lead">
-            <a href="{{ url_for('consent') }}" class="btn btn-primary w-100">Continue</a>
+            <a href="{{ url_for('consent', _external=True) }}" class="btn btn-primary w-100">Continue</a>
         </p>
         {% endif %}
     </div>

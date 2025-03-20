@@ -127153,3 +127153,78 @@ Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/in
 2025-03-20 11:40:24,811 [INFO] zBNzScIHjGZyIxXJAAAV: Sending packet MESSAGE data 2["settings configured",{"params":{"agent":{"x":3,"y":3,"has_passenger":0},"walls":[{"x":1,"y":3},{"x":1,"y":2}],"passengers":[{"x":3,"y":1,"dest_x":1,"dest_y":1,"in_taxi":0}],"tolls":[{"x":3,"y":2}],"available_tolls":[{"x":3,"y":3},{"x":2,"y":2},{"x":3,"y":2},{"x":4,"y":2},{"x":3,"y":1}],"traffic":[],"fuel_station":[],"hotswap_station":[],"available_hotswap_stations":[{"x":4,"y":3}],"width":4,"height":3,"gamma":1,"env_code":[0,0,1,0,0,0],"opt_locations":[[3,3,0],[2,3,0],[2,2,0],[2,1,0],[3,1,0],[3,1,1],[2,1,1],[1,1,1],[1,1,0]],"opt_actions":["left","down","down","right","pickup","left","left","dropoff"],"opt_traj_length":8,"opt_traj_reward":-1.695996608010176,"test_difficulty":"none","tag":-1,"all_opt_actions":[["left","down","down","right","pickup","left","left","dropoff"],["right","down","down","left","pickup","left","left","dropoff"]],"normalized_opt_actions":[],"normalized_human_actions":[],"human_actions":[],"env_traj_idxs":[8,0],"variable_filter":[[0.0,1.0,0.0]],"constraints":[[[-1,0,0]],[[-1,0,2]]]},"teammate_1_progress":"Current lesson in progress","teammate_2_progress":"Current lesson in progress","domain":"at","debug string":"","last iteration":false,"last test":false,"interaction type":"demo","already completed":false,"go prev":false,"iteration":1,"total iterations":2,"lesson id":1,"lesson string":"Starting with the first game lesson.","domain completed":false}]
 2025-03-20 11:40:24,812 [INFO] Group: 3 User: 14 Next trial:  None . Updated round: <Round 20>
 2025-03-20 11:40:27,549 [ERROR] Traceback (most recent call last):
+2025-03-20 12:56:40,374 [INFO] Using 24 processes
+2025-03-20 12:56:51,613 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:51,614 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:51,615 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-03-20 12:56:51,615 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-03-20 12:56:51,616 [INFO] 127.0.0.1 - - [2025-03-20 12:56:51] "GET / HTTP/1.1" 302 547 0.002645
+2025-03-20 12:56:51,621 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:51,621 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:51,629 [INFO] 127.0.0.1 - - [2025-03-20 12:56:51] "GET /login?next=%2F HTTP/1.1" 200 3447 0.008226
+2025-03-20 12:56:51,642 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:51,642 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:51,645 [INFO] 127.0.0.1 - - [2025-03-20 12:56:51] "GET /static/dragula.css HTTP/1.1" 200 816 0.003265
+2025-03-20 12:56:51,645 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:51,646 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:51,647 [INFO] 127.0.0.1 - - [2025-03-20 12:56:51] "GET /static/dragula.js HTTP/1.1" 200 80941 0.001682
+2025-03-20 12:56:51,647 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:51,648 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:51,648 [INFO] 127.0.0.1 - - [2025-03-20 12:56:51] "GET /static/styles.css HTTP/1.1" 200 5572 0.000910
+2025-03-20 12:56:57,025 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,026 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,026 [DEBUG] Can only upgrade connection if using GET method.
+2025-03-20 12:56:57,038 [INFO] Logging in user: <User ttt5>
+2025-03-20 12:56:57,038 [INFO] User is authenticated after login? True
+2025-03-20 12:56:57,039 [ERROR] /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py:1591: DeprecationWarning: 'werkzeug.urls.url_parse' is deprecated and will be removed in Werkzeug 3.0. Use 'urllib.parse.urlsplit' instead.
+  if not next_page or url_parse(next_page).netloc != "":
+2025-03-20 12:56:57,040 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/werkzeug/urls.py:545: DeprecationWarning: 'werkzeug.urls.URL' is deprecated and will be removed in Werkzeug 3.0. Use the 'urllib.parse' library instead.
+  return result_type(scheme, netloc, url, query, fragment)
+2025-03-20 12:56:57,040 [INFO] Next page url: /
+2025-03-20 12:56:57,040 [INFO] Redirecting to: /
+2025-03-20 12:56:57,041 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "POST /login?next=%2F HTTP/1.1" 302 634 0.015382
+2025-03-20 12:56:57,043 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,043 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,045 [INFO] Index url in index function: http://127.0.0.1:5000/
+2025-03-20 12:56:57,045 [INFO] User is authenticated? True
+2025-03-20 12:56:57,053 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "GET / HTTP/1.1" 200 7989 0.009989
+2025-03-20 12:56:57,065 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,065 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,067 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "GET /static/dragula.css HTTP/1.1" 304 142 0.001514
+2025-03-20 12:56:57,067 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,067 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,069 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "GET /static/lib/jquery-min.js HTTP/1.1" 200 93363 0.001474
+2025-03-20 12:56:57,069 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,069 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,070 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "GET /static/styles.css HTTP/1.1" 304 141 0.000718
+2025-03-20 12:56:57,070 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,070 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,071 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "GET /static/lib/underscore-min.js HTTP/1.1" 200 14359 0.001059
+2025-03-20 12:56:57,072 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,072 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,073 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "GET /static/lib/backbone-min.js HTTP/1.1" 200 19715 0.001414
+2025-03-20 12:56:57,073 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,073 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,075 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "GET /static/lib/d3.v3.min.js HTTP/1.1" 200 145001 0.001649
+2025-03-20 12:56:57,075 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,075 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,076 [INFO] 127.0.0.1 - - [2025-03-20 12:56:57] "GET /static/dragula.js HTTP/1.1" 304 141 0.000993
+2025-03-20 12:56:57,086 [DEBUG] Initializing WebSocket
+2025-03-20 12:56:57,087 [DEBUG] Validating WebSocket request
+2025-03-20 12:56:57,087 [DEBUG] Attempting to upgrade connection
+2025-03-20 12:56:57,087 [DEBUG] WebSocket request accepted, switching protocols
+2025-03-20 12:56:57,087 [INFO] gdvqayzPz89dzntUAAAA: Sending packet OPEN data {'sid': 'gdvqayzPz89dzntUAAAA', 'upgrades': [], 'pingTimeout': 60000, 'pingInterval': 25000}
+2025-03-20 12:56:57,087 [INFO] gdvqayzPz89dzntUAAAA: Received request to upgrade to websocket
+2025-03-20 12:56:57,087 [INFO] gdvqayzPz89dzntUAAAA: Upgrade to websocket successful
+2025-03-20 12:56:57,093 [INFO] gdvqayzPz89dzntUAAAA: Received packet MESSAGE data 0
+2025-03-20 12:56:57,096 [INFO] User 17 connected with SID GptGC0C4p8DVToH1AAAB
+2025-03-20 12:56:57,096 [INFO] gdvqayzPz89dzntUAAAA: Sending packet MESSAGE data 0{"sid":"GptGC0C4p8DVToH1AAAB"}
+2025-03-20 12:57:22,089 [INFO] gdvqayzPz89dzntUAAAA: Sending packet PING data None
+2025-03-20 12:57:22,090 [INFO] gdvqayzPz89dzntUAAAA: Received packet PONG data 
+2025-03-20 12:57:27,099 [INFO] gdvqayzPz89dzntUAAAA: Received packet MESSAGE data 2["heartbeat",{"timestamp":1742489847098}]
+2025-03-20 12:57:27,099 [INFO] received event "heartbeat" from GptGC0C4p8DVToH1AAAB [/]
+2025-03-20 12:57:27,100 [INFO] Received heartbeat from GptGC0C4p8DVToH1AAAB
+2025-03-20 12:57:27,100 [INFO] emitting event "heartbeat_response" to GptGC0C4p8DVToH1AAAB [/]
+2025-03-20 12:57:27,100 [INFO] gdvqayzPz89dzntUAAAA: Sending packet MESSAGE data 2["heartbeat_response",{"server_time":1742489847.1001368}]
