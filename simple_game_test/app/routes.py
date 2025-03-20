@@ -1558,10 +1558,9 @@ def login():
         
         print("[FLASK] Current User Authenticated:", current_user.is_authenticated)
     
-    return render_template("login.html")
-
 
         return redirect(url_for("index"))
+    
     
     form = LoginForm()
     
