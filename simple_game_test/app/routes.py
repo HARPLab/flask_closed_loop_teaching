@@ -176,6 +176,16 @@ def overview():
 def sandbox_introduction():
     return render_template("mike/sandbox_introduction.html")
 
+
+@app.before_request
+def show_env():
+    print("🌍 Environ keys:")
+    for key in request.environ:
+        if 'HTTP_' in key:
+            print(f"{key}: {request.environ[key]}")
+
+
+
 @socketio.on('make sandbox')
 def make_sandbox(data):
     version = data['version']
