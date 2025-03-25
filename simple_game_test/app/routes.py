@@ -178,12 +178,18 @@ def sandbox_introduction():
 
 
 @app.before_request
-def show_env():
-    print("🌍 Environ keys:")
-    for key in request.environ:
-        if 'HTTP_' in key:
-            print(f"{key}: {request.environ[key]}")
+def debug_path():
+    print("Script root:", request.script_root)
+    print("Path:", request.path)
+    print("Full path:", request.full_path)
 
+
+@app.route("/debug")
+def debug():
+    print("✅ Authenticated?", current_user.is_authenticated)
+    print("✅ Cookie:", request.cookies.get("session"))
+    print("✅ Session:", dict(session))
+    return "Check terminal logs"
 
 
 @socketio.on('make sandbox')

@@ -18,8 +18,8 @@ app.config.from_object(Config)
 # app.static_url_path = '/flask_closed_loop_teaching/static'  # default is APPLICATION_ROOT/static
 # app.config['WTF_CSRF_ENABLED'] = False  # Ensure CSRF protection is explicitly enabled
 
-# app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
-# app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching' # default is APPLICATION_ROOT
+app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
+app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching' # default is APPLICATION_ROOT
 # app.config["SESSION_COOKIE_SECURE"] = True  # Ensures cookies are set over HTTPS
 # app.config["SESSION_COOKIE_SAMESITE"] = "Lax"  # Prevents browser blocking of session cookies
 
@@ -53,7 +53,9 @@ if os.environ.get("FLASK_ENV") != "development":
     })
 
 # Initialize Socket.IO with the configuration
-socketio = SocketIO(app, **socketio_config)
+# socketio = SocketIO(app, **socketio_config)
+socketio = SocketIO(app, manage_session=False, **socketio_config)
+
 
 
 from app import routes, models
