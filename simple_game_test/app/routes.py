@@ -1601,7 +1601,8 @@ def login():
             db.session.commit()
 
         log_print('Logging in user:', user)
-        login_user(user)
+        # login_user(user)
+        login_user(user, remember=True, fresh=True)
         log_print(f"User is authenticated after login? {current_user.is_authenticated}")
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
