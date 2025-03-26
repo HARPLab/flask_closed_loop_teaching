@@ -20,6 +20,7 @@ app.config.from_object(Config)
 
 app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
 app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching' # default is APPLICATION_ROOT
+app.config["SESSION_REFRESH_EACH_REQUEST"] = False
 # app.config["SESSION_COOKIE_SECURE"] = True  # Ensures cookies are set over HTTPS
 # app.config["SESSION_COOKIE_SAMESITE"] = "Lax"  # Prevents browser blocking of session cookies
 
