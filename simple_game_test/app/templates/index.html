@@ -77,9 +77,6 @@
             reconnectionAttempts: 5,
             reconnectionDelay: 1000,
             EIO: 4,
-            extraHeaders: {
-                "Accept": "application/json"
-            },
             pingTimeout: 60000,
             pingInterval: 25000
         });
@@ -98,7 +95,7 @@
         console.log('Socket path:', socket.io.opts.path);
     }
 
-    
+
     function logout() {
         console.log("Logging out...");
         
