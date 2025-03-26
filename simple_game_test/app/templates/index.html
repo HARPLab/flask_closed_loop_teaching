@@ -44,9 +44,16 @@
     //     transports: ['polling']  // Ensures only polling is used
     // });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        // Delay Socket.IO initialization by a short time
+        setTimeout(() => {
+            initializeSocket();
+        }, 500); // 500ms delay
+    });
+
     // Automatically determine the correct base URL
 
-    let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+    // let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
 
     // let socket = io(
     //     isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
@@ -55,56 +62,86 @@
     //     }
     // );
 
-    console.log("Is Local: " + isLocal);
-
-    // Create Socket.IO connection
-    const socket = io({
-        path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
-        transports: ['websocket', 'polling'],
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-        // timeout: 20000
-        EIO: 4,  // Engine.IO protocol version
-        extraHeaders: {
-            "Accept": "application/json"
-        },
-        pingTimeout: 60000,   // 60 seconds (in milliseconds)
-        pingInterval: 25000   // 25 seconds (in milliseconds)
-    });
-
-    setInterval(() => {
-        if (socket.connected) {
-            socket.emit('heartbeat', {timestamp: new Date().getTime()});
-        }
-    }, 30000); // Send heartbeat every 30 seconds
-
-    console.log("Hostname:", window.location.hostname);
+    // console.log("Is Local: " + isLocal);
 
 
-    // Print the socket connection details
-    // socket.on('connect', function () {
-    console.log('Socket connected!');
-    console.log('Socket URL:', socket.io.uri);
-    console.log('Socket path:', socket.io.opts.path);
-    // });
 
+    function initializeSocket() {
+        let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+        console.log("Is Local: " + isLocal);
+        
+        // Your existing socket initialization code
+        const socket = io({
+            path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
+            transports: ['websocket', 'polling'],
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            EIO: 4,
+            extraHeaders: {
+                "Accept": "application/json"
+            },
+            pingTimeout: 60000,
+            pingInterval: 25000
+        });
+        
+        setInterval(() => {
+            if (socket.connected) {
+                socket.emit('heartbeat', {timestamp: new Date().getTime()});
+            }
+        }, 30000); // Send heartbeat every 30 seconds
+
+        console.log("Hostname:", window.location.hostname);
+        // Print the socket connection details
+        // socket.on('connect', function () {
+        console.log('Socket connected!');
+        console.log('Socket URL:', socket.io.uri);
+        console.log('Socket path:', socket.io.opts.path);
+    }
+
+    
     function logout() {
         console.log("Logging out...");
-
-        // Emit logout event
+        
+        // First try the Socket.IO method
         socket.emit("logout_request");
-
+        
+        // Set up a timeout fallback in case the Socket.IO event doesn't work
+        const logoutTimeout = setTimeout(() => {
+            console.log("Socket.IO logout timed out, using direct redirection");
+            window.location.href = "{{ url_for('logout_confirmation') }}?reason=complete";
+        }, 2000);
+        
         // Listen for logout response
-        socket.on("logout_response", function(data) {
+        socket.once("logout_response", function(data) {
+            clearTimeout(logoutTimeout); // Clear the fallback timeout
             console.log("Received response from backend:", data);
             if (data.reason) {
                 let logoutUrl = "{{ url_for('logout_confirmation') }}?reason=" + encodeURIComponent(data.reason);
                 window.location.href = logoutUrl;
             } else {
                 console.error("Logout failed: No redirect URL received");
+                window.location.href = "{{ url_for('logout_confirmation') }}?reason=error";
             }
         });
     }
+
+    // function logout() {
+    //     console.log("Logging out...");
+
+    //     // Emit logout event
+    //     socket.emit("logout_request");
+
+    //     // Listen for logout response
+    //     socket.on("logout_response", function(data) {
+    //         console.log("Received response from backend:", data);
+    //         if (data.reason) {
+    //             let logoutUrl = "{{ url_for('logout_confirmation') }}?reason=" + encodeURIComponent(data.reason);
+    //             window.location.href = logoutUrl;
+    //         } else {
+    //             console.error("Logout failed: No redirect URL received");
+    //         }
+    //     });
+    // }
     
     // function logout() {
     //     $jq.getJSON('/logout', function callback(data) {
