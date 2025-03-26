@@ -70,22 +70,22 @@
         let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
         console.log("Is Local: " + isLocal);
         
-        // Your existing socket initialization code
-        const socket = io({
-            path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
-            transports: ['websocket', 'polling'],
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-            EIO: 4,
-            pingTimeout: 60000,
-            pingInterval: 25000
-        });
+        // // Your existing socket initialization code
+        // const socket = io({
+        //     path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
+        //     transports: ['websocket', 'polling'],
+        //     reconnectionAttempts: 5,
+        //     reconnectionDelay: 1000,
+        //     EIO: 4,
+        //     pingTimeout: 60000,
+        //     pingInterval: 25000
+        // });
         
-        setInterval(() => {
-            if (socket.connected) {
-                socket.emit('heartbeat', {timestamp: new Date().getTime()});
-            }
-        }, 30000); // Send heartbeat every 30 seconds
+        // setInterval(() => {
+        //     if (socket.connected) {
+        //         socket.emit('heartbeat', {timestamp: new Date().getTime()});
+        //     }
+        // }, 30000); // Send heartbeat every 30 seconds
 
         console.log("Hostname:", window.location.hostname);
         // Print the socket connection details
@@ -99,8 +99,8 @@
     function logout() {
         console.log("Logging out...");
         
-        // First try the Socket.IO method
-        socket.emit("logout_request");
+        // // First try the Socket.IO method
+        // socket.emit("logout_request");
         
         // Set up a timeout fallback in case the Socket.IO event doesn't work
         const logoutTimeout = setTimeout(() => {
@@ -108,18 +108,18 @@
             window.location.href = "{{ url_for('logout_confirmation') }}?reason=complete";
         }, 2000);
         
-        // Listen for logout response
-        socket.once("logout_response", function(data) {
-            clearTimeout(logoutTimeout); // Clear the fallback timeout
-            console.log("Received response from backend:", data);
-            if (data.reason) {
-                let logoutUrl = "{{ url_for('logout_confirmation') }}?reason=" + encodeURIComponent(data.reason);
-                window.location.href = logoutUrl;
-            } else {
-                console.error("Logout failed: No redirect URL received");
-                window.location.href = "{{ url_for('logout_confirmation') }}?reason=error";
-            }
-        });
+        // // Listen for logout response
+        // socket.once("logout_response", function(data) {
+        //     clearTimeout(logoutTimeout); // Clear the fallback timeout
+        //     console.log("Received response from backend:", data);
+        //     if (data.reason) {
+        //         let logoutUrl = "{{ url_for('logout_confirmation') }}?reason=" + encodeURIComponent(data.reason);
+        //         window.location.href = logoutUrl;
+        //     } else {
+        //         console.error("Logout failed: No redirect URL received");
+        //         window.location.href = "{{ url_for('logout_confirmation') }}?reason=error";
+        //     }
+        // });
     }
 
     // function logout() {
@@ -138,33 +138,6 @@
     //             console.error("Logout failed: No redirect URL received");
     //         }
     //     });
-    // }
-    
-    // function logout() {
-    //     $jq.getJSON('/logout', function callback(data) {
-    //         window.location.href(data['url']);
-    //     });
-    // }
-
-    // function logout() {
-    // $jq.getJSON('/logout', function callback(data) {
-    //     // Append the reason to the URL before redirecting
-    //     window.location.href(data['url'] + "?reason=" + data['reason']);
-    //     // Force refresh if being cached
-    //     setTimeout(() => window.location.reload(true), 500);
-    // });
-    // }
-
-    // function logout(reason = "complete") {
-    //     console.log("Logging out... Reason:", reason);
-
-    //     // Get the base URL dynamically
-    //     let basePath = window.location.pathname.includes("/flask_closed_loop_teaching") 
-    //         ? "/flask_closed_loop_teaching" 
-    //         : "";
-
-    //     // Redirect with the correct base path
-    //     window.location.href = `${basePath}/logout?reason=${encodeURIComponent(reason)}`;
     // }
 
     console.log('In index.html');
