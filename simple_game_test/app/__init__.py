@@ -58,6 +58,10 @@ if os.environ.get("FLASK_ENV") != "development":
 socketio = SocketIO(app, manage_session=False, **socketio_config)
 
 
+# In your __init__.py after creating the socketio instance
+if hasattr(socketio, 'server') and hasattr(socketio.server, 'eio'):
+    socketio.server.eio.allow_upgrades = False  # Disable automatic upgrades
+
 
 from app import routes, models
 
