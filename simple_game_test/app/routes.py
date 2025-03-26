@@ -1555,7 +1555,7 @@ def consent():
         procedure = "This study may take up to 30 minutes."
     return render_template("consent.html", title="Consent", form=form, procedure=procedure)
 
-
+# Original
 # @app.route("/login", methods=["GET", "POST"])
 # def login():
     
@@ -1622,7 +1622,36 @@ def consent():
 
 #     return render_template("login.html", title="Sign In", form=form)
 
+# Trial 1
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
+#     if current_user.is_authenticated:
+#         return redirect(url_for("index"))
+    
+#     form = LoginForm()
+    
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(username=form.username.data).first()
+        
+#         # User creation and login logic...
+        
+#         login_user(user, remember=True, fresh=True)
+        
+#         next_page = request.args.get("next")
+#         if not next_page or url_parse(next_page).netloc != "":
+#             next_page = url_for("introduction")
+        
+#         # Create response with headers that prevent WebSocket upgrade
+#         response = redirect(next_page)
+#         response.headers['Connection'] = 'close'
+#         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+#         response.headers['Pragma'] = 'no-cache'
+#         return response
+    
+#     return render_template("login.html", title="Sign In", form=form)
 
+
+# Trial 2
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -1633,22 +1662,33 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         
-        # User creation and login logic...
+        if user is None:
+            # Create new user
+            user = User(username=form.username.data)
+            user.control_stack = []
+            user.set_num_trials_completed(0)
+            user.set_completion(0)
+            user.set_attention_check(-1)
+            
+            code = user.set_code()
+            
+            db.session.add(user)
+            db.session.commit()
         
+        # Log the user in
         login_user(user, remember=True, fresh=True)
         
+        # Get the next page
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
             next_page = url_for("introduction")
         
-        # Create response with headers that prevent WebSocket upgrade
-        response = redirect(next_page)
-        response.headers['Connection'] = 'close'
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        return response
+        # Instead of doing a redirect directly, render a page with a meta refresh
+        # This avoids WebSocket upgrade attempts during redirect
+        return render_template("redirect.html", redirect_url=next_page)
     
     return render_template("login.html", title="Sign In", form=form)
+
 
 
 @app.route("/final_survey", methods=["GET", "POST"])
