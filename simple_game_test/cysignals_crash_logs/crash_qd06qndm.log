@@ -1,0 +1,773 @@
+GNU gdb (GDB) 11.2
+Copyright (C) 2022 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-conda-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+[New LWP 4209]
+[New LWP 4215]
+[New LWP 4219]
+[New LWP 4225]
+[New LWP 4228]
+[New LWP 4231]
+[New LWP 4234]
+[New LWP 4240]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+0x00007f54ba1c532a in waitpid () from /lib/x86_64-linux-gnu/libpthread.so.0
+
+Stack backtrace
+---------------
+No symbol table info available.
+#1  0x00007f536cc29071 in print_enhanced_backtrace ()
+   from /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/cysignals/signals.cpython-39-x86_64-linux-gnu.so
+No symbol table info available.
+#2  0x00007f536cc291eb in sigdie ()
+   from /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/cysignals/signals.cpython-39-x86_64-linux-gnu.so
+No symbol table info available.
+#3  0x00007f536cc2b8f5 in cysigs_signal_handler ()
+   from /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/cysignals/signals.cpython-39-x86_64-linux-gnu.so
+No symbol table info available.
+#4  <signal handler called>
+No symbol table info available.
+#5  0x00007f54ba1c43a7 in write () from /lib/x86_64-linux-gnu/libpthread.so.0
+No symbol table info available.
+#6  0x0000555e2741be86 in _Py_write_impl (gil_held=1, count=<optimized out>, 
+    buf=0x555e3c2504e0, fd=18)
+    at /usr/local/src/conda/python-3.9.15/Python/fileutils.c:1771
+        _save = 0x555e34061f30
+        n = <optimized out>
+        err = <optimized out>
+        async_err = 0
+        n = <optimized out>
+        err = <optimized out>
+        async_err = <optimized out>
+        _save = <optimized out>
+#7  _Py_write (fd=18, buf=0x555e3c2504e0, count=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/fileutils.c:1831
+No locals.
+#8  0x0000555e2741bb4d in _io_FileIO_write_impl (b=0x7ffe12de88b0, 
+    self=0x7f540ed92640)
+    at /usr/local/src/conda/python-3.9.15/Modules/_io/fileio.c:858
+        n = <optimized out>
+        err = <optimized out>
+        n = <optimized out>
+        err = <optimized out>
+#9  _io_FileIO_write (self=0x7f540ed92640, arg=
+    <memoryview at remote 0x7f540ec2d580>)
+    at /usr/local/src/conda/python-3.9.15/Modules/_io/clinic/fileio.c.h:309
+        return_value = 0x0
+        b = {buf = 0x555e3c2504e0, 
+          obj = <memoryview at remote 0x7f540ec2d580>, len = 67, itemsize = 1, 
+          readonly = 1, ndim = 1, format = 0x0, shape = 0x0, strides = 0x0, 
+          suboffsets = 0x0, internal = 0x0}
+#10 0x0000555e27353de3 in method_vectorcall_O (
+    func=func@entry=<method_descriptor at remote 0x7f54b936a220>, 
+    args=args@entry=0x7ffe12de8a30, nargsf=<optimized out>, 
+    kwnames=kwnames@entry=0x0)
+    at /usr/local/src/conda/python-3.9.15/Objects/descrobject.c:464
+        tstate = 0x555e34061f30
+        nargs = <optimized out>
+        meth = 0x555e2741bad0 <_io_FileIO_write>
+        result = <optimized out>
+#11 0x0000555e273668c2 in _PyObject_VectorcallTstate (kwnames=0x0, 
+    nargsf=<optimized out>, args=0x7ffe12de8a30, 
+    callable=<method_descriptor at remote 0x7f54b936a220>, 
+    tstate=0x555e34061f30)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = 0x555e27353d50 <method_vectorcall_O>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#12 PyObject_VectorcallMethod (name=<optimized out>, args=0x7ffe12de8a30, 
+    nargsf=<optimized out>, kwnames=0x0)
+    at /usr/local/src/conda/python-3.9.15/Objects/call.c:828
+        tstate = 0x555e34061f30
+        callable = <method_descriptor at remote 0x7f54b936a220>
+        unbound = <optimized out>
+        result = <optimized out>
+#13 0x0000555e27425cc7 in PyObject_CallMethodOneArg (
+    arg=<memoryview at remote 0x7f540ec2d580>, name=<optimized out>, 
+    self=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:208
+        args = {<_io.FileIO at remote 0x7f540ed92640>, 
+          <memoryview at remote 0x7f540ec2d580>}
+        args = <optimized out>
+#14 _bufferedwriter_raw_write (self=0x7f540ec6e460, start=<optimized out>, 
+    len=67) at /usr/local/src/conda/python-3.9.15/Modules/_io/bufferedio.c:1824
+        buf = {buf = 0x555e3c2504e0, obj = 0x0, len = 67, itemsize = 1, 
+          readonly = 1, ndim = 1, format = 0x0, shape = 0x7ffe12de89f0, 
+          strides = 0x0, suboffsets = 0x0, internal = 0x0}
+        memobj = <memoryview at remote 0x7f540ec2d580>
+        res = <optimized out>
+        n = <optimized out>
+        errnum = <optimized out>
+#15 0x0000555e2741f878 in _bufferedwriter_flush_unlocked (self=0x7f540ec6e460)
+    at /usr/local/src/conda/python-3.9.15/Modules/_io/bufferedio.c:1869
+        written = <optimized out>
+        n = <optimized out>
+        rewind = <optimized out>
+        error = <optimized out>
+#16 0x0000555e2741f789 in buffered_flush_and_rewind_unlocked (
+    self=0x7f540ec6e460)
+    at /usr/local/src/conda/python-3.9.15/Modules/_io/bufferedio.c:800
+        res = <optimized out>
+#17 0x0000555e2741f370 in buffered_flush (self=0x7f540ec6e460, 
+    args=args@entry=0x0)
+    at /usr/local/src/conda/python-3.9.15/Modules/_io/bufferedio.c:827
+        res = <optimized out>
+#18 0x0000555e2734c2ba in method_vectorcall_NOARGS (
+    func=func@entry=<method_descriptor at remote 0x7f54b936e090>, 
+    args=args@entry=0x7ffe12de8b60, nargsf=<optimized out>, 
+    kwnames=kwnames@entry=0x0)
+    at /usr/local/src/conda/python-3.9.15/Objects/descrobject.c:436
+        tstate = 0x555e34061f30
+        nargs = 1
+        meth = 0x555e2741f320 <buffered_flush>
+        result = <optimized out>
+#19 0x0000555e273668c2 in _PyObject_VectorcallTstate (kwnames=0x0, 
+    nargsf=<optimized out>, args=0x7ffe12de8b60, 
+    callable=<method_descriptor at remote 0x7f54b936e090>, 
+    tstate=0x555e34061f30)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = 0x555e2734c230 <method_vectorcall_NOARGS>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#20 PyObject_VectorcallMethod (name=<optimized out>, args=0x7ffe12de8b60, 
+    nargsf=<optimized out>, kwnames=0x0)
+    at /usr/local/src/conda/python-3.9.15/Objects/call.c:828
+        tstate = 0x555e34061f30
+        callable = <method_descriptor at remote 0x7f54b936e090>
+        unbound = <optimized out>
+        result = <optimized out>
+#21 0x0000555e2741b28a in _PyObject_CallMethodIdNoArgs (
+    name=0x555e2757d700 <PyId_flush.lto_priv.5>, self=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:243
+No locals.
+#22 _io_TextIOWrapper_flush_impl (self=0x7f540eeced40)
+    at /usr/local/src/conda/python-3.9.15/Modules/_io/textio.c:3038
+No locals.
+#23 _io_TextIOWrapper_flush (self=0x7f540eeced40, 
+    _unused_ignored=_unused_ignored@entry=0x0)
+    at /usr/local/src/conda/python-3.9.15/Modules/_io/clinic/textio.c.h:685
+No locals.
+#24 0x0000555e2734c2ba in method_vectorcall_NOARGS (func=<optimized out>, 
+    args=0x7f54b81c2ac8, nargsf=<optimized out>, kwnames=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Objects/descrobject.c:436
+        tstate = 0x555e34061f30
+        nargs = 1
+        meth = 0x555e2741b200 <_io_TextIOWrapper_flush>
+        result = <optimized out>
+#25 0x0000555e27335efe in _PyObject_VectorcallTstate (kwnames=0x0, 
+    nargsf=<optimized out>, args=0x7f54b81c2ac8, 
+    callable=<method_descriptor at remote 0x7f54b936f270>, 
+    tstate=0x555e34061f30)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = <optimized out>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#26 PyObject_Vectorcall (kwnames=0x0, nargsf=<optimized out>, 
+    args=0x7f54b81c2ac8, callable=<method_descriptor at remote 0x7f54b936f270>)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+        tstate = 0x555e34061f30
+        tstate = <optimized out>
+#27 call_function (kwnames=0x0, oparg=<optimized out>, 
+    pp_stack=<synthetic pointer>, tstate=0x555e34061f30)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+        func = <method_descriptor at remote 0x7f54b936f270>
+        w = <optimized out>
+        nkwargs = 0
+        nargs = <optimized out>
+        pfunc = 0x7f54b81c2ac0
+        x = <optimized out>
+        stack = 0x7f54b81c2ac8
+        pfunc = <optimized out>
+        func = <optimized out>
+        x = <optimized out>
+        w = <optimized out>
+        nkwargs = <optimized out>
+        nargs = <optimized out>
+        stack = <optimized out>
+#28 _PyEval_EvalFrameDefault (tstate=<optimized out>, f=<optimized out>, 
+    throwflag=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3506
+        sp = <optimized out>
+        res = <optimized out>
+        meth = <optimized out>
+        stack_pointer = <optimized out>
+        next_instr = 0x7f54b8eaacb4
+        opcode = <optimized out>
+        oparg = <optimized out>
+        fastlocals = 0x7f54b81c2ab8
+        freevars = 0x7f54b81c2ac0
+        retval = <optimized out>
+        ceval2 = 0x555e34062710
+        eval_breaker = 0x555e34062718
+        co = 0x7f54b8ebf450
+        instr_ub = -1
+        instr_lb = <optimized out>
+        instr_prev = -1
+        first_instr = 0x7f54b8eaac90
+        names = ('acquire', 'stream', 'hasattr', 'flush', 'release')
+        consts = ('\n        Flushes the stream.\n        ', 'flush', None)
+        co_opcache = <optimized out>
+        main_loop = <optimized out>
+        fast_next_opcode = <optimized out>
+        exception_unwind = <optimized out>
+        __func__ = "_PyEval_EvalFrameDefault"
+        opcode_targets = {0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27336148 <_PyEval_EvalFrameDefault+2232>, 
+          0x555e27337218 <_PyEval_EvalFrameDefault+6536>, 
+          0x555e27336f29 <_PyEval_EvalFrameDefault+5785>, 
+          0x555e273367dd <_PyEval_EvalFrameDefault+3917>, 
+          0x555e273386bf <_PyEval_EvalFrameDefault+11823>, 
+          0x555e2733a179 <_PyEval_EvalFrameDefault+18665>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27272497 <_PyEval_EvalFrameDefault-799737>, 
+          0x555e27338da2 <_PyEval_EvalFrameDefault+13586>, 
+          0x555e27337ae7 <_PyEval_EvalFrameDefault+8791>, 
+          0x555e27338017 <_PyEval_EvalFrameDefault+10119>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e273394e0 <_PyEval_EvalFrameDefault+15440>, 
+          0x555e2733944b <_PyEval_EvalFrameDefault+15291>, 
+          0x555e2727392a <_PyEval_EvalFrameDefault-794470>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27336da4 <_PyEval_EvalFrameDefault+5396>, 
+          0x555e27336730 <_PyEval_EvalFrameDefault+3744>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27337753 <_PyEval_EvalFrameDefault+7875>, 
+          0x555e273364d5 <_PyEval_EvalFrameDefault+3141>, 
+          0x555e27336578 <_PyEval_EvalFrameDefault+3304>, 
+          0x555e2733637b <_PyEval_EvalFrameDefault+2795>, 
+          0x555e27337b62 <_PyEval_EvalFrameDefault+8914>, 
+          0x555e27336f81 <_PyEval_EvalFrameDefault+5873>, 
+          0x555e27337ede <_PyEval_EvalFrameDefault+9806>, 
+          0x555e273393b6 <_PyEval_EvalFrameDefault+15142>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488> <repeats 18 times>, 
+          0x555e27339667 <_PyEval_EvalFrameDefault+15831>, 
+          0x555e2733927b <_PyEval_EvalFrameDefault+14827>, 
+          0x555e27271c92 <_PyEval_EvalFrameDefault-801790>, 
+          0x555e27271bd6 <_PyEval_EvalFrameDefault-801978>, 
+          0x555e27273227 <_PyEval_EvalFrameDefault-796265>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27273192 <_PyEval_EvalFrameDefault-796414>, 
+          0x555e27336c1c <_PyEval_EvalFrameDefault+5004>, 
+          0x555e273384ca <_PyEval_EvalFrameDefault+11322>, 
+          0x555e27338572 <_PyEval_EvalFrameDefault+11490>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27338c2c <_PyEval_EvalFrameDefault+13212>, 
+          0x555e27336876 <_PyEval_EvalFrameDefault+4070>, 
+          0x555e27337f87 <_PyEval_EvalFrameDefault+9975>, 
+          0x555e273379dc <_PyEval_EvalFrameDefault+8524>, 
+          0x555e273374ca <_PyEval_EvalFrameDefault+7226>, 
+          0x555e27337037 <_PyEval_EvalFrameDefault+6055>, 
+          0x555e27338436 <_PyEval_EvalFrameDefault+11174>, 
+          0x555e2733792a <_PyEval_EvalFrameDefault+8346>, 
+          0x555e273399d6 <_PyEval_EvalFrameDefault+16710>, 
+          0x555e27336e4c <_PyEval_EvalFrameDefault+5564>, 
+          0x555e273391ec <_PyEval_EvalFrameDefault+14684>, 
+          0x555e27338e1b <_PyEval_EvalFrameDefault+13707>, 
+          0x555e27339ce3 <_PyEval_EvalFrameDefault+17491>, 
+          0x555e27337433 <_PyEval_EvalFrameDefault+7075>, 
+          0x555e27339e80 <_PyEval_EvalFrameDefault+17904>, 
+          0x555e27338cc1 <_PyEval_EvalFrameDefault+13361>, 
+          0x555e273376ab <_PyEval_EvalFrameDefault+7707>, 
+          0x555e27338eaf <_PyEval_EvalFrameDefault+13855>, 
+          0x555e27338b94 <_PyEval_EvalFrameDefault+13060>, 
+          0x555e27338117 <_PyEval_EvalFrameDefault+10375>, 
+          0x555e27338b00 <_PyEval_EvalFrameDefault+12912>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27339332 <_PyEval_EvalFrameDefault+15010>, 
+          0x555e27335d71 <_PyEval_EvalFrameDefault+1249>, 
+          0x555e27338875 <_PyEval_EvalFrameDefault+12261>, 
+          0x555e273387b1 <_PyEval_EvalFrameDefault+12065>, 
+          0x555e27336cbb <_PyEval_EvalFrameDefault+5163>, 
+          0x555e27336ec6 <_PyEval_EvalFrameDefault+5686>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27337d5f <_PyEval_EvalFrameDefault+9423>, 
+          0x555e2733834d <_PyEval_EvalFrameDefault+10941>, 
+          0x555e27339c6c <_PyEval_EvalFrameDefault+17372>, 
+          0x555e2733661e <_PyEval_EvalFrameDefault+3470>, 
+          0x555e27336199 <_PyEval_EvalFrameDefault+2313>, 
+          0x555e273390c5 <_PyEval_EvalFrameDefault+14389>, 
+          0x555e27336431 <_PyEval_EvalFrameDefault+2977>, 
+          0x555e273378a2 <_PyEval_EvalFrameDefault+8210>, 
+          0x555e27339161 <_PyEval_EvalFrameDefault+14545>, 
+          0x555e2727206f <_PyEval_EvalFrameDefault-800801>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27335a43 <_PyEval_EvalFrameDefault+435>, 
+          0x555e27337e46 <_PyEval_EvalFrameDefault+9654>, 
+          0x555e27336b20 <_PyEval_EvalFrameDefault+4752>, 
+          0x555e273373bc <_PyEval_EvalFrameDefault+6956>, 
+          0x555e27338fc6 <_PyEval_EvalFrameDefault+14134>, 
+          0x555e27337161 <_PyEval_EvalFrameDefault+6353>, 
+          0x555e27335fb0 <_PyEval_EvalFrameDefault+1824>, 
+          0x555e27336035 <_PyEval_EvalFrameDefault+1957>, 
+          0x555e2733955a <_PyEval_EvalFrameDefault+15562>, 
+          0x555e27338718 <_PyEval_EvalFrameDefault+11912>, 
+          0x555e2733682d <_PyEval_EvalFrameDefault+3997>, 
+          0x555e2733756c <_PyEval_EvalFrameDefault+7388>, 
+          0x555e2733780c <_PyEval_EvalFrameDefault+8060>, 
+          0x555e2733629f <_PyEval_EvalFrameDefault+2575>, 
+          0x555e27335cf7 <_PyEval_EvalFrameDefault+1127>, 
+          0x555e273360d0 <_PyEval_EvalFrameDefault+2112>, 
+          0x555e27335b00 <_PyEval_EvalFrameDefault+624>, 
+          0x555e273362f8 <_PyEval_EvalFrameDefault+2664>, 
+          0x555e27336924 <_PyEval_EvalFrameDefault+4244>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27337c04 <_PyEval_EvalFrameDefault+9076>, 
+          0x555e27336d10 <_PyEval_EvalFrameDefault+5248>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e273359e3 <_PyEval_EvalFrameDefault+339>, 
+          0x555e27335a9a <_PyEval_EvalFrameDefault+522>, 
+          0x555e27339d68 <_PyEval_EvalFrameDefault+17624>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e273397bc <_PyEval_EvalFrameDefault+16172>, 
+          0x555e27335be3 <_PyEval_EvalFrameDefault+851>, 
+          0x555e273375cc <_PyEval_EvalFrameDefault+7484>, 
+          0x555e27337268 <_PyEval_EvalFrameDefault+6616>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27337a7f <_PyEval_EvalFrameDefault+8687>, 
+          0x555e2733622b <_PyEval_EvalFrameDefault+2459>, 
+          0x555e273380a4 <_PyEval_EvalFrameDefault+10260>, 
+          0x555e27339744 <_PyEval_EvalFrameDefault+16052>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e273369e1 <_PyEval_EvalFrameDefault+4433>, 
+          0x555e2733986b <_PyEval_EvalFrameDefault+16347>, 
+          0x555e273381d1 <_PyEval_EvalFrameDefault+10561>, 
+          0x555e27336415 <_PyEval_EvalFrameDefault+2949>, 
+          0x555e273370d9 <_PyEval_EvalFrameDefault+6217>, 
+          0x555e2733732d <_PyEval_EvalFrameDefault+6813>, 
+          0x555e27339ddf <_PyEval_EvalFrameDefault+17743>, 
+          0x555e2733a0b7 <_PyEval_EvalFrameDefault+18471>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272737f9 <_PyEval_EvalFrameDefault-794775>, 
+          0x555e27338607 <_PyEval_EvalFrameDefault+11639>, 
+          0x555e27339a72 <_PyEval_EvalFrameDefault+16866>, 
+          0x555e27339f1d <_PyEval_EvalFrameDefault+18061>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27335dd1 <_PyEval_EvalFrameDefault+1345>, 
+          0x555e27335e76 <_PyEval_EvalFrameDefault+1510>, 
+          0x555e27338d13 <_PyEval_EvalFrameDefault+13443>, 
+          0x555e27339040 <_PyEval_EvalFrameDefault+14256>, 
+          0x555e27337cd6 <_PyEval_EvalFrameDefault+9286>, 
+          0x555e27338f43 <_PyEval_EvalFrameDefault+14003>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488> <repeats 90 times>}
+        PyId_displayhook = {next = 0x0, string = 0x555e2748d02c "displayhook", 
+          object = 0x0}
+        PyId_send = {next = 0x0, string = 0x555e27494dcf "send", object = 0x0}
+        PyId___build_class__ = {
+          next = 0x555e2759a640 <PyId___builtins__.lto_priv.0>, 
+          string = 0x555e27494a80 "__build_class__", 
+          object = '__build_class__'}
+        PyId___annotations__ = {next = 0x555e27592820 <PyId___bases__.14>, 
+          string = 0x555e2748da9b "__annotations__", 
+          object = '__annotations__'}
+        PyId___aenter__ = {next = 0x0, string = 0x555e27497d75 "__aenter__", 
+          object = 0x0}
+        PyId___aexit__ = {next = 0x0, string = 0x555e27497d6b "__aexit__", 
+          object = 0x0}
+        PyId___enter__ = {next = 0x555e2758ec00 <PyId__find_and_load.7>, 
+          string = 0x555e2749571e "__enter__", object = '__enter__'}
+        PyId___exit__ = {next = 0x555e2758f0c0 <PyId___enter__.6>, 
+          string = 0x555e27495728 "__exit__", object = '__exit__'}
+#29 0x0000555e27347113 in _PyEval_EvalFrame (throwflag=0, f=
+    Frame 0x7f54b81c2950, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/logging/__init__.py, line 1067, in flush (self=<FileHandler(baseFilename='/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/app_log.txt', mode='a', encoding=None, errors=None, delay=False, filters=[], _name=None, level=0, formatter=<Formatter(_style=<PercentStyle(_fmt='%(asctime)s [%(levelname)s] %(message)s') at remote 0x7f540ee31bb0>, _fmt='%(asctime)s [%(levelname)s] %(message)s', datefmt=None) at remote 0x7f540ee31b80>, lock=<_RLock(_block=<LockType at remote 0x7f540ee2a9e0>, _owner=140001842132208, _count=2) at remote 0x7f540ee31a00>, stream=<_io.TextIOWrapper at remote 0x7f540eeced40>) at remote 0x7f540ee31a30>), tstate=0x555e34061f30)
+    at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+No locals.
+#30 function_code_fastcall (tstate=0x555e34061f30, co=<optimized out>, 
+    args=<optimized out>, nargs=<optimized out>, 
+    globals={'__name__': 'logging', '__doc__': "\nLogging package for Python. Based on PEP 282 and comments thereto in\ncomp.lang.python.\n\nCopyright (C) 2001-2019 Vinay Sajip. All Rights Reserved.\n\nTo use, simply 'import logging' and log away!\n", '__package__': 'logging', '__loader__': <SourceFileLoader(name='logging', path='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/logging/__init__.py') at remote 0x7f54b8ef0820>, '__spec__': <ModuleSpec(name='logging', loader=<...>, origin='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/logging/__init__.py', loader_state=None, submodule_search_locations=['/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/logging'], _set_fileattr=True, _cached='/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/logging/__pycache__/__init__.cpython-39.pyc', _initializing=False) at remote 0x7f54b8ef0730>, '__path__': [...], '__file__': '/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/logging/__init__.py', '__cached__': '/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/lo...(truncated)) at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+        f = Frame 0x7f54b81c2950, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/logging/__init__.py, line 1067, in flush (self=<FileHandler(baseFilename='/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/app_log.txt', mode='a', encoding=None, errors=None, delay=False, filters=[], _name=None, level=0, formatter=<Formatter(_style=<PercentStyle(_fmt='%(asctime)s [%(levelname)s] %(message)s') at remote 0x7f540ee31bb0>, _fmt='%(asctime)s [%(levelname)s] %(message)s', datefmt=None) at remote 0x7f540ee31b80>, lock=<_RLock(_block=<LockType at remote 0x7f540ee2a9e0>, _owner=140001842132208, _count=2) at remote 0x7f540ee31a00>, stream=<_io.TextIOWrapper at remote 0x7f540eeced40>) at remote 0x7f540ee31a30>)
+        fastlocals = 0x7f54b81c2ab8
+        result = <optimized out>
+#31 0x0000555e27335efe in _PyObject_VectorcallTstate (kwnames=0x0, 
+    nargsf=<optimized out>, args=0x7f54b8230d10, 
+    callable=<function at remote 0x7f54b8e8d3a0>, tstate=0x555e34061f30)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = <optimized out>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#32 PyObject_Vectorcall (kwnames=0x0, nargsf=<optimized out>, 
+    args=0x7f54b8230d10, callable=<function at remote 0x7f54b8e8d3a0>)
+    at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+        tstate = 0x555e34061f30
+        tstate = <optimized out>
+#33 call_function (kwnames=0x0, oparg=<optimized out>, 
+    pp_stack=<synthetic pointer>, tstate=0x555e34061f30)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+        func = <function at remote 0x7f54b8e8d3a0>
+        w = <optimized out>
+        nkwargs = 0
+        nargs = <optimized out>
+        pfunc = 0x7f54b8230d08
+        x = <optimized out>
+        stack = 0x7f54b8230d10
+        pfunc = <optimized out>
+        func = <optimized out>
+        x = <optimized out>
+        w = <optimized out>
+        nkwargs = <optimized out>
+        nargs = <optimized out>
+        stack = <optimized out>
+#34 _PyEval_EvalFrameDefault (tstate=<optimized out>, f=<optimized out>, 
+    throwflag=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3506
+        sp = <optimized out>
+        res = <optimized out>
+        meth = <optimized out>
+        stack_pointer = <optimized out>
+        next_instr = 0x7f54b8ebc198
+        opcode = <optimized out>
+        oparg = <optimized out>
+        fastlocals = 0x7f54b8230ce8
+        freevars = 0x7f54b8230d08
+        retval = <optimized out>
+        ceval2 = 0x555e34062710
+        eval_breaker = 0x555e34062718
+        co = 0x7f54b8ebf500
+        instr_ub = -1
+        instr_lb = <optimized out>
+        instr_prev = -1
+        first_instr = 0x7f54b8ebc170
+        names = ('format', 'stream', 'write', 'terminator', 'flush', 'RecursionError', 'Exception', 'handleError')
+        consts = ("\n        Emit a record.\n\n        If a formatter is specified, it is used to format the record.\n        The record is then written to the stream with a trailing newline.  If\n        exception information is present, it is formatted using\n        traceback.print_exception and appended to the stream.  If the stream\n        has an 'encoding' attribute, it is used to determine how to do the\n        output to the stream.\n        ", None)
+        co_opcache = <optimized out>
+        main_loop = <optimized out>
+        fast_next_opcode = <optimized out>
+        exception_unwind = <optimized out>
+        __func__ = "_PyEval_EvalFrameDefault"
+        opcode_targets = {0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27336148 <_PyEval_EvalFrameDefault+2232>, 
+          0x555e27337218 <_PyEval_EvalFrameDefault+6536>, 
+          0x555e27336f29 <_PyEval_EvalFrameDefault+5785>, 
+          0x555e273367dd <_PyEval_EvalFrameDefault+3917>, 
+          0x555e273386bf <_PyEval_EvalFrameDefault+11823>, 
+          0x555e2733a179 <_PyEval_EvalFrameDefault+18665>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27272497 <_PyEval_EvalFrameDefault-799737>, 
+          0x555e27338da2 <_PyEval_EvalFrameDefault+13586>, 
+          0x555e27337ae7 <_PyEval_EvalFrameDefault+8791>, 
+          0x555e27338017 <_PyEval_EvalFrameDefault+10119>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e273394e0 <_PyEval_EvalFrameDefault+15440>, 
+          0x555e2733944b <_PyEval_EvalFrameDefault+15291>, 
+          0x555e2727392a <_PyEval_EvalFrameDefault-794470>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27336da4 <_PyEval_EvalFrameDefault+5396>, 
+          0x555e27336730 <_PyEval_EvalFrameDefault+3744>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27337753 <_PyEval_EvalFrameDefault+7875>, 
+          0x555e273364d5 <_PyEval_EvalFrameDefault+3141>, 
+          0x555e27336578 <_PyEval_EvalFrameDefault+3304>, 
+          0x555e2733637b <_PyEval_EvalFrameDefault+2795>, 
+          0x555e27337b62 <_PyEval_EvalFrameDefault+8914>, 
+          0x555e27336f81 <_PyEval_EvalFrameDefault+5873>, 
+          0x555e27337ede <_PyEval_EvalFrameDefault+9806>, 
+          0x555e273393b6 <_PyEval_EvalFrameDefault+15142>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488> <repeats 18 times>, 
+          0x555e27339667 <_PyEval_EvalFrameDefault+15831>, 
+          0x555e2733927b <_PyEval_EvalFrameDefault+14827>, 
+          0x555e27271c92 <_PyEval_EvalFrameDefault-801790>, 
+          0x555e27271bd6 <_PyEval_EvalFrameDefault-801978>, 
+          0x555e27273227 <_PyEval_EvalFrameDefault-796265>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27273192 <_PyEval_EvalFrameDefault-796414>, 
+          0x555e27336c1c <_PyEval_EvalFrameDefault+5004>, 
+          0x555e273384ca <_PyEval_EvalFrameDefault+11322>, 
+          0x555e27338572 <_PyEval_EvalFrameDefault+11490>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27338c2c <_PyEval_EvalFrameDefault+13212>, 
+          0x555e27336876 <_PyEval_EvalFrameDefault+4070>, 
+          0x555e27337f87 <_PyEval_EvalFrameDefault+9975>, 
+          0x555e273379dc <_PyEval_EvalFrameDefault+8524>, 
+          0x555e273374ca <_PyEval_EvalFrameDefault+7226>, 
+          0x555e27337037 <_PyEval_EvalFrameDefault+6055>, 
+          0x555e27338436 <_PyEval_EvalFrameDefault+11174>, 
+          0x555e2733792a <_PyEval_EvalFrameDefault+8346>, 
+          0x555e273399d6 <_PyEval_EvalFrameDefault+16710>, 
+          0x555e27336e4c <_PyEval_EvalFrameDefault+5564>, 
+          0x555e273391ec <_PyEval_EvalFrameDefault+14684>, 
+          0x555e27338e1b <_PyEval_EvalFrameDefault+13707>, 
+          0x555e27339ce3 <_PyEval_EvalFrameDefault+17491>, 
+          0x555e27337433 <_PyEval_EvalFrameDefault+7075>, 
+          0x555e27339e80 <_PyEval_EvalFrameDefault+17904>, 
+          0x555e27338cc1 <_PyEval_EvalFrameDefault+13361>, 
+          0x555e273376ab <_PyEval_EvalFrameDefault+7707>, 
+          0x555e27338eaf <_PyEval_EvalFrameDefault+13855>, 
+          0x555e27338b94 <_PyEval_EvalFrameDefault+13060>, 
+          0x555e27338117 <_PyEval_EvalFrameDefault+10375>, 
+          0x555e27338b00 <_PyEval_EvalFrameDefault+12912>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27339332 <_PyEval_EvalFrameDefault+15010>, 
+          0x555e27335d71 <_PyEval_EvalFrameDefault+1249>, 
+          0x555e27338875 <_PyEval_EvalFrameDefault+12261>, 
+          0x555e273387b1 <_PyEval_EvalFrameDefault+12065>, 
+          0x555e27336cbb <_PyEval_EvalFrameDefault+5163>, 
+          0x555e27336ec6 <_PyEval_EvalFrameDefault+5686>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27337d5f <_PyEval_EvalFrameDefault+9423>, 
+          0x555e2733834d <_PyEval_EvalFrameDefault+10941>, 
+          0x555e27339c6c <_PyEval_EvalFrameDefault+17372>, 
+          0x555e2733661e <_PyEval_EvalFrameDefault+3470>, 
+          0x555e27336199 <_PyEval_EvalFrameDefault+2313>, 
+          0x555e273390c5 <_PyEval_EvalFrameDefault+14389>, 
+          0x555e27336431 <_PyEval_EvalFrameDefault+2977>, 
+          0x555e273378a2 <_PyEval_EvalFrameDefault+8210>, 
+          0x555e27339161 <_PyEval_EvalFrameDefault+14545>, 
+          0x555e2727206f <_PyEval_EvalFrameDefault-800801>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27335a43 <_PyEval_EvalFrameDefault+435>, 
+          0x555e27337e46 <_PyEval_EvalFrameDefault+9654>, 
+          0x555e27336b20 <_PyEval_EvalFrameDefault+4752>, 
+          0x555e273373bc <_PyEval_EvalFrameDefault+6956>, 
+          0x555e27338fc6 <_PyEval_EvalFrameDefault+14134>, 
+          0x555e27337161 <_PyEval_EvalFrameDefault+6353>, 
+          0x555e27335fb0 <_PyEval_EvalFrameDefault+1824>, 
+          0x555e27336035 <_PyEval_EvalFrameDefault+1957>, 
+          0x555e2733955a <_PyEval_EvalFrameDefault+15562>, 
+          0x555e27338718 <_PyEval_EvalFrameDefault+11912>, 
+          0x555e2733682d <_PyEval_EvalFrameDefault+3997>, 
+          0x555e2733756c <_PyEval_EvalFrameDefault+7388>, 
+          0x555e2733780c <_PyEval_EvalFrameDefault+8060>, 
+          0x555e2733629f <_PyEval_EvalFrameDefault+2575>, 
+          0x555e27335cf7 <_PyEval_EvalFrameDefault+1127>, 
+          0x555e273360d0 <_PyEval_EvalFrameDefault+2112>, 
+          0x555e27335b00 <_PyEval_EvalFrameDefault+624>, 
+          0x555e273362f8 <_PyEval_EvalFrameDefault+2664>, 
+          0x555e27336924 <_PyEval_EvalFrameDefault+4244>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27337c04 <_PyEval_EvalFrameDefault+9076>, 
+          0x555e27336d10 <_PyEval_EvalFrameDefault+5248>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e273359e3 <_PyEval_EvalFrameDefault+339>, 
+          0x555e27335a9a <_PyEval_EvalFrameDefault+522>, 
+          0x555e27339d68 <_PyEval_EvalFrameDefault+17624>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e273397bc <_PyEval_EvalFrameDefault+16172>, 
+          0x555e27335be3 <_PyEval_EvalFrameDefault+851>, 
+          0x555e273375cc <_PyEval_EvalFrameDefault+7484>, 
+          0x555e27337268 <_PyEval_EvalFrameDefault+6616>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27337a7f <_PyEval_EvalFrameDefault+8687>, 
+          0x555e2733622b <_PyEval_EvalFrameDefault+2459>, 
+          0x555e273380a4 <_PyEval_EvalFrameDefault+10260>, 
+          0x555e27339744 <_PyEval_EvalFrameDefault+16052>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e273369e1 <_PyEval_EvalFrameDefault+4433>, 
+          0x555e2733986b <_PyEval_EvalFrameDefault+16347>, 
+          0x555e273381d1 <_PyEval_EvalFrameDefault+10561>, 
+          0x555e27336415 <_PyEval_EvalFrameDefault+2949>, 
+          0x555e273370d9 <_PyEval_EvalFrameDefault+6217>, 
+          0x555e2733732d <_PyEval_EvalFrameDefault+6813>, 
+          0x555e27339ddf <_PyEval_EvalFrameDefault+17743>, 
+          0x555e2733a0b7 <_PyEval_EvalFrameDefault+18471>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272737f9 <_PyEval_EvalFrameDefault-794775>, 
+          0x555e27338607 <_PyEval_EvalFrameDefault+11639>, 
+          0x555e27339a72 <_PyEval_EvalFrameDefault+16866>, 
+          0x555e27339f1d <_PyEval_EvalFrameDefault+18061>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488>, 
+          0x555e27335dd1 <_PyEval_EvalFrameDefault+1345>, 
+          0x555e27335e76 <_PyEval_EvalFrameDefault+1510>, 
+          0x555e27338d13 <_PyEval_EvalFrameDefault+13443>, 
+          0x555e27339040 <_PyEval_EvalFrameDefault+14256>, 
+          0x555e27337cd6 <_PyEval_EvalFrameDefault+9286>, 
+          0x555e27338f43 <_PyEval_EvalFrameDefault+14003>, 
+          0x555e272721a8 <_PyEval_EvalFrameDefault-800488> <repeats 90 times>}
+        PyId_displayhook = {next = 0x0, string = 0x555e2748d02c "displayhook", 
+          object = 0x0}
+        PyId_send = {next = 0x0, string = 0x555e27494dcf "send", object = 0x0}
+        PyId___build_class__ = {
+          next = 0x555e2759a640 <PyId___builtins__.lto_priv.0>, 
+          string = 0x555e27494a80 "__build_class__", 
+          object = '__build_class__'}
+        PyId___annotations__ = {next = 0x555e27592820 <PyId___bases__.14>, 
+          string = 0x555e2748da9b "__annotations__", 
+          object = '__annotations__'}
+        PyId___aenter__ = {next = 0x0, string = 0x555e27497d75 "__aenter__", 
+          object = 0x0}
+        PyId___aexit__ = {next = 0x0, string = 0x555e27497d6b "__aexit__", 
+          object = 0x0}
+        PyId___enter__ = {next = 0x555e2758ec00 <PyId__find_and_load.7>, 
+          string = 0x555e2749571e "__enter__", object = '__enter__'}
+        PyId___exit__ = {next = 0x555e2758f0c0 <PyId___enter__.6>, 
+          string = 0x555e27495728 "__exit__", object = '__exit__'}
+#35 0x0000555e27347113 in _PyEval_EvalFrame (throwflag=0, 
+    f=Frame 0x7f54b8230b80, for file /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/logging/__init__.py, line 1087, in emit (self=<FileHandler(baseFilename='/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/app_log.txt', mode='a', encoding=None, errors=None, delay=False, filters=[], _name=None, level=0, formatter=<Formatter(_style=<PercentStyle(_fmt='%(asctime)s [%(levelname)s] %(message)s') at remote 0x7f540ee31bb0>, _fmt='%(asctime)s [%(levelname)s] %(message)s', datefmt=None) at remote 0x7f540ee31b80>, lock=<_RLock(_block=<LockType at remote 0x7f540ee2a9e0>, _owner=140001842132208, _count=2) at remote 0x7f540ee31a00>, stream=<_io.TextIOWrapper at remote 0x7f540eeced40>) at remote 0x7f540ee31a30>, record=<LogRecord(name='root', msg='Traceback (most recent call last):', args=(), levelname='ERROR', levelno=40, pathname='/home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py', filename='routes.py', module='routes', exc_info=None, exc_text=None, stack_info=None, ...(truncated), tstate=0x555e34061f30)
+    at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+No locals.
+#36 function_code_fastcall (tstate=0x555e34061f30, co=<optimized out>, 
+    args=<optimized out>, nargs=<optimized out>, 
+    globals=<error reading variable: Cannot access memory at address 0x555e341f86d8>) at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+        f = <unknown at remote 0x7f54b8230b80>
+        fastlocals = 0x7f54b8230ce8
+        result = <optimized out>
+#37 0x0000555e2733a4e1 in _PyObject_VectorcallTstate (kwnames=0x0, 
+    nargsf=<optimized out>, 
+    args=<error reading variable: Cannot access memory at address 0x7ffe12de8f50>, 
+    callable=<error reading variable: Cannot access memory at address 0x7ffe12de8ef0>, 
+    tstate=<error reading variable: Cannot access memory at address 0x7ffe12de8f58>) at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+        func = <optimized out>
+        res = <optimized out>
+        func = <optimized out>
+        res = <optimized out>
+        nargs = <optimized out>
+#38 PyObject_Vectorcall (kwnames=0x0, nargsf=<optimized out>, 
+    args=<error reading variable: Cannot access memory at address 0x7ffe12de8f50>, 
+    callable=<error reading variable: Cannot access memory at address 0x7ffe12de8ef0>) at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+        tstate = <error reading variable tstate (Cannot access memory at address 0x7ffe12de8f58)>
+        tstate = <optimized out>
+#39 call_function (kwnames=0x0, oparg=<optimized out>, 
+    pp_stack=<synthetic pointer>, 
+    tstate=<error reading variable: Cannot access memory at address 0x7ffe12de8ee0>) at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+        func = <error reading variable func (Cannot access memory at address 0x7ffe12de8ef0)>
+        w = <optimized out>
+        nkwargs = 0
+        nargs = <optimized out>
+        pfunc = <error reading variable pfunc (Cannot access memory at address 0x7ffe12de8f50)>
+        x = <optimized out>
+        stack = <error reading variable stack (Cannot access memory at address 0x7ffe12de8f50)>
+        pfunc = <optimized out>
+        func = <optimized out>
+        x = <optimized out>
+        w = <optimized out>
+        nkwargs = <optimized out>
+        nargs = <optimized out>
+        stack = <optimized out>
+#40 _PyEval_EvalFrameDefault (tstate=<optimized out>, f=<optimized out>, 
+    throwflag=<optimized out>)
+    at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3489
+        sp = <optimized out>
+        res = <optimized out>
+        meth = <optimized out>
+        stack_pointer = <optimized out>
+        next_instr = <error reading variable next_instr (Cannot access memory at address 0x7ffe12de8ee8)>
+        opcode = <optimized out>
+        oparg = <optimized out>
+        fastlocals = 0x7f54061ac508
+        freevars = <error reading variable freevars (Cannot access memory at address 0x7ffe12de8f60)>
+        retval = <optimized out>
+        ceval2 = <error reading variable ceval2 (Cannot access memory at address 0x7ffe12de8f18)>
+        eval_breaker = <error reading variable eval_breaker (Cannot access memory at address 0x7ffe12de8f18)>
+        co = <error reading variable co (Cannot access memory at address 0x7ffe12de8f48)>
+        instr_ub = <error reading variable instr_ub (Cannot access memory at address 0x7ffe12de8f6c)>
+        instr_lb = <optimized out>
+        instr_prev = <error reading variable instr_prev (Cannot access memory at address 0x7ffe12de8f68)>
+        first_instr = 0x7f54b8ebab40
+        names = <unknown at remote 0x7f54b8ebab80>
+        consts = <error reading variable consts (Cannot access memory at address 0x7ffe12de8f40)>
+        co_opcache = <optimized out>
+        main_loop = <optimized out>
+        fast_next_opcode = <optimized out>
+        exception_unwind = <optimized out>
+        __func__ = <error reading variable __func__ (Cannot access memory at address 0x555e274e5780)>
+        opcode_targets = <error reading variable opcode_targets (Cannot access memory at address 0x555e2756a7c0)>
+        PyId_displayhook = <error reading variable PyId_displayhook (Cannot access memory at address 0x555e2758f180)>
+        PyId_send = <error reading variable PyId_send (Cannot access memory at address 0x555e2758f160)>
+        PyId___build_class__ = <error reading variable PyId___build_class__ (Cannot access memory at address 0x555e2758f140)>
+        PyId___annotations__ = <error reading variable PyId___annotations__ (Cannot access memory at address 0x555e2758f120)>
+        PyId___aenter__ = <error reading variable PyId___aenter__ (Cannot access memory at address 0x555e2758f100)>
+        PyId___aexit__ = <error reading variable PyId___aexit__ (Cannot access memory at address 0x555e2758f0e0)>
+        PyId___enter__ = <error reading variable PyId___enter__ (Cannot access memory at address 0x555e2758f0c0)>
+        PyId___exit__ = <error reading variable PyId___exit__ (Cannot access memory at address 0x555e2758f0a0)>
+#41 0x0000555e27347113 in _PyEval_EvalFrame (throwflag=0, 
+    f=<error reading variable: Cannot access memory at address 0x7ffe12de9020>, tstate=<error reading variable: Cannot access memory at address 0x7ffe12de9018>) at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+No locals.
+#42 function_code_fastcall (
+    tstate=<error reading variable: Cannot access memory at address 0x7ffe12de9018>, co=<optimized out>, args=<optimized out>, nargs=<optimized out>, 
+    globals=<error reading variable: Cannot access memory at address 0x7ffe12de9030>) at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+        f = <error reading variable f (Cannot access memory at address 0x7ffe12de9020)>
+        fastlocals = <error reading variable fastlocals (Cannot access memory at address 0x7ffe12de9020)>
+        result = <optimized out>
+Backtrace stopped: Cannot access memory at address 0x7ffe12de90a8
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+Cython backtrace
+----------------
+#0  0x00007f54ba1c52e0 in waitpid ()
+#1  0x00007f536cc29010 in print_enhanced_backtrace ()
+#2  0x00007f536cc29170 in sigdie ()
+#3  0x00007f536cc2b6e0 in cysigs_signal_handler ()
+#4  0x00007f54ba1c5980 in __restore_rt ()
+#5  0x00007f54ba1c4360 in write ()
+#6  0x0000555e2741be54 in _Py_write_impl () at /usr/local/src/conda/python-3.9.15/Python/fileutils.c:1771
+#7  0x0000555e2741be40 in _Py_write () at /usr/local/src/conda/python-3.9.15/Python/fileutils.c:1831
+#8  0x0000555e2741bb2a in _io_FileIO_write_impl () at /usr/local/src/conda/python-3.9.15/Modules/_io/fileio.c:858
+#9  0x0000555e2741bad0 in _io_FileIO_write () at /usr/local/src/conda/python-3.9.15/Modules/_io/clinic/fileio.c.h:309
+#10 0x0000555e27353d50 in method_vectorcall_O () at /usr/local/src/conda/python-3.9.15/Objects/descrobject.c:464
+#11 0x0000555e27366894 in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#12 0x0000555e27366840 in PyObject_VectorcallMethod () at /usr/local/src/conda/python-3.9.15/Objects/call.c:828
+#13 0x0000555e27425c8f in PyObject_CallMethodOneArg () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:208
+#14 0x0000555e27425c20 in _bufferedwriter_raw_write () at /usr/local/src/conda/python-3.9.15/Modules/_io/bufferedio.c:1824
+#15 0x0000555e2741f800 in _bufferedwriter_flush_unlocked () at /usr/local/src/conda/python-3.9.15/Modules/_io/bufferedio.c:1869
+#16 0x0000555e2741f780 in buffered_flush_and_rewind_unlocked () at /usr/local/src/conda/python-3.9.15/Modules/_io/bufferedio.c:800
+#17 0x0000555e2741f320 in buffered_flush () at /usr/local/src/conda/python-3.9.15/Modules/_io/bufferedio.c:827
+#18 0x0000555e2734c230 in method_vectorcall_NOARGS () at /usr/local/src/conda/python-3.9.15/Objects/descrobject.c:436
+#19 0x0000555e27366894 in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#20 0x0000555e27366840 in PyObject_VectorcallMethod () at /usr/local/src/conda/python-3.9.15/Objects/call.c:828
+#21 0x0000555e2741b26d in _PyObject_CallMethodIdNoArgs () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:243
+#22 0x0000555e2741b218 in _io_TextIOWrapper_flush_impl () at /usr/local/src/conda/python-3.9.15/Modules/_io/textio.c:3038
+#23 0x0000555e2741b200 in _io_TextIOWrapper_flush () at /usr/local/src/conda/python-3.9.15/Modules/_io/clinic/textio.c.h:685
+#24 0x0000555e2734c230 in method_vectorcall_NOARGS () at /usr/local/src/conda/python-3.9.15/Objects/descrobject.c:436
+#25 0x0000555e27335eca in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#26 0x0000555e27335eb5 in PyObject_Vectorcall () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+#27 0x0000555e27335e8f in call_function () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+#28 0x0000555e27335890 in _PyEval_EvalFrameDefault () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3506
+#29 0x0000555e27347100 in _PyEval_EvalFrame () at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+#30 0x0000555e27346fd0 in function_code_fastcall () at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+#31 0x0000555e27335eca in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#32 0x0000555e27335eb5 in PyObject_Vectorcall () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+#33 0x0000555e27335e8f in call_function () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+#34 0x0000555e27335890 in _PyEval_EvalFrameDefault () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3506
+#35 0x0000555e27347100 in _PyEval_EvalFrame () at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+#36 0x0000555e27346fd0 in function_code_fastcall () at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+#37 0x0000555e2733a4ac in _PyObject_VectorcallTstate () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:118
+#38 0x0000555e2733a494 in PyObject_Vectorcall () at /usr/local/src/conda/python-3.9.15/Include/cpython/abstract.h:127
+#39 0x0000555e2733a472 in call_function () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:5077
+#40 0x0000555e27335890 in _PyEval_EvalFrameDefault () at /usr/local/src/conda/python-3.9.15/Python/ceval.c:3489
+#41 0x0000555e27347100 in _PyEval_EvalFrame () at /usr/local/src/conda/python-3.9.15/Include/internal/pycore_ceval.h:40
+#42 0x0000555e27346fd0 in function_code_fastcall () at /usr/local/src/conda/python-3.9.15/Objects/call.c:330
+
+[Inferior 1 (process 4018) detached]

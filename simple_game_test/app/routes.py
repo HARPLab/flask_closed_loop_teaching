@@ -176,22 +176,6 @@ def overview():
 def sandbox_introduction():
     return render_template("mike/sandbox_introduction.html")
 
-
-@app.before_request
-def debug_path():
-    print("Script root:", request.script_root)
-    print("Path:", request.path)
-    print("Full path:", request.full_path)
-
-
-@app.route("/debug")
-def debug():
-    print("✅ Authenticated?", current_user.is_authenticated)
-    print("✅ Cookie:", request.cookies.get("session"))
-    print("✅ Session:", dict(session))
-    return "Check terminal logs"
-
-
 @socketio.on('make sandbox')
 def make_sandbox(data):
     version = data['version']
@@ -269,8 +253,6 @@ def handle_disconnect():
             
         if (user_group is None or user_status != "left"):
             log_print(f"User id: {current_user.id}, {request.sid} disconnected.")
-            user_agent = request.headers.get('User-Agent', '')
-            log_print(f"Client disconnected with SID {request.sid} using {user_agent}, reason: {request.event['message']}")
 
             user_id = current_user.id
             disconnect_time = datetime.now().strftime("%m-%d %H:%M:%S")
@@ -305,11 +287,6 @@ def handle_heartbeat(data):
     # You can respond if you want
     socketio.emit('heartbeat_response', {'server_time': time.time()}, to=request.sid)
 
-@socketio.on('firefox_keepalive')
-def handle_firefox_keepalive(data):
-    # Just respond to keep the connection alive
-    socketio.emit('firefox_keepalive_ack', to=request.sid)
-    
 
 def check_reconnection(user_id):
     """Checks if user is still disconnected after timeout"""
@@ -1555,140 +1532,61 @@ def consent():
         procedure = "This study may take up to 30 minutes."
     return render_template("consent.html", title="Consent", form=form, procedure=procedure)
 
-# Original
-# @app.route("/login", methods=["GET", "POST"])
-# def login():
-    
-#     if current_user.is_authenticated:
-#         # next_page = request.args.get("next")
 
-#         # if next_page == "/":
-#         #     # Redirect to /flask_closed_loop_teaching/ instead of root
-#         #     next_page = "/flask_closed_loop_teaching/"
-
-#         # return redirect(next_page or url_for("index"))
-
-#         if request.method == "POST":
-#             print("[FLASK] Received Login Form Submission.")
-#             print("[FLASK] Form Data:", request.form)
-        
-#         print("[FLASK] Current User Authenticated:", current_user.is_authenticated)
-    
-
-#         return redirect(url_for("index"))
-    
-    
-#     form = LoginForm()
-    
-
-#     if form.validate_on_submit():
-#         user = User.query.filter_by(username=form.username.data).first()
-
-#         if user is None:
-#             user = User(username=form.username.data)
-#             user.control_stack = []
-#             user.set_num_trials_completed(0)
-#             user.set_completion(0)
-#             user.set_attention_check(-1)
-
-#             # Change depending on the study type.
-#             # cond = user.set_condition("in_person" if IS_IN_PERSON else "online")
-            
-#             code = user.set_code()
-
-#             # with db_lock:
-#             db.session.add(user)
-#             db.session.commit()
-
-#         log_print('Logging in user:', user)
-#         # login_user(user)
-#         login_user(user, remember=True, fresh=True)
-#         log_print(f"User is authenticated after login? {current_user.is_authenticated}")
-#         next_page = request.args.get("next")
-#         if not next_page or url_parse(next_page).netloc != "":
-#             # next_page = url_for("index")
-#             next_page = url_for("introduction")
-        
-#         log_print('Next page url:', next_page)
-#         log_print(f"Redirecting to: {url_for('index')}")
-
-        
-#         # if next_page == '/':
-#         #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next page is / so redirecting to index')
-#         #     next_page = '/flask_closed_loop_teaching/'
-        
-#         return redirect(next_page or url_for("index"))
-#         # return redirect(next_page)
-
-#     return render_template("login.html", title="Sign In", form=form)
-
-# Trial 1
-# @app.route("/login", methods=["GET", "POST"])
-# def login():
-#     if current_user.is_authenticated:
-#         return redirect(url_for("index"))
-    
-#     form = LoginForm()
-    
-#     if form.validate_on_submit():
-#         user = User.query.filter_by(username=form.username.data).first()
-        
-#         # User creation and login logic...
-        
-#         login_user(user, remember=True, fresh=True)
-        
-#         next_page = request.args.get("next")
-#         if not next_page or url_parse(next_page).netloc != "":
-#             next_page = url_for("introduction")
-        
-#         # Create response with headers that prevent WebSocket upgrade
-#         response = redirect(next_page)
-#         response.headers['Connection'] = 'close'
-#         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-#         response.headers['Pragma'] = 'no-cache'
-#         return response
-    
-#     return render_template("login.html", title="Sign In", form=form)
-
-
-# Trial 2
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    
     if current_user.is_authenticated:
+        # next_page = request.args.get("next")
+
+        # if next_page == "/":
+        #     # Redirect to /flask_closed_loop_teaching/ instead of root
+        #     next_page = "/flask_closed_loop_teaching/"
+
+        # return redirect(next_page or url_for("index"))
         return redirect(url_for("index"))
     
     form = LoginForm()
     
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        
+
         if user is None:
-            # Create new user
             user = User(username=form.username.data)
             user.control_stack = []
             user.set_num_trials_completed(0)
             user.set_completion(0)
             user.set_attention_check(-1)
+
+            # Change depending on the study type.
+            # cond = user.set_condition("in_person" if IS_IN_PERSON else "online")
             
             code = user.set_code()
-            
+
+            # with db_lock:
             db.session.add(user)
             db.session.commit()
-        
-        # Log the user in
-        login_user(user, remember=True, fresh=True)
-        
-        # Get the next page
+
+        log_print('Logging in user:', user)
+        login_user(user)
+        log_print(f"User is authenticated after login? {current_user.is_authenticated}")
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
-            next_page = url_for("introduction")
+            next_page = url_for("index")
         
-        # Instead of doing a redirect directly, render a page with a meta refresh
-        # This avoids WebSocket upgrade attempts during redirect
-        return render_template("redirect.html", redirect_url=next_page)
-    
-    return render_template("login.html", title="Sign In", form=form)
+        log_print('Next page url:', next_page)
+        log_print(f"Redirecting to: {url_for('index', _external=True)}")
 
+        
+        # if next_page == '/':
+        #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next page is / so redirecting to index')
+        #     next_page = '/flask_closed_loop_teaching/'
+        
+        return redirect(next_page or url_for("index"))
+        # return redirect(next_page)
+
+    return render_template("login.html", title="Sign In", form=form)
 
 
 @app.route("/final_survey", methods=["GET", "POST"])
