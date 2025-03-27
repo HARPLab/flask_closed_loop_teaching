@@ -1,58 +1,38 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} 
+{% block content %}
 
-<script src="{{ url_for('static', filename='lib/jquery-min.js') }}" type="text/javascript"> </script>
+<script>
+    function checkBrowser() {
+        let userAgent = navigator.userAgent;
+
+        // Check for Chrome (excluding Edge and Opera)
+        let isChrome = userAgent.includes("Chrome") && !userAgent.includes("Edg") && !userAgent.includes("OPR");
+
+        // Check for Edge
+        let isEdge = userAgent.includes("Edg");
+
+        if (!isChrome && !isEdge) {
+            alert("This application only supports Chrome and Edge. Please switch browsers.");
+            document.body.innerHTML = "<h1>Unsupported Browser</h1><p>Please use Chrome or Edge to access this page.</p>";
+        }
+    }
+
+    // Run the browser check when the page loads
+    checkBrowser();
+</script>
+
+<script src="{{ url_for('static', filename='lib/jquery-min.js') }}" type="text/javascript"></script>
 <script>
     var $jq = jQuery.noConflict();
     console.log($jq); // Debug: Testing the conflict-free jQuery reference
 </script>
-<script src="{{ url_for('static', filename='lib/underscore-min.js') }}" type="text/javascript"> </script>
-<script src="{{ url_for('static', filename='lib/backbone-min.js') }}" type="text/javascript"> </script>
-<script src="{{ url_for('static', filename='lib/d3.v3.min.js') }}" type="text/javascript"> </script>
+<script src="{{ url_for('static', filename='lib/underscore-min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='lib/backbone-min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='lib/d3.v3.min.js') }}" type="text/javascript"></script>
 <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 
-<!-- <script>
-    window.onload = function () {
-        console.log("Page fully loaded. Initializing WebSocket.");
-
-        if (window.location.pathname !== "/login") {  
-            let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
-
-            let socket = io.connect(
-                isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
-                { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
-                  transports: ['polling']  // Ensures polling first, then WebSocket
-                }
-            );
-
-            socket.on('connect', function () {
-                console.log('Socket connected!');
-                console.log('Socket URL:', socket.io.uri);
-                console.log('Socket path:', socket.io.opts.path);
-            });
-        } else {
-            console.log("Skipping WebSocket initialization on login page.");
-        }
-    };
-</script> -->
-
 <script>
-    // let socket = io();
-
-    // let socket = io('/flask_closed_loop_teaching', {
-    //     path: '/flask_closed_loop_teaching/socket.io',
-    //     transports: ['polling']  // Ensures only polling is used
-    // });
-
-    // Automatically determine the correct base URL
-
     let isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
-
-    // let socket = io(
-    //     isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
-    //     { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
-    //     transports: ['polling']  // Ensures polling first, then WebSocket
-    //     }
-    // );
 
     // Create Socket.IO connection
     const socket = io({
@@ -60,30 +40,24 @@
         transports: ['polling'],
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
-        // timeout: 20000
         EIO: 4,  // Engine.IO protocol version
         extraHeaders: {
             "Accept": "application/json"
         },
-        pingTimeout: 60000,   // 60 seconds (in milliseconds)
-        pingInterval: 25000   // 25 seconds (in milliseconds)
+        pingTimeout: 60000,   // 60 seconds
+        pingInterval: 25000   // 25 seconds
     });
 
     setInterval(() => {
         if (socket.connected) {
-            socket.emit('heartbeat', {timestamp: new Date().getTime()});
+            socket.emit('heartbeat', { timestamp: new Date().getTime() });
         }
     }, 30000); // Send heartbeat every 30 seconds
 
     console.log("Hostname:", window.location.hostname);
-
-
-    // Print the socket connection details
-    // socket.on('connect', function () {
     console.log('Socket connected!');
     console.log('Socket URL:', socket.io.uri);
     console.log('Socket path:', socket.io.opts.path);
-    // });
 
     function logout() {
         console.log("Logging out...");
@@ -102,33 +76,6 @@
             }
         });
     }
-    
-    // function logout() {
-    //     $jq.getJSON('/logout', function callback(data) {
-    //         window.location.href(data['url']);
-    //     });
-    // }
-
-    // function logout() {
-    // $jq.getJSON('/logout', function callback(data) {
-    //     // Append the reason to the URL before redirecting
-    //     window.location.href(data['url'] + "?reason=" + data['reason']);
-    //     // Force refresh if being cached
-    //     setTimeout(() => window.location.reload(true), 500);
-    // });
-    // }
-
-    // function logout(reason = "complete") {
-    //     console.log("Logging out... Reason:", reason);
-
-    //     // Get the base URL dynamically
-    //     let basePath = window.location.pathname.includes("/flask_closed_loop_teaching") 
-    //         ? "/flask_closed_loop_teaching" 
-    //         : "";
-
-    //     // Redirect with the correct base path
-    //     window.location.href = `${basePath}/logout?reason=${encodeURIComponent(reason)}`;
-    // }
 
     console.log('In index.html');
 </script>
@@ -142,7 +89,7 @@
         {% if completed %}
         <h3>Study Completed</h3>
         <hr class="my-4">
-        <p class="lead">Our records indicate you have completed this study. Please enter the following one-time use code into Prolific and then press 'Submit' below to receive compensation. Do <i>not</i> press Submit before copying your code, as doing will log you out of the study interface.</p><br>
+        <p class="lead">Our records indicate you have completed this study. Please enter the following one-time use code into Prolific and then press 'Submit' below to receive compensation. Do <i>not</i> press Submit before copying your code, as doing so will log you out of the study interface.</p><br>
         <p class="lead" align="center">
             {{code}}
         </p>
@@ -158,4 +105,5 @@
         {% endif %}
     </div>
 </div>
+
 {% endblock %}
