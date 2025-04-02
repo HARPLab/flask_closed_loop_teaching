@@ -345,7 +345,8 @@
         const loadingText = document.getElementById('loading-text');
 
         // audio_timer = new Audio("/static/audio/mixkit-tick-tock-clock-close-up-1059");
-        audio_timer = new Audio("{{ url_for('static', filename='audio/mixkit-tick-tock-clock-close-up-1059.mp3') }}");
+        // audio_timer = new Audio("{{ url_for('static', filename='audio/mixkit-tick-tock-clock-close-up-1059.mp3') }}");
+        audio_timer = new Audio("/flask_closed_loop_teaching/static/audio/mixkit-tick-tock-clock-close-up-1059.mp3");
 
         audio_timer.loop = true;
 
@@ -616,7 +617,9 @@
             flashMessage.innerHTML = "Next session is available now! Press any key to continue with the study.";
 
             // play the audio
-            audio_new_lesson = new Audio("/static/audio/mixkit-positive-notification-951.wav");
+            // audio_new_lesson = new Audio("/static/audio/mixkit-positive-notification-951.wav");
+            audio_new_lesson = new Audio("/flask_closed_loop_teaching/static/audio/mixkit-positive-notification-951.wav")
+
             audio_new_lesson.loop = true;
             audio_new_lesson.play();
 
