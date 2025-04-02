@@ -110876,3 +110876,88 @@ Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/in
 2025-03-27 06:24:18,030 [ERROR] Process ForkPoolWorker-16:
 2025-03-27 06:24:18,031 [ERROR] Process ForkPoolWorker-24:
 2025-03-27 06:24:18,032 [ERROR] Process ForkPoolWorker-15:
+2025-04-02 11:51:25,426 [INFO] Using 24 processes
+2025-04-02 11:51:25,883 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-04-02 11:51:25,883 [INFO] [33mPress CTRL+C to quit[0m
+2025-04-02 11:52:09,042 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:126: DeprecationWarning: 'werkzeug.urls.url_decode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.parse_qs' instead.
+  md = url_decode(parsed_result.query)
+2025-04-02 11:52:09,043 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/flask_login/utils.py:130: DeprecationWarning: 'werkzeug.urls.url_encode' is deprecated and will be removed in Werkzeug 2.4. Use 'urllib.parse.urlencode' instead.
+  netloc=netloc, query=url_encode(md, sort=True)
+2025-04-02 11:52:09,044 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:09] "[32mGET / HTTP/1.1[0m" 302 -
+2025-04-02 11:52:09,059 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:09] "GET /login?next=/ HTTP/1.1" 200 -
+2025-04-02 11:52:09,080 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:09] "GET /static/dragula.js HTTP/1.1" 200 -
+2025-04-02 11:52:09,080 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:09] "GET /static/dragula.css HTTP/1.1" 200 -
+2025-04-02 11:52:09,080 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:09] "GET /static/styles.css HTTP/1.1" 200 -
+2025-04-02 11:52:09,159 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:09] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-02 11:52:10,961 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:10] "[32mGET / HTTP/1.1[0m" 302 -
+2025-04-02 11:52:10,966 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:10] "GET /login?next=/ HTTP/1.1" 200 -
+2025-04-02 11:52:11,001 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:11] "GET /static/dragula.js HTTP/1.1" 200 -
+2025-04-02 11:52:11,001 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:11] "GET /static/dragula.css HTTP/1.1" 200 -
+2025-04-02 11:52:11,001 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:11] "GET /static/styles.css HTTP/1.1" 200 -
+2025-04-02 11:52:11,126 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:11] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-02 11:52:14,298 [INFO] Logging in user: <User vrf1>
+2025-04-02 11:52:14,298 [INFO] User is authenticated after login? True
+2025-04-02 11:52:14,300 [ERROR] /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/app/routes.py:1606: DeprecationWarning: 'werkzeug.urls.url_parse' is deprecated and will be removed in Werkzeug 3.0. Use 'urllib.parse.urlsplit' instead.
+  if not next_page or url_parse(next_page).netloc != "":
+2025-04-02 11:52:14,301 [ERROR] /home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/site-packages/werkzeug/urls.py:545: DeprecationWarning: 'werkzeug.urls.URL' is deprecated and will be removed in Werkzeug 3.0. Use the 'urllib.parse' library instead.
+  return result_type(scheme, netloc, url, query, fragment)
+2025-04-02 11:52:14,301 [INFO] Next page url: /
+2025-04-02 11:52:14,301 [INFO] Redirecting to: http://127.0.0.1:5000/
+2025-04-02 11:52:14,302 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "[32mPOST /login?next=/ HTTP/1.1[0m" 302 -
+2025-04-02 11:52:14,308 [INFO] Index url in index function: http://127.0.0.1:5000/
+2025-04-02 11:52:14,309 [INFO] User is authenticated? True
+2025-04-02 11:52:14,318 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "GET / HTTP/1.1" 200 -
+2025-04-02 11:52:14,334 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:14,337 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:14,337 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-04-02 11:52:14,337 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "GET /static/lib/backbone-min.js HTTP/1.1" 200 -
+2025-04-02 11:52:14,339 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "GET /static/lib/underscore-min.js HTTP/1.1" 200 -
+2025-04-02 11:52:14,340 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "GET /static/lib/d3.v3.min.js HTTP/1.1" 200 -
+2025-04-02 11:52:14,341 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "GET /static/lib/jquery-min.js HTTP/1.1" 200 -
+2025-04-02 11:52:14,462 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:14] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtC_rx HTTP/1.1[0m" 404 -
+2025-04-02 11:52:15,034 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:15] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtC_-t HTTP/1.1[0m" 404 -
+2025-04-02 11:52:16,199 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:16] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD0H5 HTTP/1.1[0m" 404 -
+2025-04-02 11:52:17,615 [INFO] Logging in user: <User vrf2>
+2025-04-02 11:52:17,615 [INFO] User is authenticated after login? True
+2025-04-02 11:52:17,615 [INFO] Next page url: /
+2025-04-02 11:52:17,615 [INFO] Redirecting to: http://127.0.0.1:5000/
+2025-04-02 11:52:17,616 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "[32mPOST /login?next=/ HTTP/1.1[0m" 302 -
+2025-04-02 11:52:17,620 [INFO] Index url in index function: http://127.0.0.1:5000/
+2025-04-02 11:52:17,620 [INFO] User is authenticated? True
+2025-04-02 11:52:17,624 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "GET / HTTP/1.1" 200 -
+2025-04-02 11:52:17,646 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:17,646 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:17,646 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "GET /static/lib/jquery-min.js HTTP/1.1" 200 -
+2025-04-02 11:52:17,648 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "GET /static/lib/underscore-min.js HTTP/1.1" 200 -
+2025-04-02 11:52:17,650 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "GET /static/lib/backbone-min.js HTTP/1.1" 200 -
+2025-04-02 11:52:17,651 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "GET /static/lib/d3.v3.min.js HTTP/1.1" 200 -
+2025-04-02 11:52:17,653 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-04-02 11:52:17,674 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:17] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD0e7 HTTP/1.1[0m" 404 -
+2025-04-02 11:52:18,715 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:18] "GET /consent HTTP/1.1" 200 -
+2025-04-02 11:52:18,732 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:18] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:18,733 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:18] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:18,734 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:18] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-04-02 11:52:18,781 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:18] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD0vQ HTTP/1.1[0m" 404 -
+2025-04-02 11:52:19,326 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:19] "GET /consent HTTP/1.1" 200 -
+2025-04-02 11:52:19,343 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:19] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:19,345 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:19] "[36mGET /static/dragula.js HTTP/1.1[0m" 304 -
+2025-04-02 11:52:19,346 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:19] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:19,389 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:19] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD12x HTTP/1.1[0m" 404 -
+2025-04-02 11:52:19,462 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:19] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD143 HTTP/1.1[0m" 404 -
+2025-04-02 11:52:20,567 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:20] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD1LL HTTP/1.1[0m" 404 -
+2025-04-02 11:52:22,430 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:22] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD1oR HTTP/1.1[0m" 404 -
+2025-04-02 11:52:22,885 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:22] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD1vY HTTP/1.1[0m" 404 -
+2025-04-02 11:52:25,492 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:25] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD2YI HTTP/1.1[0m" 404 -
+2025-04-02 11:52:25,538 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:25] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD2Z0 HTTP/1.1[0m" 404 -
+2025-04-02 11:52:26,426 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:26] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:26,427 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:26] "[36mGET /static/dragula.css HTTP/1.1[0m" 304 -
+2025-04-02 11:52:30,019 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:30] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD3f0 HTTP/1.1[0m" 404 -
+2025-04-02 11:52:30,547 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:30] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD3nH HTTP/1.1[0m" 404 -
+2025-04-02 11:52:35,030 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:35] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD4tJ HTTP/1.1[0m" 404 -
+2025-04-02 11:52:35,557 [INFO] 127.0.0.1 - - [02/Apr/2025 11:52:35] "[33mGET /flask_closed_loop_teaching/socket.io/?EIO=4&transport=polling&t=PNtD4_Y HTTP/1.1[0m" 404 -
+2025-04-02 11:52:43,399 [ERROR] Process ForkPoolWorker-21:
+2025-04-02 11:52:43,400 [ERROR] Process ForkPoolWorker-24:
+2025-04-02 11:52:43,400 [ERROR] Process ForkPoolWorker-23:
+2025-04-02 11:52:43,401 [ERROR] Process ForkPoolWorker-18:
+2025-04-02 11:52:43,402 [ERROR] Process ForkPoolWorker-19:

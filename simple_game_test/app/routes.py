@@ -280,6 +280,24 @@ def handle_disconnect():
             log_print(f"User id: {current_user.id}, {request.sid} disconnected but has already left the study.")
 
 
+
+def check_current_user_active():
+    if current_user.is_authenticated:
+    
+        user_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+
+        if user_group is not None:
+            user_status = user_group.members_statuses[current_user.group_code]
+
+        if (user_status != "left"):
+            return True
+        
+    return False
+        
+
+        
+
+
 @socketio.on('heartbeat')
 def handle_heartbeat(data):
     # Log if needed
@@ -1055,6 +1073,11 @@ def settings(data):
                                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round:', next_round, 'First round status:', next_round.status, 'Next round kc_id:', next_kc_id)
                                 else:
                                     next_kc_id = -1
+
+
+                                # break out of loop if current user left the study
+                                if not check_current_user_active():
+                                    break
                         
                         ### Generate next round for the group
                         else:
@@ -1169,6 +1192,10 @@ def settings(data):
                                     log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for next round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
                                     time.sleep(2) # a sleep to avoid too many queries
 
+
+                                # break out of loop if current user left the study
+                                if not check_current_user_active():
+                                    break
                                 
                             log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Interaction type: ', current_mdp_params["interaction type"], 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
 
@@ -1177,7 +1204,7 @@ def settings(data):
                             current_user.last_iter_in_round = True  # update last iteration flag for the user
 
 
-                        break  # break main while loop
+                        break  # break main while loop after generating new round
 
                     elif current_round is not None and current_user.iteration < len(current_round.round_info):
                         log_print('Group:', current_user.group, 'User:', current_user.id, 'Moving for with next iteration in current round if there is any...', 'Iteration:', current_user.iteration)
@@ -1205,6 +1232,10 @@ def settings(data):
                     
                     time.sleep(1)  # a brief sleep to avoid too many queries
                     
+                    # break out of loop if current user left the study
+                    if not check_current_user_active():
+                        break
+
                     ###########################
 
                 
