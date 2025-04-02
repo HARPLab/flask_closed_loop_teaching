@@ -541,8 +541,8 @@
             if (data["domain completed"]) {
                 console.log("domain completed");
                 window.domain_completed = true;
-                localStorage.removeItem("initial_settings_emit_flag"); // remove the flag for next domain
-                console.log("Removed initial settings emit flag");
+                localStorage.setItem("initial_settings_emit_flag", false); // reset the flag for next domain
+                console.log("Reset initial settings emit flag");
             }
 
             

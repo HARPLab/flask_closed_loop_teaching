@@ -79,7 +79,7 @@ CARD_ID_TO_FEATURES = [
 QUICK_DEBUG_FLAG = False
 
 # Timeout for reconnection (in seconds)
-RECONNECT_TIMEOUT = 180  # Change this to the desired time
+RECONNECT_TIMEOUT = 60  # Change this to the desired time
 MAX_ITERATIONS = 500
 
 # List to track disconnected users
@@ -780,28 +780,7 @@ def next_domain(data):
     # save remaining data from 
     if len(data["user input"]) !=0:
         domain, _, _ = get_domain()
-        trial = Trial(
-            user_id = current_user.id,
-            group_code = current_user.group_code,
-            group = current_user.group,
-            domain = domain,
-            round = current_user.round,
-            interaction_type = current_user.interaction_type,
-            iteration = current_user.iteration,
-            subiteration = current_user.subiteration,
-            likert = int(data["survey"]),
-            moves = data["user input"]["moves"],
-            coordinates = data["user input"]["agent_history_nonoffset"],
-            is_opt_response = data["user input"]["opt_response"],
-            mdp_parameters = data["user input"]["mdp_parameters"],
-            duration_ms = data["user input"]["simulation_rt"],
-            human_model = None, 
-            final_score = int(data["final_score"]),
-            all_scores = data["final_score_string"]
-        )
-        # with db_lock:
-        db.session.add(trial)
-        db.session.commit()
+        add_trial_data(domain, data)
 
     # # add survey data
     # if current_user.curr_progress != "post practice":
@@ -2407,7 +2386,10 @@ def add_trial_data(domain, data):
         human_model = None, #TODO: later?,
         num_visits = 1,
         engagement_short_answer = data["engagement_input"],
-        improvement_short_answer = data["improvement_input"]
+        improvement_short_answer = data["improvement_input"],
+
+        final_score = int(data["final_score"]),
+        all_scores = data["final_score_string"]
     )
 
     # with db_lock:
