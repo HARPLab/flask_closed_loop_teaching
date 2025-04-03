@@ -1948,7 +1948,7 @@ def retrieve_next_round(params, cur_group) -> dict:
     # check if max KC loops are reached
     if not unit_learning_goal_reached_flag:
         all_kc_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, kc_id=kc_id, status="demo_tests_generated").all()
-        log_print('N KC rounds:', len(all_kc_rounds))
+        log_print('N KC rounds:', len(all_kc_rounds), 'Params max KC loops:', params['max_KC_loops'])
         if len(all_kc_rounds) >= params['max_KC_loops']:
             unit_learning_goal_reached_flag = True
     
