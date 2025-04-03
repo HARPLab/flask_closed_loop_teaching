@@ -984,7 +984,7 @@ def settings(data):
                     ### generate new round if all group members are at the end of current round (end of tests); if not step through the remaining iterations in the round
                     
                     # if not curr_already_completed and current_user.last_test_in_round:
-                    if not curr_already_completed and (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag)) and (check_member_and_group_status() or (domain_order=='1' and current_user.round == 0)):
+                    if not curr_already_completed and (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type!="final test")) and (check_member_and_group_status() or (domain_order=='1' and current_user.round == 0)):
 
                         log_print('Group:', current_user.group, 'User:', current_user.id, "Current group status: ", current_group.status, 'Current user round:', current_user.round, 'current_user curr_progress:', current_user.curr_progress)                        
                         

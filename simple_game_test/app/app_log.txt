@@ -127274,3 +127274,123 @@ Instance: /home/sureshkj/Projects/flask_closed_loop_teaching/simple_game_test/in
 2025-04-02 20:51:32,173 [INFO] Exporting table: survey
 2025-04-02 20:51:32,174 [INFO] id | timestamp | user_id | round_num | frustration | utility_of_feedback | ease_of_teaching | opt_text
 2025-04-02 20:51:32,505 [INFO] Database converted to Excel file: output_debug_apr2_local_1.xlsx
+2025-04-02 22:52:20,425 [INFO] Using 24 processes
+2025-04-02 22:52:21,005 [INFO] Exporting table: round
+2025-04-02 22:52:21,019 [INFO] id | domain | domain_progress | status | group_id | round_num | members_statuses | kc_id | min_KC_constraints | variable_filter | nonzero_counter | min_BEC_constraints_running | prior_min_BEC_constraints_running | visited_env_traj_idxs | round_info | last_round | ind_member_models_pos | ind_member_models_weights | group_union_model_pos | group_union_model_weights | group_intersection_model_pos | group_intersection_model_weights | group_knowledge
+2025-04-02 22:52:23,279 [INFO] Exporting table: group
+2025-04-02 22:52:23,288 [INFO] id | user_ids | status | timestamp | current_round | round_data | members | member_user_ids | num_members | num_active_members | members_statuses | members_EOR | members_last_test | ind_member_models | group_union_model | group_intersection_model | models_update_iteration | group_knowledge | first_round_status | experimental_condition | domain_1 | domain_2 | curr_progress
+2025-04-02 22:52:23,835 [INFO] Exporting table: trial
+2025-04-02 22:52:23,837 [INFO] id | timestamp | user_id | group_code | duration_ms | domain | interaction_type | group | round | iteration | subiteration | likert | moves | coordinates | is_opt_response | mdp_parameters | human_model | is_first_time | num_visits | engagement_short_answer | improvement_short_answer | final_score | all_scores
+2025-04-02 22:52:23,984 [INFO] Exporting table: domain
+2025-04-02 22:52:23,984 [INFO] id | timestamp | user_id | group_id | domain_name | attn1 | attn2 | attn3 | use1 | use2 | use3 | understanding | engagement_short_answer | reward_ft_weights
+2025-04-02 22:52:23,992 [INFO] Exporting table: domain_params
+2025-04-02 22:52:24,008 [INFO] domain_name | min_subset_constraints_record | env_record | traj_record | traj_features_record | mdp_features_record | consistent_state_count | min_BEC_constraints
+2025-04-02 22:52:29,947 [INFO] Exporting table: condition
+2025-04-02 22:52:29,947 [INFO] id | difficulty | nonverbal | count
+2025-04-02 22:52:30,029 [INFO] Exporting table: online_condition
+2025-04-02 22:52:30,029 [INFO] id | trials | feedback_type | no_feedback_trial | feedback_trial | count
+2025-04-02 22:52:30,130 [INFO] Exporting table: in_person_condition
+2025-04-02 22:52:30,130 [INFO] id | trials | trial_1 | trial_2 | trial_3 | trial_4 | trial_5 | count
+2025-04-02 22:52:30,132 [INFO] Exporting table: user
+2025-04-02 22:52:30,133 [INFO] id | username | password_hash | condition_id | online_condition_id | in_person_condition_id | study_type | feedback_counts | training | code | consent | age | gender | ethnicity | education | browser | final_feedback | num_trials_completed | attention_check | study_completed | curr_progress | curr_progress_time | loop_condition | domain_1 | domain_2 | interaction_type | iteration | subiteration | last_activity | last_activity_time | round | last_iter_in_round | last_test_in_round | group | group_code | group_member_id
+2025-04-02 22:52:30,161 [INFO] Exporting table: demo
+2025-04-02 22:52:30,161 [INFO] id | timestamp | user_id | round_num | demo_num | card_num | correct_bin | rule_set
+2025-04-02 22:52:30,164 [INFO] Exporting table: survey
+2025-04-02 22:52:30,164 [INFO] id | timestamp | user_id | round_num | frustration | utility_of_feedback | ease_of_teaching | opt_text
+2025-04-02 22:52:30,565 [INFO] Database converted to Excel file: output_debug_apr2_bf_4.xlsx
+2025-04-02 22:56:16,234 [INFO] Using 24 processes
+2025-04-02 22:56:16,464 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-04-02 22:56:16,464 [INFO] [33mPress CTRL+C to quit[0m
+2025-04-02 23:01:27,174 [ERROR] Process ForkPoolWorker-22:
+2025-04-02 23:01:27,174 [ERROR] Process ForkPoolWorker-25:
+2025-04-02 23:01:27,174 [ERROR] Process ForkPoolWorker-15:
+2025-04-02 23:01:27,176 [ERROR] Process ForkPoolWorker-21:
+2025-04-02 23:01:27,177 [ERROR] Traceback (most recent call last):
+2025-04-02 23:01:27,177 [ERROR] Traceback (most recent call last):
+2025-04-02 23:01:27,177 [ERROR] Traceback (most recent call last):
+2025-04-02 23:01:27,177 [ERROR] Traceback (most recent call last):
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-04-02 23:01:27,177 [ERROR] Process ForkPoolWorker-16:
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/queues.py", line 364, in get
+    with self._rlock:
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-04-02 23:01:27,177 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/synchronize.py", line 95, in __enter__
+    return self._semlock.__enter__()
+2025-04-02 23:01:27,177 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-04-02 23:01:27,177 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-04-02 23:01:27,177 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-04-02 23:01:27,177 [ERROR] File "src/cysignals/signals.pyx", line 320, in cysignals.signals.python_check_interrupt
+2025-04-02 23:01:27,178 [ERROR] KeyboardInterrupt
+2025-04-02 23:01:27,178 [ERROR] KeyboardInterrupt
+2025-04-02 23:01:27,177 [ERROR] Process ForkPoolWorker-23:
+2025-04-02 23:01:27,177 [ERROR] Process ForkPoolWorker-13:
+2025-04-02 23:01:27,178 [ERROR] KeyboardInterrupt
+2025-04-02 23:01:27,178 [ERROR] KeyboardInterrupt
+2025-04-02 23:01:27,178 [ERROR] Traceback (most recent call last):
+2025-04-02 23:01:27,178 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+2025-04-02 23:01:27,178 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+2025-04-02 23:01:27,178 [ERROR] File "/home/sureshkj/anaconda3/envs/aug_taxi/lib/python3.9/multiprocessing/pool.py", line 114, in worker
+    task = get()
+2025-04-03 01:00:55,546 [INFO] Using 24 processes
+2025-04-03 01:00:55,966 [INFO] No tables found in the database.
+2025-04-03 01:02:25,148 [INFO] Using 24 processes
+2025-04-03 01:02:25,516 [INFO] Exporting table: round
+2025-04-03 01:02:25,533 [INFO] id | domain | domain_progress | status | group_id | round_num | members_statuses | kc_id | min_KC_constraints | variable_filter | nonzero_counter | min_BEC_constraints_running | prior_min_BEC_constraints_running | visited_env_traj_idxs | round_info | last_round | ind_member_models_pos | ind_member_models_weights | group_union_model_pos | group_union_model_weights | group_intersection_model_pos | group_intersection_model_weights | group_knowledge
+2025-04-03 01:02:28,546 [INFO] Exporting table: group
+2025-04-03 01:02:28,554 [INFO] id | user_ids | status | timestamp | current_round | round_data | members | member_user_ids | num_members | num_active_members | members_statuses | members_EOR | members_last_test | ind_member_models | group_union_model | group_intersection_model | models_update_iteration | group_knowledge | first_round_status | experimental_condition | domain_1 | domain_2 | curr_progress
+2025-04-03 01:02:29,128 [INFO] Exporting table: trial
+2025-04-03 01:02:29,131 [INFO] id | timestamp | user_id | group_code | duration_ms | domain | interaction_type | group | round | iteration | subiteration | likert | moves | coordinates | is_opt_response | mdp_parameters | human_model | is_first_time | num_visits | engagement_short_answer | improvement_short_answer | final_score | all_scores
+2025-04-03 01:02:29,547 [INFO] Exporting table: domain
+2025-04-03 01:02:29,547 [INFO] id | timestamp | user_id | group_id | domain_name | attn1 | attn2 | attn3 | use1 | use2 | use3 | understanding | engagement_short_answer | reward_ft_weights
+2025-04-03 01:02:29,557 [INFO] Exporting table: domain_params
+2025-04-03 01:02:29,572 [INFO] domain_name | min_subset_constraints_record | env_record | traj_record | traj_features_record | mdp_features_record | consistent_state_count | min_BEC_constraints
+2025-04-03 01:02:36,007 [INFO] Exporting table: condition
+2025-04-03 01:02:36,007 [INFO] id | difficulty | nonverbal | count
+2025-04-03 01:02:36,081 [INFO] Exporting table: online_condition
+2025-04-03 01:02:36,081 [INFO] id | trials | feedback_type | no_feedback_trial | feedback_trial | count
+2025-04-03 01:02:36,176 [INFO] Exporting table: in_person_condition
+2025-04-03 01:02:36,176 [INFO] id | trials | trial_1 | trial_2 | trial_3 | trial_4 | trial_5 | count
+2025-04-03 01:02:36,178 [INFO] Exporting table: user
+2025-04-03 01:02:36,179 [INFO] id | username | password_hash | condition_id | online_condition_id | in_person_condition_id | study_type | feedback_counts | training | code | consent | age | gender | ethnicity | education | browser | final_feedback | num_trials_completed | attention_check | study_completed | curr_progress | curr_progress_time | loop_condition | domain_1 | domain_2 | interaction_type | iteration | subiteration | last_activity | last_activity_time | round | last_iter_in_round | last_test_in_round | group | group_code | group_member_id
+2025-04-03 01:02:36,209 [INFO] Exporting table: demo
+2025-04-03 01:02:36,209 [INFO] id | timestamp | user_id | round_num | demo_num | card_num | correct_bin | rule_set
+2025-04-03 01:02:36,212 [INFO] Exporting table: survey
+2025-04-03 01:02:36,212 [INFO] id | timestamp | user_id | round_num | frustration | utility_of_feedback | ease_of_teaching | opt_text
+2025-04-03 01:02:36,782 [INFO] Database converted to Excel file: output_bf_data_1.xlsx
