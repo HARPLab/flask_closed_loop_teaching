@@ -324,6 +324,7 @@
         // Create Socket.IO connection
         const socket = io({
             path: '/flask_closed_loop_teaching/socket.io',
+            // path: '/socket.io',
             transports: ['polling'],
             reconnectionAttempts: 5,
             reconnectionDelay: 1000,
@@ -541,7 +542,7 @@
             if (data["domain completed"]) {
                 console.log("domain completed");
                 window.domain_completed = true;
-                localStorage.setItem("initial_settings_emit_flag", false); // reset the flag for next domain
+                localStorage.removeItem("initial_settings_emit_flag", false); // reset the flag for next domain
                 console.log("Reset initial settings emit flag");
             }
 

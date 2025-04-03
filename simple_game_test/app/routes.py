@@ -782,11 +782,11 @@ def next_domain(data):
         domain, _, _ = get_domain()
         add_trial_data(domain, data)
 
-    # # add survey data
-    # if current_user.curr_progress != "post practice":
-    #     domain, _, _ = get_domain()
-    #     log_print(colored('Adding survey data...', 'red'))
-    #     add_survey_data(domain, data)
+    # add survey data
+    if current_user.curr_progress != "post practice":
+        domain, _, _ = get_domain()
+        log_print(colored('Adding survey data...', 'red'))
+        add_survey_data(domain, data)
 
     log_print("current_user.curr_progress", current_user.curr_progress)
 
@@ -918,6 +918,15 @@ def settings(data):
                         opt_response_flag = data["user input"]["opt_response"]
                 
                 add_trial_data(domain, data)
+
+            elif (current_trial is None and current_user.round !=0 and data["interaction type"] == "final test"):
+                # for completed tests
+                if len(data["user input"]) != 0:
+                    data["user input"]["mdp_parameters"]["human_actions"] = data["user input"]["moves"]
+                    opt_response_flag = data["user input"]["opt_response"]
+                
+                add_trial_data(domain, data)
+
 
             elif current_trial is not None:
                 curr_already_completed = True
