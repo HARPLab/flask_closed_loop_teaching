@@ -586,6 +586,8 @@ def join_group():
 
     num_active_members = 0
     params = get_mdp_parameters("")
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated params:', params)
+    
 
     # Counterbalance experimental condition (e.g., round-robin)
     condition_index = db.session.query(Group).count() % len(cond_list)
@@ -856,6 +858,7 @@ def settings(data):
         domain, domain_order, mdp_class = get_domain()
         params = get_mdp_parameters(mdp_class)
 
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated params:', params)
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Group:', current_user.group, 'Room name:', room_name, 'domain:', domain, 'mdp class:', mdp_class)
 
         next_round = None
@@ -962,6 +965,7 @@ def settings(data):
             # Get study parameters for the domain/mdp class
             if mdp_class != "":
                 params = get_mdp_parameters(mdp_class)  # update params for new domain
+                log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated params:', params)
 
             # update current round
             current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
@@ -1707,7 +1711,7 @@ def update_learner_models_from_tests(params, cur_group, cur_round) -> tuple:
         if cur_group.members_statuses[group_code] == 'joined':
             update_model_flag = True
         
-        if update_model_flag:
+        if update_model_flag and len(tests) > 0:
             test_constraints = []
             for test in tests:
                 cur_test_constraints = get_test_constraints(domain, test, current_domain.traj_record, current_domain.traj_features_record)
@@ -1948,8 +1952,12 @@ def retrieve_next_round(params, cur_group) -> dict:
     # check if max KC loops are reached
     if not unit_learning_goal_reached_flag:
         all_kc_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, kc_id=kc_id, status="demo_tests_generated").all()
-        log_print('N KC rounds:', len(all_kc_rounds), 'Params max KC loops:', params['max_KC_loops'])
-        if len(all_kc_rounds) >= params['max_KC_loops']:
+        
+        unique_keys = set((r.group_id, r.kc_id, r.round_number) for r in all_kc_rounds)  # replace with actual deduplication keys
+        num_unique_rounds = len(unique_keys)
+        log_print('N KC rounds:', num_unique_rounds, 'Params max KC loops:', params['max_KC_loops'])
+        
+        if num_unique_rounds >= params['max_KC_loops']:
             unit_learning_goal_reached_flag = True
     
 
