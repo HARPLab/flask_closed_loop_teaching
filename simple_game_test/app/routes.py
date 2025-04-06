@@ -20,6 +20,8 @@ from termcolor import colored
 import logging
 import random
 # from flask import g
+from datetime import date, timedelta
+
 
 
 
@@ -1937,8 +1939,13 @@ def retrieve_next_round(params, cur_group) -> dict:
         full_path_filename = base_dir + '/ind_sim_trials/' + vars_filename
 
         if not os.path.exists(full_path_filename):
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Creating folder for this run: ', full_path_filename)
-            os.makedirs(full_path_filename, exist_ok=True)
+            # sometimes when date chanages at midnight
+            alternate_path_filename =  base_dir + '/ind_sim_trials/' + (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
+            if not os.path.exists(alternate_path_filename):
+                log_print('Group:', current_user.group, 'User:', current_user.id, 'Creating folder for this run: ', full_path_filename)
+                os.makedirs(full_path_filename, exist_ok=True)
+            else:
+                full_path_filename = alternate_path_filename
     
 
 
