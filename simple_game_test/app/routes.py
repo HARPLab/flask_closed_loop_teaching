@@ -1953,7 +1953,7 @@ def retrieve_next_round(params, cur_group) -> dict:
     if not unit_learning_goal_reached_flag:
         all_kc_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, kc_id=kc_id, status="demo_tests_generated").all()
         
-        unique_keys = set((r.group_id, r.kc_id, r.round_number) for r in all_kc_rounds)  # replace with actual deduplication keys
+        unique_keys = set((r.group_id, r.kc_id, r.round_num) for r in all_kc_rounds)  # replace with actual deduplication keys
         num_unique_rounds = len(unique_keys)
         log_print('N KC rounds:', num_unique_rounds, 'Params max KC loops:', params['max_KC_loops'])
         
