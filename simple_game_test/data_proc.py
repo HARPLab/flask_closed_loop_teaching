@@ -124,8 +124,8 @@ def convert_db_to_excel(database_file, output_excel_file):
                 # Write DataFrame to an Excel sheet
                 df.to_excel(writer, sheet_name=table_name, index=False)
 
-                # Write DataFrame to a pickle file
-                df.to_pickle(f"{table_name}.pkl")
+                # # Write DataFrame to a pickle file
+                # df.to_pickle(f"{table_name}.pkl")
 
         
         print(f"Database converted to Excel file: {output_excel_file}")
