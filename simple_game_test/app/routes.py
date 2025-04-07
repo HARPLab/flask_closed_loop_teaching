@@ -99,7 +99,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
         logging.FileHandler(log_filename, mode="a"),  # Append logs to file
-        logging.StreamHandler(sys.stdout)  # Also print logs to console
+        # logging.StreamHandler(sys.stdout)  # Also print logs to console
     ]
 )
 
@@ -127,6 +127,15 @@ def log_print(*args):
     """Log messages and ensure they are printed to both file and console."""
     message = " ".join(map(str, args))
     logging.info(message)
+
+
+def status_print(*args):
+    """Log important status messages to both file and console."""
+    message = " ".join(map(str, args))
+    # Log to file via the regular logger
+    logging.info(message)
+    # Also print to console directly (bypassing redirections)
+    print(f"STATUS: {message}", file=sys.__stdout__)
 
 #####################################
 
@@ -254,7 +263,7 @@ def handle_disconnect():
             user_status = user_group.members_statuses[current_user.group_code]
             
         if (user_group is None or user_status != "left"):
-            log_print(f"User id: {current_user.id}, {request.sid} disconnected.")
+            status_print(f"User id: {current_user.id}, {request.sid} disconnected.")
 
             user_id = current_user.id
             disconnect_time = datetime.now().strftime("%m-%d %H:%M:%S")
@@ -272,14 +281,14 @@ def handle_disconnect():
             # Track disconnect time
             disconnected_users[user_id]["disconnect_times"].append(disconnect_time)
             disconnected_users[user_id]["disconnect_pages"].append(disconnect_page)
-            log_print(f"User {user_id}: Disconnected at {disconnect_time}. Tracking: {disconnected_users[user_id]}")
+            status_print(f"User {user_id}: Disconnected at {disconnect_time}. Tracking: {disconnected_users[user_id]}")
 
             # Start a thread-based timer (non-blocking)
             timer = threading.Timer(RECONNECT_TIMEOUT, check_reconnection, [user_id])
             timer.start()
             disconnect_timers[user_id] = timer  # Save the timer reference
         else:
-            log_print(f"User id: {current_user.id}, {request.sid} disconnected but has already left the study.")
+            status_print(f"User id: {current_user.id}, {request.sid} disconnected but has already left the study.")
 
 
 
@@ -317,7 +326,7 @@ def check_reconnection(user_id):
         reconnect_count = len(disconnected_users[user_id]["reconnect_times"])
 
         if disconnect_count > reconnect_count:  # Still missing reconnects
-            log_print(f"User {user_id}: Did not fully reconnect within {RECONNECT_TIMEOUT} seconds. Removing...")
+            status_print(f"User {user_id}: Did not fully reconnect within {RECONNECT_TIMEOUT} seconds. Removing...")
 
             removed_user = db.session.query(User).get(user_id)
             if removed_user and (removed_user.curr_progress != "left_study_or_got_disconnected" and removed_user.curr_progress != "removed_due_to_inactivity" and removed_user.study_completed != 1):
@@ -327,9 +336,9 @@ def check_reconnection(user_id):
                     update_database(removed_user, f"User left study or got disconnected")
                     remove_from_study(user_id)
            
-            log_print(f"User {user_id} permanently removed from tracking due to timeout.")
+            status_print(f"User {user_id} permanently removed from tracking due to timeout.")
     else:
-        log_print(f"User {user_id}: Already reconnected or removed from tracking.")
+        status_print(f"User {user_id}: Already reconnected or removed from tracking.")
 
 
 
@@ -344,7 +353,7 @@ def handle_remove_user(data):
         user = db.session.query(User).get(user_id)
         
         if user:
-            log_print(f"User {user_id} removed from study.")
+            status_print(f"User {user_id} removed from study.")
             
             # session.clear()  # Clears all session variables
             logout_user()  # Logs out the user
@@ -357,8 +366,8 @@ def handle_remove_user(data):
 
 @socketio.on("disconnect_user")
 def disconnect_user(data):
-    log_print("User disconnecting due to inactivity....")
-    log_print('Group:', current_user.group, 'User: ', current_user.id, 'disconnecting due to inactivity.')
+    status_print("User disconnecting due to inactivity....")
+    status_print('Group:', current_user.group, 'User: ', current_user.id, 'disconnecting due to inactivity.')
 
     # If user is still connected and authenticated, log them out
     if current_user.is_authenticated:
@@ -394,57 +403,13 @@ def logout_handler():
     flag_modified(current_user, "curr_progress")
     update_database(current_user, f"{current_user.username}. User progress study completed")
 
-    log_print(f'Logging out user {current_user.id} as they completed the study. Reason: {reason}')
+    status_print(f'Logging out user {current_user.id} as they completed the study. Reason: {reason}')
 
     # Logout user
     logout_user()
 
     # Emit logout response to the client
     socketio.emit("logout_response", {'reason': 'complete'}, to=request.sid)
-
-
-
-# @app.route('/logout')
-# def logout():
-    
-#     current_user.set_curr_progress("study_completed")
-#     flag_modified(current_user, "curr_progress")
-#     update_database(current_user, str(current_user.username) + ". User progress study completed")
-    
-#     log_print('Logging out user as they completed the study:', current_user.id)
-#     # session.pop("attention_check_rules", None)
-#     logout_user()  # Logs out the user
-    
-#     # return redirect(url_for('logout_confirmation', reason='complete')) # Send redirect URL to frontend
-#     return jsonify({'url': url_for('logout_confirmation'), 'reason': 'complete'})  # Send redirect URL to frontend
-
-
-# @app.route('/logout')
-# def logout():
-#     """
-#     Logs out the user and redirects to the logout confirmation page with a reason.
-#     """
-#     # Get logout reason from query parameter (default: 'complete')
-#     reason = request.args.get("reason", "complete")
-
-#     # Update progress
-#     current_user.set_curr_progress("study_completed")
-#     flag_modified(current_user, "curr_progress")
-#     update_database(current_user, f"{current_user.username}. User progress study completed")
-
-#     log_print(f'Logging out user {current_user.id} as they completed the study. Reason: {reason}')
-
-#     # Logout user
-#     logout_user()
-
-#     # Detect if running behind Nginx and adjust the redirect accordingly
-#     flask_prefix = request.headers.get("X-Forwarded-Prefix", "")
-
-#     logout_url = f"{flask_prefix}{url_for('logout_confirmation', reason=reason)}"
-
-#     log_print(f"Redirecting to logout URL: {logout_url}")
-    
-#     return redirect(logout_url)
 
 
 
@@ -456,7 +421,6 @@ def logout_confirmation():
 
 @socketio.on("sandbox settings")
 def sandbox_settings(data):
-    log_print(request.sid)
     version = data["version"]
     if version == 1:
         sb_params = {
@@ -485,7 +449,6 @@ def sandbox_settings(data):
 @login_required
 def sandbox():
     version = current_user.curr_progress
-    log_print(version)
     if version == "sandbox_1":
         preamble = ("<h1>Free play</h1> <hr/> " + "<h4>A subset of the keys in the table below will be available to control Chip in each game.<br>All game instances that you decide how Chip behaves in will be marked with a <font color='blue'>blue border</font>, like below.</h4><br>" +
         "<h4>Feel free to play around in the game below and get used to the controls.</h4>" +
@@ -525,7 +488,6 @@ def attention_check(data):
 @app.route("/post_practice", methods=["GET", "POST"])
 @login_required
 def post_practice():
-    log_print("I'm in post practice")
     current_user.set_curr_progress("post practice")
     current_user.last_iter_in_round = True
 
@@ -599,15 +561,15 @@ def join_group():
 
     if not current_user.group: # if no group yet, join one
 
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Join group function. Current user group: ', current_user.group)
+        status_print('Group:', current_user.group, 'User:', current_user.id, 'Join group function. Current user group: ', current_user.group)
         
         if open_group is not None:
             num_active_members = open_group.num_active_members
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Old group:', 'Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group:', 'Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
 
 
         if num_active_members == 0 or num_active_members == params['team_size']: # if group is full or empty, create a new group
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'No group yet.. Creating one...')
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'No group yet.. Creating one...')
             new_group_entry = Group(
                 experimental_condition=cond_list[condition_index],
                 domain_1=domain_list[domain_index][0],
@@ -634,14 +596,14 @@ def join_group():
             flag_modified(new_group, "member_user_ids")
             flag_modified(new_group, "members_statuses")
             flag_modified(new_group, "num_active_members")
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
             num_active_members = 1
 
             update_database(new_group, 'Member to new group')
             
         else:
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding to existing group')
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Adding to existing group')
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
             flag_modified(open_group, "members")
             flag_modified(open_group, "member_user_ids")
@@ -649,8 +611,8 @@ def join_group():
             flag_modified(open_group, "num_active_members")
             current_user.group = open_group.id
             num_active_members += 1
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Group id:', open_group.id, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Group id:', open_group.id, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
 
             update_database(open_group, 'Member to existing group')
     
@@ -728,7 +690,7 @@ def remove_from_study(user_id):
     user = db.session.query(User).get(user_id)
 
     if user.group is not None:
-        log_print(colored('Leaving group....', 'red'))
+        status_print(colored('Leaving group....', 'red'))
 
         current_group = db.session.query(Group).filter_by(id=user.group).order_by(Group.id.desc()).first()
 
@@ -749,7 +711,7 @@ def remove_from_study(user_id):
         
         # check if the remaining members are in EOR and waiting for the member who left
         group_EOR_status = current_group.groups_all_EOR()
-        log_print('Group:', user.group, 'User:', user.id, 'Group EOR status:', group_EOR_status)
+        status_print('Group:', user.group, 'User:', user.id, 'Group EOR status:', group_EOR_status)
 
         # Log out the user (must access db session in main thread)
         # session.pop("attention_check_rules", None)
@@ -789,7 +751,7 @@ def next_domain(data):
     # add survey data
     if current_user.curr_progress != "post practice":
         domain, _, _ = get_domain()
-        log_print(colored('Adding survey data...', 'red'))
+        status_print(colored('Adding survey data...', 'red'))
         add_survey_data(domain, data)
 
     log_print("current_user.curr_progress", current_user.curr_progress)
@@ -946,17 +908,17 @@ def settings(data):
         log_print('New domain? :', data["new_domain"])
         if data["new_domain"] == True:
 
-            log_print('Updating domain in backend and database...')
+            status_print('Updating domain in backend and database...')
             db.session.refresh(current_group)
 
             if current_user.curr_progress == current_group.curr_progress:
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of group...')
+                status_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of group...')
                 update_domain_group(current_group)
                 db.session.refresh(current_group)
 
             
             if current_user.curr_progress != current_group.curr_progress:
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of user and reset vars...')
+                status_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of user and reset vars...')
                 update_domain_user(current_user, current_group)
                 db.session.refresh(current_user)
                 
@@ -1039,7 +1001,7 @@ def settings(data):
                                 
                                 else:
                                     round_status = ""
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for first round to be generated...')
+                                    status_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for first round to be generated...')
                                     next_round_id = current_user.round+1
                                     next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
 
@@ -1058,7 +1020,7 @@ def settings(data):
                                     # flag_modified(current_group, "new_round_generation_started")
                                     update_database(current_group, 'New round generation not yet started..')
 
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for first round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
+                                    status_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for first round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
                                     time.sleep(2) # a sleep to avoid too many queries
 
                                 # vars for next round
@@ -1078,17 +1040,17 @@ def settings(data):
                             db.session.refresh(current_group)
 
                             ## Update EOR status for current user
-                            log_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.username, 'reached last iteration in round')
+                            status_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.username, 'reached last iteration in round')
                             member_idx = current_group.members.index(current_user.username)
                             
                             current_group.members_EOR[member_idx] = True
                             flag_modified(current_group, "members_EOR")
-                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Member' + str(member_idx) + ' reached EOR')
+                            status_print('Group:', current_user.group, 'User:', current_user.id, 'Member' + str(member_idx) + ' reached EOR')
                             update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR')
                             db.session.refresh(current_group)
 
                             log_print(colored('Updated Group members EOR status: ', 'red')) 
-                            log_print(current_group.members_EOR, 'member statuses:', current_group.members_statuses, 'all EOR:', current_group.groups_all_EOR(), 'all last test:', current_group.group_last_test(), 'mdp_params["interaction type"]: ', current_mdp_params["interaction type"])
+                            status_print(current_group.members_EOR, 'member statuses:', current_group.members_statuses, 'all EOR:', current_group.groups_all_EOR(), 'all last test:', current_group.group_last_test(), 'mdp_params["interaction type"]: ', current_mdp_params["interaction type"])
 
 
                             next_round_id = current_user.round+1
@@ -1104,7 +1066,7 @@ def settings(data):
                                 # ensure all members have made the same game progress and are in the end of round
                                 if (current_group.groups_all_EOR() and check_member_and_group_status() and not new_round_generation_started):
                                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Members EOR:', current_group.members_EOR, 'All EOR:', current_group.groups_all_EOR(), 'Member statuses:', current_group.members_statuses, 'Num active members: ', current_group.num_active_members)
-                                    log_print("All group members reached EOR, so i'm trying to construct the next round now")
+                                    status_print("All group members reached EOR, so i'm trying to construct the next round now")
                                     log_print("Current group status: ", current_group.status)
 
                                     # reset user EOR
@@ -1191,7 +1153,7 @@ def settings(data):
                                 if not check_current_user_active():
                                     break
                                 
-                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Interaction type: ', current_mdp_params["interaction type"], 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
+                            status_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Interaction type: ', current_mdp_params["interaction type"], 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
 
                         ### Update last iteration flag for the user
                         if current_user.last_test_in_round and opt_response_flag:
@@ -1509,7 +1471,7 @@ def settings(data):
 @app.route("/sign_consent", methods=["GET", "POST"])
 @login_required
 def sign_consent():
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Entering sign consent')
+    status_print('Group:', current_user.group, 'User:', current_user.id, 'Entering sign consent')
     current_user.consent = 1
     flag_modified(current_user, "consent")
     update_database(current_user, str(current_user.username) + ". User consent")
@@ -1531,7 +1493,7 @@ def pass_trajectories():
 @socketio.on("group comm")
 def group_comm(data):
     data["user"] = current_user.username
-    log_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
+    status_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
     socketio.emit("incoming group data", data, to='room_'+ str(current_user.group), include_self=False)
 
 
@@ -1942,7 +1904,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             # sometimes when date chanages at midnight
             alternate_path_filename =  base_dir + '/ind_sim_trials/' + (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
             if not os.path.exists(alternate_path_filename):
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Creating folder for this run: ', full_path_filename)
+                status_print('Group:', current_user.group, 'User:', current_user.id, 'Creating folder for this run: ', full_path_filename)
                 os.makedirs(full_path_filename, exist_ok=True)
             else:
                 full_path_filename = alternate_path_filename
@@ -1962,13 +1924,13 @@ def retrieve_next_round(params, cur_group) -> dict:
         
         unique_keys = set((r.group_id, r.kc_id, r.round_num) for r in all_kc_rounds)  # replace with actual deduplication keys
         num_unique_rounds = len(unique_keys)
-        log_print('N KC rounds:', num_unique_rounds, 'Params max KC loops:', params['max_KC_loops'])
+        status_print('N KC rounds:', num_unique_rounds, 'Params max KC loops:', params['max_KC_loops'])
         
         if num_unique_rounds >= params['max_KC_loops']:
             unit_learning_goal_reached_flag = True
     
 
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Current group sttatus:', cur_group.status)
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Current group status:', cur_group.status)
     new_round_for_var_filter = False
     if (cur_group.status != "Domain teaching completed"):
 
@@ -1998,7 +1960,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 teaching_complete_flag = True
 
 
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
+        status_print('Group:', current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
 
 
         # get demonstrations and tests for this round
@@ -2026,7 +1988,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             
             elif new_round_for_var_filter:
                 log_print(colored('No new demos generated for the new variable filter. Using default demos...', 'red'))
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated for the new variable filter. Using default demos...')
+                status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated for the new variable filter. Using default demos...')
                 
                 games = list()
                 if domain == 'at':
@@ -2044,7 +2006,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                             games.append({"interaction type": it, "params": mdp_dict})            
 
             else:
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
+                status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
                 # repeat the same round if no demos are generated
                 prev_round_data = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, round_num=round).order_by(Round.id.desc()).first()
                 games_extended = prev_round_data.round_info
@@ -2324,9 +2286,9 @@ def update_database(updated_data, update_type):
         db.session.add(updated_data)
         db.session.flush()
         db.session.commit()
-        log_print("Flush and Commit successful. Remember to commit at the end.", update_type )
+        status_print("Flush and Commit successful. Remember to commit at the end.", update_type )
     except Exception as e:
-        log_print(f"Error during commit: {e}.", update_type)
+        status_print(f"Error during commit: {e}.", update_type)
         db.session.rollback()
 
     db.session.refresh(updated_data) # refresh the object to get the updated data just in case; should automatically happen upon commit as instances automatically expire
@@ -2390,7 +2352,7 @@ def add_survey_data(domain, data):
 def add_trial_data(domain, data):
 
     # if len(data["user input"]) !=0:
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding trial data to database...', ' user id: ', current_user.id, 'round:', current_user.round, 'iteration:', current_user.iteration)
+    status_print('Group:', current_user.group, 'User:', current_user.id, 'Adding trial data to database...', ' user id: ', current_user.id, 'round:', current_user.round, 'iteration:', current_user.iteration)
 
     trial = Trial(
         user_id = current_user.id,
