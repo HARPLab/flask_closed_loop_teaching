@@ -449,6 +449,12 @@ def sandbox_settings(data):
 @login_required
 def sandbox():
     version = current_user.curr_progress
+    
+    if version != "sandbox_1" and version != "sandbox_2":
+        version = "sandbox_1"  # default to sandbox_2 if not set (in case they randomly land on this page)
+    
+    
+    log_print("current user progress is: " + version)
     if version == "sandbox_1":
         preamble = ("<h1>Free play</h1> <hr/> " + "<h4>A subset of the keys in the table below will be available to control Chip in each game.<br>All game instances that you decide how Chip behaves in will be marked with a <font color='blue'>blue border</font>, like below.</h4><br>" +
         "<h4>Feel free to play around in the game below and get used to the controls.</h4>" +
@@ -470,6 +476,7 @@ def sandbox():
         "<h5>You should end with 89% energy left (you won't be able to move if energy falls to 0%, but you can reset by pressing 'r'). <u>You will need to successfully complete this practice game to continue on with the study!</u></h5>" +
         "<h5>Note: Since this is practice, we have revealed each actions's effect on Chip's energy and also provide a running counter of Chip's current energy level below.</h5> <br>")
         legend = "<br><br><br><table class=\"center\"><tr><th>Key</th><th>Action</th></tr><tr><td>up/down/left/right arrow keys</td><td>corresponding movement</td></tr><tr><td>p</td><td>pick up</td></tr><tr><td>d</td><td>drop</td></tr><tr><td>r</td><td>reset simulation</td></tr></table><br>"
+
 
     res = render_template("mike/sandbox.html", preamble=preamble, legend=legend)
     # log_print(res)

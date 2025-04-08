@@ -214,7 +214,7 @@
           <div id="center-container">
               <div id="loading-container">
                   <div class="spinner"></div>
-                  <div id="loading-text">Please wait until all members of your team have finished this stage and for the next session to be available. Loading the next instruction..</div>
+                  <div id="loading-text">Please wait until all members of your team have completed this stage before proceeding. It may take a few minutes for everyone to finish. The next session will become available once everyone is ready. Thank you for your patience.</div>
               </div>
           </div>
     
@@ -249,7 +249,7 @@
     <div id="message-container"></div>
     <div id="score"></div>
     <!-- <div id="interaction_survey"></div> -->
-    <div id="wait">Please wait until all members of your team have finished this round and for the next session to be available.</div>
+    <div id="wait">Please wait until all members of your team have completed this stage before proceeding. It may take a few minutes for everyone to finish. The next session will become available once everyone is ready. Thank you for your patience.</div>
     <div id="flashMessage"></div>
     <div id="feedback"></div>
     <div id="survey"></div>
@@ -934,7 +934,7 @@
             // reset the next button to be disabled again
             if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
                 
-                loadingText.innerHTML = `Please wait for all your teammates to complete. Loading the next instruction...)`
+                loadingText.innerHTML = `Please wait until all members of your team have completed this stage before proceeding. It may take a few minutes for everyone to finish. The next session will become available once everyone is ready. Thank you for your patience.`
 
                 // document.getElementById('wait').style.display = 'block';
 
@@ -1787,7 +1787,7 @@
                         }
 
                         if (show_likert){
-                            $jq("#survey").html(`<h3>Did this interaction improve your understanding of the game strategy?</h3>
+                            $jq("#survey").html(`<h3>(Answer to progress) Did this interaction improve your understanding of the game strategy?</h3>
                         <div class="likert">
                         <label><input name="info" type="radio" value="1"/><span>Not at all</span></label>
                         <label><input name="info" type="radio" value="2"/><span>Slightly</span></label>
