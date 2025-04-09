@@ -129,6 +129,12 @@ def log_print(*args):
     logging.info(message)
 
 
+def log_error(*args):
+    """Log messages and ensure they are printed to both file and console."""
+    message = " ".join(map(str, args))
+    logging.error(message)
+
+
 def status_print(*args):
     """Log important status messages to both file and console."""
     message = " ".join(map(str, args))
@@ -1057,7 +1063,7 @@ def settings(data):
                             db.session.refresh(current_group)
 
                             log_print(colored('Updated Group members EOR status: ', 'red')) 
-                            status_print(current_group.members_EOR, 'member statuses:', current_group.members_statuses, 'all EOR:', current_group.groups_all_EOR(), 'all last test:', current_group.group_last_test(), 'mdp_params["interaction type"]: ', current_mdp_params["interaction type"])
+                            status_print(current_group.members_EOR, 'member statuses:', current_group.members_statuses, 'all EOR:', current_group.groups_all_EOR(), 'all last test:', current_group.group_last_test())
 
 
                             next_round_id = current_user.round+1
@@ -1099,9 +1105,13 @@ def settings(data):
                                         pf_round_id = current_user.round
                                         pf_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=pf_round_id).order_by(Round.id.desc()).first()
                                         
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
-                                        find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
-                                    
+                                        try:
+                                            log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
+                                            find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
+                                        except:
+                                            log_error('Group:', current_user.group, 'User:', current_user.id, 'Error in finding prob particles...')
+                                        
+                                        
                                         log_print("Generating next round...")
                                         retrieve_next_round(params, current_group)
                                         
@@ -1160,7 +1170,7 @@ def settings(data):
                                 if not check_current_user_active():
                                     break
                                 
-                            status_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Interaction type: ', current_mdp_params["interaction type"], 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
+                            status_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
 
                         ### Update last iteration flag for the user
                         if current_user.last_test_in_round and opt_response_flag:
