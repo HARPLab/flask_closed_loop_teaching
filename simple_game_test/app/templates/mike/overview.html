@@ -12,8 +12,9 @@
         path: '/flask_closed_loop_teaching/socket.io',
         // path: '/socket.io',
         transports: ['polling'],
-        reconnectionAttempts: 5,
+        reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
+        reconnectionDelayMax: 10000,
         EIO: 4,  // Engine.IO protocol version
         extraHeaders: {
             "Accept": "application/json"
@@ -26,7 +27,7 @@
         if (socket.connected) {
             socket.emit('heartbeat', { timestamp: new Date().getTime() });
         }
-    }, 30000); // Send heartbeat every 30 seconds
+    }, 10000); // Send heartbeat every 30 seconds
 
 </script>
 
@@ -45,7 +46,7 @@
     <br>
 
     <p>You are part of a <b>learning group that observes Chip and learns to play these games</b>.</p>
-    <p>Chip will <b>teach you the best strategy for each game through a series of gameplays</b>.</p>
+    <p>Chip will <b>teach you the best strategy for each game through a series of gameplays</b>. As with any game, the decisions that Chip takes have <b>trade-offs</b> and carefully note them to better understand Chip's strategy.</p>
     <p>Following each set of gameplay, <b>you will show us what you learned by playing the game yourself using your keyboard</b>.</p>
     <p>Since this learning happens as a group, <b>we ask you to pay full attention</b> and learn the games to ensure the group progresses well. <b><u>Note that you will be removed from the study if you are inactive for more than two minutes</u></b>.</p>
     <p>Please wait to synchronize your progress by waiting for all team members to complete each stage before advancing. Use only the 'Previous' and 'Next' buttons for navigating and not any browser buttons. If they are inactive, it means you can't do the navigation (go previous or next) on that page or a survey needs to be completed first.</p>

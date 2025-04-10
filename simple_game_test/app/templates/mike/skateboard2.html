@@ -326,8 +326,11 @@
             path: '/flask_closed_loop_teaching/socket.io',
             // path: '/socket.io',
             transports: ['polling'],
-            reconnectionAttempts: 5,
+            // reconnectionAttempts: 5,
+            // reconnectionDelay: 1000,
+            reconnectionAttempts: Infinity,
             reconnectionDelay: 1000,
+            reconnectionDelayMax: 10000,
             // timeout: 20000
             EIO: 4,  // Engine.IO protocol version
             extraHeaders: {
