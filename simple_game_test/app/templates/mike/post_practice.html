@@ -29,8 +29,9 @@
         path: '/flask_closed_loop_teaching/socket.io',
         // path: '/socket.io',
         transports: ['polling'],
-        reconnectionAttempts: 5,
+        reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
+        reconnectionDelayMax: 10000,
         // timeout: 20000
         EIO: 4,  // Engine.IO protocol version
         extraHeaders: {
@@ -44,7 +45,7 @@
         if (socket.connected) {
             socket.emit('heartbeat', {timestamp: new Date().getTime()});
         }
-    }, 30000); // Send heartbeat every 30 seconds
+    }, 10000); // Send heartbeat every 30 seconds
 
     // Print the socket connection details
     socket.on('connect', function () {
