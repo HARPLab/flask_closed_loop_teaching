@@ -287,15 +287,17 @@ def handle_disconnect():
                     "reconnect_pages": []
                 }
 
-            else:
-                disconnect_timers[user_id].cancel()
-                del disconnect_timers[user_id]
-                status_print(f"User {user_id}: Existing disconnect timer canceled before setting a new one.")
-
             # Track disconnect time
             disconnected_users[user_id]["disconnect_times"].append(disconnect_time)
             disconnected_users[user_id]["disconnect_pages"].append(disconnect_page)
             status_print(f"User {user_id}: Disconnected at {disconnect_time}. Tracking: {disconnected_users[user_id]}")
+
+            # cancel the existing timer
+            if user_id in disconnect_timers:
+                disconnect_timers[user_id].cancel()
+                del disconnect_timers[user_id]
+                status_print(f"User {user_id}: Existing disconnect timer canceled before setting a new one.")
+
 
             # Start a new thread-based timer (non-blocking)
             timer = threading.Timer(RECONNECT_TIMEOUT, check_reconnection, [user_id])
