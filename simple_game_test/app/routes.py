@@ -232,7 +232,9 @@ def handle_connect(auth=None):
 
         # reconnect user
         reconnect_time = datetime.now().strftime("%m-%d %H:%M:%S")
-        reconnect_page = request.referrer
+        # reconnect_page = request.referrer
+        referrer = auth.get("referrer") if auth else "Unknown"
+        reconnect_page = referrer
 
         if user_id in disconnected_users:
             disconnected_users[user_id]["reconnect_times"].append(reconnect_time)
