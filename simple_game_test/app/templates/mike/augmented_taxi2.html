@@ -339,6 +339,8 @@
             }
         }, 10000); // Send heartbeat every 30 seconds
 
+
+
         const loadingText = document.getElementById('loading-text');
         
         // audio_timer = new Audio("/static/audio/mixkit-tick-tock-clock-close-up-1059");
@@ -1028,6 +1030,9 @@
                     localStorage.setItem("user input", user_data);
                 }
             }
+
+            socket.emit("last_disconnect_page", { referrer: window.location.href });
+
 
 
         });

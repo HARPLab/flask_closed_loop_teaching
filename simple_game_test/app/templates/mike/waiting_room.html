@@ -91,9 +91,11 @@
         window.location.href = logoutUrl;
     });
 
-    addEventListener("beforeunload", (event) => {
+
+    window.addEventListener("beforeunload", function () {
         socket.emit("leave group temp");
-    });
+        socket.emit("last_disconnect_page", { referrer: window.location.href });
+        });
 
     function start_study() {
         localStorage.setItem("user input", "{}");

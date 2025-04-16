@@ -87,7 +87,7 @@ MAX_ITERATIONS = 500
 # List to track disconnected users
 disconnected_users = {}  # Stores user ID, disconnect times, and reconnect times
 disconnect_timers = {}   # Stores active timers for users
-
+last_disconnect_pages = {}
 
 #################################
 # Define log file
@@ -264,7 +264,7 @@ def handle_disconnect():
     """Handles user disconnection and starts a timer to check reconnection"""
     
     if current_user.is_authenticated:
-        
+        user_id = current_user.id
         user_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
 
         if user_group is not None:
@@ -275,7 +275,8 @@ def handle_disconnect():
 
             user_id = current_user.id
             disconnect_time = datetime.now().strftime("%m-%d %H:%M:%S")
-            disconnect_page = request.referrer
+            # disconnect_page = request.referrer  # for polling transport
+            disconnect_page = last_disconnect_pages.pop(user_id, "Unknown")
 
             # Initialize tracking if not exists
             if user_id not in disconnected_users:
@@ -298,6 +299,12 @@ def handle_disconnect():
         else:
             status_print(f"User id: {current_user.id}, {request.sid} disconnected but has already left the study.")
 
+
+@socketio.on("last_disconnect_page")
+def store_disconnect_page(data):
+    if current_user.is_authenticated:
+        user_id = current_user.id
+        last_disconnect_pages[user_id] = data.get("referrer", "Unknown")
 
 
 def check_current_user_active():

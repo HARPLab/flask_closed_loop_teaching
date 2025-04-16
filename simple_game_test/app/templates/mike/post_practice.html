@@ -57,6 +57,10 @@
         console.log('Socket path:', socket.io.opts.path);
     });
 
+    window.addEventListener("beforeunload", function () {
+        socket.emit("last_disconnect_page", { referrer: window.location.href });
+        });
+
 
     function go_to_waiting_page() {
         // Redirect to waiting_time.html before starting the study

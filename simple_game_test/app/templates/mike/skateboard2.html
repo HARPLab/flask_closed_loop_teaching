@@ -348,6 +348,8 @@
                 socket.emit('heartbeat', {timestamp: new Date().getTime()});
             }
         }, 30000); // Send heartbeat every 30 seconds
+
+
         
         const loadingText = document.getElementById('loading-text');
 
@@ -988,7 +990,7 @@
 
         }
         
-        addEventListener("beforeunload", (event) => {
+        window.addEventListener("beforeunload", (event) => {
             console.log("beforeunload event. isKickedOut: ", isKickedOut);
             if (!isKickedOut && localStorage.getItem("movement") === "false") {
                 event.preventDefault();
@@ -1028,6 +1030,8 @@
                     localStorage.setItem("user input", final_data);
                 }
             }
+
+            socket.emit("last_disconnect_page", { referrer: window.location.href });
 
         });
 
