@@ -286,13 +286,18 @@ def handle_disconnect():
                     "disconnect_pages": [],
                     "reconnect_pages": []
                 }
-            
+
+            else:
+                disconnect_timers[user_id].cancel()
+                del disconnect_timers[user_id]
+                status_print(f"User {user_id}: Existing disconnect timer canceled before setting a new one.")
+
             # Track disconnect time
             disconnected_users[user_id]["disconnect_times"].append(disconnect_time)
             disconnected_users[user_id]["disconnect_pages"].append(disconnect_page)
             status_print(f"User {user_id}: Disconnected at {disconnect_time}. Tracking: {disconnected_users[user_id]}")
 
-            # Start a thread-based timer (non-blocking)
+            # Start a new thread-based timer (non-blocking)
             timer = threading.Timer(RECONNECT_TIMEOUT, check_reconnection, [user_id])
             timer.start()
             disconnect_timers[user_id] = timer  # Save the timer reference
@@ -336,26 +341,56 @@ def handle_heartbeat(data):
 def check_reconnection(user_id):
     """Checks if user is still disconnected after timeout"""
     
-    ## Based on the number of disconnect-reconnect. Sometimes, the reconnect is not being recorded, but still reconnects.
-    # Ensure the user is still in disconnected_users after timeout
+    # ## Based on the number of disconnect-reconnect. Sometimes, the reconnect is not being recorded, but still reconnects.
+    # # Ensure the user is still in disconnected_users after timeout
+    # if user_id in disconnected_users:
+    #     disconnect_count = len(disconnected_users[user_id]["disconnect_times"])
+    #     reconnect_count = len(disconnected_users[user_id]["reconnect_times"])
+
+    #     if disconnect_count > reconnect_count:  # Still missing reconnects
+    #         status_print(f"User {user_id}: Did not fully reconnect within {RECONNECT_TIMEOUT} seconds. Removing...")
+
+    #         removed_user = db.session.query(User).get(user_id)
+    #         if removed_user and (removed_user.curr_progress != "left_study_or_got_disconnected" and removed_user.curr_progress != "removed_due_to_inactivity" and removed_user.study_completed != 1):
+    #             with app.app_context():  # Ensure Flask context for DB operations
+    #                 removed_user.set_curr_progress("left_study_or_got_disconnected")
+    #                 flag_modified(removed_user, "curr_progress")
+    #                 update_database(removed_user, f"User left study or got disconnected")
+    #                 remove_from_study(user_id)
+           
+    #         status_print(f"User {user_id} permanently removed from tracking due to timeout.")
+    # else:
+    #     status_print(f"User {user_id}: Already reconnected or removed from tracking.")
+
+
+    ## Based on disconnection and reconnection times
     if user_id in disconnected_users:
-        disconnect_count = len(disconnected_users[user_id]["disconnect_times"])
-        reconnect_count = len(disconnected_users[user_id]["reconnect_times"])
+        disconnect_times = disconnected_users[user_id]["disconnect_times"]
+        reconnect_times = disconnected_users[user_id]["reconnect_times"]
 
-        if disconnect_count > reconnect_count:  # Still missing reconnects
-            status_print(f"User {user_id}: Did not fully reconnect within {RECONNECT_TIMEOUT} seconds. Removing...")
+        last_disconnect = disconnect_times[-1] if disconnect_times else None
+        last_reconnect = reconnect_times[-1] if reconnect_times else None
+        if last_disconnect and last_reconnect:
+            time_to_reconnect = (last_reconnect - last_disconnect).total_seconds()
+            status_print('User:', user_id, 'Time to reconnect:', time_to_reconnect)
 
-            removed_user = db.session.query(User).get(user_id)
-            if removed_user and (removed_user.curr_progress != "left_study_or_got_disconnected" and removed_user.curr_progress != "removed_due_to_inactivity" and removed_user.study_completed != 1):
-                with app.app_context():  # Ensure Flask context for DB operations
+        # Check if user failed to reconnect within RECONNECT_TIMEOUT
+        if not last_reconnect or (last_disconnect and time_to_reconnect > RECONNECT_TIMEOUT):
+            status_print(f"User {user_id}: Did not reconnect within timeout. Removing...")
+
+            with app.app_context():
+                removed_user = db.session.query(User).get(user_id)
+                if removed_user and (removed_user.curr_progress not in ["left_study_or_got_disconnected", "removed_due_to_inactivity"] and removed_user.study_completed != 1):
                     removed_user.set_curr_progress("left_study_or_got_disconnected")
                     flag_modified(removed_user, "curr_progress")
-                    update_database(removed_user, f"User left study or got disconnected")
+                    update_database(removed_user, "User left study or got disconnected")
                     remove_from_study(user_id)
-           
-            status_print(f"User {user_id} permanently removed from tracking due to timeout.")
+
+            status_print(f"User {user_id} removed from tracking.")
+        else:
+            status_print(f"User {user_id}: Reconnected in time, no action taken.")
     else:
-        status_print(f"User {user_id}: Already reconnected or removed from tracking.")
+        status_print(f"User {user_id}: Already reconnected or removed.")
 
 
 
