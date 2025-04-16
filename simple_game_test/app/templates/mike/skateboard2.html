@@ -1031,9 +1031,10 @@
                 }
             }
 
-            socket.emit("last_disconnect_page", { referrer: window.location.href });
-
         });
+
+        socket.emit("last_disconnect_page", { referrer: window.location.href });
+
 
 
         addEventListener("input", (event) => {

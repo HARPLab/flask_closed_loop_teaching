@@ -300,7 +300,7 @@ def handle_disconnect():
             status_print(f"User id: {current_user.id}, {request.sid} disconnected but has already left the study.")
 
 
-@socketio.on("last_disconnect_page")
+@socketio.on('last_disconnect_page')
 def store_disconnect_page(data):
     if current_user.is_authenticated:
         user_id = current_user.id

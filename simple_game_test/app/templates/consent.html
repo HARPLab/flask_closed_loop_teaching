@@ -121,9 +121,7 @@
         }
     }, 10000); // Send heartbeat every 10 seconds
 
-    window.addEventListener("beforeunload", function () {
-        socket.emit("last_disconnect_page", { referrer: window.location.href });
-        });
+    socket.emit("last_disconnect_page", { referrer: window.location.href });
 
     function hideconsent() {
         $.getJSON("{{ url_for('sign_consent') }}", 

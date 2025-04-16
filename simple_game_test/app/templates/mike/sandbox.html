@@ -123,9 +123,7 @@
         }
     }, 10000); // Send heartbeat every 30 seconds
 
-    window.addEventListener("beforeunload", function () {
-        socket.emit("last_disconnect_page", { referrer: window.location.href });
-        });
+    socket.emit("last_disconnect_page", { referrer: window.location.href });
 
     // Print the socket connection details
     socket.on('connect', function () {
