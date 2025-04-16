@@ -305,6 +305,7 @@ def store_disconnect_page(data):
     if current_user.is_authenticated:
         user_id = current_user.id
         last_disconnect_pages[user_id] = data.get("referrer", "Unknown")
+        print('Disconnect pages list:', last_disconnect_pages[user_id])
 
 
 def check_current_user_active():
