@@ -106,7 +106,7 @@
     // let socket = io(
     //     isLocal ? "http://127.0.0.1:5000" : "/flask_closed_loop_teaching",
     //     { path: isLocal ? "/socket.io/" : "/flask_closed_loop_teaching/socket.io/",
-    //     transports: ['polling']  // Ensures polling first, then WebSocket
+    //     transports: ['websocket', 'polling'],  // Ensures polling first, then WebSocket
     //     }
     // );
 
@@ -115,7 +115,7 @@
     const socket = io({
         path: '/flask_closed_loop_teaching/socket.io',
         // path: '/socket.io',
-        transports: ['polling'],
+        transports: ['websocket', 'polling'],,
         reconnectionAttempts: 10,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 10000,
