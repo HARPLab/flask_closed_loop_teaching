@@ -340,8 +340,8 @@
         
         // audio_timer = new Audio("/static/audio/mixkit-tick-tock-clock-close-up-1059");
 
-        // audio_timer = new Audio("{{ url_for('static', filename='audio/mixkit-tick-tock-clock-close-up-1059.mp3') }}");
-        audio_timer = new Audio("/flask_closed_loop_teaching/static/audio/mixkit-tick-tock-clock-close-up-1059.mp3");
+        // audio_timer = new Audio("{{ url_for('static', filename='audio/mixkit-tick-tock-clock-close-up-1059.wav') }}");
+        audio_timer = new Audio("/flask_closed_loop_teaching/static/audio/mixkit-tick-tock-clock-close-up-1059.wav");
 
         audio_timer.loop = true;
 
@@ -596,9 +596,9 @@
             console.log("received all reached EOR message...");
 
             let EOR_start_time = Date.now();
-            while (Date.now() - EOR_start_time <= 1500) {
-                console.log("All reached EOR...." + Date.now.toLocaleString());
-            }
+            // while (Date.now() - EOR_start_time <= 1500) {
+            //     console.log("All reached EOR...." + Date.now.toLocaleString());
+            // }
 
             // show the flash message
             var flashMessage = document.getElementById("flashMessage");
