@@ -326,6 +326,7 @@ def handle_heartbeat(data):
 def check_reconnection(user_id):
     """Checks if user is still disconnected after timeout"""
     
+    ## Based on the number of disconnect-reconnect. Sometimes, the reconnect is not being recorded, but still reconnects.
     # Ensure the user is still in disconnected_users after timeout
     if user_id in disconnected_users:
         disconnect_count = len(disconnected_users[user_id]["disconnect_times"])
@@ -761,7 +762,7 @@ def next_domain(data):
         add_trial_data(domain, data)
 
     # add survey data
-    if current_user.curr_progress != "post practice":
+    if (current_user.curr_progress == "domain_1" or current_user.curr_progress == "domain_2") :
         domain, _, _ = get_domain()
         status_print(colored('Adding survey data...', 'red'))
         add_survey_data(domain, data)
@@ -2326,6 +2327,7 @@ def get_domain():
     elif curr_domain == "2":
         domain = current_user.domain_2
     else:
+        # default
         curr_domain = "1"
         domain = current_user.domain_1
 
