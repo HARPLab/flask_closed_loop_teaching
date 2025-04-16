@@ -1,6 +1,6 @@
-from gevent import monkey
-# Patch standard libraries for Gevent compatibility
-monkey.patch_all()
+# from gevent import monkey
+# # Patch standard libraries for Gevent compatibility
+# monkey.patch_all()
 
 # print("Monkey patched?", monkey.is_module_patched("socket"))
 
@@ -48,17 +48,17 @@ login.login_view = "login"
 #     print("App url map in production mode:", app.url_map)
 
 
-app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
-app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching'
-app.config['SESSION_COOKIE_SECURE'] = True  # Needed if running on HTTPS, 
-app.config['PREFERRED_URL_SCHEME'] = 'https'
-socketio = SocketIO(app, async_mode='gevent', path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*", ping_timeout=60, ping_interval=25)
-# socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
-print("App url map in production mode:", app.url_map)
+# app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
+# app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching'
+# app.config['SESSION_COOKIE_SECURE'] = True  # Needed if running on HTTPS, 
+# app.config['PREFERRED_URL_SCHEME'] = 'https'
+# socketio = SocketIO(app, async_mode='gevent', path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*", ping_timeout=60, ping_interval=25)
+# # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
+# print("App url map in production mode:", app.url_map)
 
 
 
-# socketio = SocketIO(app, ping_timeout=60, ping_interval=25)
+socketio = SocketIO(app, ping_timeout=60, ping_interval=25)
 
 
 
@@ -77,18 +77,18 @@ from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 pool_size = min(os.cpu_count(), 64)
 print(f"Using {pool_size} processes")
 
-# # ## Initialize the multiprocessing tools
-# from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
-# manager = Manager()
-# lock = manager.Lock()
-# pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
+# ## Initialize the multiprocessing tools
+from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
+manager = Manager()
+lock = manager.Lock()
+pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
 
 
-# # Lock with threading
-from threading import Lock
-from gevent.pool import Pool
-lock = Lock()
-pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
+# # # Lock with threading
+# from threading import Lock
+# from gevent.pool import Pool
+# lock = Lock()
+# pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
 
 
 
