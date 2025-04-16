@@ -211,11 +211,11 @@ def make_sandbox(data):
 
 
 @socketio.on("connect")
-def handle_connect():
+def handle_connect(auth=None):
     """Handles user reconnection and removes them from disconnected_users if needed"""
-    log_print(f"User {current_user.id} connected with SID {request.sid}")
 
     if current_user.is_authenticated:
+        log_print(f"User {current_user.id} connected with SID {request.sid}")
         user_id = current_user.id
 
         # check and reroute to logout if they have already completed the study previously or left the study

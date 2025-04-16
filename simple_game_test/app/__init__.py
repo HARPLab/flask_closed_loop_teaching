@@ -22,9 +22,6 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# app.config['SESSION_COOKIE_PATH'] = '/flask_closed_loop_teaching' # default is APPLICATION_ROOT
-# app.static_url_path = '/flask_closed_loop_teaching/static'  # default is APPLICATION_ROOT/static
-# app.config['WTF_CSRF_ENABLED'] = False  # Ensure CSRF protection is explicitly enabled
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
@@ -34,17 +31,8 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 
-# socketio = SocketIO(app,  ping_timeout=60, ping_interval=25)  # for running on local host
-# socketio.init_app(app)
-
-# app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
-# socketio = SocketIO(app, path="/flask_closed_loop_teaching/socket.io", cors_allowed_origins="*")  # Allow cross-origin for local testing
-
-# socketio = SocketIO(app, path="/socket.io", cors_allowed_origins="*")  # Allow cross-origin for local testing
-
 
 # Initialize SocketIO with gevent
-# socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
 
 # if os.environ.get("FLASK_ENV") == "development":
 #     socketio = SocketIO(app)  # for running on local host
@@ -59,13 +47,18 @@ login.login_view = "login"
 #     # socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
 #     print("App url map in production mode:", app.url_map)
 
-# socketio.init_app(app)  # explicitly initialize the socketio object
+
+app.config['APPLICATION_ROOT'] = '/flask_closed_loop_teaching'
+app.config['FORCE_SCRIPT_NAME'] = '/flask_closed_loop_teaching'
+app.config['SESSION_COOKIE_SECURE'] = True  # Needed if running on HTTPS, 
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+socketio = SocketIO(app, async_mode='gevent', path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*", ping_timeout=60, ping_interval=25)
+# socketio = SocketIO(app, path='/flask_closed_loop_teaching/socket.io', cors_allowed_origins="*")
+print("App url map in production mode:", app.url_map)
 
 
 
-
-
-socketio = SocketIO(app, ping_timeout=60, ping_interval=25)
+# socketio = SocketIO(app, ping_timeout=60, ping_interval=25)
 
 
 
