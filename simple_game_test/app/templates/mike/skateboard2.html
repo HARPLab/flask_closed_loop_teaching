@@ -352,7 +352,9 @@
         // audio_timer = new Audio("{{ url_for('static', filename='audio/mixkit-tick-tock-clock-close-up-1059.wav') }}");
         audio_timer = new Audio("/flask_closed_loop_teaching/static/audio/mixkit-tick-tock-clock-close-up-1059.wav");
 
-        audio_timer.loop = true;
+        if (audio_timer){
+            audio_timer.loop = true;
+        }
 
         // Function to reset the inactivity timer
         function resetInactivityTimer() {
@@ -392,11 +394,15 @@
                 const timerDisplay = document.getElementById("timer-display");
                 if (timerSeconds <= 20) {
                     timerDisplay.classList.add("flash-timer");
-                    audio_timer.play(); // Play the audio for the last 20 seconds
+                    if (audio_timer){
+                        audio_timer.play(); // Play the audio for the last 20 seconds
+                    }
                 } else {
                     timerDisplay.classList.remove("flash-timer");
-                    audio_timer.pause(); // Pause the audio if not in the last 20 seconds
-                    audio_timer.currentTime = 0; // Reset audio to start position
+                    if (audio_timer){
+                        audio_timer.pause(); // Pause the audio if not in the last 20 seconds
+                        audio_timer.currentTime = 0; // Reset audio to start position
+                    }
                 }
 
 
@@ -624,8 +630,10 @@
             // audio_new_lesson = new Audio("/static/audio/mixkit-positive-notification-951.wav");
             audio_new_lesson = new Audio("/flask_closed_loop_teaching/static/audio/mixkit-positive-notification-951.wav")
 
-            audio_new_lesson.loop = true;
-            audio_new_lesson.play();
+            if (audio_new_lesson){
+                audio_new_lesson.loop = true;
+                audio_new_lesson.play();
+            }
 
             // // Add event listener for keypress to hide the message and stop the audio
             // document.addEventListener('keydown', function() {
