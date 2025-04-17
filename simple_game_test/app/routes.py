@@ -81,7 +81,7 @@ CARD_ID_TO_FEATURES = [
 QUICK_DEBUG_FLAG = False
 
 # Timeout for reconnection (in seconds)
-RECONNECT_TIMEOUT = 180  # Change this to the desired time
+RECONNECT_TIMEOUT = 60  # Change this to the desired time
 MAX_ITERATIONS = 500
 
 # List to track disconnected users
@@ -364,7 +364,7 @@ def check_reconnection(user_id):
     # else:
     #     status_print(f"User {user_id}: Already reconnected or removed from tracking.")
 
-
+    status_print('Disconnected_users:', disconnected_users)
     ## Based on disconnection and reconnection times
     if user_id in disconnected_users:
         disconnect_times = disconnected_users[user_id]["disconnect_times"]
@@ -372,6 +372,10 @@ def check_reconnection(user_id):
 
         last_disconnect = disconnect_times[-1] if disconnect_times else None
         last_reconnect = reconnect_times[-1] if reconnect_times else None
+
+        status_print('Last disconnect:', last_disconnect, 'Last reconnect:', last_reconnect)
+
+
         if last_disconnect and last_reconnect:
             time_to_reconnect = (last_reconnect - last_disconnect).total_seconds()
             status_print('User:', user_id, 'Time to reconnect:', time_to_reconnect)
