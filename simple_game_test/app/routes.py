@@ -372,7 +372,7 @@ def check_reconnection(user_id):
         last_disconnect = disconnect_times[-1] if disconnect_times else None
         current_time = datetime.now()
 
-        status_print('Last disconnect:', last_disconnect, 'Last reconnect:', last_reconnect)
+        status_print('Last disconnect:', last_disconnect, 'current_time:', current_time)
 
 
         if last_disconnect:
