@@ -369,29 +369,32 @@ def check_reconnection(user_id):
     if user_id in disconnected_users:
         disconnect_times = disconnected_users[user_id]["disconnect_times"]
 
-        last_disconnect = disconnect_times[-1] if disconnect_times else None
+        last_disconnect = datetime.strptime(disconnect_times[-1], "%m-%d %H:%M:%S") if disconnect_times else None
         current_time = datetime.now()
 
         status_print('Last disconnect:', last_disconnect, 'current_time:', current_time)
 
-        time_since_disconnect = (current_time - last_disconnect).total_seconds()
-        status_print('User:', user_id, 'Time since disconnect:', time_since_disconnect)
+        if last_disconnect:
+            time_since_disconnect = (current_time - last_disconnect).total_seconds()
+            status_print('User:', user_id, 'Time since disconnect:', time_since_disconnect)
 
-        # Check if user failed to reconnect within RECONNECT_TIMEOUT
-        if time_since_disconnect >= RECONNECT_TIMEOUT:
-            status_print(f"User {user_id}: Did not reconnect within timeout. Removing...")
+            # Check if user failed to reconnect within RECONNECT_TIMEOUT
+            if time_since_disconnect >= RECONNECT_TIMEOUT:
+                status_print(f"User {user_id}: Did not reconnect within timeout. Removing...")
 
-            with app.app_context():
-                removed_user = db.session.query(User).get(user_id)
-                if removed_user and (removed_user.curr_progress not in ["left_study_or_got_disconnected", "removed_due_to_inactivity"] and removed_user.study_completed != 1):
-                    removed_user.set_curr_progress("left_study_or_got_disconnected")
-                    flag_modified(removed_user, "curr_progress")
-                    update_database(removed_user, "User left study or got disconnected")
-                    remove_from_study(user_id)
+                with app.app_context():
+                    removed_user = db.session.query(User).get(user_id)
+                    if removed_user and (removed_user.curr_progress not in ["left_study_or_got_disconnected", "removed_due_to_inactivity"] and removed_user.study_completed != 1):
+                        removed_user.set_curr_progress("left_study_or_got_disconnected")
+                        flag_modified(removed_user, "curr_progress")
+                        update_database(removed_user, "User left study or got disconnected")
+                        remove_from_study(user_id)
 
-            status_print(f"User {user_id} removed from tracking.")
+                status_print(f"User {user_id} removed from tracking.")
+            else:
+                status_print(f"User {user_id}: Reconnected in time, no action taken.")
         else:
-            status_print(f"User {user_id}: Reconnected in time, no action taken.")
+            status_print(f"User {user_id}: No disconnect times found.")
     else:
         status_print(f"User {user_id}: Already reconnected or removed.")
 
