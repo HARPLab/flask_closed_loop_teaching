@@ -369,7 +369,7 @@ def check_reconnection(user_id):
     if user_id in disconnected_users:
         disconnect_times = disconnected_users[user_id]["disconnect_times"]
 
-        last_disconnect = datetime.strptime(disconnect_times[-1], "%m-%d %H:%M:%S") if disconnect_times else None
+        last_disconnect = datetime.strptime(f"{datetime.now().year}-{disconnect_times[-1]}", "%Y-%m-%d %H:%M:%S") if disconnect_times else None
         current_time = datetime.now()
 
         status_print('Last disconnect:', last_disconnect, 'current_time:', current_time)
