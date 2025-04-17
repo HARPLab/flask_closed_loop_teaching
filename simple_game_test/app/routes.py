@@ -368,20 +368,19 @@ def check_reconnection(user_id):
     ## Based on disconnection and reconnection times
     if user_id in disconnected_users:
         disconnect_times = disconnected_users[user_id]["disconnect_times"]
-        reconnect_times = disconnected_users[user_id]["reconnect_times"]
 
         last_disconnect = disconnect_times[-1] if disconnect_times else None
-        last_reconnect = reconnect_times[-1] if reconnect_times else None
+        current_time = datetime.now()
 
         status_print('Last disconnect:', last_disconnect, 'Last reconnect:', last_reconnect)
 
 
-        if last_disconnect and last_reconnect:
-            time_to_reconnect = (last_reconnect - last_disconnect).total_seconds()
-            status_print('User:', user_id, 'Time to reconnect:', time_to_reconnect)
+        if last_disconnect:
+            time_since_disconnect = (current_time - last_disconnect).total_seconds()
+            status_print('User:', user_id, 'Time since disconnect:', time_since_disconnect)
 
         # Check if user failed to reconnect within RECONNECT_TIMEOUT
-        if not last_reconnect or (last_disconnect and time_to_reconnect > RECONNECT_TIMEOUT):
+        if last_disconnect and time_since_disconnect > RECONNECT_TIMEOUT:
             status_print(f"User {user_id}: Did not reconnect within timeout. Removing...")
 
             with app.app_context():
