@@ -81,7 +81,7 @@ CARD_ID_TO_FEATURES = [
 QUICK_DEBUG_FLAG = False
 
 # Timeout for reconnection (in seconds)
-RECONNECT_TIMEOUT = 60  # Change this to the desired time
+RECONNECT_TIMEOUT = 150  # Change this to the desired time
 MAX_ITERATIONS = 500
 
 # List to track disconnected users
