@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Simulation</title>
+    <script src="/flask_closed_loop_teaching/static/js/activity-tracker.js"></script>
 
     <script src="{{ url_for('static', filename='lib/jquery-min.js') }}" type="text/javascript"></script>
     <script>
@@ -339,19 +340,32 @@
                 socket.emit('heartbeat', {timestamp: new Date().getTime()});
             }
         }, 10000); // Send heartbeat every 30 seconds
-
+        ///////////////////////////////
 
 
         const loadingText = document.getElementById('loading-text');
         
-        // audio_timer = new Audio("/static/audio/mixkit-tick-tock-clock-close-up-1059");
-
-        // audio_timer = new Audio("{{ url_for('static', filename='audio/mixkit-tick-tock-clock-close-up-1059.wav') }}");
         audio_timer = new Audio("/flask_closed_loop_teaching/static/audio/mixkit-tick-tock-clock-close-up-1059.wav");
-
         if (audio_timer){
             audio_timer.loop = true;
         }
+
+        // Initialize the activity tracker when the page loads
+        let activityTracker;
+
+        // Set up tracker early in your script
+        window.addEventListener('DOMContentLoaded', function() {
+        // Initialize the activity tracker
+        activityTracker = ActivityTracker.init({
+            maxLogEntries: 500,
+            inactivityLimit: inactivityLimit_s * 1000, // Convert your existing limit to ms
+            isKickedOut: isKickedOut
+        });
+
+        // After initialization, set the reset timer function
+        activityTracker.setResetTimerFunction(resetInactivityTimer);
+        });
+        
 
         // Function to reset the inactivity timer
         function resetInactivityTimer() {
@@ -367,11 +381,12 @@
                 // Set a new timer
                 inactivityTimeout = setTimeout(() => {
                     // Notify the server to disconnect the user
-                    console.log("User inactive for ${inactivityLimit_min} minutes. Disconnecting...");
+                    console.log(`User inactive for ${inactivityLimit_min} minutes. Disconnecting...`);
                     final_data = populateData()
                     isKickedOut = true;
+                    
                     // Show the alert first
-                    alert("You have been disconnected due to inactivity. You are being removed from the study.");
+                    // alert("You have been disconnected due to inactivity. You are being removed from the study.");
 
                     // Stop the audio and hide the flash message (if active)
                     if (audio_new_lesson) {
@@ -448,6 +463,19 @@
             // data["new_domain"] = localStorage.getItem("new_domain");
             data["final_score"] = localStorage.getItem("final_score");
             data["final_score_string"] = localStorage.getItem("final_score_string");
+            
+            // Add activity tracker data if available
+            if (activityTracker) {
+                try {
+                    // Get activity log from localStorage
+                    const activityLog = JSON.parse(localStorage.getItem("activity_log") || "[]");
+                    data["activity_log"] = JSON.stringify(activityLog)
+                } 
+                catch (e) {
+                    console.error("Error adding activity data:", e);
+                    data["activity_log"] = e.message;
+                }
+            }
 
             reward_wt_1 = localStorage.getItem("reward_ft_wt_1_field")
             reward_wt_2 = localStorage.getItem("reward_ft_wt_2_field")
@@ -464,12 +492,6 @@
             return data
         }
 
-        // socket.on("connect", function () {
-        //     data = populateData()
-        //     socket.emit("settings", data);
-        //     localStorage.setItem("settings emit flag", "true");
-        //     console.log("settings emit flag on connect", localStorage.getItem("settings emit flag"));
-        // });
 
         socket.on("connect", function () {
             // Check if "settings" has already been sent
@@ -551,11 +573,7 @@
             }
 
             
-            
-            // localStorage.setItem("game completed", "false");
-            // localStorage.setItem("survey completed", "false");
             console.log('MDP params: ', data["params"], 'go_prev:', data["go prev"]);
-            // types possible: demo, diagnostic test, diagnostic feedback, remedial demo, remedial test, remedial feedback, survey, final test
             
             if (data["go prev"] == false) {
                 $jq("#prev").replaceWith(`<button type="button" id="prev" disabled onclick="prev()" value="previous" class="btn btn-primary btn-lg continue"> Previous <span class="glyphicon glyphicon-arrow-left"></span>
@@ -582,7 +600,6 @@
             $jq("#survey").html(``);
             }
         
-            // $jq("#debug").html(data["debug string"]);
 
             // hide the loading screen and show the game content
             document.getElementById('wait').style.display = 'none';
@@ -612,9 +629,6 @@
             console.log("received all reached EOR message...");
 
             let EOR_start_time = Date.now();
-            // while (Date.now() - EOR_start_time <= 1500) {
-            //     console.log("All reached EOR...." + Date.now.toLocaleString());
-            // }
 
             // show the flash message
             var flashMessage = document.getElementById("flashMessage");
@@ -630,39 +644,14 @@
                 audio_new_lesson.play();
             }
 
-            // // Add event listener for keypress to hide the message and stop the audio
-            // document.addEventListener('keydown', function() {
-            //     // Hide the flash message
-            //     flashMessage.style.display = 'none';
-                
-            //     // Stop the audio
-            //     audio.pause();
-            //     audio.currentTime = 0;  // Reset audio to start position
-
-            //     document.removeEventListener('keydown', arguments.callee);
-            // });
-
             document.addEventListener('keydown', handleKeydown);
 
             document.getElementById('wait').style.display = 'none';
-            // next();  // automatically go to next session
             
             window.joint_EOR = true;
 
         });
 
-        
-        // socket.on("force_logout", (data) => {
-        //     console.log("Server forcefully logged out the user. Reason:", data.reason);
-        //     alert(data.reason); // Show the reason for logout
-        //     // window.location.href = "{{ ('logout_confirmation') }}"; // Redirect to the logout confirmation page
-
-        //     // // Optionally redirect the user after acknowledgment
-        //     // setTimeout(() => {
-        //     //     window.location.href = "{{ url_for('logout_confirmation') }}";
-        //     // }, 3000); // Wait 3 seconds after alert before redirecting
-
-        // });
 
         socket.on("force_logout", (data) => {
             console.log("Server forcefully logged out the user. Reason:", data.reason);
@@ -740,9 +729,7 @@
                 $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration"))).toString() + '/6)</h1>');
                 // cl, pl, open, wtcl
                 $jq("#info_main").html('<h3>Chip has finished teaching the game play strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3><h4>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
-                // wt
-                //$jq("#info_main").replaceWith('<h3>Chip has finished teaching the strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this <b>game\'s task (dropping the pink circle at the grey square) </b> <br> ' +
-                //'while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)');
+                
                 document.getElementById('prev').style.display = 'none';
                 headerElement.style.backgroundColor = colors["final test"];
             } 
@@ -888,16 +875,6 @@
             }
         }
 
-        // socket.on("", function (data) {
-        //     if (data["passed"]) {
-        //         $jq("button").replaceWith(`<button type="button" id="next"
-        //             onclick="make_sandbox()"
-        //             value="next" class="btn btn-primary btn-lg continue">
-        //             Next <span class="glyphicon glyphicon-arrow-right"></span>
-        //             </button>` );
-        //     }
-        // }
-        // );
 
         function prev() {
             console.log("I am going prev");
@@ -916,15 +893,6 @@
             data = populateData();
 
             if (!window.domain_completed){
-                // if (window.last_test) {
-                //     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
-                //     document.getElementById('wait').style.display = 'block';
-                // }
-
-                // if (window.last_in_round) {
-                //     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
-                //     document.getElementById('wait').style.display = 'block';
-                // }
 
                 // hide the flash message
                 document.getElementById('flashMessage').style.display = 'none';
@@ -937,13 +905,6 @@
             }
             
         
-            
-            // send data to server if not already sent after connect
-            // if (localStorage.getItem("settings emit flag") == "false") {
-            // localStorage.setItem("settings emit flag", "true");
-            // console.log("settings emit flag next", localStorage.getItem("settings emit flag"));
-            // socket.emit("settings", data);
-            // }
             // reset vars (in case trajectory was not completed)
             window.moves = [];
             window.agent_history = [];
@@ -953,14 +914,6 @@
             if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
                 
                 loadingText.innerHTML = `Please wait until all members of your team have completed this stage before proceeding. It may take a few minutes for everyone to finish. The next session will become available once everyone is ready. Thank you for your patience.`
-
-                // document.getElementById('wait').style.display = 'block';
-
-                // $jq("#next").replaceWith(`<button type="button" id="next" disabled
-                //     onclick="next()"
-                //     value="next" class="btn btn-primary btn-lg continue">
-                //     Next <span class="glyphicon glyphicon-arrow-right"></span>
-                //     </button>`);
             }
 
 
@@ -1001,14 +954,6 @@
                 event.preventDefault();
                 event.returnValue = "Are you sure you want to leave? The task is incomplete.";
             }
-
-            // if (window.interaction_type === "survey") {
-            //     let engagement_sa = document.getElementById("engagement short answer")
-            //     if (engagement_sa) localStorage.setItem("engagement_input", engagement_sa.value);
-            //     else localStorage.setItem("engagement_input", '');
-            //     console.log("Setting engagement short answer....");
-            //     console.log("engagement_input", engagement_sa);
-            // }
 
             if (window.interaction_type !== "survey") {
                 let engagement_sa = document.getElementById("engagement short answer")
@@ -1085,21 +1030,6 @@
                         Next <span class="glyphicon glyphicon-arrow-right"></span>
                         </button>` );
                 }
-                
-                // // Next button logic (wait for all members to finish)
-                // console.log('End of round?', window.last_in_round, '. All members EOR?',  window.joint_EOR);
-                // if (window.last_in_round && !window.joint_EOR) {
-                //     // socket.emit("reached EOR");
-                //     // console.log("I finished my last test in the round!");
-                //     document.getElementById('wait').style.display = 'block';
-                // }
-                // else {
-                //     $jq("#next").replaceWith(`<button type="button" id="next"
-                //         onclick="next()"
-                //         value="next" class="btn btn-primary btn-lg continue">
-                //         Next <span class="glyphicon glyphicon-arrow-right"></span>
-                //         </button>` );
-                // }
 
 
             }
@@ -2221,11 +2151,6 @@
                 }
             }
             
-            
-            function mousePressed(event){
-                trackActivityFrom(event);
-            }
-
 
             // Debounce the keyPressed function
             var debouncedKeyPressed = _.debounce(keyPressed, 100); // limit consecutive keystrokes
@@ -2234,46 +2159,29 @@
             // Create a new function that calls both functions
             function keydownHandler(event) {
                 filterMovementKeys(event);
-                trackActivityFrom(event);
                 debouncedKeyPressed(event);
             }
 
-            function trackActivityFrom(event) {
-                // Log and update last_activity (optional)
-                localStorage.setItem("last_activity", event.type);
-                localStorage.setItem("last_activity_time", Date.now());
-                resetInactivityTimer();
-            }
             
             document.addEventListener('keydown', keydownHandler);
 
-            //Check for other sources of inputs as well; just for activity tracking
-            document.addEventListener("keyup", trackActivityFrom);
+            //////////
+            // function mousePressed(event){
+            //     trackActivityFrom(event);
+            // }
 
-            // Mouse
-            document.addEventListener("click", trackActivityFrom);
+            // // Debounce the mousePressed function
+            // var debouncedMousePressed = _.debounce(mousePressed, 100); // limit consecutive clicks
 
-            // Touchscreen (iOS, Android)
-            document.addEventListener("touchstart", trackActivityFrom);
+            // // Create a new function that calls both functions
+            // function mousedownHandler(event) {
+            //     // Call other necessary logic, if applicable
+            //     debouncedMousePressed(event);
+            // }
 
-            // Pointer (unified for mouse, pen, touch)
-            document.addEventListener("pointerdown", trackActivityFrom);
-
-            // Input fields (mobile keyboards)
-            document.addEventListener("input", trackActivityFrom);
-
-
-            // Debounce the mousePressed function
-            var debouncedMousePressed = _.debounce(mousePressed, 100); // limit consecutive clicks
-
-            // Create a new function that calls both functions
-            function mousedownHandler(event) {
-                // Call other necessary logic, if applicable
-                debouncedMousePressed(event);
-            }
-
-            // Add the mousedown listener
-            document.addEventListener('mousedown', mousedownHandler);
+            // // Add the mousedown listener
+            // document.addEventListener('mousedown', mousedownHandler);
+            ///////////
 
             // Helpful for canvas detection for keyboard input
             window.onload = () => {

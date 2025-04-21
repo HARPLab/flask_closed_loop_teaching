@@ -429,10 +429,13 @@ def disconnect_user(data):
 
     # If user is still connected and authenticated, log them out
     if current_user.is_authenticated:
-        if current_user.last_activity is not None:
-            last_activity_time_seconds = float(data["last_activity_time"])/1000
-            current_user.last_activity.append(data["last_activity"])
-            current_user.last_activity_time.append(datetime.fromtimestamp(last_activity_time_seconds))
+        # if current_user.last_activity is not None:
+            # last_activity_time_seconds = float(data["last_activity_time"])/1000
+            # current_user.last_activity.append(data["last_activity"])
+            # current_user.last_activity_time.append(datetime.fromtimestamp(last_activity_time_seconds))
+
+        current_user.last_activity = data["activity_log"]
+
 
         current_user.set_curr_progress("removed_due_to_inactivity")
         
@@ -912,16 +915,20 @@ def settings(data):
             current_kc_id = current_round.kc_id
         
         ## SAVE USER ACTIVITY DATA
-        if data["last_activity"] is not None:
-            last_activity_time_seconds = float(data["last_activity_time"])/1000
-            current_user.last_activity.append(data["last_activity"])
-            current_user.last_activity_time.append(datetime.fromtimestamp(last_activity_time_seconds))
+        # if data["last_activity"] is not None:
+            # last_activity_time_seconds = float(data["last_activity_time"])/1000
+            # current_user.last_activity.append(data["last_activity"])
+            # current_user.last_activity_time.append(datetime.fromtimestamp(last_activity_time_seconds))
 
-            flag_modified(current_user, "last_activity")
-            flag_modified(current_user, "last_activity_time")
-            update_database(current_user, 'Current user last activity: ' + current_user.last_activity[-1])
-            db.session.refresh(current_user)
+            # flag_modified(current_user, "last_activity")
+            # flag_modified(current_user, "last_activity_time")
+            # update_database(current_user, 'Current user last activity: ' + current_user.last_activity[-1])
+            # db.session.refresh(current_user)
 
+        current_user.last_activity = data["activity_log"]
+        flag_modified(current_user, "last_activity")
+        update_database(current_user, 'Current user last activity: ' + current_user.last_activity[-1])
+        db.session.refresh(current_user)
 
         ## SAVE TRIAL DATA TO DATABASE                    
         if data["movement"] == "next":
