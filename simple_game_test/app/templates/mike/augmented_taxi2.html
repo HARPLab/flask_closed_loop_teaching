@@ -242,7 +242,8 @@
 
     <h2 id="debug"></h2><br><br><br>
     <div id="game_container" class="row justify-content-around">
-        <canvas id="game" width="850" height="500"></canvas>
+        <canvas id="game" width="850" height="500" tabindex="0"></canvas> 
+        <!-- tabindex="0" allows it to receive keyboard focus. -->
             <div id="table_controlinfo"></div>
     </div>
 
@@ -354,58 +355,62 @@
 
         // Function to reset the inactivity timer
         function resetInactivityTimer() {
-            // Clear any existing timer
-            clearTimeout(inactivityTimeout);
-            clearInterval(timerDisplayInterval);
-            timerSeconds = inactivityLimit_s; // Reset the elapsed time
-            updateTimerDisplay(); // Update the display immediately
-            
-            console.log("Resetting inactivity timer...");
-            
-            // Set a new timer
-            inactivityTimeout = setTimeout(() => {
-                // Notify the server to disconnect the user
-                console.log("User inactive for ${inactivityLimit_min} minutes. Disconnecting...");
-                final_data = populateData()
-                isKickedOut = true;
-                // Show the alert first
-                alert("You have been disconnected due to inactivity. You are being removed from the study.");
-
-                // Stop the audio and hide the flash message (if active)
-                if (audio_new_lesson) {
-                    audio_new_lesson.pause();
-                    audio_new_lesson.currentTime = 0;
-                }
-                document.getElementById("flashMessage").style.display = "none";
+            try {
+                // Clear any existing timer
+                clearTimeout(inactivityTimeout);
+                clearInterval(timerDisplayInterval);
+                timerSeconds = inactivityLimit_s; // Reset the elapsed time
+                updateTimerDisplay(); // Update the display immediately
                 
-                socket.emit("disconnect_user", final_data);
-            }, inactivityLimit);
+                console.log("Resetting inactivity timer...");
+                
+                // Set a new timer
+                inactivityTimeout = setTimeout(() => {
+                    // Notify the server to disconnect the user
+                    console.log("User inactive for ${inactivityLimit_min} minutes. Disconnecting...");
+                    final_data = populateData()
+                    isKickedOut = true;
+                    // Show the alert first
+                    alert("You have been disconnected due to inactivity. You are being removed from the study.");
 
-             // Start the timer display interval
-            timerDisplayInterval = setInterval(() => {
-                timerSeconds--;
-                updateTimerDisplay();
-
-                // Apply flashing effect for the last 20 seconds
-                const timerDisplay = document.getElementById("timer-display");
-                if (timerSeconds <= 20) {
-                    timerDisplay.classList.add("flash-timer");
-                    if (audio_timer){
-                        audio_timer.play(); // Play the audio for the last 20 seconds
+                    // Stop the audio and hide the flash message (if active)
+                    if (audio_new_lesson) {
+                        audio_new_lesson.pause();
+                        audio_new_lesson.currentTime = 0;
                     }
-                } else {
-                    timerDisplay.classList.remove("flash-timer");
-                    if (audio_timer){
-                        audio_timer.pause(); // Pause the audio if not in the last 20 seconds
-                        audio_timer.currentTime = 0; // Reset audio to start position
+                    document.getElementById("flashMessage").style.display = "none";
+                    
+                    socket.emit("disconnect_user", final_data);
+                }, inactivityLimit);
+
+                // Start the timer display interval
+                timerDisplayInterval = setInterval(() => {
+                    timerSeconds--;
+                    updateTimerDisplay();
+
+                    // Apply flashing effect for the last 20 seconds
+                    const timerDisplay = document.getElementById("timer-display");
+                    if (timerSeconds <= 20) {
+                        timerDisplay.classList.add("flash-timer");
+                        if (audio_timer){
+                            audio_timer.play(); // Play the audio for the last 20 seconds
+                        }
+                    } else {
+                        timerDisplay.classList.remove("flash-timer");
+                        if (audio_timer){
+                            audio_timer.pause(); // Pause the audio if not in the last 20 seconds
+                            audio_timer.currentTime = 0; // Reset audio to start position
+                        }
                     }
-                }
 
 
-                if (timerSeconds <= 0) {
-                    clearInterval(timerDisplayInterval); // Stop the interval once it reaches zero
-                }
-            }, 1000);
+                    if (timerSeconds <= 0) {
+                        clearInterval(timerDisplayInterval); // Stop the interval once it reaches zero
+                    }
+                }, 1000);
+            } catch (error) {
+                console.error("Error in resetInactivityTimer:", error);
+            }
 
         }
 
@@ -2060,12 +2065,7 @@
                 var translate_draw = 0;
             }
 
-            function keyPressed(event){
-                resetInactivityTimer();
-                console.log("key pressed: ", event.key, '. Time: ', Date.now() + performance.now());
-                localStorage.setItem("last_activity", event.key);
-                localStorage.setItem("last_activity_time", Date.now() + performance.now());
-                
+            function keyPressed(event){               
                 if (mdp_parameters.tag == -2) {
                     //training case, agent & human
                     if (event.keyCode == 32) {
@@ -2223,10 +2223,7 @@
             
             
             function mousePressed(event){
-                resetInactivityTimer();
-                console.log("mouse pressed: ", event.key, '. Time: ', Date.now() + performance.now());
-                localStorage.setItem("last_activity", "mouse");
-                localStorage.setItem("last_activity_time", Date.now() + performance.now());
+                trackActivityFrom(event);
             }
 
 
@@ -2237,10 +2234,33 @@
             // Create a new function that calls both functions
             function keydownHandler(event) {
                 filterMovementKeys(event);
+                trackActivityFrom(event);
                 debouncedKeyPressed(event);
+            }
+
+            function trackActivityFrom(event) {
+                // Log and update last_activity (optional)
+                localStorage.setItem("last_activity", event.type);
+                localStorage.setItem("last_activity_time", Date.now());
+                resetInactivityTimer();
             }
             
             document.addEventListener('keydown', keydownHandler);
+
+            //Check for other sources of inputs as well; just for activity tracking
+            document.addEventListener("keyup", trackActivityFrom);
+
+            // Mouse
+            document.addEventListener("click", trackActivityFrom);
+
+            // Touchscreen (iOS, Android)
+            document.addEventListener("touchstart", trackActivityFrom);
+
+            // Pointer (unified for mouse, pen, touch)
+            document.addEventListener("pointerdown", trackActivityFrom);
+
+            // Input fields (mobile keyboards)
+            document.addEventListener("input", trackActivityFrom);
 
 
             // Debounce the mousePressed function
@@ -2255,16 +2275,23 @@
             // Add the mousedown listener
             document.addEventListener('mousedown', mousedownHandler);
 
-
+            // Helpful for canvas detection for keyboard input
+            window.onload = () => {
+                const canvas = document.getElementById("game");
+                if (canvas) {
+                    canvas.focus(); // helpful for keyboard detection
+                }
+            };
 
             start_screen();
+
+            // regain canvas focus
+            canvas.addEventListener("mousedown", () => canvas.focus());
+            canvas.addEventListener("touchstart", () => canvas.focus());
+
             canvas.addEventListener('click', draw);
             context.restore();
             return "finished execution";
-
-            
-
-
 
         }   
         

@@ -597,7 +597,7 @@ def join_group():
     """ 
 
     ret = {}
-    cond_list = ["individual_belief_low", "individual_belief_high", "common_belief", "joint_belief"]
+    cond_list = ["individual_belief_low", "common_belief", "individual_belief_high", "joint_belief"]
     domain_list = [["at", "sb"], ["sb", "at"]]
 
     if QUICK_DEBUG_FLAG:
