@@ -83,6 +83,7 @@ QUICK_DEBUG_FLAG = False
 # Timeout for reconnection (in seconds)
 RECONNECT_TIMEOUT = 150  # Change this to the desired time
 MAX_ITERATIONS = 500
+GROUP_JOIN_THRESHOLD = 1800
 
 # List to track disconnected users
 disconnected_users = {}  # Stores user ID, disconnect times, and reconnect times
@@ -634,8 +635,27 @@ def join_group():
             num_active_members = open_group.num_active_members
             status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group:', 'Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
 
+            # Check if any existing members joined more than 30 minutes ago
+            current_time = datetime.datetime.now()
+            create_new_group = False
 
-        if num_active_members == 0 or num_active_members == params['team_size']: # if group is full or empty, create a new group
+            for timestamp_str in open_group.join_timestamps:
+                if timestamp_str is not None:
+                    # Parse the timestamp string back to datetime
+                    try:
+                        timestamp = datetime.datetime.strptime(timestamp_str, "%y-%m-%d-%H-%M-%S")
+                        time_diff = current_time - timestamp
+                        if time_diff.total_seconds() > GROUP_JOIN_THRESHOLD:  # 30 minutes = 1800 seconds
+                            create_new_group = True
+                            break
+                    except (ValueError, TypeError):
+                        break
+        else:
+            create_new_group = True
+                
+
+
+        if create_new_group or num_active_members == 0 or num_active_members == params['team_size']: # if group is full or empty, create a new group
             status_print('Group:', current_user.group, 'User:', current_user.id, 'No group yet.. Creating one...')
             new_group_entry = Group(
                 experimental_condition=cond_list[condition_index],
@@ -649,6 +669,7 @@ def join_group():
                 num_members = params['team_size'],
                 members_EOR = [False for i in range(params['team_size'])],
                 members_last_test = [False for i in range(params['team_size'])],
+                join_timestamps = [None for i in range(params['team_size'])],  # Add timestamps array
                 )
             
             # with db_lock:
@@ -658,11 +679,15 @@ def join_group():
             new_group = db.session.query(Group).order_by(Group.id.desc()).first()
             current_user.group = new_group.id
 
+            current_time = datetime.datetime.now()
+            new_group.join_timestamps[0] = current_time.strftime("%y-%m-%d-%H-%M-%S")
+
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = new_group.groups_push(current_user.username, current_user.id)
             flag_modified(new_group, "members")
             flag_modified(new_group, "member_user_ids")
             flag_modified(new_group, "members_statuses")
             flag_modified(new_group, "num_active_members")
+            flag_modified(new_group, "join_timestamps")
             status_print('Group:', current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
             status_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
             num_active_members = 1
@@ -672,10 +697,16 @@ def join_group():
         else:
             status_print('Group:', current_user.group, 'User:', current_user.id, 'Adding to existing group')
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
+            
+            current_time = datetime.datetime.now()
+            new_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
+            
             flag_modified(open_group, "members")
             flag_modified(open_group, "member_user_ids")
             flag_modified(open_group, "members_statuses")
             flag_modified(open_group, "num_active_members")
+            flag_modified(new_group, "join_timestamps")
+
             current_user.group = open_group.id
             num_active_members += 1
             status_print('Group:', current_user.group, 'User:', current_user.id, 'Group id:', open_group.id, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
@@ -707,36 +738,36 @@ def join_group():
 
 
 
-def rejoin_group():
+# def rejoin_group():
 
-    # check if current user has a group
-    log_print('Rejoining group.... User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group)
+#     # check if current user has a group
+#     log_print('Rejoining group.... User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group)
 
-    if current_user.group is not None:
-        # get the group
-        group_to_rejoin = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+#     if current_user.group is not None:
+#         # get the group
+#         group_to_rejoin = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
 
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Group to rejoin:', 'Group id:', group_to_rejoin.id, 'Group members:', group_to_rejoin.members, 'Group mem ids:', group_to_rejoin.member_user_ids, 'Group status:', group_to_rejoin.members_statuses, 'Group experimental condition:', group_to_rejoin.experimental_condition)
+#         log_print('Group:', current_user.group, 'User:', current_user.id, 'Group to rejoin:', 'Group id:', group_to_rejoin.id, 'Group members:', group_to_rejoin.members, 'Group mem ids:', group_to_rejoin.member_user_ids, 'Group status:', group_to_rejoin.members_statuses, 'Group experimental condition:', group_to_rejoin.experimental_condition)
         
-        user_status = group_to_rejoin.members_statuses[current_user.group_code]
+#         user_status = group_to_rejoin.members_statuses[current_user.group_code]
 
-        # check if current user is in the group
-        if user_status != 'joined':
+#         # check if current user is in the group
+#         if user_status != 'joined':
             
-            # add the user to the group
-            _, current_user.group_code, current_user.domain_1, current_user.domain_2 = group_to_rejoin.groups_push_again(current_user.username, current_user.id)
-            flag_modified(group_to_rejoin, "members_statuses")
-            flag_modified(group_to_rejoin, "num_active_members")
-            # update the database
-            update_database(group_to_rejoin, 'Member rejoined group')
-            # join the room
-            join_room('room_'+ str(current_user.group))
-            log_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
+#             # add the user to the group
+#             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = group_to_rejoin.groups_push_again(current_user.username, current_user.id)
+#             flag_modified(group_to_rejoin, "members_statuses")
+#             flag_modified(group_to_rejoin, "num_active_members")
+#             # update the database
+#             update_database(group_to_rejoin, 'Member rejoined group')
+#             # join the room
+#             join_room('room_'+ str(current_user.group))
+#             log_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
 
-            # emit the group joined signal
-            socketio.emit("group joined", {"num_members":group_to_rejoin.num_active_members, "max_num_members": group_to_rejoin.num_members, "room_name": 'room_'+ str(current_user.group)}, to='room_'+ str(current_user.group))
+#             # emit the group joined signal
+#             socketio.emit("group joined", {"num_members":group_to_rejoin.num_active_members, "max_num_members": group_to_rejoin.num_members, "room_name": 'room_'+ str(current_user.group)}, to='room_'+ str(current_user.group))
         
-    return True
+#     return True
 
 
 
