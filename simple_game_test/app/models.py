@@ -201,6 +201,9 @@ class Group(db.Model):
 
     curr_progress =  db.Column(db.PickleType, default="domain_1")
 
+    join_timestamps = db.Column(db.PickleType, default=[])
+    
+
 
     def groups_all_EOR(self):
         EOR_list = []
