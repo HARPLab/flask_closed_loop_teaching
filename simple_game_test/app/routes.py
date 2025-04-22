@@ -703,7 +703,9 @@ def join_group():
             status_print('Group:', current_user.group, 'User:', current_user.id, 'Group timestamps:', open_group.join_timestamps, 'Adding to existing group')
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
             
-            status_print('Retrieved group domains...')
+            status_print('Updated group data...')
+            status_print('Group:', current_user.group, 'member_user_ids:', open_group.member_user_ids, 'timestamps:', open_group.join_timestamps, 'Adding to existing group')
+
 
             current_time = datetime.now()
             status_print('current_user.group_code:', current_user.group_code, 'type:', type(current_user.group_code))
@@ -716,7 +718,7 @@ def join_group():
             flag_modified(open_group, "member_user_ids")
             flag_modified(open_group, "members_statuses")
             flag_modified(open_group, "num_active_members")
-            flag_modified(new_group, "join_timestamps")
+            flag_modified(open_group, "join_timestamps")
 
             current_user.group = open_group.id
             num_active_members += 1
