@@ -636,7 +636,7 @@ def join_group():
             status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Joined timestamps:', open_group.join_timestamps, 'Group experimental condition:', open_group.experimental_condition)
 
             # Check if any existing members joined more than 30 minutes ago
-            current_time = datetime.datetime.now()
+            current_time = datetime.now()
             create_new_group = False
 
             status_print('New group flag initialized to false...')
@@ -646,7 +646,7 @@ def join_group():
                 if timestamp_str is not None:
                     # Parse the timestamp string back to datetime
                     try:
-                        timestamp = datetime.datetime.strptime(timestamp_str, "%y-%m-%d-%H-%M-%S")
+                        timestamp = datetime.strptime(timestamp_str, "%y-%m-%d-%H-%M-%S")
                         time_diff = current_time - timestamp
                         status_print('Timediff: ', time_diff)
                         if time_diff.total_seconds() > GROUP_JOIN_THRESHOLD:  # 30 minutes = 1800 seconds
@@ -689,7 +689,7 @@ def join_group():
             status_print('New group retrieved...')
 
 
-            current_time = datetime.datetime.now()
+            current_time = datetime.now()
             new_group.join_timestamps[0] = current_time.strftime("%y-%m-%d-%H-%M-%S")
 
             status_print('New group rettime stamps added...')
@@ -710,7 +710,7 @@ def join_group():
             status_print('Group:', current_user.group, 'User:', current_user.id, 'Adding to existing group')
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
             
-            current_time = datetime.datetime.now()
+            current_time = datetime.now()
             new_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
             
             flag_modified(open_group, "members")
