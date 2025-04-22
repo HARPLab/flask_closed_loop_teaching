@@ -706,7 +706,7 @@ def join_group():
             status_print('Retrieved group domains...')
 
             current_time = datetime.now()
-            print('current_user.group_code:', current_user.group_code, 'type:', type(current_user.group_code))
+            status_print('current_user.group_code:', current_user.group_code, 'type:', type(current_user.group_code))
             
             new_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
 
