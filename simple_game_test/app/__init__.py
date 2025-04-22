@@ -77,7 +77,7 @@ print('Socketio initialized....')
 # if __name__ == '__main__':
 # 	socketio.run(app)
 
-from app import models
+from app import routes, models
 print('Models loaded....')
 
 # print("Final App url map after socketio initialization.", app.url_map)
