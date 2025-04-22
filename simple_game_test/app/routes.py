@@ -700,7 +700,7 @@ def join_group():
             update_database(new_group, 'Member to new group')
             
         else:
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'Adding to existing group')
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Group timestamps:', open_group.join_timestamps, 'Adding to existing group')
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
             
             status_print('Retrieved group domains...')
@@ -708,7 +708,7 @@ def join_group():
             current_time = datetime.now()
             status_print('current_user.group_code:', current_user.group_code, 'type:', type(current_user.group_code))
             
-            new_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
+            open_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
 
             status_print('Timestamps added....')
             
