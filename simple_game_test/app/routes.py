@@ -675,24 +675,17 @@ def join_group():
                 members_last_test = [False for i in range(params['team_size'])],
                 join_timestamps = [None for i in range(params['team_size'])],  # Add timestamps array
                 )
-            status_print('New group entry created...')
 
             # with db_lock:
             db.session.add(new_group_entry)
             db.session.commit()
-
-            status_print('New group db committed...')
                         
             new_group = db.session.query(Group).order_by(Group.id.desc()).first()
             current_user.group = new_group.id
 
-            status_print('New group retrieved...')
-
-
             current_time = datetime.now()
             new_group.join_timestamps[0] = current_time.strftime("%y-%m-%d-%H-%M-%S")
 
-            status_print('New group rettime stamps added...')
 
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = new_group.groups_push(current_user.username, current_user.id)
             flag_modified(new_group, "members")
@@ -710,8 +703,13 @@ def join_group():
             status_print('Group:', current_user.group, 'User:', current_user.id, 'Adding to existing group')
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
             
+            status_print('Retrieved group domains...')
+
             current_time = datetime.now()
+            print('current_user.group_code:', current_user.group_code, 'type:', type(current_user.group_code))
+            
             new_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
+
             
             flag_modified(open_group, "members")
             flag_modified(open_group, "member_user_ids")
