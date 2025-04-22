@@ -633,7 +633,7 @@ def join_group():
         
         if open_group is not None:
             num_active_members = open_group.num_active_members
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Joined timestamps:', open_group.join_timestamps, 'Group experimental condition:', open_group.experimental_condition)
 
             # Check if any existing members joined more than 30 minutes ago
             current_time = datetime.datetime.now()
