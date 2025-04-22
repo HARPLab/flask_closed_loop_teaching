@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from app import db, login
+# from app.extensions import db, login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func
@@ -200,8 +201,7 @@ class Group(db.Model):
     domain_2 = db.Column(db.PickleType)
 
     curr_progress =  db.Column(db.PickleType, default="domain_1")
-
-    join_timestamps = db.Column(db.PickleType, default=[])
+    join_timestamps = db.Column(db.PickleType)
     
 
 

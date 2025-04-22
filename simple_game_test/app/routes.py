@@ -46,7 +46,7 @@ from datetime import date
 import matplotlib.pyplot as plt
 from threading import Lock
 
-print("App url map:", app.url_map)
+# print("App url map:", app.url_map)
 
 db_lock = Lock()
 disconnected_users_lock = Lock()

@@ -10,12 +10,15 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+
+# from app.extensions import db, login, migrate  # initialize from extensions to avoid circular imports with models.py
+
 from config import Config
 
 import logging, os
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-
+print('Loaded packages....')
 
 
 
@@ -25,10 +28,19 @@ app.config.from_object(Config)
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1) # Apply ProxyFix middleware for subroutes in externalnginx server
 
-
+# When db is created in init.py
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
+
+# When db is created in extensions.py
+# db.init_app(app)
+# migrate.init_app(app, db)
+# login.init_app(app)
+
+print('Db, migrate, login initialized....')
+
+
 login.login_view = "login"
 
 
@@ -60,16 +72,25 @@ login.login_view = "login"
 
 socketio = SocketIO(app, ping_timeout=60, ping_interval=25)
 
-
+print('Socketio initialized....')
 
 # if __name__ == '__main__':
 # 	socketio.run(app)
 
-from app import routes, models
+from app import models
+print('Models loaded....')
 
 # print("Final App url map after socketio initialization.", app.url_map)
 
+# # migrate after models import
+# migrate.init_app(app, db)
+# print('Migrate initialized....')
 
+# login.init_app(app)
+# print('Login initialized....')
+
+
+####################################################
 # comment lines below when creating the database. uncomment lines below when running the app
 from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 
@@ -77,45 +98,49 @@ from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 pool_size = min(os.cpu_count(), 64)
 print(f"Using {pool_size} processes")
 
-# ## Initialize the multiprocessing tools
+# ## Lock with multiprocessing tools (when using flask default server)
 from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
 manager = Manager()
 lock = manager.Lock()
 pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
 
+print('Lock initialized....')
 
-# # # Lock with threading
+# ## Lock with threading (when using gunicorn/gevent)
 # from threading import Lock
 # from gevent.pool import Pool
 # lock = Lock()
 # pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
 
 
-
 logging.basicConfig(level=logging.DEBUG)
 
-rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
-if rows == 0:
-	for condition in ONLINE_CONDITIONS:
-		no_feedback_trial = condition.index("no_feedback")
-		feedback_trial = 1 - no_feedback_trial
-		feedback_type = condition[feedback_trial]
-		trials = condition
-		db.session.add(models.OnlineCondition(trials=trials, no_feedback_trial=no_feedback_trial, feedback_trial=feedback_trial, feedback_type=feedback_type, count=0))
-	for condition in IN_PERSON_CONDITIONS:
-		trials = condition
-		db.session.add(models.InPersonCondition(trials=trials, trial_1=condition[0], trial_2=condition[1], trial_3=condition[2], trial_4=condition[3], trial_5=condition[4], count=0))
+with app.app_context():
+	rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
+	if rows == 0:
+		for condition in ONLINE_CONDITIONS:
+			no_feedback_trial = condition.index("no_feedback")
+			feedback_trial = 1 - no_feedback_trial
+			feedback_type = condition[feedback_trial]
+			trials = condition
+			db.session.add(models.OnlineCondition(trials=trials, no_feedback_trial=no_feedback_trial, feedback_trial=feedback_trial, feedback_type=feedback_type, count=0))
+		for condition in IN_PERSON_CONDITIONS:
+			trials = condition
+			db.session.add(models.InPersonCondition(trials=trials, trial_1=condition[0], trial_2=condition[1], trial_3=condition[2], trial_4=condition[3], trial_5=condition[4], count=0))
 
-# # remove the 3 lines below when starting the second round of trials
-# db.session.query(models.Round).delete()
-# db.session.query(models.Group).delete()
+	print('Conditions initialized....')
 
-old_group = db.session.query(models.Group).first()
-if old_group is None:
-	group = models.Group(user_ids=[])
-	db.session.add(group)
 
-db.session.commit()
+	old_group = db.session.query(models.Group).first()
+	if old_group is None:
+		group = models.Group(user_ids=[])
+		db.session.add(group)
+
+	print('Groups initialized....')
+
+	db.session.commit()
+
+print('Db committed....')
 
 # if __name__ == "__main__" and os.environ.get("FLASK_ENV") == "development":
 #     socketio.run(app, debug=True, host="127.0.0.1", port=5000, use_reloader=False)
