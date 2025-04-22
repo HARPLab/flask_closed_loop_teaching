@@ -633,7 +633,7 @@ def join_group():
         
         if open_group is not None:
             num_active_members = open_group.num_active_members
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group:', 'Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
 
             # Check if any existing members joined more than 30 minutes ago
             current_time = datetime.datetime.now()
@@ -654,7 +654,7 @@ def join_group():
             create_new_group = True
                 
 
-
+        
         if create_new_group or num_active_members == 0 or num_active_members == params['team_size']: # if group is full or empty, create a new group
             status_print('Group:', current_user.group, 'User:', current_user.id, 'No group yet.. Creating one...')
             new_group_entry = Group(
@@ -671,16 +671,24 @@ def join_group():
                 members_last_test = [False for i in range(params['team_size'])],
                 join_timestamps = [None for i in range(params['team_size'])],  # Add timestamps array
                 )
-            
+            status_print('New group entry created...')
+
             # with db_lock:
             db.session.add(new_group_entry)
             db.session.commit()
+
+            status_print('New group db committed...')
                         
             new_group = db.session.query(Group).order_by(Group.id.desc()).first()
             current_user.group = new_group.id
 
+            status_print('New group retrieved...')
+
+
             current_time = datetime.datetime.now()
             new_group.join_timestamps[0] = current_time.strftime("%y-%m-%d-%H-%M-%S")
+
+            status_print('New group rettime stamps added...')
 
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = new_group.groups_push(current_user.username, current_user.id)
             flag_modified(new_group, "members")
@@ -731,7 +739,7 @@ def join_group():
         join_room('room_'+ str(current_user.group))
 
         # if room is None then it gets sent to everyone
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
+        status_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
         socketio.emit("group joined", {"num_members":num_active_members, "max_num_members": params['team_size'], "room_name": 'room_'+ str(current_user.group)}, to='room_'+ str(current_user.group))
         return
 
