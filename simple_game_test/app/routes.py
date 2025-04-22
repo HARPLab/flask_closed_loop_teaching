@@ -639,6 +639,8 @@ def join_group():
             current_time = datetime.datetime.now()
             create_new_group = False
 
+            status_print('New group flag initialized to false...')
+
             for timestamp_str in open_group.join_timestamps:
                 status_print('Timestamp: ', timestamp_str)
                 if timestamp_str is not None:
