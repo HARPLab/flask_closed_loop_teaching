@@ -710,6 +710,7 @@ def join_group():
             
             new_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
 
+            status_print('Timestamps added....')
             
             flag_modified(open_group, "members")
             flag_modified(open_group, "member_user_ids")
