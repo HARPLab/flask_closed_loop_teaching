@@ -640,11 +640,13 @@ def join_group():
             create_new_group = False
 
             for timestamp_str in open_group.join_timestamps:
+                status_print('Timestamp: ', timestamp_str)
                 if timestamp_str is not None:
                     # Parse the timestamp string back to datetime
                     try:
                         timestamp = datetime.datetime.strptime(timestamp_str, "%y-%m-%d-%H-%M-%S")
                         time_diff = current_time - timestamp
+                        status_print('Timediff: ', time_diff)
                         if time_diff.total_seconds() > GROUP_JOIN_THRESHOLD:  # 30 minutes = 1800 seconds
                             create_new_group = True
                             break
