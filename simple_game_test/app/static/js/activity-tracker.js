@@ -36,8 +36,8 @@
     
     // Key mapping to save space
     const keyMap = {
-      'ArrowLeft': '←', 'ArrowRight': '→', 'ArrowUp': '↑', 'ArrowDown': '↓',
-      'Enter': '⏎', 'Tab': '⇥', 'Escape': 'Esc', 'Backspace': '⌫', 'Delete': 'Del',
+      'ArrowLeft': 'Left', 'ArrowRight': 'Right', 'ArrowUp': 'Up', 'ArrowDown': 'Down',
+      'Enter': 'Enter', 'Tab': 'Tab', 'Escape': 'Esc', 'Backspace': 'BckSpc', 'Delete': 'Del',
       'Home': 'Hm', 'End': 'End', 'PageUp': 'PgU', 'PageDown': 'PgD',
       'Control': 'Ctrl', 'Alt': 'Alt', 'Shift': 'Shft', 'Meta': 'Met',
       ' ': 'Spc', 'Space': 'Spc'
