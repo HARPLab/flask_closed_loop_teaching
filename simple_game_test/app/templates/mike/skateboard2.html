@@ -370,7 +370,7 @@
         // Set up tracker early in your script
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize the activity tracker
-            const activityTracker = ActivityTracker.init({
+            activityTracker = ActivityTracker.init({
             maxLogEntries: 500,
             storageKey: 'skateboard_game_activity'
             });    
