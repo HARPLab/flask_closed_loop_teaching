@@ -240,10 +240,6 @@
       // Browser navigation events
       window.addEventListener('beforeunload', e => {
         logActivity('beforeunload', {url: window.location.href});
-        if (localStorage.getItem("movement") === "false") {
-          e.preventDefault();
-          e.returnValue = "Are you sure you want to leave? The task is incomplete.";
-        }
       });
       
       window.addEventListener('unload', () => logActivity('unload', {url: window.location.href}));
