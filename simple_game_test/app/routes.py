@@ -59,7 +59,7 @@ from flask_login import logout_user
 
 
 
-with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') as f:
+with open(os.path.join(os.path.dirname(__file__), 'user_study_dict_extended.json'), 'r') as f:
     default_rounds = json.load(f)
 
 # rule_str = None
@@ -2149,7 +2149,9 @@ def retrieve_next_round(params, cur_group) -> dict:
             
             for td in test_difficulty:
                 for mdp_list in default_rounds[mdp_class]["final test"][td]:
+                    print(mdp_list)
                     for mdp_dict in mdp_list:
+                        print(mdp_dict)
                         if final_test_id in final_tests_to_add:
                             status_print('Adding final test:', final_test_id, 'Difficulty:', td)
                             games.append({"interaction type": "final test", "params": mdp_dict})
