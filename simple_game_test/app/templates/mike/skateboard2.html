@@ -299,6 +299,7 @@
         let timerDisplayInterval; // Store the interval for updating the timer display
         let timerSeconds = 0; // Track elapsed time in seconds
         let isKickedOut = false; // Track if the user has been kicked out due to inactivity
+        let isWaitingState = false; // Global waiting state flag
 
         // hide the game instructions and preamble and show a loading screen while waiting to receive the necessary game data
         document.getElementById('instructions').style.display = 'none';
@@ -371,17 +372,8 @@
             // Initialize the activity tracker
             const activityTracker = ActivityTracker.init({
             maxLogEntries: 500,
-            inactivityLimit: inactivityLimit_s * 1000, // Convert your existing limit to ms
-            storageKey: 'taxi_game_activity'
-            });
-
-        window.gameTracker = activityTracker;
-        window.gameTracker.setWaiting(false); // default
-
-
-        // // After initialization, set the reset timer function
-        // activityTracker.setResetTimerFunction(resetInactivityTimer);
-    
+            storageKey: 'skateboard_game_activity'
+            });    
     
         });
 
@@ -389,6 +381,13 @@
         // Function to reset the inactivity timer
         function resetInactivityTimer() {
             try {
+                
+                // Don't go into timer logic if in waiting state
+                if (isWaitingState) {
+                    console.log("In waiting state - not resetting timer");
+                    return;
+                }
+                
                 // Clear any existing timer
                 clearTimeout(inactivityTimeout);
                 clearInterval(timerDisplayInterval);
@@ -400,14 +399,7 @@
                 // Set a new timer
                 inactivityTimeout = setTimeout(() => {
                     // Notify the server to disconnect the user
-                    console.log(`User inactive for ${inactivityLimit_min} minutes. Disconnecting...`);
-                    
-                    // Log the inactivity event if tracker is available
-                    if (activityTracker) {
-                        activityTracker.log("inactive", {reason: "timeout"});
-                        activityTracker.setKickedOut(true);
-                    }
-                    
+                    console.log(`User inactive for ${inactivityLimit_min} minutes. Disconnecting...`);                    
                     final_data = populateData()
                     isKickedOut = true;
                     
@@ -493,7 +485,7 @@
             data["final_score_string"] = localStorage.getItem("final_score_string");
 
             // Add activity tracker data if available
-            if (window.gameTracker) {
+            if (activityTracker) {
                 try {
                     // Get activity log from localStorage
                     const activityLog = JSON.parse(localStorage.getItem("activity_log") || "[]");
@@ -521,14 +513,6 @@
             console.log("Set reward function weights: ", data["reward_ft_weights"])
             return data
         }
-
-
-        // socket.on("connect", function () {
-        //     data = populateData()
-        //     socket.emit("settings", data);
-        //     localStorage.setItem("settings emit flag", "true");
-        //     console.log("settings emit flag on connect", localStorage.getItem("settings emit flag"));
-        // });
 
 
         socket.on("connect", function () {
@@ -690,18 +674,6 @@
                 audio_new_lesson.loop = true;
                 audio_new_lesson.play();
             }
-
-            // // Add event listener for keypress to hide the message and stop the audio
-            // document.addEventListener('keydown', function() {
-            //     // Hide the flash message
-            //     flashMessage.style.display = 'none';
-                
-            //     // Stop the audio
-            //     audio.pause();
-            //     audio.currentTime = 0;  // Reset audio to start position
-
-            //     document.removeEventListener('keydown', arguments.callee);
-            // });
 
             document.addEventListener('keydown', handleKeydown);
 
@@ -955,16 +927,6 @@
 
 
             if (!window.domain_completed){
-                // if (window.last_test) {
-                //     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
-                //     document.getElementById('wait').style.display = 'block';
-                // }
-
-                // if (window.last_in_round) {
-                //     // document.getElementById('wait').innerHTML = "Please wait for the next session to be available.";
-                //     document.getElementById('wait').style.display = 'block';
-                // }
-
                 // hide the flash message
                 document.getElementById('flashMessage').style.display = 'none';
 
@@ -975,14 +937,6 @@
                 }
             }
         
-            
-            // // send data to server
-            // // if (localStorage.getItem("settings emit flag") == "false") {
-            // localStorage.setItem("settings emit flag", "true");
-            // console.log("settings emit flag next", localStorage.getItem("settings emit flag"));
-            // socket.emit("settings", data);
-            // // }
-
 
             // reset vars (in case trajectory was not completed)
             window.moves = [];
@@ -993,7 +947,10 @@
             if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
                 
                 loadingText.innerHTML = `Please wait until all members of your team have completed this stage before proceeding. It may take a few minutes for everyone to finish. The next session will become available once everyone is ready. Thank you for your patience.`
-                window.gameTracker.setWaiting(true);
+                isWaitingState = true;
+                // Clear any current timers
+                clearTimeout(inactivityTimeout);
+                clearInterval(timerDisplayInterval);
             }
 
 
@@ -1524,23 +1481,6 @@
                     }
                 }
 
-                // // sometimes the mdp_params does not contain all opt params, so do a simple check
-                // if (!same_traj_checked && !same_traj) {
-                //     if (window.moves.length == opt_moves.length){
-                //         same_traj = true;
-                //     }
-                // }
-
-                //console.log('skateboard2_' + mdp_parameters.test_difficulty + '_' + mdp_parameters.tag.toString());
-                //console.log(same_traj);
-
-                // // the two test demonstrations at each level of difficulty are always pairs of an even and odd number
-                // if (mdp_parameters.tag % 2 == 0) {
-                //     sessionStorage.setItem('skateboard2_' + mdp_parameters.test_difficulty + '_a', same_traj)
-                // }
-                // else {
-                //     sessionStorage.setItem('skateboard2_' + mdp_parameters.test_difficulty + '_b', same_traj)
-                // }
 
                 var it = window.interaction_type
                 if(it == "final test") {
@@ -2196,28 +2136,11 @@
             function keydownHandler(event) {
                 filterMovementKeys(event);
                 debouncedKeyPressed(event);
+                resetInactivityTimer(event);
             }
 
             document.addEventListener('keydown', keydownHandler);
 
-
-            
-            // //////////////////////
-            // function mousePressed(event){
-            //     trackActivityFrom(event);
-            // }
-            // // Debounce the mousePressed function
-            // var debouncedMousePressed = _.debounce(mousePressed, 100); // limit consecutive clicks
-
-            // // Create a new function that calls both functions
-            // function mousedownHandler(event) {
-            //     // Call other necessary logic, if applicable
-            //     debouncedMousePressed(event);
-            // }
-
-            // // Add the mousedown listener
-            // document.addEventListener('mousedown', mousedownHandler);
-            // //////////////////////
 
             // Helpful for canvas detection for keyboard input
             window.onload = () => {
