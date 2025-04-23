@@ -481,7 +481,7 @@
             if (activityTracker) {
                 try {
                     // Get activity log from localStorage
-                    const activityLog = JSON.parse(localStorage.getItem("activity_log") || "[]");
+                    const activityLog = JSON.parse(localStorage.getItem("taxi_game_activity") || "[]");
                     data["activity_log"] = JSON.stringify(activityLog)
                     console.log('Activity logged...')
                 } 
