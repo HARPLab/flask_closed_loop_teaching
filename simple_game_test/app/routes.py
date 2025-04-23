@@ -435,7 +435,10 @@ def disconnect_user(data):
             # current_user.last_activity.append(data["last_activity"])
             # current_user.last_activity_time.append(datetime.fromtimestamp(last_activity_time_seconds))
 
-        current_user.last_activity = data["activity_log"]
+        try:
+            current_user.last_activity = data["activity_log"]
+        except:
+            current_user.last_activity = ""
 
 
         current_user.set_curr_progress("removed_due_to_inactivity")
@@ -973,7 +976,7 @@ def settings(data):
             current_user.last_activity = ""
         
         flag_modified(current_user, "last_activity")
-        update_database(current_user, 'Current user last activity: ' + current_user.last_activity[-1])
+        update_database(current_user, 'Current user last activity')
         db.session.refresh(current_user)
 
         ## SAVE TRIAL DATA TO DATABASE                    
