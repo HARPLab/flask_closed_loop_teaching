@@ -49,6 +49,9 @@
   let inactivityTimeout = null;
   let isKickedOut = false;
   let resetTimerFunction = null;
+  let isWaitingState = false;
+  let activeTimers = new Set(); // Track all timers
+  
   
   // Format date as YY-MM-DD-HH-MM-SS
   function formatDate(date) {
