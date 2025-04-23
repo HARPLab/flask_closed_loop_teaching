@@ -354,16 +354,22 @@
         let activityTracker;
 
         // Set up tracker early in your script
-        window.addEventListener('DOMContentLoaded', function() {
-        // Initialize the activity tracker
-        activityTracker = ActivityTracker.init({
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the activity tracker
+            const activityTracker = ActivityTracker.init({
             maxLogEntries: 500,
             inactivityLimit: inactivityLimit_s * 1000, // Convert your existing limit to ms
-            isKickedOut: isKickedOut
-        });
+            storageKey: 'taxi_game_activity'
+            });
 
-        // After initialization, set the reset timer function
-        activityTracker.setResetTimerFunction(resetInactivityTimer);
+        window.gameTracker = activityTracker;
+        window.gameTracker.setWaiting(false); // default
+
+
+        // // After initialization, set the reset timer function
+        // activityTracker.setResetTimerFunction(resetInactivityTimer);
+    
+    
         });
         
 
@@ -465,7 +471,7 @@
             data["final_score_string"] = localStorage.getItem("final_score_string");
             
             // Add activity tracker data if available
-            if (activityTracker) {
+            if (window.gameTracker) {
                 try {
                     // Get activity log from localStorage
                     const activityLog = JSON.parse(localStorage.getItem("activity_log") || "[]");
@@ -914,6 +920,7 @@
             if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
                 
                 loadingText.innerHTML = `Please wait until all members of your team have completed this stage before proceeding. It may take a few minutes for everyone to finish. The next session will become available once everyone is ready. Thank you for your patience.`
+                window.gameTracker.setWaiting(true);
             }
 
 
@@ -1469,6 +1476,11 @@
             }
 
             function record_data(){
+                // Set the waiting state before recording data
+                if (window.gameTracker) {
+                    window.gameTracker.setWaiting(true);
+                }
+                
                 var end_time = performance.now();
 
                 // record whether the user got the optimal trajectory or not
@@ -1494,15 +1506,8 @@
                     }
                 }
 
-                // // sometimes the mdp_params does not contain all opt params, so do a simple check
-                // if (!same_traj_checked && !same_traj) {
-                //     if (window.moves.length == opt_moves.length){
-                //         same_traj = true;
-                //     }
-                // }
-
-                //console.log('augmented_taxi2_' + mdp_parameters.test_difficulty + '_' + mdp_parameters.tag.toString());
-                //console.log(same_traj);
+                // Make sure to keep this part to track the completed state
+                localStorage.setItem("game completed", "true");
 
                 var it = window.interaction_type
                 if(it == "final test") {

@@ -367,16 +367,22 @@
         let activityTracker;
 
         // Set up tracker early in your script
-        window.addEventListener('DOMContentLoaded', function() {
-        // Initialize the activity tracker
-        activityTracker = ActivityTracker.init({
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the activity tracker
+            const activityTracker = ActivityTracker.init({
             maxLogEntries: 500,
             inactivityLimit: inactivityLimit_s * 1000, // Convert your existing limit to ms
-            isKickedOut: isKickedOut
-        });
-        
-        // After initialization, set the reset timer function
-        activityTracker.setResetTimerFunction(resetInactivityTimer);
+            storageKey: 'taxi_game_activity'
+            });
+
+        window.gameTracker = activityTracker;
+        window.gameTracker.setWaiting(false); // default
+
+
+        // // After initialization, set the reset timer function
+        // activityTracker.setResetTimerFunction(resetInactivityTimer);
+    
+    
         });
 
 
@@ -487,7 +493,7 @@
             data["final_score_string"] = localStorage.getItem("final_score_string");
 
             // Add activity tracker data if available
-            if (activityTracker) {
+            if (window.gameTracker) {
                 try {
                     // Get activity log from localStorage
                     const activityLog = JSON.parse(localStorage.getItem("activity_log") || "[]");
@@ -987,14 +993,7 @@
             if ((localStorage.getItem("last test") == "true" && localStorage.getItem("optimal_traj") == "true") || (window.last_in_round)){
                 
                 loadingText.innerHTML = `Please wait until all members of your team have completed this stage before proceeding. It may take a few minutes for everyone to finish. The next session will become available once everyone is ready. Thank you for your patience.`
-
-                // document.getElementById('wait').style.display = 'block';
-
-                // $jq("#next").replaceWith(`<button type="button" id="next" disabled
-                //     onclick="next()"
-                //     value="next" class="btn btn-primary btn-lg continue">
-                //     Next <span class="glyphicon glyphicon-arrow-right"></span>
-                //     </button>`);
+                window.gameTracker.setWaiting(true);
             }
 
 
@@ -1494,6 +1493,11 @@
 
 
             function record_data(){
+                // Set the waiting state before recording data
+                if (window.gameTracker) {
+                    window.gameTracker.setWaiting(true);
+                }
+                
                 var end_time = performance.now();
 
                 // record whether the user got the optimal trajectory or not

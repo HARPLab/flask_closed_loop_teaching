@@ -151,6 +151,67 @@
       console.error('Error logging activity:', e);
     }
   }
+
+  // Clear all active timers
+  function clearAllTimers() {
+    // Clear the inactivity timeout if it exists
+    if (inactivityTimeout) {
+        clearTimeout(inactivityTimeout);
+        inactivityTimeout = null;
+    }
+    
+    // Clear all tracked timers
+    activeTimers.forEach(timerId => {
+        clearTimeout(timerId);
+        clearInterval(timerId);
+    });
+    activeTimers.clear();
+    
+    console.log("All timers cleared");
+    }
+
+  // Set up timer tracking
+  function setupTimerTracking() {
+    // Override setTimeout to track timers
+    const originalSetTimeout = window.setTimeout;
+    window.setTimeout = function(callback, delay, ...args) {
+        if (isWaitingState) {
+        console.log("Prevented timer creation during waiting state");
+        return null; // Don't create timers in waiting state
+        }
+        
+        const timerId = originalSetTimeout(callback, delay, ...args);
+        activeTimers.add(timerId);
+        return timerId;
+    };
+    
+    // Override clearTimeout to remove from tracked set
+    const originalClearTimeout = window.clearTimeout;
+    window.clearTimeout = function(timerId) {
+        originalClearTimeout(timerId);
+        activeTimers.delete(timerId);
+    };
+    
+    // Override setInterval to track timers
+    const originalSetInterval = window.setInterval;
+    window.setInterval = function(callback, delay, ...args) {
+        if (isWaitingState) {
+        console.log("Prevented interval creation during waiting state");
+        return null; // Don't create intervals in waiting state
+        }
+        
+        const timerId = originalSetInterval(callback, delay, ...args);
+        activeTimers.add(timerId);
+        return timerId;
+    };
+    
+    // Override clearInterval to remove from tracked set
+    const originalClearInterval = window.clearInterval;
+    window.clearInterval = function(timerId) {
+        originalClearInterval(timerId);
+        activeTimers.delete(timerId);
+    };
+    }
   
   // Set up event listeners for tracking
   function setupTracking() {
@@ -180,69 +241,102 @@
       }
     });
     
+    
     // Mouse events
-    document.addEventListener('click', e => logActivity('click', {
-      x: e.clientX, y: e.clientY,
-      target: e.target.id || e.target.tagName.toLowerCase()
-    }));
-    
-    document.addEventListener('mousedown', e => logActivity('mousedown', {
-      x: e.clientX, y: e.clientY,
-      target: e.target.id || e.target.tagName.toLowerCase()
-    }));
-    
-    document.addEventListener('mouseup', e => logActivity('mouseup', {
-      x: e.clientX, y: e.clientY
-    }));
+    document.addEventListener('click', e => {
+        if (!isWaitingState) {
+            logActivity('click', {
+            x: e.clientX, y: e.clientY,
+            target: e.target.id || e.target.tagName.toLowerCase()
+            });
+        }
+        });
+        
+    document.addEventListener('mousedown', e => {
+        if (!isWaitingState) {
+            logActivity('mousedown', {
+            x: e.clientX, y: e.clientY,
+            target: e.target.id || e.target.tagName.toLowerCase()
+            });
+        }
+        });
+        
+    document.addEventListener('mouseup', e => {
+        if (!isWaitingState) {
+            logActivity('mouseup', {
+            x: e.clientX, y: e.clientY
+            });
+        }
+        });
     
     // Keyboard events
     document.addEventListener('keydown', e => {
-      logActivity('keydown', {
-        key: e.key,
-        keyCode: e.keyCode,
-        modifiers: {
-          ctrl: e.ctrlKey,
-          alt: e.altKey,
-          shift: e.shiftKey,
-          meta: e.metaKey
-        },
-        target: e.target.id || e.target.tagName.toLowerCase()
-      });
+      if (!isWaitingState || e.keyCode === 82) { // Always allow 'R' key for reset
+        logActivity('keydown', {
+          key: e.key,
+          keyCode: e.keyCode,
+          modifiers: {
+            ctrl: e.ctrlKey,
+            alt: e.altKey,
+            shift: e.shiftKey,
+            meta: e.metaKey
+          },
+          target: e.target.id || e.target.tagName.toLowerCase()
+        });
+      }
     });
     
-    document.addEventListener('keyup', e => logActivity('keyup', {
-      key: e.key,
-      keyCode: e.keyCode,
-      modifiers: {
-        ctrl: e.ctrlKey,
-        alt: e.altKey,
-        shift: e.shiftKey,
-        meta: e.metaKey
+    document.addEventListener('keyup', e => {
+      if (!isWaitingState || e.keyCode === 82) { // Always allow 'R' key for reset
+        logActivity('keyup', {
+          key: e.key,
+          keyCode: e.keyCode,
+          modifiers: {
+            ctrl: e.ctrlKey,
+            alt: e.altKey,
+            shift: e.shiftKey,
+            meta: e.metaKey
+          }
+        });
       }
-    }));
+    });
     
     // Touch events for mobile
     document.addEventListener('touchstart', e => {
-      const touch = e.touches[0];
-      logActivity('touchstart', {
-        x: touch.clientX, 
-        y: touch.clientY,
-        target: e.target.id || e.target.tagName.toLowerCase()
+        if (!isWaitingState) {
+          const touch = e.touches[0];
+          logActivity('touchstart', {
+            x: touch.clientX, 
+            y: touch.clientY,
+            target: e.target.id || e.target.tagName.toLowerCase()
+          });
+        }
       });
-    });
-    
-    document.addEventListener('touchend', e => logActivity('touchend', {
-      target: e.target.id || e.target.tagName.toLowerCase()
-    }));
-    
-    // Form events
-    document.addEventListener('input', e => logActivity('input', {
-      target: e.target.id || e.target.tagName.toLowerCase()
-    }));
-    
-    document.addEventListener('change', e => logActivity('change', {
-      target: e.target.id || e.target.tagName.toLowerCase()
-    }));
+      
+      document.addEventListener('touchend', e => {
+        if (!isWaitingState) {
+          logActivity('touchend', {
+            target: e.target.id || e.target.tagName.toLowerCase()
+          });
+        }
+      });
+      
+      // Form events
+      document.addEventListener('input', e => {
+        if (!isWaitingState) {
+          logActivity('input', {
+            target: e.target.id || e.target.tagName.toLowerCase()
+          });
+        }
+      });
+      
+      document.addEventListener('change', e => {
+        if (!isWaitingState) {
+          logActivity('change', {
+            target: e.target.id || e.target.tagName.toLowerCase()
+          });
+        }
+      });
     
     // Browser navigation events
     window.addEventListener('beforeunload', e => {
@@ -264,13 +358,17 @@
     const originalPushState = window.history.pushState;
     window.history.pushState = function() {
       originalPushState.apply(this, arguments);
-      logActivity('pushState', {url: window.location.href});
+      if (!isWaitingState) {
+        logActivity('pushState', {url: window.location.href});
+      }
     };
     
     const originalReplaceState = window.history.replaceState;
     window.history.replaceState = function() {
       originalReplaceState.apply(this, arguments);
-      logActivity('replaceState', {url: window.location.href});
+      if (!isWaitingState) {
+        logActivity('replaceState', {url: window.location.href});
+      }
     };
     
     // Track visibility changes
@@ -294,6 +392,53 @@
     
     console.log('Activity tracking initialized. Log size: ' + JSON.stringify(activityLog).length + ' bytes');
   }
+
+    // Set waiting state
+   function setWaiting(waiting) {
+    if (waiting === isWaitingState) return; // No change
+    
+    isWaitingState = waiting;
+    localStorage.setItem("page_waiting", waiting ? "true" : "false");
+    
+    if (waiting) {
+        // Log waiting start
+        logActivity('wait_start', {waiting: true});
+        
+        // Clear all timers to prevent background activity
+        clearAllTimers();
+    } else {
+        // Log waiting end
+        logActivity('wait_end', {waiting: false});
+        
+        // Reset inactivity timer if function provided
+        if (typeof resetTimerFunction === 'function') {
+        resetTimerFunction();
+        }
+    }
+
+     // Create default reset timer function
+    function createResetTimerFunction() {
+        return function() {
+        if (isWaitingState) return; // Don't reset timer in waiting state
+        
+        // Clear existing inactivity timeout
+        if (inactivityTimeout) {
+            clearTimeout(inactivityTimeout);
+            activeTimers.delete(inactivityTimeout);
+        }
+        
+        // Set new inactivity timeout
+        inactivityTimeout = setTimeout(() => {
+            logActivity('inactive');
+        }, config.inactivityLimit);
+        
+        activeTimers.add(inactivityTimeout);
+        };
+    }
+    
+    console.log("Waiting state set to:", waiting);
+    }
+      
   
   // Get statistics about logged activities
   function getStats() {
@@ -376,12 +521,24 @@
         resetTimerFunction = options.resetTimerFunction;
       }
     }
+
+    // Check if page was in waiting state before
+    if (localStorage.getItem("page_waiting") === "true") {
+        isWaitingState = true;
+    }
+          
     
     // Load existing logs
     loadLogs();
     
+    
+    //Set up timer tracking
+    setupTimerTracking();
+    
     // Set up event tracking
     setupTracking();
+
+
     
     // Return public API
     return {
@@ -399,6 +556,14 @@
       },
       enableLogging: function(enable) {
         config.enableLogging = !!enable;
+      },
+      setWaiting: setWaiting,
+      isWaiting: function() {
+        return isWaitingState;
+      },
+      clearAllTimers: clearAllTimers,
+      getActiveTimerCount: function() {
+        return activeTimers.size;
       }
     };
   }
