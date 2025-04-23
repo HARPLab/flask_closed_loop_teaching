@@ -1210,16 +1210,22 @@ def settings(data):
                                         current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
                                         
 
-                                        pf_round_id = current_user.round
-                                        pf_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=pf_round_id).order_by(Round.id.desc()).first()
+                                        # update models from feedback of test responses
+                                        update_learner_models_from_feedback(params, current_group, current_round)
+                                        db.session.refresh(current_group)
+                                        current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
                                         
-                                        try:
-                                            log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
-                                            find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
-                                        except:
-                                            log_error('Group:', current_user.group, 'User:', current_user.id, 'Error in finding prob particles...')
+
+                                        # pf_round_id = current_user.round
+                                        # pf_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=pf_round_id).order_by(Round.id.desc()).first()
                                         
+                                        # try:
+                                        #     log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
+                                        #     find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
+                                        # except:
+                                        #     log_error('Group:', current_user.group, 'User:', current_user.id, 'Error in finding prob particles...')
                                         
+                                        #################################################
                                         log_print("Generating next round...")
                                         retrieve_next_round(params, current_group)
                                         
@@ -1842,33 +1848,6 @@ def update_learner_models_from_tests(params, cur_group, cur_round) -> tuple:
     ind_member_models_pos_current = [ind_member_models[i].positions for i in range(num_members)]
     ind_member_models_weights_current = [ind_member_models[i].weights for i in range(num_members)]
 
-    # log_print('Group:', current_user.group, 'User:', current_user.id, 'ind_member_models_pos_current:', ind_member_models_pos_current[0])
-    # log_print('Group:', current_user.group, 'User:', current_user.id, 'ind_member_models_weights_current:', ind_member_models_weights_current[0])
-
-
-    # add the updated round information to the database
-    # current_round_tests_updated = Round(group_id=current_round.group_id, 
-    #                                 round_num=current_round.round_num,
-    #                                 domain = current_group.curr_progress,
-    #                                 members_statuses=current_group.members_statuses,
-    #                                 kc_id = kc_id,
-    #                                 min_KC_constraints = current_round.min_KC_constraints,
-    #                                 round_info=current_round.round_info,
-    #                                 status="tests_updated",
-    #                                 variable_filter=current_round.variable_filter,
-    #                                 nonzero_counter=current_round.nonzero_counter,
-    #                                 min_BEC_constraints_running=current_round.min_BEC_constraints_running,
-    #                                 prior_min_BEC_constraints_running=current_round.prior_min_BEC_constraints_running,
-    #                                 visited_env_traj_idxs=current_round.visited_env_traj_idxs,
-    #                                 ind_member_models_pos = current_round.ind_member_models_pos.append(ind_member_models_pos_current),
-    #                                 ind_member_models_weights = current_round.ind_member_models_weights.append(ind_member_models_weights_current),
-    #                                 group_union_model_pos = current_round.group_union_model_pos.append(group_union_model.positions),
-    #                                 group_union_model_weights = current_round.group_union_model_weights.append(group_union_model.weights),
-    #                                 group_intersection_model_pos = current_round.group_intersection_model_pos.append(group_intersection_model.positions),
-    #                                 group_intersection_model_weights = current_round.group_intersection_model_weights.append(group_intersection_model.weights),
-    #                                 group_knowledge = [updated_group_knowledge]
-    #                                 )
-
     current_round_tests_updated = Round(group_id=cur_round.group_id, 
                                 round_num=cur_round.round_num,
                                 domain_progress = cur_group.curr_progress,
@@ -1903,7 +1882,7 @@ def update_learner_models_from_tests(params, cur_group, cur_round) -> tuple:
     cur_group.ind_member_models = copy.deepcopy(ind_member_models)
     cur_group.group_union_model = copy.deepcopy(group_union_model)
     cur_group.group_intersection_model = copy.deepcopy(group_intersection_model)
-    cur_group.status = "upd_tests"  #reset status to generate demos
+    cur_group.status = "upd_tests"  # update status
 
     flag_modified(cur_group, "ind_member_models")
     flag_modified(cur_group, "group_union_model")
@@ -2162,7 +2141,8 @@ def retrieve_next_round(params, cur_group) -> dict:
             
             final_test_id = 1
             # final_tests_to_add = [3, 5, 8, 12, 15, 17] # indices of final tests to add (one for each difficulty level)
-            final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
+            # final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
+            final_tests_to_add = range(30)
             
             if QUICK_DEBUG_FLAG:
                 final_tests_to_add = [1, 3]
@@ -2171,6 +2151,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 for mdp_list in default_rounds[mdp_class]["final test"][td]:
                     for mdp_dict in mdp_list:
                         if final_test_id in final_tests_to_add:
+                            status_print('Adding final test:', final_test_id, 'Difficulty:', td)
                             games.append({"interaction type": "final test", "params": mdp_dict})
                         final_test_id += 1
 
@@ -2253,14 +2234,6 @@ def update_learner_models_from_demos(params, cur_group, next_round) -> tuple:
     teacher_uf = params['teacher_learning_factor']
     model_type = params['teacher_update_model_type']
 
-    # current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
-
-    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Current user group:', current_user.group, 'Domain:', current_group.curr_progress, 'Round:',  current_user.round)
-    # next_round_id = current_user.round+1
-    # updated_current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain=current_group.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round: ', next_round)
-
-    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Current user group:', current_user.group, 'Domain:', cur_group.curr_progress, 'Round:',  current_user.round, 'Next round:', next_round)
     
     # log_print('Group:', current_user.group, 'User:', current_user.id, 'Before updating demos for constraints...', next_round.min_BEC_constraints_running)
     find_prob_particles(cur_group.ind_member_models, cur_group.members_statuses, next_round.min_BEC_constraints_running)
@@ -2270,31 +2243,15 @@ def update_learner_models_from_demos(params, cur_group, next_round) -> tuple:
     group_union_model = copy.deepcopy(cur_group.group_union_model)
     group_intersection_model = copy.deepcopy(cur_group.group_intersection_model)
 
-    # # DEBUG
-    # for ind_member_model in ind_member_models:
-    #     # fig, ax = plt.figure()
-    #     ind_member_model.plot()
-    #     # plt.show()
-    # group_union_model.plot()
-    # # plt.show()
-    # group_intersection_model.plot()
-    # # plt.show()
-
     # update the models based on the demos
     demo_mdps = [game["params"] for game in next_round.round_info if game["interaction type"] == "demo"]
-
-    # log_print("Len Demo MDPS:", len(demo_mdps))
     
     constraints = []
     for demo_mdp in demo_mdps:
         constraints.extend(demo_mdp['constraints'])
 
-    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Constraints from demos: ', constraints)
-
     min_KC_constraints = remove_redundant_constraints(constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
             
-    
-    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Constraints from demos: ', constraints, 'min_demo_constraints:', min_KC_constraints)
     
     # update the models
     joint_constraints = []
@@ -2361,6 +2318,100 @@ def update_learner_models_from_demos(params, cur_group, next_round) -> tuple:
 
 
     # return ind_member_models, group_union_model, group_intersection_model
+
+
+
+def update_learner_models_from_feedback(params, cur_group, next_round) -> tuple:
+
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models based on demos...')
+
+    teacher_uf = params['teacher_learning_factor']
+    model_type = params['teacher_update_model_type']
+
+    
+    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Before updating demos for constraints...', next_round.min_BEC_constraints_running)
+    find_prob_particles(cur_group.ind_member_models, cur_group.members_statuses, next_round.min_BEC_constraints_running)
+
+    # current models
+    ind_member_models = copy.deepcopy(cur_group.ind_member_models)
+    group_union_model = copy.deepcopy(cur_group.group_union_model)
+    group_intersection_model = copy.deepcopy(cur_group.group_intersection_model)
+
+    # update the models based on the demos
+    test_mdps = [game["params"] for game in next_round.round_info if game["interaction type"] == "diagnostic test"]
+    
+    constraints = []
+    for test_mdp in test_mdps:
+        constraints.extend(test_mdp['constraints'])
+
+    min_KC_constraints = remove_redundant_constraints(constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
+            
+    
+    # update the models
+    joint_constraints = []
+    ind_member_models_pos_current = []
+    ind_member_models_weights_current  = []
+    for i in range(len(ind_member_models)):
+        if cur_group.members_statuses[i] == 'joined':
+            # log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating model for member:', i, 'with constraints:', min_KC_constraints)
+            ind_member_models[i].update(min_KC_constraints, teacher_uf, model_type, params)
+            joint_constraints.append(min_KC_constraints)
+
+            ind_member_models_pos_current.append(ind_member_models[i].positions)
+            ind_member_models_weights_current.append(ind_member_models[i].weights)
+
+            # log_print('Group:', current_user.group, 'User:', current_user.id, 'Member:', i, 'N positions:', len(ind_member_models[i].positions), 'N weights:', len(ind_member_models[i].weights))
+
+    # update the team models
+    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating common models... with constraints:', min_KC_constraints)
+    group_intersection_model.update(min_KC_constraints, teacher_uf, model_type, params)  # common belief model
+    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group belief model with constraints:', joint_constraints)
+    group_union_model.update_jk(joint_constraints, teacher_uf, model_type, params) # joint belief model
+
+    # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating demos for constraints...', next_round.min_BEC_constraints_running)
+    find_prob_particles(ind_member_models, cur_group.members_statuses, next_round.min_BEC_constraints_running)
+    
+
+    current_round_feedback_updated = Round(group_id=next_round.group_id, 
+                                    domain_progress = cur_group.curr_progress,
+                                    domain = next_round.domain,
+                                    round_num=next_round.round_num,
+                                    kc_id = next_round.kc_id,
+                                    min_KC_constraints = min_KC_constraints,
+                                    members_statuses=cur_group.members_statuses,
+                                    round_info=next_round.round_info,
+                                    status="feedback_updated",
+                                    variable_filter=next_round.variable_filter,
+                                    nonzero_counter=next_round.nonzero_counter,
+                                    min_BEC_constraints_running=next_round.min_BEC_constraints_running,
+                                    prior_min_BEC_constraints_running=next_round.prior_min_BEC_constraints_running,
+                                    visited_env_traj_idxs=next_round.visited_env_traj_idxs,
+                                    ind_member_models_pos = [ind_member_models_pos_current],
+                                    ind_member_models_weights = [ind_member_models_weights_current],
+                                    group_union_model_pos = [group_union_model.positions],
+                                    group_union_model_weights = [group_union_model.weights],
+                                    group_intersection_model_pos = [group_intersection_model.positions],
+                                    group_intersection_model_weights = [group_intersection_model.weights],
+                                    group_knowledge = next_round.group_knowledge
+                                    )
+    
+    update_database(current_round_feedback_updated, 'Update learner models from feedback')
+       
+    # log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating models to group')
+    cur_group.ind_member_models = copy.deepcopy(ind_member_models)
+    cur_group.group_union_model = copy.deepcopy(group_union_model)
+    cur_group.group_intersection_model = copy.deepcopy(group_intersection_model)
+    cur_group.status = "upd_feedback"
+
+    flag_modified(cur_group, "ind_member_models")
+    flag_modified(cur_group, "group_union_model")
+    flag_modified(cur_group, "group_intersection_model")   
+    flag_modified(cur_group, "status")
+
+    update_database(cur_group, 'Update learner models from feedback')
+
+
+
 
 
 
