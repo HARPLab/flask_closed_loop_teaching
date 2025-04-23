@@ -214,6 +214,7 @@ def make_sandbox(data):
 @socketio.on("connect")
 def handle_connect(auth=None):
     """Handles user reconnection and removes them from disconnected_users if needed"""
+    status_print('User: ', current_user.id, ' connected....')
 
     if current_user.is_authenticated:
         log_print(f"User {current_user.id} connected with SID {request.sid}")
