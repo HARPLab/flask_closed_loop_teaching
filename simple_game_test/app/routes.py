@@ -707,9 +707,7 @@ def join_group():
             status_print('Group:', current_user.group, 'member_user_ids:', open_group.member_user_ids, 'timestamps:', open_group.join_timestamps, 'Adding to existing group')
 
 
-            current_time = datetime.now()
-            status_print('current_user.group_code:', current_user.group_code, 'type:', type(current_user.group_code))
-            
+            current_time = datetime.now()            
             open_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
 
             status_print('Timestamps added....')
@@ -968,8 +966,12 @@ def settings(data):
             # flag_modified(current_user, "last_activity_time")
             # update_database(current_user, 'Current user last activity: ' + current_user.last_activity[-1])
             # db.session.refresh(current_user)
-
-        current_user.last_activity = data["activity_log"]
+        
+        try:
+            current_user.last_activity = data["activity_log"]
+        except:
+            current_user.last_activity = ""
+        
         flag_modified(current_user, "last_activity")
         update_database(current_user, 'Current user last activity: ' + current_user.last_activity[-1])
         db.session.refresh(current_user)
