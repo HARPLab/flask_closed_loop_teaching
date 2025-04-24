@@ -46,17 +46,18 @@
     // State variables
     let activityLog = [];
     
-    // Format date as YY-MM-DD-HH-MM-SS
+    // Time in EST
     function formatDate(date) {
-      const padZero = (num) => String(num).padStart(2, '0');
-      const year = date.getFullYear().toString().slice(2);
-      const month = padZero(date.getMonth() + 1);
-      const day = padZero(date.getDate());
-      const hours = padZero(date.getHours());
-      const minutes = padZero(date.getMinutes());
-      const seconds = padZero(date.getSeconds());
-      
-      return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+        const options = { timeZone: 'America/New_York', hour12: false };
+        const padZero = (num) => String(num).padStart(2, '0');
+        const zonedDate = new Date(date.toLocaleString('en-US', options));
+        const year = zonedDate.getFullYear().toString().slice(2);
+        const month = padZero(zonedDate.getMonth() + 1);
+        const day = padZero(zonedDate.getDate());
+        const hours = padZero(zonedDate.getHours());
+        const minutes = padZero(zonedDate.getMinutes());
+        const seconds = padZero(zonedDate.getSeconds());
+        return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
     }
     
     // Load existing logs if available

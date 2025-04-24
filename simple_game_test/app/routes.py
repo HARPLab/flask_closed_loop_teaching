@@ -214,7 +214,7 @@ def make_sandbox(data):
 @socketio.on("connect")
 def handle_connect(auth=None):
     """Handles user reconnection and removes them from disconnected_users if needed"""
-    status_print('User: ', current_user.id, ' connected....')
+    # status_print('User: ', current_user.id, ' connected....')
 
     if current_user.is_authenticated:
         log_print(f"User {current_user.id} connected with SID {request.sid}")
@@ -237,22 +237,25 @@ def handle_connect(auth=None):
         # reconnect_page = request.referrer
         referrer = auth.get("referrer") if auth else "Unknown"
         reconnect_page = referrer
+        reconnect_page = reconnect_page.replace("https://bridge.apt.ri.cmu.edu/flask_closed_loop_teaching/", "")
 
-        if user_id in disconnected_users:
-            disconnected_users[user_id]["reconnect_times"].append(reconnect_time)
-            disconnected_users[user_id]["reconnect_pages"].append(reconnect_page)
-            log_print(f"User {user_id}: Reconnected at {reconnect_time}. Tracking: {disconnected_users[user_id]}")
+        with disconnected_users_lock:
+            if user_id in disconnected_users:
+                disconnected_users[user_id]["reconnect_times"].append(reconnect_time)
+                disconnected_users[user_id]["reconnect_pages"].append(reconnect_page)
+                status_print(f"User {user_id}: Reconnected at {reconnect_time} , from: {reconnect_page}")
 
-            # Cancel the active timer if it exists
-            if user_id in disconnect_timers:
-                disconnect_timers[user_id].cancel()
-                del disconnect_timers[user_id]  # Remove from dictionary
-                log_print(f"User {user_id}: Timer canceled due to reconnection.")
 
-            # # Remove only if user has fully reconnected for every disconnect
-            # if len(disconnected_users[user_id]["disconnect_times"]) == len(disconnected_users[user_id]["reconnect_times"]):
-            #     disconnected_users.pop(user_id, None)
-            #     log_print(f"User {user_id} fully reconnected and removed from tracking.")
+                # Cancel the active timer if it exists
+                if user_id in disconnect_timers:
+                    disconnect_timers[user_id].cancel()
+                    del disconnect_timers[user_id]  # Remove from dictionary
+                    log_print(f"User {user_id}: Timer canceled due to reconnection.")
+
+                # # Remove only if user has fully reconnected for every disconnect
+                # if len(disconnected_users[user_id]["disconnect_times"]) == len(disconnected_users[user_id]["reconnect_times"]):
+                #     disconnected_users.pop(user_id, None)
+                #     log_print(f"User {user_id} fully reconnected and removed from tracking.")
 
         # Ensure they rejoin their correct room
         if current_user.group:
@@ -279,20 +282,24 @@ def handle_disconnect():
             disconnect_time = datetime.now().strftime("%m-%d %H:%M:%S")
             # disconnect_page = request.referrer  # for polling transport
             disconnect_page = last_disconnect_pages.pop(user_id, "Unknown")
+            disconnect_page = disconnect_page.replace("https://bridge.apt.ri.cmu.edu/flask_closed_loop_teaching/", "")
 
-            # Initialize tracking if not exists
-            if user_id not in disconnected_users:
-                disconnected_users[user_id] = {
-                    "disconnect_times": [],
-                    "reconnect_times": [],
-                    "disconnect_pages": [],
-                    "reconnect_pages": []
-                }
 
-            # Track disconnect time
-            disconnected_users[user_id]["disconnect_times"].append(disconnect_time)
-            disconnected_users[user_id]["disconnect_pages"].append(disconnect_page)
-            status_print(f"User {user_id}: Disconnected at {disconnect_time}. Tracking: {disconnected_users[user_id]}")
+            with disconnected_users_lock:
+
+                # Initialize tracking if not exists
+                if user_id not in disconnected_users:
+                    disconnected_users[user_id] = {
+                        "disconnect_times": [],
+                        "reconnect_times": [],
+                        "disconnect_pages": [],
+                        "reconnect_pages": []
+                    }
+
+                # Track disconnect time
+                disconnected_users[user_id]["disconnect_times"].append(disconnect_time)
+                disconnected_users[user_id]["disconnect_pages"].append(disconnect_page)
+                status_print(f"User {user_id}: Disconnected at {disconnect_time} , from: {disconnect_page}")
 
             # cancel the existing timer
             if user_id in disconnect_timers:
@@ -366,39 +373,41 @@ def check_reconnection(user_id):
     # else:
     #     status_print(f"User {user_id}: Already reconnected or removed from tracking.")
 
-    status_print('Disconnected_users:', disconnected_users)
     ## Based on disconnection and reconnection times
-    if user_id in disconnected_users:
-        disconnect_times = disconnected_users[user_id]["disconnect_times"]
+    with disconnected_users_lock:
+        status_print('Disconnected_users:', disconnected_users)
 
-        last_disconnect = datetime.strptime(f"{datetime.now().year}-{disconnect_times[-1]}", "%Y-%m-%d %H:%M:%S") if disconnect_times else None
-        current_time = datetime.now()
+        if user_id in disconnected_users:
+            disconnect_times = disconnected_users[user_id]["disconnect_times"]
 
-        status_print('Last disconnect:', last_disconnect, 'current_time:', current_time)
+            last_disconnect = datetime.strptime(f"{datetime.now().year}-{disconnect_times[-1]}", "%Y-%m-%d %H:%M:%S") if disconnect_times else None
+            current_time = datetime.now()
 
-        if last_disconnect:
-            time_since_disconnect = (current_time - last_disconnect).total_seconds()
-            status_print('User:', user_id, 'Time since disconnect:', time_since_disconnect)
+            status_print('Last disconnect:', last_disconnect, 'current_time:', current_time)
 
-            # Check if user failed to reconnect within RECONNECT_TIMEOUT
-            if time_since_disconnect >= RECONNECT_TIMEOUT:
-                status_print(f"User {user_id}: Did not reconnect within timeout. Removing...")
+            if last_disconnect:
+                time_since_disconnect = (current_time - last_disconnect).total_seconds()
+                status_print('User:', user_id, 'Time since disconnect:', time_since_disconnect)
 
-                with app.app_context():
-                    removed_user = db.session.query(User).get(user_id)
-                    if removed_user and (removed_user.curr_progress not in ["left_study_or_got_disconnected", "removed_due_to_inactivity"] and removed_user.study_completed != 1):
-                        removed_user.set_curr_progress("left_study_or_got_disconnected")
-                        flag_modified(removed_user, "curr_progress")
-                        update_database(removed_user, "User left study or got disconnected")
-                        remove_from_study(user_id)
+                # Check if user failed to reconnect within RECONNECT_TIMEOUT
+                if time_since_disconnect >= RECONNECT_TIMEOUT:
+                    status_print(f"User {user_id}: Did not reconnect within timeout. Removing...")
 
-                status_print(f"User {user_id} removed from tracking.")
+                    with app.app_context():
+                        removed_user = db.session.query(User).get(user_id)
+                        if removed_user and (removed_user.curr_progress not in ["left_study_or_got_disconnected", "removed_due_to_inactivity"] and removed_user.study_completed != 1):
+                            removed_user.set_curr_progress("left_study_or_got_disconnected")
+                            flag_modified(removed_user, "curr_progress")
+                            update_database(removed_user, "User left study or got disconnected")
+                            remove_from_study(user_id)
+
+                    status_print(f"User {user_id} removed from tracking.")
+                else:
+                    status_print(f"User {user_id}: Reconnected in time, no action taken.")
             else:
-                status_print(f"User {user_id}: Reconnected in time, no action taken.")
+                status_print(f"User {user_id}: No disconnect times found.")
         else:
-            status_print(f"User {user_id}: No disconnect times found.")
-    else:
-        status_print(f"User {user_id}: Already reconnected or removed.")
+            status_print(f"User {user_id}: Already reconnected or removed.")
 
 
 
