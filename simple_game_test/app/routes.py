@@ -1219,10 +1219,10 @@ def settings(data):
                                         current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
                                         
 
-                                        # update models from feedback of test responses
-                                        update_learner_models_from_feedback(params, current_group, current_round)
-                                        db.session.refresh(current_group)
-                                        current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
+                                        # # update models from feedback of test responses
+                                        # update_learner_models_from_feedback(params, current_group, current_round)
+                                        # db.session.refresh(current_group)
+                                        # current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
                                         
 
                                         # pf_round_id = current_user.round
