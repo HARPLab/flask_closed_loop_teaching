@@ -88,6 +88,11 @@
         });
     }
 
+    window.addEventListener("beforeunload", function (event) {
+        const activityLog = JSON.parse(localStorage.getItem("shared_activity_log") || "[]");
+        console.log("Activity data: ", activityLog)
+    });
+
     console.log('In index.html');
 </script>
 

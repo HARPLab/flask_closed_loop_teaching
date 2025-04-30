@@ -484,6 +484,7 @@
             // Get activity log from localStorage
             const activityLog = JSON.parse(localStorage.getItem("shared_activity_log") || "[]");
             data["activity_log"] = JSON.stringify(activityLog)
+            console.log("Activity log: ", activityLog)
             console.log('Activity logged...')
 
             reward_wt_1 = localStorage.getItem("reward_ft_wt_1_field")
