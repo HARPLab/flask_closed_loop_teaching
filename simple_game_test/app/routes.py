@@ -321,7 +321,7 @@ def store_disconnect_page(data):
     if current_user.is_authenticated:
         user_id = current_user.id
         last_disconnect_pages[user_id] = data.get("referrer", "Unknown")
-        print('Disconnect pages list:', last_disconnect_pages[user_id])
+        # print('Disconnect pages list:', last_disconnect_pages[user_id])
 
 
 def check_current_user_active():
@@ -375,7 +375,7 @@ def check_reconnection(user_id):
 
     ## Based on disconnection and reconnection times
     with disconnected_users_lock:
-        status_print('Disconnected_users:', disconnected_users)
+        # status_print('Disconnected_users:', disconnected_users)
 
         if user_id in disconnected_users:
             disconnect_times = disconnected_users[user_id]["disconnect_times"]
