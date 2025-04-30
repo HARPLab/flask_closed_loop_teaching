@@ -908,7 +908,7 @@ def sb():
     return render_template("mike/skateboard2.html")
 
 
-
+# Check member status
 def check_member_and_group_status():
     '''Checks if all members in a group have completed a domain'''
     
