@@ -488,20 +488,11 @@
             data["final_score"] = localStorage.getItem("final_score");
             data["final_score_string"] = localStorage.getItem("final_score_string");
 
-            console.log('Activity tracker:', activityTracker)
             // Add activity tracker data if available
-            if (activityTracker) {
-                try {
-                    // Get activity log from localStorage
-                    const activityLog = JSON.parse(localStorage.getItem("shared_activity_log") || "[]");
-                    data["activity_log"] = JSON.stringify(activityLog)
-                    console.log('Activity logged...')
-                } 
-                catch (e) {
-                    console.error("Error adding activity data:", e);
-                    data["activity_log"] = e.message;
-                }
-            }
+            // Get activity log from localStorage
+            const activityLog = JSON.parse(localStorage.getItem("shared_activity_log") || "[]");
+            data["activity_log"] = JSON.stringify(activityLog)
+            console.log('Activity logged...')
 
 
             
