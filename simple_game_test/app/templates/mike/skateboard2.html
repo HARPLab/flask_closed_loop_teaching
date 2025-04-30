@@ -364,18 +364,22 @@
             audio_timer.loop = true;
         }
 
-        // Initialize the activity tracker when the page loads
-        let activityTracker;
+        // // Initialize the activity tracker when the page loads
+        // let activityTracker;
 
-        // Set up tracker early in your script
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize the activity tracker
-            activityTracker = ActivityTracker.init({
-            maxLogEntries: 10000,
-            storageKey: 'skateboard_game_activity'
-            });    
+        // // Set up tracker early in your script
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     // Initialize the activity tracker
+        //     activityTracker = ActivityTracker.init({
+        //     maxLogEntries: 10000,
+        //     storageKey: 'skateboard_game_activity'
+        //     });    
     
-        });
+        // });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            ActivityTracker.init({ maxLogEntries: 10000, storageKey: 'shared_activity_log' });
+            });
 
 
         // Function to reset the inactivity timer
@@ -489,7 +493,7 @@
             if (activityTracker) {
                 try {
                     // Get activity log from localStorage
-                    const activityLog = JSON.parse(localStorage.getItem("skateboard_game_activity") || "[]");
+                    const activityLog = JSON.parse(localStorage.getItem("shared_activity_log") || "[]");
                     data["activity_log"] = JSON.stringify(activityLog)
                     console.log('Activity logged...')
                 } 
@@ -498,6 +502,7 @@
                     data["activity_log"] = e.message;
                 }
             }
+
 
             
 

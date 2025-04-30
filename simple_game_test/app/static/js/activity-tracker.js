@@ -51,13 +51,14 @@
         const options = { timeZone: 'America/New_York', hour12: false };
         const padZero = (num) => String(num).padStart(2, '0');
         const zonedDate = new Date(date.toLocaleString('en-US', options));
-        const year = zonedDate.getFullYear().toString().slice(2);
-        const month = padZero(zonedDate.getMonth() + 1);
-        const day = padZero(zonedDate.getDate());
+        // const year = zonedDate.getFullYear().toString().slice(2);
+        // const month = padZero(zonedDate.getMonth() + 1);
+        // const day = padZero(zonedDate.getDate());
         const hours = padZero(zonedDate.getHours());
         const minutes = padZero(zonedDate.getMinutes());
         const seconds = padZero(zonedDate.getSeconds());
-        return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+        // return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+        return `${hours}-${minutes}-${seconds}`;
     }
     
     // Load existing logs if available
@@ -104,11 +105,11 @@
           logEntry.m = modifiers;
         }
         
-        // Add mouse/touch coordinates if available
-        if (additionalInfo.x !== undefined && additionalInfo.y !== undefined) {
-          logEntry.x = Math.round(additionalInfo.x);
-          logEntry.y = Math.round(additionalInfo.y);
-        }
+        // // Add mouse/touch coordinates if available
+        // if (additionalInfo.x !== undefined && additionalInfo.y !== undefined) {
+        //   logEntry.x = Math.round(additionalInfo.x);
+        //   logEntry.y = Math.round(additionalInfo.y);
+        // }
         
         // Add target element information if available
         if (additionalInfo.target) {
@@ -116,14 +117,34 @@
         }
         
         // Add URL info for navigation events
+        base_path = "/flask_closed_loop_teaching"
+
         if (additionalInfo.url) {
-          try {
-            const urlObj = new URL(additionalInfo.url);
-            logEntry.u = urlObj.pathname + urlObj.search;
-          } catch (e) {
-            logEntry.u = additionalInfo.url;
-          }
+            try {
+                const urlObj = new URL(additionalInfo.url);
+                let pathname = urlObj.pathname + urlObj.search;
+            
+                // Remove base path prefix
+                const basePath = "/flask_closed_loop_teaching";
+                if (pathname.startsWith(basePath)) {
+                    pathname = pathname.slice(basePath.length);
+                }
+            
+                logEntry.u = pathname;
+            } 
+            catch (e) {
+                let rawPath = additionalInfo.url;
+                
+                // Fallback in case URL constructor fails — also remove base manually
+                const basePath = "/flask_closed_loop_teaching";
+                if (rawPath.startsWith(basePath)) {
+                    rawPath = rawPath.slice(basePath.length);
+                }
+            
+                logEntry.u = rawPath;
+            }
         }
+          
         
         // Add to memory log
         activityLog.push(logEntry);
@@ -377,8 +398,34 @@
       };
     }
     
-    // Expose to global scope
-    window.ActivityTracker = {
-      init: init
+//     // Expose to global scope
+//     window.ActivityTracker = {
+//       init: init
+//     };
+//   })();
+
+
+    // Expose to global scope and ensure its not reinitialized on each page
+
+    window.ActivityTracker = (function() {
+    let initialized = false;
+    let publicAPI = {};
+
+    publicAPI.init = function(options = {}) {
+        if (initialized) return publicAPI; // Prevent multiple initializations
+
+        // Apply config overrides if provided
+        if (options.maxLogEntries) config.maxLogEntries = options.maxLogEntries;
+        if (options.storageKey) config.storageKey = options.storageKey;
+
+        loadLogs();
+        setupTracking();
+        initialized = true;
+
+        return publicAPI;
     };
-  })();
+
+    publicAPI.logActivity = logActivity;
+
+    return publicAPI;
+})();

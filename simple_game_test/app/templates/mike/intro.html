@@ -33,6 +33,10 @@
 
     socket.emit("last_disconnect_page", { referrer: window.location.href });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        ActivityTracker.init({ maxLogEntries: 10000, storageKey: 'shared_activity_log' });
+        });
+
 </script>
 
 

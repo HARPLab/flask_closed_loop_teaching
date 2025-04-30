@@ -98,6 +98,10 @@
 
     socket.emit("last_disconnect_page", { referrer: window.location.href });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        ActivityTracker.init({ maxLogEntries: 10000, storageKey: 'shared_activity_log' });
+        });
+
     function start_study() {
         localStorage.setItem("user input", "{}");
         localStorage.setItem("movement", "next");
