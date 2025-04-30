@@ -90,6 +90,15 @@ const config = {
           logEntry.u = rawPath;
         }
       }
+
+      if (additionalInfo.hidden){
+        try{
+            logEntry.h = hidden
+        }
+        catch (e) {
+            console.error('Error logging activity:', e);
+        }
+      }
   
       activityLog.push(logEntry);
       if (activityLog.length > config.maxLogEntries) {
@@ -149,7 +158,7 @@ const config = {
     document.addEventListener('change', e => logActivity('change', { target: e.target.id || e.target.tagName.toLowerCase() }));
   
     window.addEventListener('beforeunload', () => logActivity('beforeunload', { url: window.location.href }));
-    window.addEventListener('unload', () => logActivity('unload', { url: window.location.href }));
+    // window.addEventListener('unload', () => logActivity('unload', { url: window.location.href }));
     window.addEventListener('pagehide', () => logActivity('pagehide', { url: window.location.href }));
     window.addEventListener('pageshow', () => logActivity('pageshow', { url: window.location.href }));
     window.addEventListener('popstate', () => logActivity('popstate', { url: window.location.href }));
