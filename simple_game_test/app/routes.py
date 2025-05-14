@@ -62,6 +62,8 @@ from flask_login import logout_user
 with open(os.path.join(os.path.dirname(__file__), 'user_study_dict_extended.json'), 'r') as f:
     default_rounds = json.load(f)
 
+
+
 # rule_str = None
 # TODO need a proper solution instead of global variables, i.e. per-user environment
 # https://stackoverflow.com/questions/27611216/how-to-pass-a-variable-between-flask-pages
@@ -615,6 +617,7 @@ def join_group():
 
     ret = {}
     cond_list = ["individual_belief_low", "common_belief", "individual_belief_high", "joint_belief"]
+    
     domain_list = [["at", "sb"], ["sb", "at"]]
 
     if QUICK_DEBUG_FLAG:
@@ -1115,17 +1118,18 @@ def settings(data):
                                     db.session.refresh(current_group)
                                     
                                     next_round_id = current_user.round+1
-                                    print('Group:', current_user.group, 'User:', current_user.id, 'First round generated. Next round id:', next_round_id, 'User progress: ', current_user.curr_progress)
+                                    status_print('Group:', current_user.group, 'User:', current_user.id, 'First round generated. Next round id:', next_round_id, 'User progress: ', current_user.curr_progress)
                                     next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
                                     
-
-                                    if current_group.status != "Domain teaching completed":
+                                    status_print('Next round:', next_round)
+                                    
+                                    if current_group.status != "Domain teaching completed" and next_round is not None:
                                         update_learner_models_from_demos(params, current_group, next_round)
                                     db.session.refresh(current_group)
                                     current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
 
                                     # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
-                                    find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
+                                    # find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
                                     
                                     break
                                 
@@ -1248,13 +1252,16 @@ def settings(data):
                                             next_kc_id = -1
 
                                         log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models from demos...', 'current_group status:', current_group.status)
-                                        if current_group.status != "Domain teaching completed":
+                                        
+                                        status_print('Next round:', next_round)
+                                        
+                                        if current_group.status != "Domain teaching completed" and next_round is not None:
                                             update_learner_models_from_demos(params, current_group, next_round)
                                         db.session.refresh(current_group)
                                         current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()                            
 
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
-                                        find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
+                                        # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
+                                        # find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
 
                                     else:
                                         log_print('Group:', current_user.group, 'User:', current_user.id, 'Curr group status: ', current_group.status)
@@ -1335,7 +1342,7 @@ def settings(data):
                     ###########################
 
                 
-                ## Check if a new round was generated and wait until it is available (unless a new domain is generated)
+                ## Double check if a new round was generated
                 log_print('Group:', current_user.group, 'User:', current_user.id, 'next_round:', next_round, 'current_user.last_iter_in_round', current_user.last_iter_in_round)
                 if current_user.last_iter_in_round: 
 
@@ -2016,11 +2023,11 @@ def retrieve_next_round(params, cur_group) -> dict:
         if not os.path.exists(full_path_filename):
             # sometimes when date chanages at midnight
             alternate_path_filename =  base_dir + '/ind_sim_trials/' + (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
-            if not os.path.exists(alternate_path_filename):
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'Creating folder for this run: ', full_path_filename)
-                os.makedirs(full_path_filename, exist_ok=True)
-            else:
+            if os.path.exists(alternate_path_filename):
                 full_path_filename = alternate_path_filename
+            
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Creating folder for this run: ', full_path_filename)
+            os.makedirs(full_path_filename, exist_ok=True)
     
 
 
@@ -2083,11 +2090,15 @@ def retrieve_next_round(params, cur_group) -> dict:
             group_intersection_model_demo_gen = copy.deepcopy(group_intersection_model)
 
             args = domain, vars_filename, group_union_model_demo_gen, group_intersection_model_demo_gen, ind_member_models_demo_gen, members_statuses, experimental_condition, variable_filter, nonzero_counter, new_round_for_var_filter, min_BEC_constraints_running, visited_env_traj_idxs, pool, lock    
-            min_KC_constraints, demo_mdps, test_mdps, experimental_condition, variable_filter, nonzero_counter, min_BEC_constraints_running, visited_env_traj_idxs, teaching_complete_flag = generate_demos_test_interaction_round(args)
+            min_KC_constraints, demo_mdps, test_mdps, experimental_condition, variable_filter, nonzero_counter, min_BEC_constraints_running, visited_env_traj_idxs, teaching_complete_flag, round_generation_process = generate_demos_test_interaction_round(args)
             
             
             round_status = "demo_tests_generated"
             games_extended = []
+
+
+            # for debugging
+            demo_mdps = []
             
             # new round data
             if len(demo_mdps) > 0:
@@ -2116,7 +2127,9 @@ def retrieve_next_round(params, cur_group) -> dict:
                         mdp_dict = default_rounds[mdp_class][it][interaction_id]
                         # # check if variable filter matches
                         if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
-                            games.append({"interaction type": it, "params": mdp_dict})            
+                            games.append({"interaction type": it, "params": mdp_dict}) 
+
+                status_print('Games:', games)
 
             else:
                 status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
@@ -2140,6 +2153,7 @@ def retrieve_next_round(params, cur_group) -> dict:
         else:
             log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding final tests for this round...')
             round_status = "final_tests_generated"
+            round_generation_process = ''
             test_difficulty = ['low', 'medium', 'high']
             games = list()
 
@@ -2226,7 +2240,9 @@ def retrieve_next_round(params, cur_group) -> dict:
                         group_union_model_weights = [group_union_model.weights],
                         group_intersection_model_pos = [group_intersection_model.positions],
                         group_intersection_model_weights = [group_intersection_model.weights],
-                        group_knowledge = [group_knowledge])
+                        group_knowledge = [group_knowledge],
+                        round_generation_process = round_generation_process
+                        )
                         
         update_database(new_round, 'New round data generated')
 
@@ -2308,7 +2324,8 @@ def update_learner_models_from_demos(params, cur_group, next_round) -> tuple:
                                     group_union_model_weights = [group_union_model.weights],
                                     group_intersection_model_pos = [group_intersection_model.positions],
                                     group_intersection_model_weights = [group_intersection_model.weights],
-                                    group_knowledge = next_round.group_knowledge
+                                    group_knowledge = next_round.group_knowledge,
+                                    round_generation_process = ''
                                     )
     
     update_database(current_round_demo_updated, 'Update learner models from demos')
@@ -2333,7 +2350,7 @@ def update_learner_models_from_demos(params, cur_group, next_round) -> tuple:
 
 def update_learner_models_from_feedback(params, cur_group, next_round) -> tuple:
 
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models based on demos...')
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models based on feedback...')
 
     teacher_uf = params['teacher_learning_factor']
     model_type = params['teacher_update_model_type']
@@ -2402,10 +2419,11 @@ def update_learner_models_from_feedback(params, cur_group, next_round) -> tuple:
                                     group_union_model_weights = [group_union_model.weights],
                                     group_intersection_model_pos = [group_intersection_model.positions],
                                     group_intersection_model_weights = [group_intersection_model.weights],
-                                    group_knowledge = next_round.group_knowledge
+                                    group_knowledge = next_round.group_knowledge,
+                                    round_generation_process = ''
                                     )
     
-    update_database(current_round_feedback_updated, 'Update learner models from feedback')
+    update_database(current_round_feedback_updated, 'Update round data from feedback')
        
     # log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating models to group')
     cur_group.ind_member_models = copy.deepcopy(ind_member_models)
@@ -2418,7 +2436,7 @@ def update_learner_models_from_feedback(params, cur_group, next_round) -> tuple:
     flag_modified(cur_group, "group_intersection_model")   
     flag_modified(cur_group, "status")
 
-    update_database(cur_group, 'Update learner models from feedback')
+    update_database(cur_group, 'Update group learner models from feedback')
 
 
 

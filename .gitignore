@@ -3,5 +3,9 @@ app.db
 env/
 ./my_env/*
 ./my_env/bin/*
-debug/
-data/
+debug/*
+data/*
+results/*
+simple_game_test/app/app_log.txt
+simple_game_test/app.db
+simple_game_test/migrations/*
