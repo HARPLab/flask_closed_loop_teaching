@@ -94,59 +94,59 @@ print('Login initialized....')
 
 
 # ####################################################
-# # comment lines below when creating the database. uncomment lines below when running the app
-# from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
+# comment lines below when creating the database. uncomment lines below when running the app
+from app.params import ONLINE_CONDITIONS, IN_PERSON_CONDITIONS
 
 
-# pool_size = min(os.cpu_count(), 64)
-# print(f"Using {pool_size} processes")
+pool_size = min(os.cpu_count(), 64)
+print(f"Using {pool_size} processes")
 
-# # ## Lock with multiprocessing tools (when using flask default server)
-# from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
-# manager = Manager()
-# lock = manager.Lock()
-# pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
+# ## Lock with multiprocessing tools (when using flask default server)
+from multiprocessing import Manager, Pool, Lock  # Multiprocessing tools do not work well with gevent server
+manager = Manager()
+lock = manager.Lock()
+pool = Pool(processes=pool_size)  # Adjust the number of processes as needed  (python multiprocessing)
 
-# print('Lock initialized....')
+print('Lock initialized....')
 
-# # ## Lock with threading (when using gunicorn/gevent)
-# # from threading import Lock
-# # from gevent.pool import Pool
-# # lock = Lock()
-# # pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
-
-
-# logging.basicConfig(level=logging.DEBUG)
-
-# with app.app_context():
-# 	rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
-# 	if rows == 0:
-# 		for condition in ONLINE_CONDITIONS:
-# 			no_feedback_trial = condition.index("no_feedback")
-# 			feedback_trial = 1 - no_feedback_trial
-# 			feedback_type = condition[feedback_trial]
-# 			trials = condition
-# 			db.session.add(models.OnlineCondition(trials=trials, no_feedback_trial=no_feedback_trial, feedback_trial=feedback_trial, feedback_type=feedback_type, count=0))
-# 		for condition in IN_PERSON_CONDITIONS:
-# 			trials = condition
-# 			db.session.add(models.InPersonCondition(trials=trials, trial_1=condition[0], trial_2=condition[1], trial_3=condition[2], trial_4=condition[3], trial_5=condition[4], count=0))
-
-# 	print('Conditions initialized....')
+# ## Lock with threading (when using gunicorn/gevent)
+# from threading import Lock
+# from gevent.pool import Pool
+# lock = Lock()
+# pool = Pool(size=pool_size)  # Adjust the number of processes as needed  (gevent pool)
 
 
-# 	old_group = db.session.query(models.Group).first()
-# 	if old_group is None:
-# 		group = models.Group(user_ids=[])
-# 		db.session.add(group)
+logging.basicConfig(level=logging.DEBUG)
 
-# 	print('Groups initialized....')
+with app.app_context():
+	rows = (db.session.query(models.OnlineCondition).count() + db.session.query(models.InPersonCondition).count())
+	if rows == 0:
+		for condition in ONLINE_CONDITIONS:
+			no_feedback_trial = condition.index("no_feedback")
+			feedback_trial = 1 - no_feedback_trial
+			feedback_type = condition[feedback_trial]
+			trials = condition
+			db.session.add(models.OnlineCondition(trials=trials, no_feedback_trial=no_feedback_trial, feedback_trial=feedback_trial, feedback_type=feedback_type, count=0))
+		for condition in IN_PERSON_CONDITIONS:
+			trials = condition
+			db.session.add(models.InPersonCondition(trials=trials, trial_1=condition[0], trial_2=condition[1], trial_3=condition[2], trial_4=condition[3], trial_5=condition[4], count=0))
 
-# 	db.session.commit()
+	print('Conditions initialized....')
 
-# print('Db committed....')
 
-# # if __name__ == "__main__" and os.environ.get("FLASK_ENV") == "development":
-# #     socketio.run(app, debug=True, host="127.0.0.1", port=5000, use_reloader=False)
+	old_group = db.session.query(models.Group).first()
+	if old_group is None:
+		group = models.Group(user_ids=[])
+		db.session.add(group)
 
-# # if __name__ == "__main__":
-# #     socketio.run(app, host="0.0.0.0", port=5000)
+	print('Groups initialized....')
+
+	db.session.commit()
+
+print('Db committed....')
+
+# if __name__ == "__main__" and os.environ.get("FLASK_ENV") == "development":
+#     socketio.run(app, debug=True, host="127.0.0.1", port=5000, use_reloader=False)
+
+# if __name__ == "__main__":
+#     socketio.run(app, host="0.0.0.0", port=5000)
