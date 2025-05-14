@@ -1,13 +1,30 @@
 from flask import render_template, flash, redirect, url_for, request, session
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
+from flask_socketio import join_room, leave_room, rooms
+import asyncio
+from flask import redirect, url_for, jsonify, render_template
+from flask_login import logout_user
+
+
+print('Routes: Loaded flask apps...')
+
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, TrialForm, DemoForm, ConsentForm, AttentionCheckForm, FinalForm, TrainingForm, FeedbackSurveyForm, NoFeedbackSurveyForm, InformativenessForm
 from app.models import User, Trial, Demo, Survey, Domain, Group, Round, DomainParams, OnlineCondition, InPersonCondition
 from app.params import *
-import copy
+from app.backend_test import send_signal
+from app import socketio
+
+
+
+print('Routes: Loaded "App"...')
+
+
+
 # import numpy as np
 # import random as rand
+import copy
 import json
 import time
 import threading
@@ -22,29 +39,28 @@ import random
 # from flask import g
 from datetime import date, timedelta
 
-
-
-
-sys.path.append(os.path.join(os.path.dirname(__file__), 'group_teaching'))
-from .group_teaching.codes.user_study.user_study_utils import generate_demos_test_interaction_round, initialize_teaching, obtain_constraint, normalize_trajectories
-# from .group_teaching.codes import params_team as params
-from .group_teaching.codes.policy_summarization.BEC_helpers import remove_redundant_constraints, update_variable_filter
-from .group_teaching.codes.teams.teams_helpers import update_team_knowledge, check_unit_learning_goal_reached
-from .group_teaching.codes.params_utils import get_mdp_parameters
-from app.backend_test import send_signal
-from app import socketio
-from flask_socketio import join_room, leave_room, rooms
-import asyncio
-from concurrent.futures import ProcessPoolExecutor
-from sqlalchemy.orm.attributes import flag_modified
-
-# from transitions import Machine, State
-
 import pickle
 import numpy as np
 from datetime import date
 import matplotlib.pyplot as plt
 from threading import Lock
+
+from concurrent.futures import ProcessPoolExecutor
+from sqlalchemy.orm.attributes import flag_modified
+
+
+print('Routes: Loaded python apps...')
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'group_teaching'))
+from .group_teaching.codes.user_study.user_study_utils import generate_demos_test_interaction_round, initialize_teaching, obtain_constraint, normalize_trajectories
+from .group_teaching.codes.policy_summarization.BEC_helpers import remove_redundant_constraints, update_variable_filter
+from .group_teaching.codes.teams.teams_helpers import update_team_knowledge, check_unit_learning_goal_reached
+from .group_teaching.codes.params_utils import get_mdp_parameters
+
+
+# from transitions import Machine, State
+
+print('Routes: Loaded group teaching apps...')
 
 # print("App url map:", app.url_map)
 
@@ -53,8 +69,6 @@ disconnected_users_lock = Lock()
 executor = ProcessPoolExecutor()
 
 
-from flask import redirect, url_for, jsonify, render_template
-from flask_login import logout_user
 
 
 
@@ -62,7 +76,7 @@ from flask_login import logout_user
 with open(os.path.join(os.path.dirname(__file__), 'user_study_dict_extended.json'), 'r') as f:
     default_rounds = json.load(f)
 
-
+# print(default_rounds)
 
 # rule_str = None
 # TODO need a proper solution instead of global variables, i.e. per-user environment
@@ -2240,10 +2254,8 @@ def retrieve_next_round(params, cur_group) -> dict:
                         group_union_model_weights = [group_union_model.weights],
                         group_intersection_model_pos = [group_intersection_model.positions],
                         group_intersection_model_weights = [group_intersection_model.weights],
-                        group_knowledge = [group_knowledge],
-                        round_generation_process = round_generation_process
-                        )
-                        
+                        group_knowledge = [group_knowledge]
+                )                              
         update_database(new_round, 'New round data generated')
 
         return games_extended
@@ -2324,8 +2336,7 @@ def update_learner_models_from_demos(params, cur_group, next_round) -> tuple:
                                     group_union_model_weights = [group_union_model.weights],
                                     group_intersection_model_pos = [group_intersection_model.positions],
                                     group_intersection_model_weights = [group_intersection_model.weights],
-                                    group_knowledge = next_round.group_knowledge,
-                                    round_generation_process = ''
+                                    group_knowledge = next_round.group_knowledge
                                     )
     
     update_database(current_round_demo_updated, 'Update learner models from demos')
@@ -2419,8 +2430,7 @@ def update_learner_models_from_feedback(params, cur_group, next_round) -> tuple:
                                     group_union_model_weights = [group_union_model.weights],
                                     group_intersection_model_pos = [group_intersection_model.positions],
                                     group_intersection_model_weights = [group_intersection_model.weights],
-                                    group_knowledge = next_round.group_knowledge,
-                                    round_generation_process = ''
+                                    group_knowledge = next_round.group_knowledge
                                     )
     
     update_database(current_round_feedback_updated, 'Update round data from feedback')

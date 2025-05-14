@@ -159,7 +159,7 @@ class Round(db.Model):
     group_intersection_model_weights = db.Column(MutableList.as_mutable(db.PickleType), default=[])
     group_knowledge = db.Column(MutableList.as_mutable(db.PickleType), default=[])
 
-    round_generation_process = db.Column(db.PickleType) # the process of generating the round information
+    # round_generation_process = db.Column(db.PickleType) # the process of generating the round information
 
 
 class Group(db.Model):
