@@ -2051,6 +2051,7 @@ def retrieve_next_round(params, cur_group) -> dict:
         unit_learning_goal_reached_flag = check_unit_learning_goal_reached(params, group_knowledge, active_member_ids, min_KC_constraints, kc_id)
     else:
         unit_learning_goal_reached_flag = False
+        new_round_for_var_filter = True
 
     # check if max KC loops are reached
     if not unit_learning_goal_reached_flag:
@@ -2065,7 +2066,7 @@ def retrieve_next_round(params, cur_group) -> dict:
     
 
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Current group status:', cur_group.status)
-    new_round_for_var_filter = False
+    
     if (cur_group.status != "Domain teaching completed"):
 
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Current variable filter: ', variable_filter, ' with nonzero counter: ', nonzero_counter)
@@ -2080,6 +2081,7 @@ def retrieve_next_round(params, cur_group) -> dict:
         else:
             # update BEC constraints
             min_BEC_constraints_running = copy.deepcopy(prior_min_BEC_constraints_running)
+
         
         log_print('Group:', current_user.group, 'User:', current_user.id, 'min BEC constraints:', min_BEC_constraints_running, 'prior min BEC constraints:', prior_min_BEC_constraints_running)
         
@@ -2110,6 +2112,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             round_status = "demo_tests_generated"
             games_extended = []
 
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
             
             # new round data
             if len(demo_mdps) > 0:
