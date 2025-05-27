@@ -45,7 +45,10 @@ from datetime import date
 import matplotlib.pyplot as plt
 from threading import Lock
 
-from concurrent.futures import ProcessPoolExecutor
+from collections import defaultdict
+from contextlib import contextmanager
+
+# from concurrent.futures import ProcessPoolExecutor
 from sqlalchemy.orm.attributes import flag_modified
 
 
@@ -64,13 +67,39 @@ print('Routes: Loaded group teaching apps...')
 
 # print("App url map:", app.url_map)
 
-db_lock = Lock()
+# db_lock = Lock()
 disconnected_users_lock = Lock()
-executor = ProcessPoolExecutor()
+# executor = ProcessPoolExecutor()
+
+# Dictionary to store locks per group - automatically creates locks as needed
+group_locks = defaultdict(Lock)
+
+# Keep the global lock only for operations that affect multiple groups
+global_db_lock = Lock()
 
 
-
-
+@contextmanager
+def group_database_transaction(group_id):
+    """
+    Context manager for group-specific database operations
+    Only locks operations for the specific group
+    """
+    if group_id is None:
+        # For operations without a group (like user creation), use global lock
+        lock = global_db_lock
+    else:
+        # Use group-specific lock
+        lock = group_locks[group_id]
+    
+    with lock:
+        try:
+            yield db.session
+            db.session.commit()
+            logging.info(f"Group {group_id} database transaction completed")
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Group {group_id} database transaction failed: {e}")
+            raise
 
 
 with open(os.path.join(os.path.dirname(__file__), 'user_study_dict_extended.json'), 'r') as f:
@@ -175,9 +204,9 @@ def index():
     completed = True if current_user.study_completed == 1 else False
 
     current_user.loop_condition = "debug"
-    # with db_lock:
-    db.session.add(current_user)
-    db.session.commit()
+    with db_lock:
+        db.session.add(current_user)
+        db.session.commit()
 
     return render_template("index.html",
                            title="Home Page",
@@ -706,9 +735,9 @@ def join_group():
                 join_timestamps = [None for i in range(params['team_size'])],  # Add timestamps array
                 )
 
-            # with db_lock:
-            db.session.add(new_group_entry)
-            db.session.commit()
+            with db_lock:
+                db.session.add(new_group_entry)
+                db.session.commit()
                         
             new_group = db.session.query(Group).order_by(Group.id.desc()).first()
             current_user.group = new_group.id
@@ -1224,11 +1253,11 @@ def settings(data):
                                     update_database(current_group, 'Member ' + str(member_idx) + ' reset EOR for user ' + str(current_user.id))
                                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR, 'current_group.status :', current_group.status )
                                     
-                                    if current_group.status == "upd_demos":
+                                    if current_group.status != "gen_demos":
 
                                         new_round_generation_started = True
                                         # flag_modified(current_group, "new_round_generation_started")
-                                        update_database(current_group, 'New round generation started..')
+                                        # update_database(current_group, 'New round generation started..')
 
                                         
                                         # update models from test responses
@@ -1254,7 +1283,13 @@ def settings(data):
                                         
                                         #################################################
                                         log_print("Generating next round...")
+
+                                        current_group.status = "gen_demos"
+                                        flag_modified(current_group, "status")
+                                        update_database(current_group, 'New round generation started..')
+
                                         retrieve_next_round(params, current_group)
+
                                         
                                         db.session.refresh(current_group)
                                         next_round_id = current_user.round+1
@@ -1271,6 +1306,7 @@ def settings(data):
                                         
                                         if current_group.status != "Domain teaching completed" and next_round is not None:
                                             update_learner_models_from_demos(params, current_group, next_round)
+                                        
                                         db.session.refresh(current_group)
                                         current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()                            
 
@@ -1279,8 +1315,8 @@ def settings(data):
 
                                     else:
                                         log_print('Group:', current_user.group, 'User:', current_user.id, 'Curr group status: ', current_group.status)
-                                        log_print("Group status not updated to upd_demos")
-                                        RuntimeError("Group status not updated to upd_demos")
+                                        log_error("Group status not updated properly")
+                                        RuntimeWarning("Group status not updated properly")
                                     
                                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Socket emitting all reached EOR')
                                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
@@ -1712,9 +1748,9 @@ def login():
             
             code = user.set_code()
 
-            # with db_lock:
-            db.session.add(user)
-            db.session.commit()
+            with db_lock:
+                db.session.add(user)
+                db.session.commit()
 
         log_print('Logging in user:', user)
         login_user(user)
@@ -2023,9 +2059,9 @@ def retrieve_next_round(params, cur_group) -> dict:
                 min_BEC_constraints = domain_params["min_BEC_constraints"]
             )
 
-            # with db_lock:
-            db.session.add(curr_domain_params)
-            db.session.commit()
+            with db_lock:
+                db.session.add(curr_domain_params)
+                db.session.commit()
 
 
         # create a directory for the group
@@ -2495,17 +2531,17 @@ def get_test_constraints(domain, trial, traj_record, traj_features_record) -> np
 
 def update_database(updated_data, update_type):
 
-    # with db_lock:
-    try:
-        db.session.add(updated_data)
-        db.session.flush()
-        db.session.commit()
-        status_print("Flush and Commit successful. Remember to commit at the end.", update_type )
-    except Exception as e:
-        status_print(f"Error during commit: {e}.", update_type)
-        db.session.rollback()
+    with db_lock:
+        try:
+            db.session.add(updated_data)
+            db.session.flush()
+            db.session.commit()
+            status_print("Flush and Commit successful. Remember to commit at the end.", update_type )
+        except Exception as e:
+            status_print(f"Error during commit: {e}.", update_type)
+            db.session.rollback()
 
-    db.session.refresh(updated_data) # refresh the object to get the updated data just in case; should automatically happen upon commit as instances automatically expire
+        db.session.refresh(updated_data) # refresh the object to get the updated data just in case; should automatically happen upon commit as instances automatically expire
 
     # if update_type == 'Update round data from tests':
     #     # Verify if the round is present after the commit
@@ -2559,9 +2595,9 @@ def add_survey_data(domain, data):
             reward_ft_weights = data["reward_ft_weights"]
         )
     
-    # with db_lock:
-    db.session.add(dom)
-    db.session.commit()
+    with db_lock:
+        db.session.add(dom)
+        db.session.commit()
 
 
 def add_trial_data(domain, data):
@@ -2593,9 +2629,9 @@ def add_trial_data(domain, data):
         all_scores = data["final_score_string"]
     )
 
-    # with db_lock:
-    db.session.add(trial)
-    db.session.commit()
+    with db_lock:
+        db.session.add(trial)
+        db.session.commit()
 
 
 def update_domain_group(cur_group):
