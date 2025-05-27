@@ -205,7 +205,7 @@ def index():
     completed = True if current_user.study_completed == 1 else False
 
     current_user.loop_condition = "debug"
-    with db_lock:
+    with global_db_lock:
         db.session.add(current_user)
         db.session.commit()
 
@@ -1751,7 +1751,7 @@ def login():
             
             code = user.set_code()
 
-            with db_lock:
+            with global_db_lock:
                 db.session.add(user)
                 db.session.commit()
 
@@ -2065,8 +2065,8 @@ def retrieve_next_round(params, cur_group) -> dict:
                     consistent_state_count = domain_params["consistent_state_count"],
                     min_BEC_constraints = domain_params["min_BEC_constraints"]
                 )
-    
-                with db_lock:
+                
+                with global_db_lock:
                     db.session.add(curr_domain_params)
                     db.session.commit()
     
@@ -2625,7 +2625,7 @@ def add_survey_data(domain, data):
             reward_ft_weights = data["reward_ft_weights"]
         )
     
-    with db_lock:
+    with global_db_lock:
         db.session.add(dom)
         db.session.commit()
 
@@ -2659,7 +2659,7 @@ def add_trial_data(domain, data):
         all_scores = data["final_score_string"]
     )
 
-    with db_lock:
+    with global_db_lock:
         db.session.add(trial)
         db.session.commit()
 
