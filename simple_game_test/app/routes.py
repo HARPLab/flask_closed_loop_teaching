@@ -1426,7 +1426,7 @@ def settings(data):
                             
                             flag_modified(current_group, "members_EOR")
                             flag_modified(current_group, "members_last_test")
-                            update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id), db_lock=True)
+                            update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id), db_lock_status=True)
                            
                             db.session.refresh(current_group)
                             log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR)
