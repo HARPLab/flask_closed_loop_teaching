@@ -872,18 +872,19 @@ def remove_from_study(user_id):
             flag_modified(current_group, "members_statuses")
             flag_modified(current_group, "num_active_members")
             flag_modified(current_group, "members")
-    
-        update_database(current_group, 'Member left group and study')
         
-        db.session.refresh(current_group)
+            # Don't call update_database() - let the context manager handle commit
+            # update_database(current_group, 'Member left group and study')
+            
+        
         log_print('Group:', user.group, 'User:', user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
         log_print('Sending signal to members in group:', 'room_'+ str(user.group))
         
+        db.session.refresh(current_group)
         group_EOR_status = current_group.groups_all_EOR()
         status_print(f'Group {user.group} EOR status: {group_EOR_status}')
 
         socketio.emit("member left", {"member code": user.group_code}, to='room_'+ str(user.group))
-
         socketio.emit("force_remove_user", {"user_id": user_id})
 
 
@@ -1214,12 +1215,13 @@ def settings(data):
                                 flag_modified(current_group, "members_EOR")
                                 status_print('Group:', current_user.group, 'User:', current_user.id, 'Member' + str(member_idx) + ' reached EOR')
                             
-                            
-                            update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR', db_lock_status=True) # Ensure database updates occur outside transactions
-                            
-                            db.session.refresh(current_group)
+                                # Don't call update_database() - let the context manager handle commit
+                                # update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR', db_lock_status=True) # Ensure database updates occur outside transactions
+                                
+                        
 
                             log_print(colored('Updated Group members EOR status: ', 'red')) 
+                            db.session.refresh(current_group)
                             status_print(current_group.members_EOR, 'member statuses:', current_group.members_statuses, 'all EOR:', current_group.groups_all_EOR(), 'all last test:', current_group.group_last_test())
 
 
@@ -1232,7 +1234,7 @@ def settings(data):
                                 
                                 # Re-query before each loop
                                 current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
-                                log_print('current_group EOR:', current_group.groups_all_EOR(), 'check_member_and_group_status:', check_member_and_group_status, 'new_round_generation_started:', new_round_generation_started)
+                                log_print('Group mebers EOR: ', current_group.members_EOR, 'current_group EOR:', current_group.groups_all_EOR(), 'check_member_and_group_status:', check_member_and_group_status(), 'new_round_generation_started:', new_round_generation_started)
 
                                 # ensure all members have made the same game progress and are in the end of round
                                 if (current_group.groups_all_EOR() and check_member_and_group_status() and not new_round_generation_started):
@@ -1427,12 +1429,13 @@ def settings(data):
                             
                             flag_modified(current_group, "members_EOR")
                             flag_modified(current_group, "members_last_test")
-                        
-                        # Ensure database updates occur outside transactions
-                        update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id), db_lock_status=True)
-                       
-                        db.session.refresh(current_group)
+                            
+                            # Don't call update_database() - let the context manager handle commit
+                            # Ensure database updates occur outside transactions
+                            # update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id), db_lock_status=True)
+                           
                         log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR)
+                        db.session.refresh(current_group)
 
                     else:
                         RuntimeError("Next round not generated")
