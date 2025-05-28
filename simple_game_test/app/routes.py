@@ -60,6 +60,42 @@ from .group_teaching.codes.policy_summarization.BEC_helpers import remove_redund
 from .group_teaching.codes.teams.teams_helpers import update_team_knowledge, check_unit_learning_goal_reached
 from .group_teaching.codes.params_utils import get_mdp_parameters
 
+#################################
+# Define log file
+log_filename = os.path.join(os.path.dirname(__file__), "app_log.txt")
+
+# Set up logging to file and console
+logging.basicConfig(
+    level=logging.DEBUG,  # Capture both INFO and ERROR logs
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(log_filename, mode="a"),  # Append logs to file
+        # logging.StreamHandler(sys.stdout)  # Also print logs to console
+    ]
+)
+
+
+class LoggerWriter:
+    """Redirects stdout and stderr to logging."""
+    
+    def __init__(self, level):
+        self.level = level  # Log level (INFO for stdout, ERROR for stderr)
+
+    def write(self, message):
+        if message.strip():  # Ignore empty messages
+            self.level(message.strip())  # Log the message
+
+    def flush(self):
+        pass  # Needed for compatibility with sys.stdout/sys.stderr
+
+
+# Redirect stdout and stderr to logging
+sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
+sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
+
+
+
+#####################################
 
 
 def log_print(*args):
@@ -82,7 +118,8 @@ def status_print(*args):
     # Also print to console directly (bypassing redirections)
     print(f"STATUS: {message}", file=sys.__stdout__)
 
-# from transitions import Machine, State
+######################################
+
 
 log_print('Routes: Loaded group teaching apps...')
 
@@ -157,42 +194,7 @@ disconnected_users = {}  # Stores user ID, disconnect times, and reconnect times
 disconnect_timers = {}   # Stores active timers for users
 last_disconnect_pages = {}
 
-#################################
-# Define log file
-log_filename = os.path.join(os.path.dirname(__file__), "app_log.txt")
 
-# Set up logging to file and console
-logging.basicConfig(
-    level=logging.DEBUG,  # Capture both INFO and ERROR logs
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler(log_filename, mode="a"),  # Append logs to file
-        # logging.StreamHandler(sys.stdout)  # Also print logs to console
-    ]
-)
-
-
-class LoggerWriter:
-    """Redirects stdout and stderr to logging."""
-    
-    def __init__(self, level):
-        self.level = level  # Log level (INFO for stdout, ERROR for stderr)
-
-    def write(self, message):
-        if message.strip():  # Ignore empty messages
-            self.level(message.strip())  # Log the message
-
-    def flush(self):
-        pass  # Needed for compatibility with sys.stdout/sys.stderr
-
-
-# Redirect stdout and stderr to logging
-sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
-sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
-
-
-
-#####################################
 
 @app.route("/", methods=["GET", "POST"])
 # @app.route("/index", methods=["GET", "POST"])
