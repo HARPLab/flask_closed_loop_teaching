@@ -183,7 +183,7 @@ CARD_ID_TO_FEATURES = [
 ]
 '''
 
-QUICK_DEBUG_FLAG = False
+QUICK_DEBUG_FLAG = True
 
 # Timeout for reconnection (in seconds)
 RECONNECT_TIMEOUT = 150  # Change this to the desired time
@@ -2254,11 +2254,12 @@ def retrieve_next_round(params, cur_group) -> dict:
             final_test_id = 1
             # final_tests_to_add = [3, 5, 8, 12, 15, 17] # indices of final tests to add (one for each difficulty level)
             # final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
-            # final_tests_to_add = range(30)
+            # final_tests_to_add = range(1,19)
             final_tests_to_add = [1, 2, 4, 8, 10, 12] # balances KCs from among the available tests
             
             if QUICK_DEBUG_FLAG:
-                final_tests_to_add = [1, 3]
+                # final_tests_to_add = [1, 3]
+                final_tests_to_add = range(1,19)
             
             for td in test_difficulty:
                 for mdp_list in default_rounds[mdp_class]["final test"][td]:
