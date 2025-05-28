@@ -1333,7 +1333,7 @@ def settings(data):
     
                                         new_round_generation_started = False
                                         # flag_modified(current_group, "new_round_generation_started")
-                                        update_database(current_group, 'New round generation not yet started..')
+                                        # update_database(current_group, 'New round generation not yet started..')
     
                                         log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for next round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
                                         time.sleep(2) # a sleep to avoid too many queries
@@ -2266,7 +2266,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             if teaching_complete_flag:
                 cur_group.status = "Domain teaching completed"
                 flag_modified(cur_group, "status")
-    
+            
             update_database(cur_group, 'PF models, teaching status updated')
     
     
@@ -2583,7 +2583,9 @@ def update_database(updated_data, update_type):
     with db_lock:
         try:
             db.session.add(updated_data)
+            log_print('Added/Updated row...')
             db.session.flush()
+            log_print('Flushed...')
             db.session.commit()
             status_print(f"Database operation successful: {update_type}")
         except Exception as e:
