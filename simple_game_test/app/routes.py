@@ -84,12 +84,8 @@ def group_database_transaction(group_id):
     Context manager for group-specific database operations
     Only locks operations for the specific group
     """
-    if group_id is None:
-        # For operations without a group (like user creation), use global lock
-        db_lock = global_db_lock
-    else:
-        # Use group-specific lock
-        db_lock = group_locks[group_id]
+    # Use group-specific lock
+    db_lock = group_locks[group_id]
         
     log_print('Db lock in func:', db_lock)
     
@@ -871,14 +867,14 @@ def remove_from_study(user_id):
             flag_modified(current_group, "num_active_members")
             flag_modified(current_group, "members")
     
-            update_database(current_group, 'Member left group and study')
-            
-            db.session.refresh(current_group)
-            log_print('Group:', user.group, 'User:', user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
-            log_print('Sending signal to members in group:', 'room_'+ str(user.group))
-            
-            group_EOR_status = current_group.groups_all_EOR()
-            status_print(f'Group {user.group} EOR status: {group_EOR_status}')
+        update_database(current_group, 'Member left group and study')
+        
+        db.session.refresh(current_group)
+        log_print('Group:', user.group, 'User:', user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
+        log_print('Sending signal to members in group:', 'room_'+ str(user.group))
+        
+        group_EOR_status = current_group.groups_all_EOR()
+        status_print(f'Group {user.group} EOR status: {group_EOR_status}')
 
         socketio.emit("member left", {"member code": user.group_code}, to='room_'+ str(user.group))
 
@@ -1204,15 +1200,16 @@ def settings(data):
                                 # Re-read group data inside the lock to get fresh state
                                 current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
         
-        
                                 status_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.username, 'reached last iteration in round')
-                                member_idx = current_group.members.index(current_user.username)
                                 
+                                member_idx = current_group.members.index(current_user.username)
                                 current_group.members_EOR[member_idx] = True
                             
                                 flag_modified(current_group, "members_EOR")
                                 status_print('Group:', current_user.group, 'User:', current_user.id, 'Member' + str(member_idx) + ' reached EOR')
-                                update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR', db_lock_status=True)
+                            
+                            
+                            update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR', db_lock_status=True) # Ensure database updates occur outside transactions
                             
                             db.session.refresh(current_group)
 
@@ -1227,11 +1224,6 @@ def settings(data):
 
                             while next_round is None:
                                 
-                                
-                                # with group_database_transaction(current_user.group):
-                                    
-                                    # # Re-read group data inside lock
-                                    # current_group = db.session.query(Group).filter_by(id=current_user.group).first()
 
                                 # ensure all members have made the same game progress and are in the end of round
                                 if (current_group.groups_all_EOR() and check_member_and_group_status() and not new_round_generation_started):
@@ -1426,10 +1418,12 @@ def settings(data):
                             
                             flag_modified(current_group, "members_EOR")
                             flag_modified(current_group, "members_last_test")
-                            update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id), db_lock_status=True)
-                           
-                            db.session.refresh(current_group)
-                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR)
+                        
+                        # Ensure database updates occur outside transactions
+                        update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id), db_lock_status=True)
+                       
+                        db.session.refresh(current_group)
+                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR)
 
                     else:
                         RuntimeError("Next round not generated")
@@ -2540,80 +2534,66 @@ def get_test_constraints(domain, trial, traj_record, traj_features_record) -> np
 
 def update_database(updated_data, update_type, db_lock_status=False):
 
-    # with db_lock:
-    #     try:
-    #         db.session.add(updated_data)
-    #         db.session.flush()
-    #         db.session.commit()
-    #         status_print("Flush and Commit successful. Remember to commit at the end.", update_type )
-    #     except Exception as e:
-    #         status_print(f"Error during commit: {e}.", update_type)
-    #         db.session.rollback()
-
-    #     db.session.refresh(updated_data) # refresh the object to get the updated data just in case; should automatically happen upon commit as instances automatically expire
-    
-    """
-    Updated to be group-aware when possible
-    """
-    
-    log_print('Trying to update database for ', update_type)
-    
-    # Try to determine if this is group-specific data
-    # group_id = None
-    # if hasattr(updated_data, 'group_id'):
-    #     group_id = updated_data.group_id
-    # elif hasattr(updated_data, 'group'):
-    #     group_id = updated_data.group
-    # elif hasattr(updated_data, 'id'):
-    #     group_id = updated_data.id
-    
-    # Check only for Group db; use Global db lock for all other dbs
-    if not db_lock_status:
-        group_id = None
-        if hasattr(updated_data, 'id'):
-            group_id = updated_data.id
-        
-        log_print('Group id:', group_id)
-        
-        # Use appropriate lock
-        if group_id is not None:
-            db_lock = group_locks[group_id]
-        else:
-            db_lock = global_db_lock
-        
-        log_print('Db lock:', db_lock)
-    
-    
-        with db_lock:
-            try:
-                db.session.add(updated_data)
-                log_print('Added/Updated row...')
-                db.session.flush()
-                log_print('Flushed...')
-                db.session.commit()
-                status_print(f"Database operation successful: {update_type}")
-            except Exception as e:
-                status_print(f"Error during {update_type}: {e}")
-                db.session.rollback()
-                raise
-                
-    else:
-    # Don't use db lock if already locked
-        log_print('DB already locked....')
+    log_print('Trying to update database for ', update_type)    
+    with global_db_lock:
         try:
             db.session.add(updated_data)
-            log_print('Added/Updated row...')
             db.session.flush()
-            log_print('Flushed...')
             db.session.commit()
             status_print(f"Database operation successful: {update_type}")
         except Exception as e:
-            status_print(f"Error during {update_type}: {e}")
+            status_print(f"Error during commit: {e}.", update_type)
             db.session.rollback()
-            raise
+
+    db.session.refresh(updated_data) # refresh the object to get the updated data just in case; should automatically happen upon commit as instances automatically expire
+   
+    # # Check only for Group db; use Global db lock for all other dbs
+    # if not db_lock_status:
+    #     group_id = None
+    #     if hasattr(updated_data, 'id'):
+    #         group_id = updated_data.id
+        
+    #     log_print('Group id:', group_id)
+        
+    #     # Use appropriate lock
+    #     if group_id is not None:
+    #         db_lock = group_locks[group_id]
+    #     else:
+    #         db_lock = global_db_lock
+        
+    #     log_print('Db lock:', db_lock)
+    
+    
+    #     with db_lock:
+    #         try:
+    #             db.session.add(updated_data)
+    #             log_print('Added/Updated row...')
+    #             db.session.flush()
+    #             log_print('Flushed...')
+    #             db.session.commit()
+    #             status_print(f"Database operation successful: {update_type}")
+    #         except Exception as e:
+    #             status_print(f"Error during {update_type}: {e}")
+    #             db.session.rollback()
+    #             raise
+                
+    # else:
+    # # Don't use db lock if already locked
+    #     log_print('DB already locked....')
+    #     try:
+    #         db.session.add(updated_data)
+    #         log_print('Added/Updated row...')
+    #         db.session.flush()
+    #         log_print('Flushed...')
+    #         db.session.commit()
+    #         status_print(f"Database operation successful: {update_type}")
+    #     except Exception as e:
+    #         status_print(f"Error during {update_type}: {e}")
+    #         db.session.rollback()
+    #         raise
         
         
-    db.session.refresh(updated_data)
+    # db.session.refresh(updated_data)
 
 
 def get_domain():
