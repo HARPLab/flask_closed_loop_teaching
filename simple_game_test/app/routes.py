@@ -2297,7 +2297,8 @@ def retrieve_next_round(params, cur_group) -> dict:
                             group_intersection_model_pos = [group_intersection_model.positions],
                             group_intersection_model_weights = [group_intersection_model.weights],
                             group_knowledge = [group_knowledge]
-                    )                              
+                    )         
+            log_print('New round info:', new_round)                     
             update_database(new_round, 'New round data generated')
     
             return games_extended
@@ -2559,11 +2560,15 @@ def update_database(updated_data, update_type):
     elif hasattr(updated_data, 'group'):
         group_id = updated_data.group
     
+    log_print('Group id:', group_id)
+    
     # Use appropriate lock
     if group_id is not None:
         db_lock = group_locks[group_id]
     else:
         db_lock = global_db_lock
+    
+    log_print('Db lock:', db_lock)
     
     with db_lock:
         try:
