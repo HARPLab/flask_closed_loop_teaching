@@ -658,152 +658,149 @@ def join_group():
     data emitted: num_members
     side effects: alters Groups database with added member in appropriate row   
     """ 
+    
+    cond_list = ["individual_belief_low", "common_belief", "individual_belief_high", "joint_belief"]
+    domain_list = [["at", "sb"], ["sb", "at"]]
 
-    # Use global lock for group creation/assignment since this affects group assignment
-    with group_database_transaction(None):  # None = use global lock
+    if QUICK_DEBUG_FLAG:
+        domain_list = [["at", "sb"]]
+
     
-        cond_list = ["individual_belief_low", "common_belief", "individual_belief_high", "joint_belief"]
-        domain_list = [["at", "sb"], ["sb", "at"]]
+    # cond_list = ["individual_belief_low"]
+    # domain_list = [["at", "sb"]]
+
     
-        if QUICK_DEBUG_FLAG:
-            domain_list = [["at", "sb"]]
+    # get last entry in groups table
+    # the initial entry is an empty list as initialized in app/__init__.py
+    open_group = db.session.query(Group).filter_by(status="study_not_start").order_by(Group.id.desc()).first()
+
+    num_active_members = 0
+    params = get_mdp_parameters("")
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated params:', params)
     
+
+    # Counterbalance experimental conditions
+    condition_index = db.session.query(Group).count() % len(cond_list)
+    domain_index = db.session.query(Group).count() % len(domain_list)
+
+    if not current_user.group: # if no group yet, join one
+
+        status_print('Group:', current_user.group, 'User:', current_user.id, 'Join group function. Current user group: ', current_user.group)
         
-        # cond_list = ["individual_belief_low"]
-        # domain_list = [["at", "sb"]]
-    
-        
-        # get last entry in groups table
-        # the initial entry is an empty list as initialized in app/__init__.py
-        open_group = db.session.query(Group).filter_by(status="study_not_start").order_by(Group.id.desc()).first()
-    
-        num_active_members = 0
-        params = get_mdp_parameters("")
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated params:', params)
-        
-    
-        # Counterbalance experimental conditions
-        condition_index = db.session.query(Group).count() % len(cond_list)
-        domain_index = db.session.query(Group).count() % len(domain_list)
-    
-        if not current_user.group: # if no group yet, join one
-    
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'Join group function. Current user group: ', current_user.group)
-            
-            if open_group is not None:
-                num_active_members = open_group.num_active_members
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Joined timestamps:', open_group.join_timestamps, 'Group experimental condition:', open_group.experimental_condition)
-    
-                # Check if any existing members joined more than 30 minutes ago
-                current_time = datetime.now()
-                create_new_group = False
-    
-                status_print('New group flag initialized to false...')
-    
-                for timestamp_str in open_group.join_timestamps:
-                    status_print('Timestamp: ', timestamp_str)
-                    if timestamp_str is not None:
-                        # Parse the timestamp string back to datetime
-                        try:
-                            timestamp = datetime.strptime(timestamp_str, "%y-%m-%d-%H-%M-%S")
-                            time_diff = current_time - timestamp
-                            status_print('Timediff: ', time_diff)
-                            if time_diff.total_seconds() > GROUP_JOIN_THRESHOLD:  # 30 minutes = 1800 seconds
-                                create_new_group = True
-                                break
-                        except (ValueError, TypeError):
+        if open_group is not None:
+            num_active_members = open_group.num_active_members
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Old group Group id:', open_group.id, 'num_active_members:', num_active_members, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Joined timestamps:', open_group.join_timestamps, 'Group experimental condition:', open_group.experimental_condition)
+
+            # Check if any existing members joined more than 30 minutes ago
+            current_time = datetime.now()
+            create_new_group = False
+
+            status_print('New group flag initialized to false...')
+
+            for timestamp_str in open_group.join_timestamps:
+                status_print('Timestamp: ', timestamp_str)
+                if timestamp_str is not None:
+                    # Parse the timestamp string back to datetime
+                    try:
+                        timestamp = datetime.strptime(timestamp_str, "%y-%m-%d-%H-%M-%S")
+                        time_diff = current_time - timestamp
+                        status_print('Timediff: ', time_diff)
+                        if time_diff.total_seconds() > GROUP_JOIN_THRESHOLD:  # 30 minutes = 1800 seconds
+                            create_new_group = True
                             break
-            else:
-                create_new_group = True
-                    
-    
-            
-            if create_new_group or num_active_members == 0 or num_active_members == params['team_size']: # if group is full or empty, create a new group
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'No group yet.. Creating one...')
-                new_group_entry = Group(
-                    experimental_condition=cond_list[condition_index],
-                    domain_1=domain_list[domain_index][0],
-                    domain_2=domain_list[domain_index][1],
-                    status = "study_not_start",
-                    member_user_ids = [None for i in range(params['team_size'])],
-                    members = [None for i in range(params['team_size'])],
-                    members_statuses = ["not joined" for i in range(params['team_size'])],
-                    num_active_members = 0,
-                    num_members = params['team_size'],
-                    members_EOR = [False for i in range(params['team_size'])],
-                    members_last_test = [False for i in range(params['team_size'])],
-                    join_timestamps = [None for i in range(params['team_size'])],  # Add timestamps array
-                    )
-    
-                db.session.add(new_group_entry)
-                db.session.commit()
-                            
-                new_group = db.session.query(Group).order_by(Group.id.desc()).first()
-                current_user.group = new_group.id
-    
-                current_time = datetime.now()
-                new_group.join_timestamps[0] = current_time.strftime("%y-%m-%d-%H-%M-%S")
-    
-    
-                _, current_user.group_code, current_user.domain_1, current_user.domain_2 = new_group.groups_push(current_user.username, current_user.id)
-                flag_modified(new_group, "members")
-                flag_modified(new_group, "member_user_ids")
-                flag_modified(new_group, "members_statuses")
-                flag_modified(new_group, "num_active_members")
-                flag_modified(new_group, "join_timestamps")
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
-                num_active_members = 1
-    
-                update_database(new_group, 'Member to new group')
+                    except (ValueError, TypeError):
+                        break
+        else:
+            create_new_group = True
                 
-            else:
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'Group timestamps:', open_group.join_timestamps, 'Adding to existing group')
-                _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
-                
-                status_print('Updated group data...')
-                status_print('Group:', current_user.group, 'member_user_ids:', open_group.member_user_ids, 'timestamps:', open_group.join_timestamps, 'Adding to existing group')
-    
-    
-                current_time = datetime.now()            
-                open_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
-    
-                status_print('Timestamps added....')
-                
-                flag_modified(open_group, "members")
-                flag_modified(open_group, "member_user_ids")
-                flag_modified(open_group, "members_statuses")
-                flag_modified(open_group, "num_active_members")
-                flag_modified(open_group, "join_timestamps")
-    
-                current_user.group = open_group.id
-                num_active_members += 1
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'Group id:', open_group.id, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
-    
-                update_database(open_group, 'Member to existing group')
+
         
-    
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Current user: ' + str(current_user.username) + 'Current user group: ' + str(current_user.group))
+        if create_new_group or num_active_members == 0 or num_active_members == params['team_size']: # if group is full or empty, create a new group
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'No group yet.. Creating one...')
+            new_group_entry = Group(
+                experimental_condition=cond_list[condition_index],
+                domain_1=domain_list[domain_index][0],
+                domain_2=domain_list[domain_index][1],
+                status = "study_not_start",
+                member_user_ids = [None for i in range(params['team_size'])],
+                members = [None for i in range(params['team_size'])],
+                members_statuses = ["not joined" for i in range(params['team_size'])],
+                num_active_members = 0,
+                num_members = params['team_size'],
+                members_EOR = [False for i in range(params['team_size'])],
+                members_last_test = [False for i in range(params['team_size'])],
+                join_timestamps = [None for i in range(params['team_size'])],  # Add timestamps array
+                )
+
+            db.session.add(new_group_entry)
+            db.session.commit()
+                        
+            new_group = db.session.query(Group).order_by(Group.id.desc()).first()
+            current_user.group = new_group.id
+
+            current_time = datetime.now()
+            new_group.join_timestamps[0] = current_time.strftime("%y-%m-%d-%H-%M-%S")
+
+
+            _, current_user.group_code, current_user.domain_1, current_user.domain_2 = new_group.groups_push(current_user.username, current_user.id)
+            flag_modified(new_group, "members")
+            flag_modified(new_group, "member_user_ids")
+            flag_modified(new_group, "members_statuses")
+            flag_modified(new_group, "num_active_members")
+            flag_modified(new_group, "join_timestamps")
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
+            num_active_members = 1
+
+            update_database(new_group, 'Member to new group')
             
-    
-            # make sure that when people leave and rejoin they check the time elapsed and 
-            # if it's not too long, then put them back in a group
-            # they shouldn't be able to go back once they're in the waiting room
-    
-            # test 
-            all_groups = db.session.query(Group).all()
-            log_print([[g.id, g.members] for g in all_groups])
-    
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Room:', 'room_'+ str(current_user.group))
-            log_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
-            join_room('room_'+ str(current_user.group))
-    
-            # if room is None then it gets sent to everyone
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
-            socketio.emit("group joined", {"num_members":num_active_members, "max_num_members": params['team_size'], "room_name": 'room_'+ str(current_user.group)}, to='room_'+ str(current_user.group))
+        else:
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Group timestamps:', open_group.join_timestamps, 'Adding to existing group')
+            _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
             
+            status_print('Updated group data...')
+            status_print('Group:', current_user.group, 'member_user_ids:', open_group.member_user_ids, 'timestamps:', open_group.join_timestamps, 'Adding to existing group')
+
+
+            current_time = datetime.now()            
+            open_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
+
+            status_print('Timestamps added....')
+            
+            flag_modified(open_group, "members")
+            flag_modified(open_group, "member_user_ids")
+            flag_modified(open_group, "members_statuses")
+            flag_modified(open_group, "num_active_members")
+            flag_modified(open_group, "join_timestamps")
+
+            current_user.group = open_group.id
+            num_active_members += 1
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Group id:', open_group.id, 'Group members:', open_group.members, 'Group mem ids:', open_group.member_user_ids, 'Group status:', open_group.members_statuses, 'Group experimental condition:', open_group.experimental_condition)
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
+
+            update_database(open_group, 'Member to existing group')
     
+
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Current user: ' + str(current_user.username) + 'Current user group: ' + str(current_user.group))
+        
+
+        # make sure that when people leave and rejoin they check the time elapsed and 
+        # if it's not too long, then put them back in a group
+        # they shouldn't be able to go back once they're in the waiting room
+
+        # test 
+        all_groups = db.session.query(Group).all()
+        log_print([[g.id, g.members] for g in all_groups])
+
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Room:', 'room_'+ str(current_user.group))
+        log_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
+        join_room('room_'+ str(current_user.group))
+
+        # if room is None then it gets sent to everyone
+        status_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
+        socketio.emit("group joined", {"num_members":num_active_members, "max_num_members": params['team_size'], "room_name": 'room_'+ str(current_user.group)}, to='room_'+ str(current_user.group))
+        
+
 
 
 

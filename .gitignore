@@ -9,3 +9,4 @@ results/*
 simple_game_test/app/app_log.txt
 simple_game_test/app.db
 simple_game_test/migrations/*
+app_log.txt
