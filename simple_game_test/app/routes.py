@@ -152,6 +152,7 @@ def group_database_transaction(group_id):
     with db_lock:
         try:
             yield db.session
+            db.session.flush()
             db.session.commit()
             logging.info(f"Group {group_id} database transaction completed")
         except Exception as e:
@@ -858,6 +859,8 @@ def remove_from_study(user_id):
 
     if user.group is not None:
         
+        db.session.refresh(user)
+        
         # Use group-specific lock since we're only modifying this group's data
         with group_database_transaction(user.group):
             
@@ -888,6 +891,21 @@ def remove_from_study(user_id):
         socketio.emit("force_remove_user", {"user_id": user_id})
 
 
+
+def refresh_group_and_check_active_members(group_id):
+    """
+    Refresh group data and return updated group object and active member count
+    """
+    current_group = db.session.query(Group).filter_by(id=group_id).first()
+    if current_group:
+        # Force refresh from database to get latest status changes
+        db.session.refresh(current_group)
+        db.session.expunge(current_group)
+        current_group = db.session.query(Group).filter_by(id=group_id).first()
+        
+        active_count = sum(1 for status in current_group.members_statuses if status == 'joined')
+        return current_group, active_count
+    return None, 0
 
 
 
@@ -1105,7 +1123,10 @@ def settings(data):
                 
                 
                 while True:
-                    db.session.refresh(current_group)
+                    # db.session.refresh(current_group)
+                    
+                    current_group, active_member_count = refresh_group_and_check_active_members(current_user.group)
+
 
                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for team status to update, mainly all members to be in same game/domain...')
                     
@@ -1204,8 +1225,11 @@ def settings(data):
 
                             ## Update EOR status for current user
                             with group_database_transaction(current_user.group):
+                                
                                 # Re-read group data inside the lock to get fresh state
-                                current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+                                # current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+                                current_group, active_member_count = refresh_group_and_check_active_members(current_user.group)
+
         
                                 status_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.username, 'reached last iteration in round')
                                 
@@ -1233,7 +1257,8 @@ def settings(data):
                             while next_round is None:
                                 
                                 # Re-query before each loop
-                                current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+                                # current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+                                current_group, active_member_count = refresh_group_and_check_active_members(current_user.group)
                                 log_print('Group mebers EOR: ', current_group.members_EOR, 'members_statuses:', current_group.members_statuses, 'current_group EOR:', current_group.groups_all_EOR(), 'check_member_and_group_status:', check_member_and_group_status(), 'new_round_generation_started:', new_round_generation_started)
 
                                 # ensure all members have made the same game progress and are in the end of round
