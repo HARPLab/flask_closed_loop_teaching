@@ -2557,12 +2557,17 @@ def update_database(updated_data, update_type):
     log_print('Trying to update database for ', update_type)
     
     # Try to determine if this is group-specific data
+    # group_id = None
+    # if hasattr(updated_data, 'group_id'):
+    #     group_id = updated_data.group_id
+    # elif hasattr(updated_data, 'group'):
+    #     group_id = updated_data.group
+    # elif hasattr(updated_data, 'id'):
+    #     group_id = updated_data.id
+    
+    # Check only for Group db; use Global db lock for all other dbs
     group_id = None
-    if hasattr(updated_data, 'group_id'):
-        group_id = updated_data.group_id
-    elif hasattr(updated_data, 'group'):
-        group_id = updated_data.group
-    elif hasattr(updated_data, 'id'):
+    if hasattr(updated_data, 'id'):
         group_id = updated_data.id
     
     log_print('Group id:', group_id)
