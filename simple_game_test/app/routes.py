@@ -1234,7 +1234,7 @@ def settings(data):
                                 
                                 # Re-query before each loop
                                 current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
-                                log_print('Group mebers EOR: ', current_group.members_EOR, 'current_group EOR:', current_group.groups_all_EOR(), 'check_member_and_group_status:', check_member_and_group_status(), 'new_round_generation_started:', new_round_generation_started)
+                                log_print('Group mebers EOR: ', current_group.members_EOR, 'members_statuses:', current_group.members_statuses, 'current_group EOR:', current_group.groups_all_EOR(), 'check_member_and_group_status:', check_member_and_group_status(), 'new_round_generation_started:', new_round_generation_started)
 
                                 # ensure all members have made the same game progress and are in the end of round
                                 if (current_group.groups_all_EOR() and check_member_and_group_status() and not new_round_generation_started):
