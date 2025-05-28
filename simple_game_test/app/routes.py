@@ -2559,6 +2559,8 @@ def update_database(updated_data, update_type):
         group_id = updated_data.group_id
     elif hasattr(updated_data, 'group'):
         group_id = updated_data.group
+    elif hasattr(updated_data, 'id'):
+        group_id = updated_data.id
     
     log_print('Group id:', group_id)
     
@@ -2581,7 +2583,7 @@ def update_database(updated_data, update_type):
             db.session.rollback()
             raise
         
-        db.session.refresh(updated_data)
+    db.session.refresh(updated_data)
 
 
 def get_domain():
