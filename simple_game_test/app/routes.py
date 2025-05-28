@@ -90,6 +90,8 @@ def group_database_transaction(group_id):
     else:
         # Use group-specific lock
         db_lock = group_locks[group_id]
+        
+    log_print('Db lock in func:', db_lock)
     
     with db_lock:
         try:
