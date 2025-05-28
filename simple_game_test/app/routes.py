@@ -77,6 +77,8 @@ group_locks = defaultdict(Lock)
 # Keep the global lock only for operations that affect multiple groups
 global_db_lock = Lock()
 
+log_print('Global db lock: ', global_db_lock)
+
 
 @contextmanager
 def group_database_transaction(group_id):
