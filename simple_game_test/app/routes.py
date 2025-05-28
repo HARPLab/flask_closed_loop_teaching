@@ -2553,6 +2553,9 @@ def update_database(updated_data, update_type):
     """
     Updated to be group-aware when possible
     """
+    
+    log_print('Trying to update database for ', update_type)
+    
     # Try to determine if this is group-specific data
     group_id = None
     if hasattr(updated_data, 'group_id'):
