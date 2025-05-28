@@ -1212,7 +1212,7 @@ def settings(data):
                             
                                 flag_modified(current_group, "members_EOR")
                                 status_print('Group:', current_user.group, 'User:', current_user.id, 'Member' + str(member_idx) + ' reached EOR')
-                                update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR')
+                                update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR', db_lock_status=True)
                             
                             db.session.refresh(current_group)
 
@@ -1228,122 +1228,122 @@ def settings(data):
                             while next_round is None:
                                 
                                 
-                                with group_database_transaction(current_user.group):
+                                # with group_database_transaction(current_user.group):
                                     
-                                    # Re-read group data inside lock
-                                    current_group = db.session.query(Group).filter_by(id=current_user.group).first()
+                                    # # Re-read group data inside lock
+                                    # current_group = db.session.query(Group).filter_by(id=current_user.group).first()
 
-                                    # ensure all members have made the same game progress and are in the end of round
-                                    if (current_group.groups_all_EOR() and check_member_and_group_status() and not new_round_generation_started):
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Members EOR:', current_group.members_EOR, 'All EOR:', current_group.groups_all_EOR(), 'Member statuses:', current_group.members_statuses, 'Num active members: ', current_group.num_active_members)
-                                        status_print("All group members reached EOR, so i'm trying to construct the next round now")
-                                        log_print("Current group status: ", current_group.status)
-    
-                                        # reset user EOR
-                                        member_idx = current_user.group_code
-                                        current_group.members_EOR[member_idx] = False
-                                        flag_modified(current_group, "members_EOR")
-                                        update_database(current_group, 'Member ' + str(member_idx) + ' reset EOR for user ' + str(current_user.id))
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR, 'current_group.status :', current_group.status )
+                                # ensure all members have made the same game progress and are in the end of round
+                                if (current_group.groups_all_EOR() and check_member_and_group_status() and not new_round_generation_started):
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Members EOR:', current_group.members_EOR, 'All EOR:', current_group.groups_all_EOR(), 'Member statuses:', current_group.members_statuses, 'Num active members: ', current_group.num_active_members)
+                                    status_print("All group members reached EOR, so i'm trying to construct the next round now")
+                                    log_print("Current group status: ", current_group.status)
+
+                                    # reset user EOR
+                                    member_idx = current_user.group_code
+                                    current_group.members_EOR[member_idx] = False
+                                    flag_modified(current_group, "members_EOR")
+                                    update_database(current_group, 'Member ' + str(member_idx) + ' reset EOR for user ' + str(current_user.id))
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR, 'current_group.status :', current_group.status )
+                                    db.session.refresh(current_group)
+                                    
+                                    if current_group.status != "gen_demos":
+
+                                        new_round_generation_started = True
+                                        # flag_modified(current_group, "new_round_generation_started")
+                                        # update_database(current_group, 'New round generation started..')
+
+                                        
+                                        # update models from test responses
+                                        update_learner_models_from_tests(params, current_group, current_round)  # only for diagnostic tests and not for final tests
+                                        db.session.refresh(current_group)
+                                        current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
+                                        
+
+                                        # # update models from feedback of test responses
+                                        # update_learner_models_from_feedback(params, current_group, current_round)
+                                        # db.session.refresh(current_group)
+                                        # current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
+                                        
+
+                                        # pf_round_id = current_user.round
+                                        # pf_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=pf_round_id).order_by(Round.id.desc()).first()
+                                        
+                                        # try:
+                                        #     log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
+                                        #     find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
+                                        # except:
+                                        #     log_error('Group:', current_user.group, 'User:', current_user.id, 'Error in finding prob particles...')
+                                        
+                                        #################################################
+                                        log_print("Generating next round...")
+
+                                        current_group.status = "gen_demos"
+                                        flag_modified(current_group, "status")
+                                        update_database(current_group, 'New round generation started..')
                                         db.session.refresh(current_group)
                                         
-                                        if current_group.status != "gen_demos":
-    
-                                            new_round_generation_started = True
-                                            # flag_modified(current_group, "new_round_generation_started")
-                                            # update_database(current_group, 'New round generation started..')
-    
-                                            
-                                            # update models from test responses
-                                            update_learner_models_from_tests(params, current_group, current_round)  # only for diagnostic tests and not for final tests
-                                            db.session.refresh(current_group)
-                                            current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-                                            
-    
-                                            # # update models from feedback of test responses
-                                            # update_learner_models_from_feedback(params, current_group, current_round)
-                                            # db.session.refresh(current_group)
-                                            # current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-                                            
-    
-                                            # pf_round_id = current_user.round
-                                            # pf_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=pf_round_id).order_by(Round.id.desc()).first()
-                                            
-                                            # try:
-                                            #     log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
-                                            #     find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
-                                            # except:
-                                            #     log_error('Group:', current_user.group, 'User:', current_user.id, 'Error in finding prob particles...')
-                                            
-                                            #################################################
-                                            log_print("Generating next round...")
-    
-                                            current_group.status = "gen_demos"
-                                            flag_modified(current_group, "status")
-                                            update_database(current_group, 'New round generation started..')
-                                            db.session.refresh(current_group)
-                                            
-                                            retrieve_next_round(params, current_group)
-    
-                                            
-                                            db.session.refresh(current_group)
-                                            next_round_id = current_user.round+1
-                                            next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-                                            
-                                            if next_round is not None:
-                                                next_kc_id = next_round.kc_id
-                                            else:
-                                                next_kc_id = -1
-    
-                                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models from demos...', 'current_group status:', current_group.status)
-                                            
-                                            status_print('Next round:', next_round)
-                                            
-                                            if current_group.status != "Domain teaching completed" and next_round is not None:
-                                                update_learner_models_from_demos(params, current_group, next_round)
-                                            
-                                            db.session.refresh(current_group)
-                                            current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()                            
-    
-                                            # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
-                                            # find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
-    
-                                        else:
-                                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Curr group status: ', current_group.status)
-                                            log_error("Group status not updated properly")
-                                            RuntimeWarning("Group status not updated properly")
+                                        retrieve_next_round(params, current_group)
+
                                         
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Socket emitting all reached EOR')
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
-                                        socketio.emit("all reached EOR", to='room_'+ str(current_user.group))  # triggers next page button to go to next round for clients
-                                        break
-                                    else:
-                                        round_status = ""
+                                        db.session.refresh(current_group)
                                         next_round_id = current_user.round+1
                                         next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-    
+                                        
                                         if next_round is not None:
-                                            round_status = next_round.status
-    
-                                            if round_status == "demo_tests_generated" or round_status == "final_tests_generated" or round_status == "demos_updated":
-                                                break
-    
-                                            # check if all group members have left
-                                            db.session.refresh(current_group)
-                                            if current_group.num_active_members == 0:
-                                                break
-    
-                                        new_round_generation_started = False
-                                        # flag_modified(current_group, "new_round_generation_started")
-                                        # update_database(current_group, 'New round generation not yet started..')
-    
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for next round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
-                                        time.sleep(2) # a sleep to avoid too many queries
-    
-    
-                                    # break out of loop if current user left the study
-                                    if not check_current_user_active():
-                                        break
+                                            next_kc_id = next_round.kc_id
+                                        else:
+                                            next_kc_id = -1
+
+                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models from demos...', 'current_group status:', current_group.status)
+                                        
+                                        status_print('Next round:', next_round)
+                                        
+                                        if current_group.status != "Domain teaching completed" and next_round is not None:
+                                            update_learner_models_from_demos(params, current_group, next_round)
+                                        
+                                        db.session.refresh(current_group)
+                                        current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()                            
+
+                                        # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
+                                        # find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
+
+                                    else:
+                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Curr group status: ', current_group.status)
+                                        log_error("Group status not updated properly")
+                                        RuntimeWarning("Group status not updated properly")
+                                    
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Socket emitting all reached EOR')
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
+                                    socketio.emit("all reached EOR", to='room_'+ str(current_user.group))  # triggers next page button to go to next round for clients
+                                    break
+                                else:
+                                    round_status = ""
+                                    next_round_id = current_user.round+1
+                                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
+
+                                    if next_round is not None:
+                                        round_status = next_round.status
+
+                                        if round_status == "demo_tests_generated" or round_status == "final_tests_generated" or round_status == "demos_updated":
+                                            break
+
+                                        # check if all group members have left
+                                        db.session.refresh(current_group)
+                                        if current_group.num_active_members == 0:
+                                            break
+
+                                    new_round_generation_started = False
+                                    # flag_modified(current_group, "new_round_generation_started")
+                                    # update_database(current_group, 'New round generation not yet started..')
+
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for next round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
+                                    time.sleep(2) # a sleep to avoid too many queries
+
+
+                                # break out of loop if current user left the study
+                                if not check_current_user_active():
+                                    break
                                 
                             status_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
 
@@ -1426,7 +1426,7 @@ def settings(data):
                             
                             flag_modified(current_group, "members_EOR")
                             flag_modified(current_group, "members_last_test")
-                            update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id))
+                            update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id), db_lock=True)
                            
                             db.session.refresh(current_group)
                             log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR)
@@ -1980,269 +1980,224 @@ def retrieve_next_round(params, cur_group) -> dict:
 
     group_id = cur_group.id
     
-    with group_database_transaction(group_id):
+    # with group_database_transaction(group_id):
         
-        # Refresh group data to get latest state
-        db.session.refresh(cur_group)   
-        
-        
-        round = current_user.round 
-    
-        domain_id = cur_group.curr_progress
-        if domain_id == "domain_1":
-            domain = cur_group.domain_1
-        elif domain_id == "domain_2":
-            domain = cur_group.domain_2
-        else:
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Domain id:', domain_id)
-            raise ValueError('Domain not found')
-        
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'round:', round, 'Group status:', cur_group.status, 'Group experimental condition:', cur_group.experimental_condition, 'Group members:', cur_group.members)
-    
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Member statuses retrive next round:', cur_group.members_statuses)
-        
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Group experimental condition:', cur_group.experimental_condition, 'Group status:', cur_group.status, 'Group id:', cur_group.id, 'Group members:', cur_group.members)
-        experimental_condition = cur_group.experimental_condition
-        members_statuses = cur_group.members_statuses
-        active_member_ids = [idx for idx, status in enumerate(members_statuses) if status == 'joined']
-        
-        vars_filename = date.today().strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
-        new_round_for_var_filter = False
+    # Refresh group data to get latest state
+    db.session.refresh(cur_group)   
     
     
-        # load previous round data
-        if round > 0:
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'current_user.curr_progress:', current_user.curr_progress, 'current_group prgress:', cur_group.curr_progress, 'round:', round, 'group:', current_user.group)
-            prev_models = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, round_num=round).order_by(Round.id.desc()).first()
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Previous round:', prev_models.id, prev_models.round_num, prev_models.status, prev_models.group_id, prev_models.domain, prev_models.group_knowledge, prev_models.kc_id, prev_models.min_KC_constraints)
+    round = current_user.round 
+
+    domain_id = cur_group.curr_progress
+    if domain_id == "domain_1":
+        domain = cur_group.domain_1
+    elif domain_id == "domain_2":
+        domain = cur_group.domain_2
+    else:
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Domain id:', domain_id)
+        raise ValueError('Domain not found')
+    
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'round:', round, 'Group status:', cur_group.status, 'Group experimental condition:', cur_group.experimental_condition, 'Group members:', cur_group.members)
+
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Member statuses retrive next round:', cur_group.members_statuses)
+    
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Group experimental condition:', cur_group.experimental_condition, 'Group status:', cur_group.status, 'Group id:', cur_group.id, 'Group members:', cur_group.members)
+    experimental_condition = cur_group.experimental_condition
+    members_statuses = cur_group.members_statuses
+    active_member_ids = [idx for idx, status in enumerate(members_statuses) if status == 'joined']
+    
+    vars_filename = date.today().strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
+    new_round_for_var_filter = False
+
+
+    # load previous round data
+    if round > 0:
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'current_user.curr_progress:', current_user.curr_progress, 'current_group prgress:', cur_group.curr_progress, 'round:', round, 'group:', current_user.group)
+        prev_models = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, round_num=round).order_by(Round.id.desc()).first()
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Previous round:', prev_models.id, prev_models.round_num, prev_models.status, prev_models.group_id, prev_models.domain, prev_models.group_knowledge, prev_models.kc_id, prev_models.min_KC_constraints)
+        
+        all_prev_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress).all()
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'All previous rounds...')
+        for prev_round in all_prev_rounds:
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Previous round:', prev_round.id, prev_round.round_num, prev_round.status, prev_round.group_id, prev_round.domain, prev_round.group_knowledge, prev_round.kc_id, prev_round.min_KC_constraints)
+        
+        group_union_model = copy.deepcopy(cur_group.group_union_model)
+        group_intersection_model =  copy.deepcopy(cur_group.group_intersection_model)
+        ind_member_models =  copy.deepcopy(cur_group.ind_member_models)
+
+        variable_filter = prev_models.variable_filter
+        nonzero_counter = prev_models.nonzero_counter
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Nonzero counter:', nonzero_counter, 'round:', round)
+        min_BEC_constraints_running = prev_models.min_BEC_constraints_running
+        prior_min_BEC_constraints_running = prev_models.prior_min_BEC_constraints_running
+        visited_env_traj_idxs = prev_models.visited_env_traj_idxs
+        group_knowledge = prev_models.group_knowledge[0]
+        kc_id = prev_models.kc_id
+        min_KC_constraints = prev_models.min_KC_constraints
+
+
+    else:
+        # initialize models for first round/learning session
+        group_knowledge, particles_team_teacher, variable_filter, nonzero_counter, min_BEC_constraints_running, visited_env_traj_idxs, domain_params = initialize_teaching((domain, pool, lock))
+        prior_min_BEC_constraints_running = copy.deepcopy(min_BEC_constraints_running)
+        
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'nonzero counter:', nonzero_counter, 'round:', 0, 'variable filter:', variable_filter)
+
+        ind_member_models = []
+        for key in particles_team_teacher.keys():
+            if 'common' not in key and 'joint' not in key:
+                ind_member_models.append(copy.deepcopy(particles_team_teacher[key]))
+
+        group_intersection_model = copy.deepcopy(particles_team_teacher['common_knowledge'])
+        group_union_model = copy.deepcopy(particles_team_teacher['joint_knowledge'])
+        kc_id = 0
             
-            all_prev_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress).all()
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'All previous rounds...')
-            for prev_round in all_prev_rounds:
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Previous round:', prev_round.id, prev_round.round_num, prev_round.status, prev_round.group_id, prev_round.domain, prev_round.group_knowledge, prev_round.kc_id, prev_round.min_KC_constraints)
             
-            group_union_model = copy.deepcopy(cur_group.group_union_model)
-            group_intersection_model =  copy.deepcopy(cur_group.group_intersection_model)
-            ind_member_models =  copy.deepcopy(cur_group.ind_member_models)
-    
-            variable_filter = prev_models.variable_filter
-            nonzero_counter = prev_models.nonzero_counter
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Nonzero counter:', nonzero_counter, 'round:', round)
-            min_BEC_constraints_running = prev_models.min_BEC_constraints_running
-            prior_min_BEC_constraints_running = prev_models.prior_min_BEC_constraints_running
-            visited_env_traj_idxs = prev_models.visited_env_traj_idxs
-            group_knowledge = prev_models.group_knowledge[0]
-            kc_id = prev_models.kc_id
-            min_KC_constraints = prev_models.min_KC_constraints
-    
-    
-        else:
-            # initialize models for first round/learning session
-            group_knowledge, particles_team_teacher, variable_filter, nonzero_counter, min_BEC_constraints_running, visited_env_traj_idxs, domain_params = initialize_teaching((domain, pool, lock))
-            prior_min_BEC_constraints_running = copy.deepcopy(min_BEC_constraints_running)
+        # # # save domain params to database (run only once for each domain)
+        existing_domain_params = db.session.query(DomainParams).filter_by(domain_name=domain).first()
+        if existing_domain_params is None:
+            curr_domain_params = DomainParams(
+                domain_name = domain_params["domain_name"],
+                min_subset_constraints_record = domain_params["min_subset_constraints_record"],
+                env_record = domain_params["env_record"],
+                traj_record = domain_params["traj_record"],
+                traj_features_record = domain_params["traj_features_record"],
+                mdp_features_record = domain_params["mdp_features_record"],
+                consistent_state_count = domain_params["consistent_state_count"],
+                min_BEC_constraints = domain_params["min_BEC_constraints"]
+            )
             
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'nonzero counter:', nonzero_counter, 'round:', 0, 'variable filter:', variable_filter)
-    
-            ind_member_models = []
-            for key in particles_team_teacher.keys():
-                if 'common' not in key and 'joint' not in key:
-                    ind_member_models.append(copy.deepcopy(particles_team_teacher[key]))
-    
-            group_intersection_model = copy.deepcopy(particles_team_teacher['common_knowledge'])
-            group_union_model = copy.deepcopy(particles_team_teacher['joint_knowledge'])
-            kc_id = 0
-                
-                
-            # # # save domain params to database (run only once for each domain)
-            existing_domain_params = db.session.query(DomainParams).filter_by(domain_name=domain).first()
-            if existing_domain_params is None:
-                curr_domain_params = DomainParams(
-                    domain_name = domain_params["domain_name"],
-                    min_subset_constraints_record = domain_params["min_subset_constraints_record"],
-                    env_record = domain_params["env_record"],
-                    traj_record = domain_params["traj_record"],
-                    traj_features_record = domain_params["traj_features_record"],
-                    mdp_features_record = domain_params["mdp_features_record"],
-                    consistent_state_count = domain_params["consistent_state_count"],
-                    min_BEC_constraints = domain_params["min_BEC_constraints"]
-                )
-                
-                with global_db_lock:
-                    db.session.add(curr_domain_params)
-                    db.session.commit()
-    
-    
-            # create a directory for the group
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            base_dir = os.path.abspath(os.path.join(current_dir, 'group_teaching', 'results', params['data_loc']['BEC']))
-            
-            full_path_filename = base_dir + '/ind_sim_trials/' + vars_filename
-    
-            if not os.path.exists(full_path_filename):
-                # sometimes when date chanages at midnight
-                alternate_path_filename =  base_dir + '/ind_sim_trials/' + (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
-                if os.path.exists(alternate_path_filename):
-                    full_path_filename = alternate_path_filename
-                
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'Creating folder for this run: ', full_path_filename)
-                os.makedirs(full_path_filename, exist_ok=True)
+            with global_db_lock:
+                db.session.add(curr_domain_params)
+                db.session.commit()
+
+
+        # create a directory for the group
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        base_dir = os.path.abspath(os.path.join(current_dir, 'group_teaching', 'results', params['data_loc']['BEC']))
         
+        full_path_filename = base_dir + '/ind_sim_trials/' + vars_filename
+
+        if not os.path.exists(full_path_filename):
+            # sometimes when date chanages at midnight
+            alternate_path_filename =  base_dir + '/ind_sim_trials/' + (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
+            if os.path.exists(alternate_path_filename):
+                full_path_filename = alternate_path_filename
+            
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'Creating folder for this run: ', full_path_filename)
+            os.makedirs(full_path_filename, exist_ok=True)
     
+
+
+    #check if unit knowledge is reached and update variable filter
+    if round > 0:
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Round:', round, 'Group knowledge:', group_knowledge, 'min_KC_constraints:', min_KC_constraints, 'kc_id:', kc_id, 'active_member_ids:', active_member_ids)
+        unit_learning_goal_reached_flag = check_unit_learning_goal_reached(params, group_knowledge, active_member_ids, min_KC_constraints, kc_id)
+    else:
+        unit_learning_goal_reached_flag = False
+        new_round_for_var_filter = True
+
+    # check if max KC loops are reached
+    if not unit_learning_goal_reached_flag:
+        all_kc_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, kc_id=kc_id, status="demo_tests_generated").all()
+        
+        unique_keys = set((r.group_id, r.kc_id, r.round_num) for r in all_kc_rounds)  # replace with actual deduplication keys
+        num_unique_rounds = len(unique_keys)
+        status_print('N KC rounds:', num_unique_rounds, 'Params max KC loops:', params['max_KC_loops'])
+        
+        if num_unique_rounds >= params['max_KC_loops']:
+            unit_learning_goal_reached_flag = True
     
-        #check if unit knowledge is reached and update variable filter
-        if round > 0:
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Round:', round, 'Group knowledge:', group_knowledge, 'min_KC_constraints:', min_KC_constraints, 'kc_id:', kc_id, 'active_member_ids:', active_member_ids)
-            unit_learning_goal_reached_flag = check_unit_learning_goal_reached(params, group_knowledge, active_member_ids, min_KC_constraints, kc_id)
-        else:
-            unit_learning_goal_reached_flag = False
+
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Current group status:', cur_group.status)
+    
+    if (cur_group.status != "Domain teaching completed"):
+
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Current variable filter: ', variable_filter, ' with nonzero counter: ', nonzero_counter)
+        if unit_learning_goal_reached_flag:
+            variable_filter, nonzero_counter = update_variable_filter(nonzero_counter)
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated variable filter: ', variable_filter, ' with nonzero counter: ', nonzero_counter)
+            kc_id += 1
             new_round_for_var_filter = True
-    
-        # check if max KC loops are reached
-        if not unit_learning_goal_reached_flag:
-            all_kc_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, kc_id=kc_id, status="demo_tests_generated").all()
-            
-            unique_keys = set((r.group_id, r.kc_id, r.round_num) for r in all_kc_rounds)  # replace with actual deduplication keys
-            num_unique_rounds = len(unique_keys)
-            status_print('N KC rounds:', num_unique_rounds, 'Params max KC loops:', params['max_KC_loops'])
-            
-            if num_unique_rounds >= params['max_KC_loops']:
-                unit_learning_goal_reached_flag = True
+
+            # update prior min BEC constraints
+            prior_min_BEC_constraints_running = copy.deepcopy(min_BEC_constraints_running)
+        else:
+            # update BEC constraints
+            min_BEC_constraints_running = copy.deepcopy(prior_min_BEC_constraints_running)
+
         
-    
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Current group status:', cur_group.status)
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'min BEC constraints:', min_BEC_constraints_running, 'prior min BEC constraints:', prior_min_BEC_constraints_running)
         
-        if (cur_group.status != "Domain teaching completed"):
-    
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Current variable filter: ', variable_filter, ' with nonzero counter: ', nonzero_counter)
-            if unit_learning_goal_reached_flag:
-                variable_filter, nonzero_counter = update_variable_filter(nonzero_counter)
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated variable filter: ', variable_filter, ' with nonzero counter: ', nonzero_counter)
-                kc_id += 1
-                new_round_for_var_filter = True
-    
-                # update prior min BEC constraints
-                prior_min_BEC_constraints_running = copy.deepcopy(min_BEC_constraints_running)
-            else:
-                # update BEC constraints
-                min_BEC_constraints_running = copy.deepcopy(prior_min_BEC_constraints_running)
-    
-            
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'min BEC constraints:', min_BEC_constraints_running, 'prior min BEC constraints:', prior_min_BEC_constraints_running)
-            
-            # check if teaching is complete
-            teaching_complete_flag = False
-            if not np.any(variable_filter) and unit_learning_goal_reached_flag:
+        # check if teaching is complete
+        teaching_complete_flag = False
+        if not np.any(variable_filter) and unit_learning_goal_reached_flag:
+            teaching_complete_flag = True
+
+        # NOTE: Only for Quick Debugging. Having only one knowledge component/round
+        if QUICK_DEBUG_FLAG:
+            if round > 1:
                 teaching_complete_flag = True
-    
-            # NOTE: Only for Quick Debugging. Having only one knowledge component/round
-            if QUICK_DEBUG_FLAG:
-                if round > 1:
-                    teaching_complete_flag = True
-    
-    
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
-    
-    
-            # get demonstrations and tests for this round
-            if not teaching_complete_flag:
-                ind_member_models_demo_gen = copy.deepcopy(ind_member_models)
-                group_union_model_demo_gen = copy.deepcopy(group_union_model)
-                group_intersection_model_demo_gen = copy.deepcopy(group_intersection_model)
-    
-                args = domain, vars_filename, group_union_model_demo_gen, group_intersection_model_demo_gen, ind_member_models_demo_gen, members_statuses, experimental_condition, variable_filter, nonzero_counter, new_round_for_var_filter, min_BEC_constraints_running, visited_env_traj_idxs, pool, lock    
-                min_KC_constraints, demo_mdps, test_mdps, experimental_condition, variable_filter, nonzero_counter, min_BEC_constraints_running, visited_env_traj_idxs, teaching_complete_flag, _ = generate_demos_test_interaction_round(args)
-                
-                
-                round_status = "demo_tests_generated"
-                games_extended = []
-    
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
-                
-                # new round data
-                if len(demo_mdps) > 0:
-                    games = list()
-                    for i in range(len(demo_mdps)):
-                        games.append({"interaction type": "demo", "params": demo_mdps[i]})
-    
-                    for i in range(len(test_mdps)):
-                        games.append({"interaction type": "diagnostic test", "params": test_mdps[i]})
-                    
-                
-                elif new_round_for_var_filter:
-                    log_print(colored('No new demos generated for the new variable filter. Using default demos...', 'red'))
-                    status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated for the new variable filter. Using default demos...')
-                    
-                    games = list()
-                    if domain == 'at':
-                        mdp_class = 'augmented_taxi2'
-                    elif domain == 'sb':
-                        mdp_class = 'skateboard2'
-    
-                    interaction_types = ['demo', 'diagnostic test']
-    
-                    for it in interaction_types:
-                        for interaction_id in default_rounds[mdp_class][it].keys():
-                            mdp_dict = default_rounds[mdp_class][it][interaction_id]
-                            # # check if variable filter matches
-                            if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
-                                games.append({"interaction type": it, "params": mdp_dict}) 
-    
-                    status_print('Games:', games)
-    
-                else:
-                    status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
-                    # repeat the same round if no demos are generated
-                    prev_round_data = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, round_num=round).order_by(Round.id.desc()).first()
-                    games_extended = prev_round_data.round_info
-                    min_KC_constraints = prev_round_data.min_KC_constraints
-    
-                ## Add feedback for diagnostic tests
-                if len(games_extended)==0:  
-                    for game in games:
-                        games_extended.append(game)
-                        if game["interaction type"] == "diagnostic test":
-                            new_game = copy.deepcopy(game)
-                            new_game["interaction type"] = "diagnostic feedback"
-                            new_game["params"]["tag"] = -1  
-                            games_extended.append(new_game)
+
+
+        status_print('Group:', current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
+
+
+        # get demonstrations and tests for this round
+        if not teaching_complete_flag:
+            ind_member_models_demo_gen = copy.deepcopy(ind_member_models)
+            group_union_model_demo_gen = copy.deepcopy(group_union_model)
+            group_intersection_model_demo_gen = copy.deepcopy(group_intersection_model)
+
+            args = domain, vars_filename, group_union_model_demo_gen, group_intersection_model_demo_gen, ind_member_models_demo_gen, members_statuses, experimental_condition, variable_filter, nonzero_counter, new_round_for_var_filter, min_BEC_constraints_running, visited_env_traj_idxs, pool, lock    
+            min_KC_constraints, demo_mdps, test_mdps, experimental_condition, variable_filter, nonzero_counter, min_BEC_constraints_running, visited_env_traj_idxs, teaching_complete_flag, _ = generate_demos_test_interaction_round(args)
             
             
+            round_status = "demo_tests_generated"
+            games_extended = []
+
+            status_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
             
-            else:
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding final tests for this round...')
-                round_status = "final_tests_generated"
-                round_generation_process = ''
-                test_difficulty = ['low', 'medium', 'high']
+            # new round data
+            if len(demo_mdps) > 0:
                 games = list()
-    
+                for i in range(len(demo_mdps)):
+                    games.append({"interaction type": "demo", "params": demo_mdps[i]})
+
+                for i in range(len(test_mdps)):
+                    games.append({"interaction type": "diagnostic test", "params": test_mdps[i]})
+                
+            
+            elif new_round_for_var_filter:
+                log_print(colored('No new demos generated for the new variable filter. Using default demos...', 'red'))
+                status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated for the new variable filter. Using default demos...')
+                
+                games = list()
                 if domain == 'at':
                     mdp_class = 'augmented_taxi2'
                 elif domain == 'sb':
                     mdp_class = 'skateboard2'
-                
-                final_test_id = 1
-                # final_tests_to_add = [3, 5, 8, 12, 15, 17] # indices of final tests to add (one for each difficulty level)
-                # final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
-                # final_tests_to_add = range(30)
-                final_tests_to_add = [1, 2, 4, 8, 10, 12] # balances KCs from among the available tests
-                
-                if QUICK_DEBUG_FLAG:
-                    final_tests_to_add = [1, 3]
-                
-                for td in test_difficulty:
-                    for mdp_list in default_rounds[mdp_class]["final test"][td]:
-                        for mdp_dict in mdp_list:
-                            if final_test_id in final_tests_to_add:
-                                # status_print('Adding final test:', final_test_id, 'Difficulty:', td)
-                                games.append({"interaction type": "final test", "params": mdp_dict})
-                            final_test_id += 1
-    
-                # add a survey at the end
-                games.append({"interaction type": "survey", "params": {}})
-    
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Added ', len(games), ' final tests for this round...')
-    
-                games_extended = []
+
+                interaction_types = ['demo', 'diagnostic test']
+
+                for it in interaction_types:
+                    for interaction_id in default_rounds[mdp_class][it].keys():
+                        mdp_dict = default_rounds[mdp_class][it][interaction_id]
+                        # # check if variable filter matches
+                        if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
+                            games.append({"interaction type": it, "params": mdp_dict}) 
+
+                status_print('Games:', games)
+
+            else:
+                status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
+                # repeat the same round if no demos are generated
+                prev_round_data = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, round_num=round).order_by(Round.id.desc()).first()
+                games_extended = prev_round_data.round_info
+                min_KC_constraints = prev_round_data.min_KC_constraints
+
+            ## Add feedback for diagnostic tests
+            if len(games_extended)==0:  
                 for game in games:
                     games_extended.append(game)
                     if game["interaction type"] == "diagnostic test":
@@ -2250,63 +2205,108 @@ def retrieve_next_round(params, cur_group) -> dict:
                         new_game["interaction type"] = "diagnostic feedback"
                         new_game["params"]["tag"] = -1  
                         games_extended.append(new_game)
-                
-                for game in games_extended:
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Extended list. Interaction type: ', game["interaction type"])
-                
-    
-            # add models to group database
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding particle filter models to group')
-            cur_group.ind_member_models = copy.deepcopy(ind_member_models)
-            cur_group.group_union_model = copy.deepcopy(group_union_model)
-            cur_group.group_intersection_model = copy.deepcopy(group_intersection_model)
-    
-            flag_modified(cur_group, "ind_member_models")
-            flag_modified(cur_group, "group_union_model")
-            flag_modified(cur_group, "group_intersection_model")
-    
-            if teaching_complete_flag:
-                cur_group.status = "Domain teaching completed"
-                flag_modified(cur_group, "status")
-            
-            update_database(cur_group, 'PF models, teaching status updated')
-    
-    
-            # add new round to round database
-            ind_member_models_pos = [ind_member_models[i].positions for i in range(len(ind_member_models))]
-            ind_member_models_weights = [ind_member_models[i].weights for i in range(len(ind_member_models))]
-    
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Group curr progress:', cur_group.curr_progress, 'domain:', domain, 'round:', round )
-            log_print('kc_id: ', kc_id, 'min_KC_constraints:', min_KC_constraints, 'round_status: ', round_status)
-            new_round = Round(group_id=cur_group.id, 
-                            domain_progress = cur_group.curr_progress,
-                            domain = domain,
-                            round_num=round+1, 
-                            members_statuses = members_statuses,
-                            kc_id = kc_id,
-                            min_KC_constraints = min_KC_constraints,
-                            round_info=games_extended,
-                            status = round_status,
-                            variable_filter=variable_filter,
-                            nonzero_counter=nonzero_counter,
-                            min_BEC_constraints_running=min_BEC_constraints_running,
-                            prior_min_BEC_constraints_running=prior_min_BEC_constraints_running,
-                            visited_env_traj_idxs=visited_env_traj_idxs,
-                            ind_member_models_pos = [ind_member_models_pos],
-                            ind_member_models_weights = [ind_member_models_weights],
-                            group_union_model_pos = [group_union_model.positions],
-                            group_union_model_weights = [group_union_model.weights],
-                            group_intersection_model_pos = [group_intersection_model.positions],
-                            group_intersection_model_weights = [group_intersection_model.weights],
-                            group_knowledge = [group_knowledge]
-                    )         
-            log_print('New round info:', new_round)                     
-            update_database(new_round, 'New round data generated')
-    
-            return games_extended
-    
+        
+        
+        
         else:
-            return list()
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding final tests for this round...')
+            round_status = "final_tests_generated"
+            round_generation_process = ''
+            test_difficulty = ['low', 'medium', 'high']
+            games = list()
+
+            if domain == 'at':
+                mdp_class = 'augmented_taxi2'
+            elif domain == 'sb':
+                mdp_class = 'skateboard2'
+            
+            final_test_id = 1
+            # final_tests_to_add = [3, 5, 8, 12, 15, 17] # indices of final tests to add (one for each difficulty level)
+            # final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
+            # final_tests_to_add = range(30)
+            final_tests_to_add = [1, 2, 4, 8, 10, 12] # balances KCs from among the available tests
+            
+            if QUICK_DEBUG_FLAG:
+                final_tests_to_add = [1, 3]
+            
+            for td in test_difficulty:
+                for mdp_list in default_rounds[mdp_class]["final test"][td]:
+                    for mdp_dict in mdp_list:
+                        if final_test_id in final_tests_to_add:
+                            # status_print('Adding final test:', final_test_id, 'Difficulty:', td)
+                            games.append({"interaction type": "final test", "params": mdp_dict})
+                        final_test_id += 1
+
+            # add a survey at the end
+            games.append({"interaction type": "survey", "params": {}})
+
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Added ', len(games), ' final tests for this round...')
+
+            games_extended = []
+            for game in games:
+                games_extended.append(game)
+                if game["interaction type"] == "diagnostic test":
+                    new_game = copy.deepcopy(game)
+                    new_game["interaction type"] = "diagnostic feedback"
+                    new_game["params"]["tag"] = -1  
+                    games_extended.append(new_game)
+            
+            for game in games_extended:
+                log_print('Group:', current_user.group, 'User:', current_user.id, 'Extended list. Interaction type: ', game["interaction type"])
+            
+
+        # add models to group database
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding particle filter models to group')
+        cur_group.ind_member_models = copy.deepcopy(ind_member_models)
+        cur_group.group_union_model = copy.deepcopy(group_union_model)
+        cur_group.group_intersection_model = copy.deepcopy(group_intersection_model)
+
+        flag_modified(cur_group, "ind_member_models")
+        flag_modified(cur_group, "group_union_model")
+        flag_modified(cur_group, "group_intersection_model")
+
+        if teaching_complete_flag:
+            cur_group.status = "Domain teaching completed"
+            flag_modified(cur_group, "status")
+        
+        update_database(cur_group, 'PF models, teaching status updated')
+
+
+        # add new round to round database
+        ind_member_models_pos = [ind_member_models[i].positions for i in range(len(ind_member_models))]
+        ind_member_models_weights = [ind_member_models[i].weights for i in range(len(ind_member_models))]
+
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Group curr progress:', cur_group.curr_progress, 'domain:', domain, 'round:', round )
+        log_print('kc_id: ', kc_id, 'min_KC_constraints:', min_KC_constraints, 'round_status: ', round_status)
+        new_round = Round(group_id=cur_group.id, 
+                        domain_progress = cur_group.curr_progress,
+                        domain = domain,
+                        round_num=round+1, 
+                        members_statuses = members_statuses,
+                        kc_id = kc_id,
+                        min_KC_constraints = min_KC_constraints,
+                        round_info=games_extended,
+                        status = round_status,
+                        variable_filter=variable_filter,
+                        nonzero_counter=nonzero_counter,
+                        min_BEC_constraints_running=min_BEC_constraints_running,
+                        prior_min_BEC_constraints_running=prior_min_BEC_constraints_running,
+                        visited_env_traj_idxs=visited_env_traj_idxs,
+                        ind_member_models_pos = [ind_member_models_pos],
+                        ind_member_models_weights = [ind_member_models_weights],
+                        group_union_model_pos = [group_union_model.positions],
+                        group_union_model_weights = [group_union_model.weights],
+                        group_intersection_model_pos = [group_intersection_model.positions],
+                        group_intersection_model_weights = [group_intersection_model.weights],
+                        group_knowledge = [group_knowledge]
+                )         
+        log_print('New round info:', new_round)                     
+        update_database(new_round, 'New round data generated')
+
+        return games_extended
+
+    else:
+        return list()
 
 
 
@@ -2538,7 +2538,7 @@ def get_test_constraints(domain, trial, traj_record, traj_features_record) -> np
     return constraint
 
 
-def update_database(updated_data, update_type):
+def update_database(updated_data, update_type, db_lock_status=False):
 
     # with db_lock:
     #     try:
@@ -2568,21 +2568,38 @@ def update_database(updated_data, update_type):
     #     group_id = updated_data.id
     
     # Check only for Group db; use Global db lock for all other dbs
-    group_id = None
-    if hasattr(updated_data, 'id'):
-        group_id = updated_data.id
+    if not db_lock_status:
+        group_id = None
+        if hasattr(updated_data, 'id'):
+            group_id = updated_data.id
+        
+        log_print('Group id:', group_id)
+        
+        # Use appropriate lock
+        if group_id is not None:
+            db_lock = group_locks[group_id]
+        else:
+            db_lock = global_db_lock
+        
+        log_print('Db lock:', db_lock)
     
-    log_print('Group id:', group_id)
     
-    # Use appropriate lock
-    if group_id is not None:
-        db_lock = group_locks[group_id]
+        with db_lock:
+            try:
+                db.session.add(updated_data)
+                log_print('Added/Updated row...')
+                db.session.flush()
+                log_print('Flushed...')
+                db.session.commit()
+                status_print(f"Database operation successful: {update_type}")
+            except Exception as e:
+                status_print(f"Error during {update_type}: {e}")
+                db.session.rollback()
+                raise
+                
     else:
-        db_lock = global_db_lock
-    
-    log_print('Db lock:', db_lock)
-    
-    with db_lock:
+    # Don't use db lock if already locked
+        log_print('DB already locked....')
         try:
             db.session.add(updated_data)
             log_print('Added/Updated row...')
@@ -2594,6 +2611,7 @@ def update_database(updated_data, update_type):
             status_print(f"Error during {update_type}: {e}")
             db.session.rollback()
             raise
+        
         
     db.session.refresh(updated_data)
 
