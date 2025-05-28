@@ -1176,7 +1176,7 @@ def settings(data):
 
                                     new_round_generation_started = False
                                     # flag_modified(current_group, "new_round_generation_started")
-                                    update_database(current_group, 'New round generation not yet started..')
+                                    # update_database(current_group, 'New round generation not yet started..')
 
                                     status_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for first round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
                                     time.sleep(2) # a sleep to avoid too many queries
