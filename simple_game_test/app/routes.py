@@ -63,7 +63,7 @@ from .group_teaching.codes.params_utils import get_mdp_parameters
 
 # from transitions import Machine, State
 
-print('Routes: Loaded group teaching apps...')
+log_print('Routes: Loaded group teaching apps...')
 
 # print("App url map:", app.url_map)
 
