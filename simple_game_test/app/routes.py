@@ -61,6 +61,27 @@ from .group_teaching.codes.teams.teams_helpers import update_team_knowledge, che
 from .group_teaching.codes.params_utils import get_mdp_parameters
 
 
+
+def log_print(*args):
+    """Log messages and ensure they are printed to both file and console."""
+    message = " ".join(map(str, args))
+    logging.info(message)
+
+
+def log_error(*args):
+    """Log messages and ensure they are printed to both file and console."""
+    message = " ".join(map(str, args))
+    logging.error(message)
+
+
+def status_print(*args):
+    """Log important status messages to both file and console."""
+    message = " ".join(map(str, args))
+    # Log to file via the regular logger
+    logging.info(message)
+    # Also print to console directly (bypassing redirections)
+    print(f"STATUS: {message}", file=sys.__stdout__)
+
 # from transitions import Machine, State
 
 log_print('Routes: Loaded group teaching apps...')
@@ -170,25 +191,6 @@ sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
 sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
 
 
-def log_print(*args):
-    """Log messages and ensure they are printed to both file and console."""
-    message = " ".join(map(str, args))
-    logging.info(message)
-
-
-def log_error(*args):
-    """Log messages and ensure they are printed to both file and console."""
-    message = " ".join(map(str, args))
-    logging.error(message)
-
-
-def status_print(*args):
-    """Log important status messages to both file and console."""
-    message = " ".join(map(str, args))
-    # Log to file via the regular logger
-    logging.info(message)
-    # Also print to console directly (bypassing redirections)
-    print(f"STATUS: {message}", file=sys.__stdout__)
 
 #####################################
 
