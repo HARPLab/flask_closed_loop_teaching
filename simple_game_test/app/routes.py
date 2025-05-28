@@ -86,12 +86,12 @@ def group_database_transaction(group_id):
     """
     if group_id is None:
         # For operations without a group (like user creation), use global lock
-        lock = global_db_lock
+        db_lock = global_db_lock
     else:
         # Use group-specific lock
-        lock = group_locks[group_id]
+        db_lock = group_locks[group_id]
     
-    with lock:
+    with db_lock:
         try:
             yield db.session
             db.session.commit()
@@ -1972,6 +1972,8 @@ def retrieve_next_round(params, cur_group) -> dict:
     data out: environment variables for next round
     side effects: none  
     """ 
+    
+    from app import pool, lock
 
 
     group_id = cur_group.id
@@ -2559,11 +2561,11 @@ def update_database(updated_data, update_type):
     
     # Use appropriate lock
     if group_id is not None:
-        lock = group_locks[group_id]
+        db_lock = group_locks[group_id]
     else:
-        lock = global_db_lock
+        db_lock = global_db_lock
     
-    with lock:
+    with db_lock:
         try:
             db.session.add(updated_data)
             db.session.flush()
