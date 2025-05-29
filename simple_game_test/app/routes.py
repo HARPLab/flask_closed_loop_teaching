@@ -2256,10 +2256,11 @@ def retrieve_next_round(params, cur_group) -> dict:
             # final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
             # final_tests_to_add = range(1,19)
             # final_tests_to_add = [1, 2, 4, 8, 10, 12] # balances KCs from among the available tests
+            
             if domain == 'at':
                 final_tests_to_add = [6, 7, 8, 11, 14, 15]
             elif domain == 'sb':
-                final_tests_to_add = [2, 4, 7, 10, 12, 14]
+                final_tests_to_add = [4, 7, 10, 12, 14, 16]
             else:
                 RuntimeError('Unknown domain')
                 
@@ -2272,7 +2273,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 for mdp_list in default_rounds[mdp_class]["final test"][td]:
                     for mdp_dict in mdp_list:
                         if final_test_id in final_tests_to_add:
-                            # status_print('Adding final test:', final_test_id, 'Difficulty:', td)
+                            status_print('Adding final test:', final_test_id, 'Difficulty:', td)
                             games.append({"interaction type": "final test", "params": mdp_dict})
                         final_test_id += 1
 
