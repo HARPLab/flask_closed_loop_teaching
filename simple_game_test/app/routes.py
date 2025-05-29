@@ -183,7 +183,7 @@ CARD_ID_TO_FEATURES = [
 ]
 '''
 
-QUICK_DEBUG_FLAG = True
+QUICK_DEBUG_FLAG = False
 
 # Timeout for reconnection (in seconds)
 RECONNECT_TIMEOUT = 150  # Change this to the desired time
