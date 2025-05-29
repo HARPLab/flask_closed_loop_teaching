@@ -139,28 +139,53 @@ log_print('Global db lock: ', global_db_lock)
 
 
 @contextmanager
-def group_database_transaction(group_id):
+def group_database_transaction(group_id, retries=5, base_delay=0.1):
     """
     Context manager for group-specific database operations
     Only locks operations for the specific group
     """
-    # Use group-specific lock
-    db_lock = group_locks[group_id]
-        
-    log_print('Db lock in func:', db_lock)
-    
-    with db_lock:
-        try:
-            yield db.session
-            db.session.flush()
-            db.session.commit()
-            logging.info(f"Group {group_id} database transaction completed")
-        except Exception as e:
-            db.session.rollback()
-            logging.error(f"Group {group_id} database transaction failed: {e}")
-            raise
+    group_db_lock = group_locks[group_id]
+    with group_db_lock:
+        attempt = 0
+        while attempt < retries:
+            try:
+                yield db.session
+                db.session.flush()
+                db.session.commit()
+                return
+            except OperationalError as e:
+                if "database is locked" in str(e):
+                    delay = base_delay * (2 ** attempt)  # exponential backoff
+                    time.sleep(delay)
+                    attempt += 1
+                    continue
+                else:
+                    db.session.rollback()
+                    raise
+        db.session.rollback()
+        raise RuntimeError(f"Failed to complete transaction for group {group_id} after {retries} retries.")
 
 
+# @contextmanager
+# def global_database_transaction(retries=5, base_delay=0.1):
+#     with global_db_lock:
+#         attempt = 0
+#         while attempt < retries:
+#             try:
+#                 yield db.session
+#                 db.session.flush()
+#                 db.session.commit()
+#                 return
+#             except OperationalError as e:
+#                 if "database is locked" in str(e):
+#                     time.sleep(base_delay * (2 ** attempt))
+#                     attempt += 1
+#                     continue
+#                 else:
+#                     db.session.rollback()
+#                     raise
+#         db.session.rollback()
+#         raise RuntimeError("Failed to complete global transaction after retries.")
 
 with open(os.path.join(os.path.dirname(__file__), 'user_study_dict_extended.json'), 'r') as f:
     default_rounds = json.load(f)
@@ -248,7 +273,7 @@ def sandbox_introduction():
 @socketio.on('make sandbox')
 def make_sandbox(data):
     version = data['version']
-
+    
     if version == 1:
         current_user.set_curr_progress("sandbox_1")
     elif version == 2:
@@ -2578,21 +2603,57 @@ def get_test_constraints(domain, trial, traj_record, traj_features_record) -> np
     return constraint
 
 
-def update_database(updated_data, update_type, db_lock_status=False):
+# def update_database(updated_data, update_type, db_lock_status=False):
 
-    log_print('Trying to update database for ', update_type)    
-    with global_db_lock:
-        try:
-            db.session.add(updated_data)
-            db.session.flush()
-            db.session.commit()
-            status_print(f"Database operation successful: {update_type}")
-        except Exception as e:
-            status_print(f"Error during commit: {e}.", update_type)
-            db.session.rollback()
+#     log_print('Trying to update database for ', update_type)    
+#     with global_db_lock:
+#         try:
+#             db.session.add(updated_data)
+#             db.session.flush()
+#             db.session.commit()
+#             status_print(f"Database operation successful: {update_type}")
+#         except Exception as e:
+#             status_print(f"Error during commit: {e}.", update_type)
+#             db.session.rollback()
 
-    db.session.refresh(updated_data) # refresh the object to get the updated data just in case; should automatically happen upon commit as instances automatically expire
+#     db.session.refresh(updated_data) # refresh the object to get the updated data just in case; should automatically happen upon commit as instances automatically expire
    
+
+    
+def update_database(updated_data, update_type, max_retries=5):
+    """
+    Simplified database update with retry logic for SQLite locks
+    """
+    for attempt in range(max_retries):
+        try:
+            
+            with global_db_lock:
+                db.session.add(updated_data)
+                db.session.flush()
+                db.session.commit()
+                logging.info(f"Database operation successful: {update_type}")
+                db.session.refresh(updated_data)
+                return True
+            
+        except OperationalError as e:
+            if "database is locked" in str(e).lower() and attempt < max_retries - 1:
+                # Exponential backoff with jitter
+                wait_time = (2 ** attempt) + random.uniform(0, 1)
+                logging.warning(f"Database locked, retrying in {wait_time:.2f}s (attempt {attempt + 1}/{max_retries})")
+                db.session.rollback()
+                time.sleep(wait_time)
+                continue
+            else:
+                logging.error(f"Database operation failed: {update_type}, Error: {e}")
+                db.session.rollback()
+                raise
+        except Exception as e:
+            logging.error(f"Unexpected error during {update_type}: {e}")
+            db.session.rollback()
+            raise
+   
+    
+# def update_database()
     # # Check only for Group db; use Global db lock for all other dbs
     # if not db_lock_status:
     #     group_id = None
