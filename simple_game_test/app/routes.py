@@ -1300,71 +1300,74 @@ def settings(data):
                                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR, 'current_group.status :', current_group.status )
                                     db.session.refresh(current_group)
                                     
-                                    if current_group.status != "gen_demos":
+                                    #################################################
+                                    # This additional check is causing issues sometimes
+                                    # if current_group.status != "gen_demos":
 
-                                        new_round_generation_started = True
-                                        # flag_modified(current_group, "new_round_generation_started")
-                                        # update_database(current_group, 'New round generation started..')
+                                    new_round_generation_started = True
+                                    # flag_modified(current_group, "new_round_generation_started")
+                                    # update_database(current_group, 'New round generation started..')
 
-                                        
-                                        # update models from test responses
-                                        update_learner_models_from_tests(params, current_group, current_round)  # only for diagnostic tests and not for final tests
-                                        db.session.refresh(current_group)
-                                        current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-                                        
+                                    
+                                    # update models from test responses
+                                    update_learner_models_from_tests(params, current_group, current_round)  # only for diagnostic tests and not for final tests
+                                    db.session.refresh(current_group)
+                                    current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
+                                    
 
-                                        # # update models from feedback of test responses
-                                        # update_learner_models_from_feedback(params, current_group, current_round)
-                                        # db.session.refresh(current_group)
-                                        # current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-                                        
+                                    # # update models from feedback of test responses
+                                    # update_learner_models_from_feedback(params, current_group, current_round)
+                                    # db.session.refresh(current_group)
+                                    # current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
+                                    
 
-                                        # pf_round_id = current_user.round
-                                        # pf_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=pf_round_id).order_by(Round.id.desc()).first()
-                                        
-                                        # try:
-                                        #     log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
-                                        #     find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
-                                        # except:
-                                        #     log_error('Group:', current_user.group, 'User:', current_user.id, 'Error in finding prob particles...')
-                                        
-                                        #################################################
-                                        log_print("Generating next round...")
+                                    # pf_round_id = current_user.round
+                                    # pf_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=pf_round_id).order_by(Round.id.desc()).first()
+                                    
+                                    # try:
+                                    #     log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
+                                    #     find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
+                                    # except:
+                                    #     log_error('Group:', current_user.group, 'User:', current_user.id, 'Error in finding prob particles...')
+                                    
+                                    #################################################
+                                    log_print("Generating next round...")
 
-                                        current_group.status = "gen_demos"
-                                        flag_modified(current_group, "status")
-                                        update_database(current_group, 'New round generation started..')
-                                        db.session.refresh(current_group)
-                                        
-                                        retrieve_next_round(params, current_group)
+                                    current_group.status = "gen_demos"
+                                    flag_modified(current_group, "status")
+                                    update_database(current_group, 'New round generation started..')
+                                    db.session.refresh(current_group)
+                                    
+                                    retrieve_next_round(params, current_group)
 
-                                        
-                                        db.session.refresh(current_group)
-                                        next_round_id = current_user.round+1
-                                        next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-                                        
-                                        if next_round is not None:
-                                            next_kc_id = next_round.kc_id
-                                        else:
-                                            next_kc_id = -1
-
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models from demos...', 'current_group status:', current_group.status)
-                                        
-                                        status_print('Next round:', next_round)
-                                        
-                                        if current_group.status != "Domain teaching completed" and next_round is not None:
-                                            update_learner_models_from_demos(params, current_group, next_round)
-                                        
-                                        db.session.refresh(current_group)
-                                        current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()                            
-
-                                        # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
-                                        # find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
-
+                                    
+                                    db.session.refresh(current_group)
+                                    next_round_id = current_user.round+1
+                                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
+                                    
+                                    if next_round is not None:
+                                        next_kc_id = next_round.kc_id
                                     else:
-                                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Curr group status: ', current_group.status)
-                                        log_error("Group status not updated properly")
-                                        RuntimeWarning("Group status not updated properly")
+                                        next_kc_id = -1
+
+                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models from demos...', 'current_group status:', current_group.status)
+                                    
+                                    status_print('Next round:', next_round)
+                                    
+                                    if current_group.status != "Domain teaching completed" and next_round is not None:
+                                        update_learner_models_from_demos(params, current_group, next_round)
+                                    
+                                    db.session.refresh(current_group)
+                                    current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()                            
+
+                                    # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
+                                    # find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
+
+                                    # else:
+                                    #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Curr group status: ', current_group.status)
+                                    #     log_error("Group status not updated properly")
+                                    #     RuntimeWarning("Group status not updated properly")
+                                    ###########################################################
                                     
                                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Socket emitting all reached EOR')
                                     log_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
