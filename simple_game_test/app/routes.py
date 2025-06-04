@@ -50,6 +50,8 @@ from contextlib import contextmanager
 
 # from concurrent.futures import ProcessPoolExecutor
 from sqlalchemy.orm.attributes import flag_modified
+from sqlalchemy.exc import OperationalError
+
 
 
 print('Routes: Loaded python apps...')
@@ -154,6 +156,7 @@ def group_database_transaction(group_id, retries=5, base_delay=0.1):
                 db.session.commit()
                 return
             except OperationalError as e:
+                log_print('Group:', group_id,'. Group lock is active...')
                 if "database is locked" in str(e):
                     delay = base_delay * (2 ** attempt)  # exponential backoff
                     time.sleep(delay)
@@ -1000,19 +1003,45 @@ def check_member_and_group_status():
     return True
 
 
+
+def is_user_active():
+    """ 
+    Check if the user is actively still part of the group and has not completed the study or left the study
+    """
+    
+    if current_user.curr_progress == "left_study_or_got_disconnected" or current_user.curr_progress == "removed_due_to_inactivity":
+        log_print('Group:', current_user.group, 'User:', current_user.id, '. User not active....')
+        socketio.emit("force_logout", {"reason": 'inactivity'}, to=request.sid)
+        return False
+
+    elif current_user.curr_progress == "study_completed":
+        log_print('Group:', current_user.group, 'User:', current_user.id, '. User completed study....')
+        socketio.emit("force_logout", {"reason": 'study_completed'}, to=request.sid)
+        return False
+    
+    elif current_user.study_type == 'in_loop':
+        log_print('Group:', current_user.group, 'User:', current_user.id, '. User stuck in loop....')
+        return False
+    
+    else:
+        return True
+    
+
 # takes in state, including user input etc
 # and returns params for next state
 @socketio.on("settings")
 def settings(data):
     log_print('Data received:', data)
 
-    if current_user.curr_progress == "left_study_or_got_disconnected" or current_user.curr_progress == "removed_due_to_inactivity":
-        socketio.emit("force_logout", {"reason": 'inactivity'}, to=request.sid)
+    # if current_user.curr_progress == "left_study_or_got_disconnected" or current_user.curr_progress == "removed_due_to_inactivity":
+    #     socketio.emit("force_logout", {"reason": 'inactivity'}, to=request.sid)
 
-    elif current_user.curr_progress == "study_completed":
-        socketio.emit("force_logout", {"reason": 'study_completed'}, to=request.sid)
+    # elif current_user.curr_progress == "study_completed":
+    #     socketio.emit("force_logout", {"reason": 'study_completed'}, to=request.sid)
     
-    else:
+    # else:
+        
+    if is_user_active():
 
         room_name = data["room_name"]        
         domain, domain_order, mdp_class = get_domain()
@@ -1061,44 +1090,49 @@ def settings(data):
         update_database(current_user, 'Current user last activity')
         db.session.refresh(current_user)
 
+       
+
         ## SAVE TRIAL DATA TO DATABASE                    
-        if data["movement"] == "next":
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.id, 'Next movement. Checking if current trial was already completed..')
+        
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.id, 'Next movement. Checking if current trial was already completed..')
 
-            ### add/update trial data to database              
-            # check if current iteration has been already completed and add/update trial data
-            current_trial = db.session.query(Trial).filter_by(user_id=current_user.id,
-                                                                domain=domain,
-                                                                round=current_user.round,
-                                                                iteration=current_user.iteration).order_by(Trial.id.desc()).first()                          
+        ### add/update trial data to database              
+        # check if current iteration has been already completed and add/update trial data
+        current_trial = db.session.query(Trial).filter_by(user_id=current_user.id,
+                                                            domain=domain,
+                                                            round=current_user.round,
+                                                            iteration=current_user.iteration).order_by(Trial.id.desc()).first()                          
 
 
-            ### Add trial data to database when a trial is completed and re-visited after completion
-            if current_user.interaction_type == "survey":
-                log_print(colored('Adding survey data...', 'red'))
-                add_survey_data(domain, data)
-            
-            
-            elif (current_trial is None and current_user.round !=0 and data["interaction type"] is not None and int(data["survey"]) != -1) or (current_trial is not None and int(data["survey"]) != -1):
-                if 'test' in current_user.interaction_type:
-                    # for completed tests
-                    if len(data["user input"]) != 0:
-                        data["user input"]["mdp_parameters"]["human_actions"] = data["user input"]["moves"]
-                        opt_response_flag = data["user input"]["opt_response"]
-                
-                add_trial_data(domain, data)
-
-            elif (current_trial is None and current_user.round !=0 and data["interaction type"] == "final test"):
+        ### Add trial data to database when a trial is completed and re-visited after completion
+        if current_user.interaction_type == "survey":
+            log_print(colored('Adding survey data...', 'red'))
+            add_survey_data(domain, data)
+        
+        
+        elif (current_trial is None and current_user.round !=0 and data["interaction type"] is not None and int(data["survey"]) != -1) or (current_trial is not None and int(data["survey"]) != -1):
+            if 'test' in current_user.interaction_type:
                 # for completed tests
                 if len(data["user input"]) != 0:
                     data["user input"]["mdp_parameters"]["human_actions"] = data["user input"]["moves"]
                     opt_response_flag = data["user input"]["opt_response"]
-                
-                add_trial_data(domain, data)
+            
+            add_trial_data(domain, data)
 
+        elif (current_trial is None and current_user.round !=0 and data["interaction type"] == "final test"):
+            # for completed tests
+            if len(data["user input"]) != 0:
+                data["user input"]["mdp_parameters"]["human_actions"] = data["user input"]["moves"]
+                opt_response_flag = data["user input"]["opt_response"]
+            
+            add_trial_data(domain, data)
 
-            elif current_trial is not None:
-                curr_already_completed = True
+        
+        elif current_trial is not None:
+            curr_already_completed = True
+            
+            # Update number of visits
+            if data["movement"] == "next":
                 current_trial.num_visits += 1
                 flag_modified(current_trial, "num_visits")
                 update_database(current_trial, 'Current trial num visits: ' + str(current_trial.num_visits))
@@ -1150,6 +1184,8 @@ def settings(data):
                 while True:
                     # db.session.refresh(current_group)
                     
+                    current_user.study_type = 'in_loop' # so that the same user is not stuck in a separate loop
+                    
                     current_group, active_member_count = refresh_group_and_check_active_members(current_user.group)
 
 
@@ -1174,7 +1210,9 @@ def settings(data):
                             log_print('Group:', current_user.group, 'User:', current_user.id, 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Waiting for first round to be generated...')
 
                             while next_round is None:     
-
+                                
+                                current_user.study_type = 'in_loop'
+                                
                                 if (db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=1).count() == 0 and 
                                     current_group.status != "gen_demos" and not new_round_generation_started):
 
@@ -1243,7 +1281,10 @@ def settings(data):
                                 # break out of loop if current user left the study
                                 if not check_current_user_active():
                                     break
-                        
+                            
+                            
+                            current_user.study_type = 'not_in_loop'
+                            
                         ### Generate next round for the group
                         else:
                             db.session.refresh(current_group)
@@ -1280,6 +1321,8 @@ def settings(data):
                             log_print('Group:', current_user.group, 'User:', current_user.id, 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Waiting for next round to be generated...')
 
                             while next_round is None:
+                                
+                                current_user.study_type = 'in_loop'
                                 
                                 # Re-query before each loop
                                 # current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
@@ -1400,7 +1443,9 @@ def settings(data):
                                 # break out of loop if current user left the study
                                 if not check_current_user_active():
                                     break
-                                
+                            
+                            
+                            current_user.study_type = 'not_in_loop'
                             status_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
 
                         ### Update last iteration flag for the user
@@ -1411,7 +1456,7 @@ def settings(data):
                         break  # break main while loop after generating new round
 
                     elif current_round is not None and current_user.iteration < len(current_round.round_info):
-                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Moving for with next iteration in current round if there is any...', 'Iteration:', current_user.iteration)
+                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Moving for with next iteration in current round if there is any...', 'Iteration:', current_user.iteration, ' interaction:', data["interaction type"])
                         if data["interaction type"] != "diagnostic test": 
                             current_user.iteration += 1
 
@@ -1441,7 +1486,8 @@ def settings(data):
                         break
 
                     ###########################
-
+                
+                current_user.study_type = 'not_in_loop'
                 
                 ## Double check if a new round was generated
                 log_print('Group:', current_user.group, 'User:', current_user.id, 'next_round:', next_round, 'current_user.last_iter_in_round', current_user.last_iter_in_round)
@@ -2639,6 +2685,7 @@ def update_database(updated_data, update_type, max_retries=5):
                 return True
             
         except OperationalError as e:
+            log_print('Group:', group_id,'. Global lock is active...')
             if "database is locked" in str(e).lower() and attempt < max_retries - 1:
                 # Exponential backoff with jitter
                 wait_time = (2 ** attempt) + random.uniform(0, 1)
@@ -2751,9 +2798,8 @@ def add_survey_data(domain, data):
             reward_ft_weights = data["reward_ft_weights"]
         )
     
-    with global_db_lock:
-        db.session.add(dom)
-        db.session.commit()
+    update_database(dom, 'Adding survey data to database...')
+    
 
 
 def add_trial_data(domain, data):
@@ -2785,9 +2831,11 @@ def add_trial_data(domain, data):
         all_scores = data["final_score_string"]
     )
 
-    with global_db_lock:
-        db.session.add(trial)
-        db.session.commit()
+    # with global_db_lock:
+    #     db.session.add(trial)
+    #     db.session.commit()
+    
+    update_database(trial, 'Adding trial data to database...')
 
 
 def update_domain_group(cur_group):

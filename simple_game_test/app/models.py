@@ -27,6 +27,7 @@ class User(UserMixin, db.Model):
     study_type = db.Column(db.PickleType)
     feedback_counts = db.Column(db.PickleType)
     training = db.Column(db.Integer)
+    browser = db.Column(db.String(256))
     ##############
 
     code = db.Column(db.String(20))
@@ -35,7 +36,6 @@ class User(UserMixin, db.Model):
     gender = db.Column(db.Integer)
     ethnicity = db.Column(db.PickleType)
     education = db.Column(db.Integer)
-    browser = db.Column(db.String(256))
     final_feedback = db.Column(db.PickleType)
     num_trials_completed = db.Column(db.Integer)
 

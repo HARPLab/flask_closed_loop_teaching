@@ -8,12 +8,12 @@ from pathlib import Path
 # Add the project root directory to Python path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-# from app.group_teaching.codes.simple_rl import *
+from app.group_teaching.codes.simple_rl import *
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-# import teams.particle_filter_team as pf_team
+import teams.particle_filter_team as pf_team
 from numpy import array
 import os, sys
 
@@ -250,7 +250,7 @@ def convert_db_to_excel(database_file, output_excel_file):
 
 
 # Replace 'app.db' with your database file and 'output.xlsx' with the desired Excel file name
-convert_db_to_excel('../data/app_db_bf_05_28_1.db', '../results/output_bf_05_28_p1.xlsx')
+convert_db_to_excel('../data/app_db_bf_06_02_p2.db', '../results/output_bf_06_02_p2.xlsx')
 
 # print_table_data('app_bf_jan30.db')
 
