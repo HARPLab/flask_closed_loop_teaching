@@ -93,7 +93,7 @@ const config = {
 
       if (additionalInfo.hidden){
         try{
-            logEntry.h = hidden
+            logEntry.h = additionalInfo.hidden
         }
         catch (e) {
             console.error('Error logging activity:', e);
