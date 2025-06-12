@@ -1041,12 +1041,13 @@ def settings(data):
     
     # else:
 
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'current_user.iteration:', current_user.iteration)
     
     if data["domain"] is not None and current_user.iteration == data["iteration"]: 
         repeating_data = False
     else:
         repeating_data = True
+
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Repeating data:', repeating_data, 'Current user iteration:', current_user.iteration, 'Data iteration:', data["iteration"])
         
     if is_user_active():
 
