@@ -1042,7 +1042,7 @@ def settings(data):
     # else:
 
     
-    if data["domain"] is not None and current_user.iteration == data["iteration"]: 
+    if data["domain"] is None or current_user.iteration == data["iteration"]: 
         repeating_data = False
     else:
         repeating_data = True
