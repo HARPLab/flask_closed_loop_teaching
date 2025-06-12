@@ -403,7 +403,7 @@ def store_disconnect_page(data):
         # print('Disconnect pages list:', last_disconnect_pages[user_id])
 
 
-def check_current_user_active():
+def check_current_user_in_group():
     if current_user.is_authenticated:
     
         user_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
@@ -1182,6 +1182,9 @@ def advance_or_generate_round(
               curr_already_completed, '. Current user last iter in round?', current_user.last_iter_in_round, 'opt_response_flag:', opt_response_flag)
 
     while True:
+        
+        current_user.study_type = 'in_loop'
+        
         current_group, _ = refresh_group_and_check_active_members(current_user.group)
 
         should_generate_new_round = (
@@ -1195,7 +1198,8 @@ def advance_or_generate_round(
 
         if should_generate_new_round:
             time.sleep(random.random()*3)  # desync simultaneous generation (0-3s delay)
-
+            print('Group:', current_user.group, 'User:', current_user.id, 'Round number:', current_user.round)
+            
             if current_user.round == 0:
                 next_round = _generate_first_round(current_group, params)
             else:
@@ -1215,9 +1219,11 @@ def advance_or_generate_round(
             break
 
         time.sleep(1)
-        if not check_current_user_active():
+        if not check_current_user_in_group():
             break
-
+        
+    current_user.study_type = 'not_in_loop'
+    
     # Safety check: If last_iter_in_round is set, update round if needed
     if current_user.last_iter_in_round:
         next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
@@ -1244,10 +1250,14 @@ def _generate_first_round(current_group, params):
     new_round_generation_started = False
     
     while True:
+        
+        current_user.study_type = 'in_loop'
+
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating first round...')
         next_round = get_current_round(current_user.group, current_user.curr_progress, 1)
         
         if next_round is not None:
+            current_user.study_type = 'not_in_loop'
             return next_round
 
         if (
@@ -1267,12 +1277,13 @@ def _generate_first_round(current_group, params):
             if next_round and current_group.status != "Domain teaching completed":
                 update_learner_models_from_demos(params, current_group, next_round)
             db.session.refresh(current_group)
+            current_user.study_type = 'not_in_loop'
             return next_round
 
         time.sleep(2)
-        if not check_current_user_active():
+        if not check_current_user_in_group():
+            current_user.study_type = 'not_in_loop'
             break
-
 
 
 def _generate_subsequent_round(current_group, current_round, params):
@@ -1285,8 +1296,11 @@ def _generate_subsequent_round(current_group, current_round, params):
     db.session.refresh(current_group)
 
     while True:
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting to generate next round...')
         current_group, _ = refresh_group_and_check_active_members(current_user.group)
+        
         if current_group.groups_all_EOR() and check_member_and_group_status():
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'All members EOR and member and group domains match. Generating next round...')
             member_idx = current_user.group_code
             current_group.members_EOR[member_idx] = False
             flag_modified(current_group, "members_EOR")
@@ -1308,10 +1322,12 @@ def _generate_subsequent_round(current_group, current_round, params):
             if next_round and current_group.status != "Domain teaching completed":
                 update_learner_models_from_demos(params, current_group, next_round)
 
+            current_user.study_type = 'not_in_loop'
             return next_round
 
         time.sleep(2)
-        if not check_current_user_active():
+        if not check_current_user_in_group():
+            current_user.study_type = 'not_in_loop'
             break
 
 
