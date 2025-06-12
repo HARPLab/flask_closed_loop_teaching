@@ -1646,6 +1646,7 @@ def settings(data):
             
             domain, domain_order, mdp_class = get_domain()
             opt_response_flag = data["user input"].get("opt_response", False)
+            current_iteration = data["iteration"]
             
             # Fetch recent available round
             current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress).order_by(Round.id.desc()).first()
