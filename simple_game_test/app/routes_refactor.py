@@ -1025,7 +1025,573 @@ def is_user_active():
     
     else:
         return True
+        
+
+
+def setup_user_context(data):
     
+    current_kc_id = -2  # default value
+    
+    room_name = data["room_name"]        
+    domain, domain_order, mdp_class = get_domain()
+    params = get_mdp_parameters(mdp_class)
+
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Group:', current_user.group, 'Room name:', room_name, 'domain:', domain, 'mdp class:', mdp_class, 'Updated params:', params)
+
+
+    # get current group and round data
+    current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+    current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
+    
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'current_user progress: ', current_user.curr_progress, 'current_group progress: ', current_group.curr_progress, 'Round_num:', current_user.round, 'current_round:', current_round, current_user.iteration, current_user.interaction_type)
+    
+
+    ## Get round details
+    if current_round is not None:
+        current_mdp_params = current_round.round_info[current_user.iteration - 1]
+        current_user.interaction_type = current_mdp_params["interaction type"]
+        current_kc_id = current_round.kc_id
+    
+    return room_name, domain, domain_order, mdp_class, params, current_group, current_round, current_kc_id
+   
+    
+
+def process_activity_and_trial_data(data, domain):
+    """
+    Updates current_user's activity log and trial data if 'movement' is 'next'.
+    Returns: (opt_response_flag: bool, curr_already_completed: bool)
+    """
+    # Save activity log
+    try:
+        current_user.last_activity = data.get("activity_log", "")
+    except Exception:
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'No user activity available to log.')
+        current_user.last_activity = ""
+
+    flag_modified(current_user, "last_activity")
+    update_database(current_user, "Current user last activity")
+    db.session.refresh(current_user)
+
+    opt_response_flag = False
+    curr_already_completed = False
+
+    
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Next movement. Checking if current trial was already completed..')
+
+    # check if current iteration has been already completed and add/update trial data
+    current_trial = db.session.query(Trial).filter_by(user_id=current_user.id,
+                                                        domain=domain,
+                                                        round=current_user.round,
+                                                        iteration=current_user.iteration).order_by(Trial.id.desc()).first()  
+
+    survey_valid = int(data.get("survey", -1)) != -1
+    interaction_type = data.get("interaction type")
+
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Current trial:', current_trial, 'Current user iteration:', current_user.iteration, 'Current user round:', current_user.round, 'Interaction type:', interaction_type, 'Survey valid:', survey_valid)
+
+    if current_user.interaction_type == "survey":
+        log_print(colored("Adding survey data...", "red"))
+        add_survey_data(domain, data)
+
+    elif ((current_trial is None and current_user.round != 0 and interaction_type and survey_valid)
+        or (current_trial is not None and survey_valid)):
+        if 'test' in current_user.interaction_type and data.get("user input"):
+            data["user input"]["mdp_parameters"]["human_actions"] = data["user input"]["moves"]
+            opt_response_flag = data["user input"].get("opt_response", False)
+
+        add_trial_data(domain, data)
+
+    elif (current_trial is None and current_user.round != 0 and interaction_type == "final test"):
+        if data.get("user input"):
+            data["user input"]["mdp_parameters"]["human_actions"] = data["user input"]["moves"]
+            opt_response_flag = data["user input"].get("opt_response", False)
+
+        add_trial_data(domain, data)
+
+    elif current_trial is not None:
+        curr_already_completed = True
+        
+        # Update number of visits (if page is being reloaded it could count as revisits unfortunately)
+        if data.get("movement") == "next":
+            current_trial.num_visits += 1
+            flag_modified(current_trial, "num_visits")
+            update_database(current_trial, f"Updating current trial num visits: {current_trial.num_visits}")
+
+    return opt_response_flag, curr_already_completed
+
+
+
+def check_and_update_domain(data, current_group):
+    """
+    Check if the domain needs to be updated. If so, updates group and user domain progress,
+    refreshes parameters, and returns updated (domain, domain_order, mdp_class, params, current_round).
+    """
+    log_print('New domain? :', data.get("new_domain"))
+
+    if not data.get("new_domain", False):
+        return None, None, None, None, None  # No update needed
+
+    status_print('Updating domain in backend and database...')
+    db.session.refresh(current_group)
+
+    # Update domain for group
+    if current_user.curr_progress == current_group.curr_progress:
+        status_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of group...')
+        update_domain_group(current_group)
+        db.session.refresh(current_group)
+
+    # Update domain for user if their progress has not yet been synced
+    if current_user.curr_progress != current_group.curr_progress:
+        status_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of user and reset vars...')
+        update_domain_user(current_user, current_group)
+        db.session.refresh(current_user)
+
+        domain, domain_order, mdp_class = get_domain()
+        log_print('Group:', current_user.group, 'User:', current_user.id,
+                  'Updated Domain:', domain, 'Domain order:', domain_order, 'mdp class:', mdp_class)
+    else:
+        domain, domain_order, mdp_class = get_domain()
+
+    # Get study parameters
+    params = get_mdp_parameters(mdp_class) if mdp_class else None
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated params:', params)
+
+    # Refresh current round
+    current_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round)
+
+    return domain, domain_order, mdp_class, params, current_round
+
+
+
+def advance_or_generate_round(
+    data, domain, domain_order, current_group, current_round,
+    params, opt_response_flag, curr_already_completed
+    ):
+    """
+    Handles forward movement logic:
+    - Steps to the next iteration
+    - Generates the next round if all members finished the current one
+    - Handles EOR and updates learner models
+    Returns: updated current_group, current_round, next_round, next_kc_id
+    """
+    new_round_generation_started = False
+    next_round = None
+    next_kc_id = -1
+
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Next movement. Current trial already completed?',
+              curr_already_completed, '. Current user last iter in round?', current_user.last_iter_in_round, 'opt_response_flag:', opt_response_flag)
+
+    while True:
+        current_group, _ = refresh_group_and_check_active_members(current_user.group)
+
+        should_generate_new_round = (
+            not curr_already_completed and (
+                current_user.last_iter_in_round or
+                (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")
+            ) and (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
+        )
+
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Should generate new round:', should_generate_new_round)
+
+        if should_generate_new_round:
+            time.sleep(random.random()*3)  # desync simultaneous generation (0-3s delay)
+
+            if current_user.round == 0:
+                next_round = _generate_first_round(current_group, params)
+            else:
+                next_round = _generate_subsequent_round(current_group, current_round, params)
+
+            if next_round is not None:
+                next_kc_id = next_round.kc_id
+
+            if current_user.last_test_in_round and opt_response_flag:
+                current_user.last_iter_in_round = True
+
+            break
+
+        # Else: Step to next trial in current round if available
+        elif current_round and current_user.iteration < len(current_round.round_info):
+            _step_forward_in_round(data, domain, current_round, curr_already_completed, opt_response_flag)
+            break
+
+        time.sleep(1)
+        if not check_current_user_active():
+            break
+
+    # Safety check: If last_iter_in_round is set, update round if needed
+    if current_user.last_iter_in_round:
+        next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
+        if next_round:
+            next_kc_id = next_round.kc_id
+            current_user.round += 1
+            current_user.iteration = 1
+            current_user.last_iter_in_round = False
+            current_user.last_test_in_round = False
+            _reset_eor_flags(current_group)
+
+    return current_group, next_kc_id
+
+
+def get_current_round(group_id, curr_progress, round_num):
+    return (
+        db.session.query(Round)
+        .filter_by(group_id=group_id, domain_progress=curr_progress, round_num=round_num)
+        .order_by(Round.id.desc())
+        .first()
+    )
+
+def _generate_first_round(current_group, params):
+    new_round_generation_started = False
+    
+    while True:
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating first round...')
+        next_round = get_current_round(current_user.group, current_user.curr_progress, 1)
+        
+        if next_round is not None:
+            return next_round
+
+        if (
+            db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=1).count() == 0 and
+            current_group.status != "gen_demos" and not new_round_generation_started
+        ):
+            new_round_generation_started = True
+            current_group.status = "gen_demos"
+            flag_modified(current_group, "status")
+            update_database(current_group, 'Generating first round...')
+            db.session.refresh(current_group)
+
+            retrieve_next_round(params, current_group)
+            db.session.refresh(current_group)
+
+            next_round = get_current_round(current_user.group, current_user.curr_progress, 1)
+            if next_round and current_group.status != "Domain teaching completed":
+                update_learner_models_from_demos(params, current_group, next_round)
+            db.session.refresh(current_group)
+            return next_round
+
+        time.sleep(2)
+        if not check_current_user_active():
+            break
+
+
+
+def _generate_subsequent_round(current_group, current_round, params):
+    with group_database_transaction(current_user.group):
+        current_group, _ = refresh_group_and_check_active_members(current_user.group)
+        member_idx = current_group.members.index(current_user.username)
+        current_group.members_EOR[member_idx] = True
+        flag_modified(current_group, "members_EOR")
+
+    db.session.refresh(current_group)
+
+    while True:
+        current_group, _ = refresh_group_and_check_active_members(current_user.group)
+        if current_group.groups_all_EOR() and check_member_and_group_status():
+            member_idx = current_user.group_code
+            current_group.members_EOR[member_idx] = False
+            flag_modified(current_group, "members_EOR")
+            update_database(current_group, f'Resetting EOR for user {current_user.id}')
+            db.session.refresh(current_group)
+
+            update_learner_models_from_tests(params, current_group, current_round)
+            db.session.refresh(current_group)
+
+            current_group.status = "gen_demos"
+            flag_modified(current_group, "status")
+            update_database(current_group, 'Generating next round...')
+            db.session.refresh(current_group)
+
+            retrieve_next_round(params, current_group)
+            db.session.refresh(current_group)
+
+            next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
+            if next_round and current_group.status != "Domain teaching completed":
+                update_learner_models_from_demos(params, current_group, next_round)
+
+            return next_round
+
+        time.sleep(2)
+        if not check_current_user_active():
+            break
+
+
+
+def _step_forward_in_round(data, domain, current_round, curr_already_completed, opt_response_flag):
+    """
+    Steps the user forward within the current round.
+    Handles regular, diagnostic, and repeated test logic.
+    Updates `current_user.iteration` and `last_iter_in_round`.
+    """
+    log_print('Group:', current_user.group, 'User:', current_user.id,
+              'Moving forward in current round. Iteration:', current_user.iteration)
+
+    interaction_type = data.get("interaction type")
+
+    if interaction_type != "diagnostic test":
+        current_user.iteration += 1
+
+    elif not curr_already_completed:
+        if interaction_type == "diagnostic test" and not opt_response_flag:
+            current_user.iteration += 1
+        elif interaction_type == "diagnostic test" and opt_response_flag:
+            current_user.iteration += 2  # Skip over feedback to next test
+    else:
+        if interaction_type == "diagnostic test":
+            current_trial = (
+                db.session.query(Trial)
+                .filter_by(
+                    user_id=current_user.id,
+                    domain=domain,
+                    round=current_user.round,
+                    iteration=current_user.iteration
+                )
+                .order_by(Trial.id.desc())
+                .first()
+            )
+            if current_trial and current_trial.is_opt_response:
+                current_user.iteration += 2
+            else:
+                current_user.iteration += 1
+
+    # Check if we’re now at the last iteration
+    if current_user.iteration > len(current_round.round_info):
+        current_user.last_iter_in_round = True
+        log_print("User reached last iteration of the round.")
+
+
+
+def move_to_previous_trial(domain):
+    """
+    Handles the user pressing the 'Prev' button.
+    Moves back one iteration or to the last iteration of the previous round.
+    """
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'User pressed Prev')
+
+    if current_user.iteration > 1:
+        current_user.iteration -= 1
+    else:
+        # Move to previous round
+        current_user.round -= 1
+        log_print('User moved to previous round:', current_user.round)
+
+        prev_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round)
+        if prev_round is not None:
+            current_user.iteration = len(prev_round.round_info)
+        else:
+            current_user.iteration = 1
+
+    # If no trial found for that iteration, skip back once more
+    prev_trial = (
+        db.session.query(Trial)
+        .filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration)
+        .order_by(Trial.id.desc())
+        .first()
+    )
+    if prev_trial is None and current_user.iteration > 1:
+        current_user.iteration -= 1
+
+
+
+def prepare_next_trial_data(data, domain, current_group, updated_round, next_kc_id, current_kc_id, opt_response_flag):
+    """
+    Prepares the response dictionary for the next trial.
+    Updates flags, interaction type, and teammate statuses.
+    """
+    response = {}
+    next_trial = (
+        db.session.query(Trial)
+        .filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration)
+        .order_by(Trial.id.desc())
+        .first()
+    )
+
+    next_already_completed = False
+    interaction_list = [x["interaction type"] for x in updated_round.round_info]
+
+    # Set last_test and last_iter flags
+    last_test_idx = next((i for i in reversed(range(len(interaction_list))) if 'test' in interaction_list[i]), -1)
+    current_user.last_test_in_round = (current_user.iteration == last_test_idx + 1)
+    current_user.last_iter_in_round = (current_user.iteration == len(updated_round.round_info))
+
+    # Get trial params
+    if next_trial and next_trial.likert != -1:
+        next_already_completed = True
+        current_user.interaction_type = next_trial.interaction_type
+        response["params"] = next_trial.mdp_parameters
+        response["moves"] = next_trial.moves
+
+        if 'test' in current_user.interaction_type:
+            response["params"]["tag"] = -1
+            if not opt_response_flag:
+                response["params"]["opt_actions"] = next_trial.moves
+    else:
+        next_mdp_params = updated_round.round_info[current_user.iteration - 1]
+        response["params"] = next_mdp_params["params"]
+        current_user.interaction_type = next_mdp_params["interaction type"]
+
+    # Add feedback if applicable
+    if 'feedback' in current_user.interaction_type:
+        last_test_trial = (
+            db.session.query(Trial)
+            .filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration - 1)
+            .order_by(Trial.id.desc())
+            .first()
+        )
+
+        if last_test_trial:
+            if not opt_response_flag:
+                norm_opt, norm_human = get_normalized_trajectories(last_test_trial, domain)
+            else:
+                norm_opt = norm_human = last_test_trial.moves
+
+            response["params"].update({
+                "normalized_opt_actions": norm_opt,
+                "opt_actions": last_test_trial.moves,
+                "normalized_human_actions": norm_human,
+                "human_actions": last_test_trial.moves,
+                "tag": -2,
+            })
+
+    # Update DB-tracked user state
+    for field in ["last_iter_in_round", "last_test_in_round", "iteration", "round", "interaction_type"]:
+        flag_modified(current_user, field)
+    update_database(current_user, f"{current_user.username}. User progress in settings")
+
+    # Should "Prev" be allowed?
+    response["go prev"] = not (
+        (current_user.round == 1 and current_user.iteration == 1 and current_user.interaction_type == "demo")
+        or (current_user.interaction_type == "survey")
+    )
+
+    # Add lesson context
+    N_demos = sum(1 for x in updated_round.round_info if x["interaction type"] == "demo")
+    N_tests = sum(1 for x in updated_round.round_info if x["interaction type"] == "diagnostic test")
+    lesson_id = next_kc_id + 1 if next_kc_id != -1 else 0
+    interaction = current_user.interaction_type
+
+    if interaction == "demo":
+        iteration_id = current_user.iteration
+        total = N_demos
+        lesson_string = (
+            "Starting with the first game lesson." if next_kc_id == 0 else
+            "Moving onto a new game lesson." if current_kc_id != next_kc_id else
+            "Repeating the previous game lesson."
+        )
+    elif interaction == "diagnostic test":
+        iteration_id = int((current_user.iteration - N_demos) / 2) + 1
+        total = N_tests
+        lesson_string = ""
+    elif interaction == "final test":
+        iteration_id = current_user.iteration
+        total = len(updated_round.round_info)
+        lesson_string = ""
+    else:
+        iteration_id = ""
+        total = ""
+        lesson_string = ""
+
+    # Teammate progress strings
+    round_type = "Strategy assessment" if interaction == "final test" else "Current lesson"
+    group_user_ids = current_group.member_user_ids
+
+    teammate_statuses = {}
+    teammate_id = 1
+    for i, uid in enumerate(group_user_ids):
+        if uid == current_user.id:
+            continue
+        key = f"teammate_{teammate_id}_progress"
+        if current_group.members_statuses[i] == "joined":
+            if current_group.members_EOR[i]:
+                teammate_statuses[key] = f"{round_type} completed. Waiting for teammate(s)."
+            else:
+                teammate_statuses[key] = f"{round_type} in progress"
+        elif current_group.members_statuses[i] == "left":
+            teammate_statuses[key] = "Left the study"
+        teammate_id += 1
+
+    # Final response dict
+    response.update({
+        "domain": domain,
+        "last iteration": current_user.last_iter_in_round,
+        "last test": current_user.last_test_in_round,
+        "interaction type": interaction,
+        "already completed": next_already_completed,
+        "iteration": iteration_id,
+        "total iterations": total,
+        "lesson id": lesson_id,
+        "lesson string": lesson_string,
+        "debug string": "",
+        "domain completed": interaction == "survey",
+        **teammate_statuses,
+    })
+
+    log_print("Prepared response:", response)
+    return response
+
+
+
+def handle_trial_navigation(data, domain, domain_order, current_group, current_round,
+    params, opt_response_flag, curr_already_completed, current_kc_id):
+    """
+    Handles trial navigation including forward/backward movement,
+    new round generation, and preparing trial response.
+    """
+    response = {}
+    next_kc_id = -1
+
+    # Skip if user already completed study or is doing a survey
+    if current_group.curr_progress == "study_completed" or current_user.interaction_type == "survey":
+        return current_group, response, next_kc_id
+
+    movement = data.get("movement")
+
+    if movement == "next":
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'User pressed Next...')
+        current_group, next_kc_id = advance_or_generate_round(data, domain, domain_order, current_group, current_round,
+                                                                                         params, opt_response_flag, curr_already_completed)
+
+    elif movement == "prev":
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'User pressed Prev...')
+        move_to_previous_trial(domain)
+
+    # Re-fetch current round (in case it changed)
+    updated_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round)
+
+    if updated_round:
+        response = prepare_next_trial_data(data, domain, current_group, updated_round, next_kc_id, current_kc_id, opt_response_flag)
+    else:
+        log_error('No updated round found after trial navigation')
+        raise RuntimeError("No updated round found for user")
+
+    return current_group, response, next_kc_id
+
+
+
+def _reset_eor_flags(current_group):
+    """
+    Resets the current user's EOR and last test flags in the group
+    after moving to a new round. Operates under group-level lock.
+    """
+    with group_database_transaction(current_user.group):
+        current_group = (
+            db.session.query(Group)
+            .filter_by(id=current_user.group)
+            .first()
+        )
+
+        member_idx = current_user.group_code
+        current_group.members_EOR[member_idx] = False
+        current_group.members_last_test[member_idx] = False
+
+        flag_modified(current_group, "members_EOR")
+        flag_modified(current_group, "members_last_test")
+        # Commit handled by context manager while exiting context
+
+    log_print('Group:', current_user.group, 'User:', current_user.id,
+              'Reset EOR and last test flags:', current_group.members_EOR)
+    
+    db.session.refresh(current_group)
+
 
 # takes in state, including user input etc
 # and returns params for next state
@@ -1033,754 +1599,73 @@ def is_user_active():
 def settings(data):
     log_print('Data received:', data)
 
-    # if current_user.curr_progress == "left_study_or_got_disconnected" or current_user.curr_progress == "removed_due_to_inactivity":
-    #     socketio.emit("force_logout", {"reason": 'inactivity'}, to=request.sid)
 
-    # elif current_user.curr_progress == "study_completed":
-    #     socketio.emit("force_logout", {"reason": 'study_completed'}, to=request.sid)
-    
-    # else:
-
-    if current_user.iteration == data["iteration"]: 
-        repeating_data = False
-    else:
-        repeating_data = True
-        
     if is_user_active():
 
-        room_name = data["room_name"]        
-        domain, domain_order, mdp_class = get_domain()
-        params = get_mdp_parameters(mdp_class)
+        log_print('Group:', current_user.group, 'User:', current_user.id, '. User active.')
 
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Group:', current_user.group, 'Room name:', room_name, 'domain:', domain, 'mdp class:', mdp_class, 'Updated params:', params)
-
+        # INITIALIZE ROUND GENERATION VARIABLES
         next_round = None
         opt_response_flag = False
         next_kc_id = -1
-        current_kc_id = -2
         curr_already_completed = False
         response = {}
-        new_round_generation_started = False
-
-        # get current group and round data
-        current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
-        current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-        
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'current_user progress: ', current_user.curr_progress, 'current_group progress: ', current_group.curr_progress, 'Round_num:', current_user.round, 'current_round:', current_round, current_user.iteration, current_user.interaction_type)
         
 
-        ## Get round details
-        if current_round is not None:
-            current_mdp_params = current_round.round_info[current_user.iteration - 1]
-            current_user.interaction_type = current_mdp_params["interaction type"]
-            current_kc_id = current_round.kc_id
         
+        ## Check if current user iteration matches the received data (sometimes when reloaded when next round was generated, the data may not match in which case we skip adding trial data)
         
-        try:
-            current_user.last_activity = data["activity_log"]
-        except:
-            current_user.last_activity = ""
-        
-        flag_modified(current_user, "last_activity")
-        update_database(current_user, 'Current user last activity')
-        db.session.refresh(current_user)
+        if current_user.iteration == data["iteration"]:     
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'User iteration matches received data. Adding trial data.')
 
-       
-
-        ## SAVE TRIAL DATA TO DATABASE                    
-        
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.id, 'Next movement. Checking if current trial was already completed..')
-
-        ### add/update trial data to database 
-        
-        # # Check if current user iteration matches the received data (sometimes when reloaded when next round was generated, the data may not match in which case we skip adding trial data)
-        
-        if not repeating_data:      
-            # check if current iteration has been already completed and add/update trial data
-            current_trial = db.session.query(Trial).filter_by(user_id=current_user.id,
-                                                                domain=domain,
-                                                                round=current_user.round,
-                                                                iteration=current_user.iteration).order_by(Trial.id.desc()).first()                          
+            # GET USER CONTEXT
+            room_name, domain, domain_order, mdp_class, params, current_group, current_round, current_kc_id = setup_user_context(data)
+            
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Room name:', room_name, 'Domain:', domain, 'Domain order:', domain_order, 'MDP class:', mdp_class, 'Params:', params, 'Current round:', current_round, 'Current KC id:', current_kc_id)
 
 
-            ### Add trial data to database when a trial is completed and re-visited after completion
-            if current_user.interaction_type == "survey":
-                log_print(colored('Adding survey data...', 'red'))
-                add_survey_data(domain, data)
+            ## SAVE USER ACTIVITY DATA   
+            opt_response_flag, curr_already_completed = process_activity_and_trial_data(data, domain)
+
+            ## CHECK AND UPDATE DOMAIN
+            current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+            update_result = check_and_update_domain(data, current_group)
+            if update_result[0] is not None:
+                domain, domain_order, mdp_class, params, current_round = update_result
+                log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated Domain:', domain, 'Domain order:', domain_order, 'MDP class:', mdp_class, 'Params:', params)
             
             
-            elif (current_trial is None and current_user.round !=0 and data["interaction type"] is not None and int(data["survey"]) != -1) or (current_trial is not None and int(data["survey"]) != -1):
-                if 'test' in current_user.interaction_type:
-                    # for completed tests
-                    if len(data["user input"]) != 0:
-                        data["user input"]["mdp_parameters"]["human_actions"] = data["user input"]["moves"]
-                        opt_response_flag = data["user input"]["opt_response"]
-                
-                add_trial_data(domain, data)
-
-            elif (current_trial is None and current_user.round !=0 and data["interaction type"] == "final test"):
-                # for completed tests
-                if len(data["user input"]) != 0:
-                    data["user input"]["mdp_parameters"]["human_actions"] = data["user input"]["moves"]
-                    opt_response_flag = data["user input"]["opt_response"]
-                
-                add_trial_data(domain, data)
-
+            # Step 4: Trial navigation + round generation + response
+            current_group, response, next_kc_id = handle_trial_navigation( data, domain, domain_order, current_group, current_round,
+                                                                                                        params, opt_response_flag, curr_already_completed, current_kc_id)
             
-            elif current_trial is not None:
-                curr_already_completed = True
-                
-                # Update number of visits
-                if data["movement"] == "next":
-                    current_trial.num_visits += 1
-                    flag_modified(current_trial, "num_visits")
-                    update_database(current_trial, 'Current trial num visits: ' + str(current_trial.num_visits))
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Next trial response:', response)
         
-            ################################################################################        
-
-            ### CHECK AND UPDATE DOMAIN
-            # if (data["new_domain"] == "true") or (domain_order=='1' and current_user.round == 0):
-            log_print('New domain? :', data["new_domain"])
-            if data["new_domain"] == True:
-
-                status_print('Updating domain in backend and database...')
-                db.session.refresh(current_group)
-
-                if current_user.curr_progress == current_group.curr_progress:
-                    status_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of group...')
-                    update_domain_group(current_group)
-                    db.session.refresh(current_group)
-
-                
-                if current_user.curr_progress != current_group.curr_progress:
-                    status_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of user and reset vars...')
-                    update_domain_user(current_user, current_group)
-                    db.session.refresh(current_user)
-                    
-                    # Get new domain details
-                    domain, domain_order, mdp_class = get_domain()    
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated Domain:', domain, 'Domain order:', domain_order, 'mdp class:', mdp_class)                
-
-                # Get study parameters for the domain/mdp class
-                if mdp_class != "":
-                    params = get_mdp_parameters(mdp_class)  # update params for new domain
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated params:', params)
-
-                # update current round
-                current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-
-        ################################################################################        
-
-
-        ### CALCULATE INFORMATION FOR NEXT TRIAL
-        if (current_group.curr_progress != "study_completed") and (current_user.interaction_type != 'survey'):
-
-            if (data["movement"] == "next") and not repeating_data:
-                #########################
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Next movement. Current trial already completed?', curr_already_completed, '. Current user last iter in round?', current_user.last_iter_in_round, 'opt_response_flag:', opt_response_flag)
-                
-                
-                while True:
-                    # db.session.refresh(current_group)
-                    
-                    current_user.study_type = 'in_loop' # so that the same user is not stuck in a separate loop
-                    
-                    current_group, active_member_count = refresh_group_and_check_active_members(current_user.group)
-
-
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for team status to update, mainly all members to be in same game/domain...')
-                    
-                    ### generate new round if all group members are at the end of current round (end of tests); if not step through the remaining iterations in the round
-                    
-                    # if not curr_already_completed and current_user.last_test_in_round:
-                    if not curr_already_completed and (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type!="final test")) and (check_member_and_group_status() or (domain_order=='1' and current_user.round == 0)):
-
-                        log_print('Group:', current_user.group, 'User:', current_user.id, "Current group status: ", current_group.status, 'Current user round:', current_user.round, 'current_user curr_progress:', current_user.curr_progress)                        
-                        
-                        ## add a random wait time to ensure members do not enter the following loop at the same time (0 to 1 s)
-                        time.sleep(random.random())
-
-                        ### Generate first round for the group
-                        if current_user.round == 0:
-                            
-                            next_round_id = current_user.round+1
-                            next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-
-                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Waiting for first round to be generated...')
-
-                            while next_round is None:     
-                                
-                                current_user.study_type = 'in_loop'
-                                
-                                if (db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=1).count() == 0 and 
-                                    current_group.status != "gen_demos" and not new_round_generation_started):
-
-                                    new_round_generation_started = True
-
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating first round...')
-                                    current_group.status = "gen_demos"
-                                    
-                                    
-                                    flag_modified(current_group, "status")
-                                    # flag_modified(current_group, "new_round_generation_started")
-                                    update_database(current_group, 'Group status: gen_demos; in retrieve next round')
-                                    db.session.refresh(current_group)
-                                    
-                                    retrieve_next_round(params, current_group)
-                                    db.session.refresh(current_group)
-                                    
-                                    next_round_id = current_user.round+1
-                                    status_print('Group:', current_user.group, 'User:', current_user.id, 'First round generated. Next round id:', next_round_id, 'User progress: ', current_user.curr_progress)
-                                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-                                    
-                                    status_print('Next round:', next_round)
-                                    
-                                    if current_group.status != "Domain teaching completed" and next_round is not None:
-                                        update_learner_models_from_demos(params, current_group, next_round)
-                                    db.session.refresh(current_group)
-                                    current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-
-                                    # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
-                                    # find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
-                                    
-                                    break
-                                
-                                else:
-                                    round_status = ""
-                                    status_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for first round to be generated...')
-                                    next_round_id = current_user.round+1
-                                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-
-                                    if next_round is not None:
-                                        round_status = next_round.status
-
-                                        if round_status == "demo_tests_generated" or round_status == "final_tests_generated" or round_status == "demos_updated":
-                                            break
-
-                                        # check if all group members have left
-                                        db.session.refresh(current_group)
-                                        if current_group.num_active_members == 0:
-                                            break
-
-                                    new_round_generation_started = False
-                                    # flag_modified(current_group, "new_round_generation_started")
-                                    # update_database(current_group, 'New round generation not yet started..')
-
-                                    status_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for first round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
-                                    time.sleep(2) # a sleep to avoid too many queries
-
-                                # vars for next round
-                                if next_round is not None:
-                                    next_kc_id = next_round.kc_id
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round:', next_round, 'First round status:', next_round.status, 'Next round kc_id:', next_kc_id)
-                                else:
-                                    next_kc_id = -1
-
-
-                                # break out of loop if current user left the study
-                                if not check_current_user_active():
-                                    break
-                            
-                            
-                            current_user.study_type = 'not_in_loop'
-                            
-                        ### Generate next round for the group
-                        else:
-                            db.session.refresh(current_group)
-
-                            ## Update EOR status for current user
-                            with group_database_transaction(current_user.group):
-                                
-                                # Re-read group data inside the lock to get fresh state
-                                # current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
-                                current_group, active_member_count = refresh_group_and_check_active_members(current_user.group)
-
-        
-                                status_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.username, 'reached last iteration in round')
-                                
-                                member_idx = current_group.members.index(current_user.username)
-                                current_group.members_EOR[member_idx] = True
-                            
-                                flag_modified(current_group, "members_EOR")
-                                status_print('Group:', current_user.group, 'User:', current_user.id, 'Member' + str(member_idx) + ' reached EOR')
-                            
-                                # Don't call update_database() - let the context manager handle commit
-                                # update_database(current_group, 'Member ' + str(member_idx) + ' reached EOR', db_lock_status=True) # Ensure database updates occur outside transactions
-                                
-                        
-
-                            log_print(colored('Updated Group members EOR status: ', 'red')) 
-                            db.session.refresh(current_group)
-                            status_print(current_group.members_EOR, 'member statuses:', current_group.members_statuses, 'all EOR:', current_group.groups_all_EOR(), 'all last test:', current_group.group_last_test())
-
-
-                            next_round_id = current_user.round+1
-                            next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-
-                            log_print('Group:', current_user.group, 'User:', current_user.id, 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'Waiting for next round to be generated...')
-
-                            while next_round is None:
-                                
-                                current_user.study_type = 'in_loop'
-                                
-                                # Re-query before each loop
-                                # current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
-                                current_group, active_member_count = refresh_group_and_check_active_members(current_user.group)
-                                log_print('Group mebers EOR: ', current_group.members_EOR, 'members_statuses:', current_group.members_statuses, 'current_group EOR:', current_group.groups_all_EOR(), 'check_member_and_group_status:', check_member_and_group_status(), 'new_round_generation_started:', new_round_generation_started)
-
-                                # ensure all members have made the same game progress and are in the end of round
-                                if (current_group.groups_all_EOR() and check_member_and_group_status() and not new_round_generation_started):
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Members EOR:', current_group.members_EOR, 'All EOR:', current_group.groups_all_EOR(), 'Member statuses:', current_group.members_statuses, 'Num active members: ', current_group.num_active_members)
-                                    status_print("All group members reached EOR, so i'm trying to construct the next round now")
-                                    log_print("Current group status: ", current_group.status)
-
-                                    # reset user EOR
-                                    member_idx = current_user.group_code
-                                    current_group.members_EOR[member_idx] = False
-                                    flag_modified(current_group, "members_EOR")
-                                    update_database(current_group, 'Member ' + str(member_idx) + ' reset EOR for user ' + str(current_user.id))
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR, 'current_group.status :', current_group.status )
-                                    db.session.refresh(current_group)
-                                    
-                                    #################################################
-                                    # This additional check is causing issues sometimes
-                                    # if current_group.status != "gen_demos":
-
-                                    new_round_generation_started = True
-                                    # flag_modified(current_group, "new_round_generation_started")
-                                    # update_database(current_group, 'New round generation started..')
-
-                                    
-                                    # update models from test responses
-                                    update_learner_models_from_tests(params, current_group, current_round)  # only for diagnostic tests and not for final tests
-                                    db.session.refresh(current_group)
-                                    current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-                                    
-
-                                    # # update models from feedback of test responses
-                                    # update_learner_models_from_feedback(params, current_group, current_round)
-                                    # db.session.refresh(current_group)
-                                    # current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-                                    
-
-                                    # pf_round_id = current_user.round
-                                    # pf_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=pf_round_id).order_by(Round.id.desc()).first()
-                                    
-                                    # try:
-                                    #     log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from tests...')
-                                    #     find_prob_particles(current_group.ind_member_models, current_group.members_statuses, pf_round.min_BEC_constraints_running)                            
-                                    # except:
-                                    #     log_error('Group:', current_user.group, 'User:', current_user.id, 'Error in finding prob particles...')
-                                    
-                                    #################################################
-                                    log_print("Generating next round...")
-
-                                    current_group.status = "gen_demos"
-                                    flag_modified(current_group, "status")
-                                    update_database(current_group, 'New round generation started...')
-                                    db.session.refresh(current_group)
-                                    
-                                    retrieve_next_round(params, current_group)
-
-                                    
-                                    db.session.refresh(current_group)
-                                    next_round_id = current_user.round+1
-                                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-                                    
-                                    if next_round is not None:
-                                        next_kc_id = next_round.kc_id
-                                    else:
-                                        next_kc_id = -1
-
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models from demos...', 'current_group status:', current_group.status)
-                                    
-                                    status_print('Next round:', next_round)
-                                    
-                                    if current_group.status != "Domain teaching completed" and next_round is not None:
-                                        update_learner_models_from_demos(params, current_group, next_round)
-                                    
-                                    db.session.refresh(current_group)
-                                    current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()                            
-
-                                    # log_print('Group:', current_user.group, 'User:', current_user.id, 'After updating learner models from demos...')
-                                    # find_prob_particles(current_group.ind_member_models, current_group.members_statuses, next_round.min_BEC_constraints_running)
-
-                                    # else:
-                                    #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Curr group status: ', current_group.status)
-                                    #     log_error("Group status not updated properly")
-                                    #     RuntimeWarning("Group status not updated properly")
-                                    ###########################################################
-                                    
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Socket emitting all reached EOR')
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
-                                    socketio.emit("all reached EOR", to='room_'+ str(current_user.group))  # triggers next page button to go to next round for clients
-                                    break
-                                else:
-                                    round_status = ""
-                                    next_round_id = current_user.round+1
-                                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-
-                                    if next_round is not None:
-                                        round_status = next_round.status
-
-                                        if round_status == "demo_tests_generated" or round_status == "final_tests_generated" or round_status == "demos_updated":
-                                            break
-
-                                        # check if all group members have left
-                                        db.session.refresh(current_group)
-                                        if current_group.num_active_members == 0:
-                                            break
-
-                                    new_round_generation_started = False
-                                    # flag_modified(current_group, "new_round_generation_started")
-                                    # update_database(current_group, 'New round generation not yet started..')
-
-                                    log_print('Group:', current_user.group, 'User:', current_user.id, '. Waiting for next round to be generated...' 'Next round id:', next_round_id, 'Round status:', round_status)
-                                    time.sleep(2) # a sleep to avoid too many queries
-
-
-                                # break out of loop if current user left the study
-                                if not check_current_user_active():
-                                    break
-                            
-                            
-                            current_user.study_type = 'not_in_loop'
-                            status_print('Group:', current_user.group, 'User:', current_user.id, 'Next round available....', 'Next Round id:', current_user.round+1, 'Next round:', next_round, 'current user iteration:', current_user.iteration, 'len of round info:', len(current_round.round_info))
-
-                        ### Update last iteration flag for the user
-                        if current_user.last_test_in_round and opt_response_flag:
-                            current_user.last_iter_in_round = True  # update last iteration flag for the user
-
-
-                        break  # break main while loop after generating new round
-
-                    elif current_round is not None and current_user.iteration < len(current_round.round_info):
-                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Moving for with next iteration in current round if there is any...', 'Iteration:', current_user.iteration, ' interaction:', data["interaction type"])
-                        if data["interaction type"] != "diagnostic test": 
-                            current_user.iteration += 1
-
-                        if not curr_already_completed:
-                            if data["interaction type"] == "diagnostic test" and not opt_response_flag:
-                                current_user.iteration += 1
-                            elif data["interaction type"] == "diagnostic test" and opt_response_flag:
-                                # current_user.iteration += 1
-                                current_user.iteration += 2  # skip the optimal response and go to the next test
-                        else:
-                            if data["interaction type"] == "diagnostic test":
-                                current_trial = db.session.query(Trial).filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration).order_by(Trial.id.desc()).first()
-                                if current_trial.is_opt_response:
-                                    current_user.iteration += 2
-                                else:
-                                    current_user.iteration += 1
-
-                            if current_user.iteration > len(current_round.round_info):
-                                current_user.last_iter_in_round = True  # update last iteration flag for the user
-
-                        break  # break main while loop
-                    
-                    time.sleep(1)  # a brief sleep to avoid too many queries
-                    
-                    # break out of loop if current user left the study
-                    if not check_current_user_active():
-                        break
-
-                    ###########################
-                
-                current_user.study_type = 'not_in_loop'
-                
-                ## Double check if a new round was generated
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'next_round:', next_round, 'current_user.last_iter_in_round', current_user.last_iter_in_round)
-                if current_user.last_iter_in_round: 
-
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Checking if new round is already generated...')
-                    
-                    # check if new round is already generated (this is a safety check as the user should be able to press 'Next' only if next round is available)
-                    next_round_id = current_user.round+1
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round id:', next_round_id, 'group id:', current_user.group, 'domain progress:', current_user.curr_progress)
-                    next_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=next_round_id).order_by(Round.id.desc()).first()
-
-                    
-                    if next_round is not None:
-                        
-                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Next round generated...')
-                        next_kc_id = next_round.kc_id
-                        current_user.round += 1
-                        current_user.iteration = 1  # reset iteration to 1 for new round
-                        current_user.last_iter_in_round = False
-                        current_user.last_test_in_round = False
-
-                        # # reset EOR flags - for all members in the group (Don't use this. As users can be in different rounds especially when starting a new domain)
-                        # current_group.members_EOR = [False for x in current_group.members_EOR]
-                        # current_group.members_last_test = [False for x in current_group.members_last_test]
-                        
-                        db.session.refresh(current_group)  # refresh any changes made to the group from other users
-
-                        # reset EOR flags - for current user
-                        with group_database_transaction(current_user.group):
-
-                            # Re-read group data inside lock
-                            current_group = db.session.query(Group).filter_by(id=current_user.group).first()
-                            
-                            member_idx = current_user.group_code
-                            current_group.members_EOR[member_idx] = False
-                            current_group.members_last_test[member_idx] = False
-                            
-                            flag_modified(current_group, "members_EOR")
-                            flag_modified(current_group, "members_last_test")
-                            
-                            # Don't call update_database() - let the context manager handle commit
-                            # Ensure database updates occur outside transactions
-                            # update_database(current_group, 'Reset EOR and last test flags for user ' + str(current_user.id), db_lock_status=True)
-                           
-                        log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated group members EOR:', current_group.members_EOR)
-                        db.session.refresh(current_group)
-
-                    else:
-                        RuntimeError("Next round not generated")
-                ################################
-
-            elif data["movement"] == "prev" and not repeating_data:
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'User: ', current_user.id, 'Prev movement............................................')
-                if current_user.iteration > 1:
-                    current_user.iteration -= 1 #update iteration for current round
-                else:
-                    current_user.round -= 1
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'User round after prev:', current_user.round)
-                    prev_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-                    current_user.iteration = len(prev_round.round_info)
-
-                # don't show feedback if test response is correct (check for this trial in trial database)
-                prev_trial = db.session.query(Trial).filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration).order_by(Trial.id.desc()).first()
-                if prev_trial is None:
-                    current_user.iteration -= 1
-                    
-            ################################################################################
-
-
-            ### PROCESS DETAILS TO SEND FOR THE NEXT TRIAL
-
-            # check if next trial to be shown has already been completed (due to reload of browser)
-            if not repeating_data:
-                next_already_completed = False
-
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'group_id:', current_user.group, 'Current user round:', current_user.round, 'current_user_progress: ', current_user.curr_progress, 'current_group progress:', current_group.curr_progress, 'Current user iteration:', current_user.iteration)
-                
-                next_trial = db.session.query(Trial).filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration).order_by(Trial.id.desc()).first()
-                updated_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-
+        else:
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'User iteration does not match received data. Skipping trial data addition.')
+            
+            domain, domain_order, mdp_class = get_domain()
+            opt_response_flag = data["user input"].get("opt_response", False)
+            current_iteration = data["iteration"]
+            
+            # Fetch recent available round
+            current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress).order_by(Round.id.desc()).first()
+            current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+            next_kc_id = current_round.kc_id if current_round else -1
+
+            if current_round:
+                response = prepare_next_trial_data(data, domain, current_group, current_round, next_kc_id, current_kc_id, opt_response_flag)
+                log_print('Group:', current_user.group, 'User:', current_user.id, 'Next trial response:', response)
             else:
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'repeating data observed', 'group_id:', current_user.group, 'Current user round:', current_user.round, 'current_user_progress: ', current_user.curr_progress, 'current_group progress:', current_group.curr_progress, 'Current user iteration:', current_user.iteration)
-
-                
-                current_iteration = data["iteration"]
-                
-                updated_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-                next_round_id = updated_round.id if updated_round else None
-
-                next_trial = db.session.query(Trial).filter_by(user_id=current_user.id, domain=domain, round=next_round_id, iteration=current_iteration).order_by(Trial.id.desc()).first()
-            ######################
-
-            if updated_round is not None:
-                next_kc_id = updated_round.kc_id
-
-                interaction_list = [x["interaction type"] for x in updated_round.round_info]
-                last_test_iteration_idx = next((i for i in reversed(range(len(interaction_list))) if 'test' in interaction_list[i]), None)
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'current_user.iteration:', current_user.iteration, 'Last test iteration:', last_test_iteration_idx + 1)
-
-                if current_user.iteration == last_test_iteration_idx + 1:
-                    current_user.last_test_in_round = True
-                    log_print("Next test is last in round for user")
-                else:
-                    current_user.last_test_in_round = False
-                
-                # check if the next trial is the last iteration in the round
-                if current_user.iteration == len(updated_round.round_info):
-                    current_user.last_iter_in_round = True
-                    log_print("Next iteration is last in round for user")
-                else:
-                    current_user.last_iter_in_round = False
-            
-
-
-                ## update variables
-                if next_trial is not None and next_trial.likert != -1:
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Response params of previously completed trial...')
-                    next_already_completed = True
-                    current_user.interaction_type = next_trial.interaction_type
-
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Next_trial.likert:', next_trial.likert)
-
-                    response["params"] = next_trial.mdp_parameters
-                    response["moves"] = next_trial.moves
-
-                    if 'test' in current_user.interaction_type:
-                        # # if you've already been to this test page, you should simply show the optimal trajectory
-                        response["params"]["tag"] = -1
-                        if not opt_response_flag:
-                            response["params"]["opt_actions"] = next_trial.moves
-                        
-
-                else:
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Response params from MDP params for new trial...')
-                    next_mdp_params = updated_round.round_info[current_user.iteration - 1]
-                    response["params"] = next_mdp_params["params"]
-                    current_user.interaction_type = next_mdp_params["interaction type"]
-
-                #######################
-                
-                ## check if next trial is "answer"
-                if 'feedback' in current_user.interaction_type:
-                    # Show correct response for the previous test with normalize the actions of the optimal and (incorrect) human trajectory such that they're the same length
-                    # (by causing the longer trajectory to wait at overlapping states)
-                    # update human actions and locations for visuzalization
-
-                    last_test_trial = db.session.query(Trial).filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration - 1).order_by(Trial.id.desc()).first()
-                    log_print('Group:', current_user.group, 'User:', current_user.id, 'Last test trial interaction type:', last_test_trial.interaction_type)
-
-                    if not opt_response_flag:
-                        normalized_opt_actions, normalized_human_actions = get_normalized_trajectories(last_test_trial, domain)
-                    else:
-                        normalized_opt_actions = last_test_trial.moves
-                        normalized_human_actions = last_test_trial.moves
-                
-
-                    response["params"]["normalized_opt_actions"] = normalized_opt_actions
-                    response["params"]["opt_actions"] = last_test_trial.moves
-                    
-                    response["params"]["normalized_human_actions"] = normalized_human_actions
-                    response["params"]["human_actions"] = last_test_trial.moves
-                    response["params"]["tag"] = -2
-
-
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'data movement: ', data["movement"], 'current user iteration:', current_user.iteration, 'current user round:', current_user.round, 'current user interaction type:', current_user.interaction_type, 'next already completed:', next_already_completed)
-
-                flag_modified(current_user, "last_iter_in_round")
-                flag_modified(current_user, "last_test_in_round")
-                flag_modified(current_user, "iteration")
-                flag_modified(current_user, "round")
-                flag_modified(current_user, "interaction_type")
-
-                update_database(current_user, str(current_user.username) + ". User progress in settings")
-                ########################
-
-                
-                # check if the next page should be able to go back
-                go_prev = True
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'current_user.round:', current_user.round, 'current_user.iteration:', current_user.iteration, 'current_user.interaction_type:', current_user.interaction_type, 'next already_completed:', next_already_completed)
-                # if (current_user.round == 1 and current_user.iteration==1 and current_user.interaction_type == "demo") or ("test" in current_user.interaction_type and not already_completed) or (current_user.interaction_type == "survey"):        
-                if (current_user.round == 1 and current_user.iteration==1 and current_user.interaction_type == "demo") or (current_user.interaction_type == "survey"):
-                    go_prev = False
-                # if ('test' in current_user.interaction_type and not next_already_completed):
-                #     go_prev = False
-                
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Go prev for this iteration:', go_prev, 'Updated round:', updated_round, 'Next round:', next_round, 'Current round:', current_round)
-
-                N_demos = len([x for x in updated_round.round_info if x["interaction type"] == "demo"])
-                N_diagnostic_tests = len([x for x in updated_round.round_info if x["interaction type"] == "diagnostic test"])
-                
-                if next_kc_id == 0:
-                    first_demo_string = f"Starting with the first game lesson."
-                elif current_kc_id != next_kc_id:
-                    first_demo_string = f"Moving onto a new game lesson."
-                else:
-                    first_demo_string = f"Not everyone in your group learned the previous game lesson. Repeating it again."
-                
-
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'current_kc_id:', current_kc_id, 'next_kc_id:', next_kc_id, 'first_demo_string:', first_demo_string)
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'current_user.interaction_type: ', current_user.interaction_type, 'current_user.iteration: ', current_user.iteration)
-
-                lesson_string = ''
-                iteration_id = ''
-                N_iterations = ''
-                debug_string = ''
-                lesson_id = next_kc_id + 1 if next_kc_id != -1 else 0
-                if current_user.interaction_type == "demo" and current_user.iteration == 1:
-                    # debug_string = first_demo_string
-                    lesson_string = first_demo_string
-                    iteration_id = 1
-                    N_iterations = N_demos
-                elif current_user.interaction_type == "demo" and current_user.iteration > 1:
-                    # debug_string = f"Lesson ={current_kc_id}. Demo no. {current_user.iteration}/{N_demos}. <br>"
-                    iteration_id = current_user.iteration
-                    N_iterations = N_demos
-                elif current_user.interaction_type == "diagnostic test":
-                    iteration_id = int((current_user.iteration - N_demos)/2) + 1
-                    N_iterations = N_diagnostic_tests
-                    # debug_string = f"Lesson ={current_kc_id}. Test no. {iteration_id}/{N_diagnostic_tests}. <br>"
-                elif current_user.interaction_type == "diagnostic feedback":
-                    # debug_string = f"Here is the answer to the previous diagnostic test. <br> Current learning session ={current_user.round}. <br> Game instance in current round = {current_user.iteration}/{len(updated_round.round_info)}"
-                    debug_string = ''    
-                elif current_user.interaction_type == "final test":
-                    iteration_id = current_user.iteration
-                    N_iterations = len(updated_round.round_info)
-                    # debug_string = f"Final tests for this game. <br> Test no. {current_user.iteration}/{len(updated_round.round_info)}."
-
-
-                # Get interaction type and iteration of other users in the group
-                group_user_ids = current_group.member_user_ids
-                log_print('Group user ids:', group_user_ids)
-
-                if current_user.interaction_type == "final test":
-                    round_type = 'Strategy assessment'
-                else:
-                    round_type = 'Current lesson'
-
-                response["teammate_1_progress"] = round_type + ' started'
-                response["teammate_2_progress"] = round_type + ' started'
-
-                teammate_id = 1
-                for i in range(len(group_user_ids)):
-                    user_id = group_user_ids[i]
-                    if user_id != current_user.id and current_group.members_statuses[i] == "joined":
-
-                        ## Based on the group status
-                        if current_group.members_EOR[i]:
-                            response["teammate_" + str(teammate_id) + "_progress"] = round_type + ' completed. Waiting for teammate(s).'
-                        else:
-                            response["teammate_" + str(teammate_id) + "_progress"] = round_type + ' in progress'
-                        
-                        teammate_id += 1
-
-                    elif user_id != current_user.id and current_group.members_statuses[i] == "left":
-                        response["teammate_" + str(teammate_id) + "_progress"] = 'Left the study'
-
-                        teammate_id += 1
-                        
-
-                response["domain"] = domain
-                response["debug string"] = ''
-                response["last iteration"] = current_user.last_iter_in_round
-                response["last test"] = current_user.last_test_in_round
-                response["interaction type"] = current_user.interaction_type
-                response["already completed"] = next_already_completed
-                response["go prev"] = go_prev
-                response["iteration"] = iteration_id
-                response["total iterations"] = N_iterations
-                response["lesson id"] = lesson_id
-                response["lesson string"] = lesson_string
-                if current_user.interaction_type == "survey":
-                    response["domain completed"] = True
-                else:
-                    response["domain completed"] = False
-
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Settings response:', response)
-                
-                # # Ensure that user is in the correct room (additional check; may cause some issues)
-                # log_print('Group:', current_user.group, 'User:', current_user.id, 'Ensuring user is in room:', room_name)
-                # log_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
-                # join_room(room_name)
-
-                socketio.emit("settings configured", response, to=request.sid)
-
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Next trial: ', next_trial, '. Updated round:', updated_round)
-
-            else:
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'No updated round found for group_id:', current_user.group, 'Current user round:', current_user.round)
-                RuntimeError('No updated round found for group_id:', current_user.group, 'Current user round:', current_user.round)
-    #########################
-
-
-
+                log_error('No updated round found after trial navigation')
+                raise RuntimeError("No updated round found for user")
+        
+        # Step 5: Emit final settings response to user
+        socketio.emit("settings configured", response, to=request.sid)
+        
+#######################################################################################        
+         
+        
 
 @app.route("/sign_consent", methods=["GET", "POST"])
 @login_required
@@ -1934,15 +1819,12 @@ def final_survey():
 
 
 
+
+
 ####################  Functions   ###################
 
-def update_learner_models_from_tests(params, cur_group, cur_round) -> tuple:
+def _get_domain_from_group(cur_group):
     
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models based on tests...')
-
-    # current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
-    # current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain=current_group.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
-
     domain_id = cur_group.curr_progress
     if domain_id == "domain_1":
         domain = cur_group.domain_1
@@ -1952,11 +1834,18 @@ def update_learner_models_from_tests(params, cur_group, cur_round) -> tuple:
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Domain id:', domain_id)
         raise ValueError('Domain not found')
     
+    return domain
+
+
+def update_learner_models_from_tests(params, cur_group, cur_round) -> tuple:
+    
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models based on tests...')
+    
+    domain = _get_domain_from_group(cur_group)
+
     current_domain = db.session.query(DomainParams).filter_by(domain_name=domain).first()
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Current domain:', current_domain.domain_name)
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'All domains:',  db.session.query(DomainParams).all())
 
-    
     teaching_uf = params['teacher_learning_factor']
     model_type = params['teacher_update_model_type']
     
@@ -2092,7 +1981,6 @@ def retrieve_next_round(params, cur_group) -> dict:
     
     from app import pool, lock
 
-
     group_id = cur_group.id
     
     # with group_database_transaction(group_id):
@@ -2114,9 +2002,6 @@ def retrieve_next_round(params, cur_group) -> dict:
     
     log_print('Group:', current_user.group, 'User:', current_user.id, 'round:', round, 'Group status:', cur_group.status, 'Group experimental condition:', cur_group.experimental_condition, 'Group members:', cur_group.members)
 
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Member statuses retrive next round:', cur_group.members_statuses)
-    
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Group experimental condition:', cur_group.experimental_condition, 'Group status:', cur_group.status, 'Group id:', cur_group.id, 'Group members:', cur_group.members)
     experimental_condition = cur_group.experimental_condition
     members_statuses = cur_group.members_statuses
     active_member_ids = [idx for idx, status in enumerate(members_statuses) if status == 'joined']
@@ -2131,10 +2016,10 @@ def retrieve_next_round(params, cur_group) -> dict:
         prev_models = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, round_num=round).order_by(Round.id.desc()).first()
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Previous round:', prev_models.id, prev_models.round_num, prev_models.status, prev_models.group_id, prev_models.domain, prev_models.group_knowledge, prev_models.kc_id, prev_models.min_KC_constraints)
         
-        all_prev_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress).all()
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'All previous rounds...')
-        for prev_round in all_prev_rounds:
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Previous round:', prev_round.id, prev_round.round_num, prev_round.status, prev_round.group_id, prev_round.domain, prev_round.group_knowledge, prev_round.kc_id, prev_round.min_KC_constraints)
+        # all_prev_rounds = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress).all()
+        # log_print('Group:', current_user.group, 'User:', current_user.id, 'All previous rounds...')
+        # for prev_round in all_prev_rounds:
+        #     log_print('Group:', current_user.group, 'User:', current_user.id, 'Previous round:', prev_round.id, prev_round.round_num, prev_round.status, prev_round.group_id, prev_round.domain, prev_round.group_knowledge, prev_round.kc_id, prev_round.min_KC_constraints)
         
         group_union_model = copy.deepcopy(cur_group.group_union_model)
         group_intersection_model =  copy.deepcopy(cur_group.group_intersection_model)
@@ -2181,7 +2066,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 consistent_state_count = domain_params["consistent_state_count"],
                 min_BEC_constraints = domain_params["min_BEC_constraints"]
             )
-
+            
             with group_database_transaction(group_id):
                 db.session.add(curr_domain_params)
                 db.session.commit()
@@ -2808,8 +2693,11 @@ def add_survey_data(domain, data):
             reward_ft_weights = data["reward_ft_weights"]
         )
     
+    # with global_db_lock:
+        # db.session.add(dom)
+        # db.session.commit()
+        
     update_database(dom, 'Adding survey data to database...')
-    
 
 
 def add_trial_data(domain, data):
