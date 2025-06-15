@@ -2595,18 +2595,16 @@ def update_database(updated_data, update_type, max_retries=5):
     Simplified database update with retry logic for SQLite locks
     """
     for attempt in range(max_retries):
-        try:
-            
-            with global_db_lock:
-                db.session.add(updated_data)
-                db.session.flush()
-                db.session.commit()
-                logging.info(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
-                db.session.refresh(updated_data)
-                return True
+        try:     
+            db.session.add(updated_data)
+            db.session.flush()
+            db.session.commit()
+            logging.info(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
+            db.session.refresh(updated_data)
+            return True
             
         except OperationalError as e:
-            log_print('Group: ', current_user.group, ' User: ', current_user.id, ' Global lock is active...')
+            log_print('Group: ', current_user.group, ' User: ', current_user.id, 'Unable to update databse....')
             
             if "database is locked" in str(e).lower() and attempt < max_retries - 1:
                 # Exponential backoff with jitter
