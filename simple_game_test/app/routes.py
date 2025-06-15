@@ -423,7 +423,7 @@ def check_current_user_in_group():
 @socketio.on('heartbeat')
 def handle_heartbeat(data):
     # Log if needed
-    log_print(f"Received heartbeat from {request.sid}")
+    log_print(f"Current User: {current_user.id}, Received heartbeat from {request.sid}")
     # You can respond if you want
     socketio.emit('heartbeat_response', {'server_time': time.time()}, to=request.sid)
 
@@ -2291,7 +2291,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             
 
         # add models to group database
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding particle filter models to group')
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding particle filter models to group for new round...')
         cur_group.ind_member_models = copy.deepcopy(ind_member_models)
         cur_group.group_union_model = copy.deepcopy(group_union_model)
         cur_group.group_intersection_model = copy.deepcopy(group_intersection_model)
@@ -2601,25 +2601,26 @@ def update_database(updated_data, update_type, max_retries=5):
                 db.session.add(updated_data)
                 db.session.flush()
                 db.session.commit()
-                logging.info(f"Database operation successful: {update_type}")
+                logging.info(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
                 db.session.refresh(updated_data)
                 return True
             
         except OperationalError as e:
-            log_print('Global lock is active...')
+            log_print('Group: ', current_user.group, ' User: ', current_user.id, ' Global lock is active...')
+            
             if "database is locked" in str(e).lower() and attempt < max_retries - 1:
                 # Exponential backoff with jitter
                 wait_time = (2 ** attempt) + random.uniform(0, 1)
-                logging.warning(f"Database locked, retrying in {wait_time:.2f}s (attempt {attempt + 1}/{max_retries})")
+                logging.warning(f"Current Group: {current_user.group}, User: {current_user.id}, Database locked, retrying in {wait_time:.2f}s (attempt {attempt + 1}/{max_retries})")
                 db.session.rollback()
                 time.sleep(wait_time)
                 continue
             else:
-                logging.error(f"Database operation failed: {update_type}, Error: {e}")
+                logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {e}")
                 db.session.rollback()
                 raise
         except Exception as e:
-            logging.error(f"Unexpected error during {update_type}: {e}")
+            logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Unexpected error during {update_type}: {e}")
             db.session.rollback()
             raise
    
