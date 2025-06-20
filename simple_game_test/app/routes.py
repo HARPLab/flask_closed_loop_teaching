@@ -217,6 +217,7 @@ QUICK_DEBUG_FLAG = False
 RECONNECT_TIMEOUT = 150  # Change this to the desired time
 MAX_ITERATIONS = 500
 GROUP_JOIN_THRESHOLD = 1800
+ROUND_GENERATION_WAIT_TIME = 10  # seconds
 
 # List to track disconnected users
 disconnected_users = {}  # Stores user ID, disconnect times, and reconnect times
@@ -1197,7 +1198,7 @@ def advance_or_generate_round(
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Should generate new round:', should_generate_new_round)
 
         if should_generate_new_round:
-            time.sleep(random.random()*3)  # desync simultaneous generation (0-3s delay)
+            time.sleep(random.random()*ROUND_GENERATION_WAIT_TIME/2)  # desync simultaneous generation (0-5s delay)
             print('Group:', current_user.group, 'User:', current_user.id, 'Round number:', current_user.round)
             
             if current_user.round == 0:
@@ -1218,7 +1219,7 @@ def advance_or_generate_round(
             _step_forward_in_round(data, domain, current_round, curr_already_completed, opt_response_flag)
             break
 
-        time.sleep(1)
+        time.sleep(0.2*ROUND_GENERATION_WAIT_TIME)  # Wait before checking again
         if not check_current_user_in_group():
             break
         
@@ -1325,7 +1326,7 @@ def _generate_subsequent_round(current_group, current_round, params):
             current_user.study_type = 'not_in_loop'
             return next_round
 
-        time.sleep(2)
+        time.sleep(ROUND_GENERATION_WAIT_TIME)  # Wait before checking again
         if not check_current_user_in_group():
             current_user.study_type = 'not_in_loop'
             break
