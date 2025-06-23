@@ -239,9 +239,9 @@ def index():
     completed = True if current_user.study_completed == 1 else False
 
     current_user.loop_condition = "debug"
-    with global_db_lock:
-        db.session.add(current_user)
-        db.session.commit()
+    # with global_db_lock:
+    db.session.add(current_user)
+    db.session.commit()
 
     return render_template("index.html",
                            title="Home Page",
@@ -2094,9 +2094,9 @@ def retrieve_next_round(params, cur_group) -> dict:
                 min_BEC_constraints = domain_params["min_BEC_constraints"]
             )
             
-            with group_database_transaction(group_id):
-                db.session.add(curr_domain_params)
-                db.session.commit()
+            # with group_database_transaction(group_id):
+            db.session.add(curr_domain_params)
+            db.session.commit()
 
 
         # create a directory for the group
@@ -2600,12 +2600,14 @@ def update_database(updated_data, update_type, max_retries=5):
             db.session.add(updated_data)
             db.session.flush()
             db.session.commit()
-            logging.info(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
             db.session.refresh(updated_data)
+            logging.info(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
+            
             return True
             
         except OperationalError as e:
             log_print('Group: ', current_user.group, ' User: ', current_user.id, 'Unable to update databse....')
+            log_print('Group: ', current_user.group, ' User: ', current_user.id, 'Error: ', e)
             
             if "database is locked" in str(e).lower() and attempt < max_retries - 1:
                 # Exponential backoff with jitter
