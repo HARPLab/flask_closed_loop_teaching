@@ -2606,23 +2606,21 @@ def update_database(updated_data, update_type, max_retries=5):
             return True
             
         except OperationalError as e:
-            log_print('Group: ', current_user.group, ' User: ', current_user.id, 'Unable to update databse....')
-            log_print('Group: ', current_user.group, ' User: ', current_user.id, 'Error: ', e)
             
             if "database is locked" in str(e).lower() and attempt < max_retries - 1:
                 # Exponential backoff with jitter
                 wait_time = (2 ** attempt) + random.uniform(0, 1)
+                db.session.rollback() # first rollback the session in case of lock errors before accessing any tables from the db (user, group, etc.)
                 logging.warning(f"Current Group: {current_user.group}, User: {current_user.id}, Database locked, retrying in {wait_time:.2f}s (attempt {attempt + 1}/{max_retries})")
-                db.session.rollback()
                 time.sleep(wait_time)
                 continue
             else:
-                logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {e}")
                 db.session.rollback()
+                logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {e}")
                 raise
         except Exception as e:
-            logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Unexpected error during {update_type}: {e}")
             db.session.rollback()
+            logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Unexpected error during {update_type}: {e}")
             raise
    
     
