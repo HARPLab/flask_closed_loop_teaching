@@ -1772,7 +1772,7 @@ def consent():
     if IS_IN_PERSON:
         procedure = "This study may take up to 90 minutes, and audio/screen recordings will be collected."
     else:
-        procedure = "This study may take up to 60 minutes."
+        procedure = "This study may take up to 70 minutes."
     return render_template("consent.html", title="Consent", form=form, procedure=procedure)
 
 
