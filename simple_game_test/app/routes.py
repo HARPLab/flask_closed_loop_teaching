@@ -154,6 +154,7 @@ def group_database_transaction(group_id, retries=5, base_delay=0.1):
                 yield db.session
                 db.session.flush()
                 db.session.commit()
+                log_print('Group:', group_id,'. Group db lock - process complete...')
                 return
             except OperationalError as e:
                 log_print('Group:', group_id,'. Group lock is active...')
@@ -907,7 +908,8 @@ def remove_from_study(user_id):
         
             # Don't call update_database() - let the context manager handle commit
             # update_database(current_group, 'Member left group and study')
-            
+        
+        log_print('Group:', user.group, 'User:', user.id, 'Group db lock released...')
         
         log_print('Group:', user.group, 'User:', user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
         log_print('Sending signal to members in group:', 'room_'+ str(user.group))
@@ -1293,6 +1295,7 @@ def _generate_subsequent_round(current_group, current_round, params):
         member_idx = current_group.members.index(current_user.username)
         current_group.members_EOR[member_idx] = True
         flag_modified(current_group, "members_EOR")
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Group db lock released...')
 
     db.session.refresh(current_group)
 
@@ -1605,6 +1608,7 @@ def _reset_eor_flags(current_group):
         flag_modified(current_group, "members_last_test")
         # Commit handled by context manager while exiting context
 
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Group db lock released...')
     log_print('Group:', current_user.group, 'User:', current_user.id,
               'Reset EOR and last test flags:', current_group.members_EOR)
     
@@ -2616,7 +2620,8 @@ def update_database(updated_data, update_type, max_retries=5):
                 continue
             else:
                 db.session.rollback()
-                logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {e}")
+                logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {str(e).lower()}")
+                lo
                 raise
         except Exception as e:
             db.session.rollback()
