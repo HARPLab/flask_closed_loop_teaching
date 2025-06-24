@@ -636,7 +636,7 @@
         });
 
 
-        socket.on("all reached EOR", function (){
+        socket.on("new lesson available", function (){
             console.log("received all reached EOR message...");
 
             let EOR_start_time = Date.now();

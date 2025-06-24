@@ -1215,6 +1215,7 @@ def advance_or_generate_round(
 
             if next_round is not None:
                 next_kc_id = next_round.kc_id
+                socketio.emit("new lesson available", to='room_'+ str(current_user.group)) 
 
             if current_user.last_test_in_round and opt_response_flag:
                 current_user.last_iter_in_round = True
