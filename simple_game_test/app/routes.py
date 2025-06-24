@@ -2629,7 +2629,8 @@ def update_database(updated_data, update_type, max_retries=5):
             db.session.flush()
             db.session.commit()
             db.session.refresh(updated_data)
-            logging.info(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
+            if "User left study" not in update_type:
+                logging.info(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
             
             return True
             
@@ -2639,17 +2640,20 @@ def update_database(updated_data, update_type, max_retries=5):
                 # Exponential backoff with jitter
                 wait_time = (2 ** attempt) + random.uniform(0, 1)
                 db.session.rollback() # first rollback the session in case of lock errors before accessing any tables from the db (user, group, etc.)
-                logging.warning(f"Current Group: {current_user.group}, User: {current_user.id}, Database locked, retrying in {wait_time:.2f}s (attempt {attempt + 1}/{max_retries})")
+                if "User left study" not in update_type:
+                    logging.warning(f"Current Group: {current_user.group}, User: {current_user.id}, Database locked, retrying in {wait_time:.2f}s (attempt {attempt + 1}/{max_retries})")
                 time.sleep(wait_time)
                 continue
             else:
                 db.session.rollback()
-                logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {str(e).lower()}")
+                if "User left study" not in update_type:
+                    logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {str(e).lower()}")
                 lo
                 raise
         except Exception as e:
             db.session.rollback()
-            logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Unexpected error during {update_type}: {e}")
+            if "User left study" not in update_type:
+                logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Unexpected error during {update_type}: {e}")
             raise
    
     
