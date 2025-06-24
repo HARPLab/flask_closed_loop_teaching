@@ -1183,7 +1183,7 @@ def advance_or_generate_round(
     """
     new_round_generation_started = False
     next_round = None
-    next_kc_id = -1
+    
 
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next movement. Current trial already completed?',
               curr_already_completed, '. Current user last iter in round?', current_user.last_iter_in_round, 'opt_response_flag:', opt_response_flag)
@@ -1224,6 +1224,7 @@ def advance_or_generate_round(
         # Else: Step to next trial in current round if available
         elif current_round and current_user.iteration < len(current_round.round_info):
             _step_forward_in_round(data, domain, current_round, curr_already_completed, opt_response_flag)
+            next_kc_id = current_round.kc_id
             break
 
         time.sleep(0.2*ROUND_GENERATION_WAIT_TIME)  # Wait before checking again
@@ -1599,7 +1600,9 @@ def handle_trial_navigation(data, domain, domain_order, current_group, current_r
 
     # Re-fetch current round (in case it changed)
     updated_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round)
-
+    
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated round after navigation:', updated_round, 'next_kc_id:', next_kc_id)
+    
     if updated_round:
         response = prepare_next_trial_data(data, domain, current_group, updated_round, next_kc_id, current_kc_id, opt_response_flag)
     else:
