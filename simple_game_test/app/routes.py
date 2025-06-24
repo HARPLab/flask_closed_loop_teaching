@@ -1328,6 +1328,11 @@ def _generate_subsequent_round(current_group, current_round, params):
 
             current_user.study_type = 'not_in_loop'
             return next_round
+        else:
+            next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
+            if next_round is not None:
+                current_user.study_type = 'not_in_loop'
+                return next_round
 
         time.sleep(ROUND_GENERATION_WAIT_TIME)  # Wait before checking again
         if not check_current_user_in_group():
