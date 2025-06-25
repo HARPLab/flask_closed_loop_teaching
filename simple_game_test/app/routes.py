@@ -191,7 +191,7 @@ def group_database_transaction(group_id, retries=5, base_delay=0.1):
 #         db.session.rollback()
 #         raise RuntimeError("Failed to complete global transaction after retries.")
 
-with open(os.path.join(os.path.dirname(__file__), 'user_study_dict_extended_updated.json'), 'r') as f:
+with open(os.path.join(os.path.dirname(__file__), 'group_user_study_dict.json'), 'r') as f:
     default_rounds = json.load(f)
 
 # print(default_rounds)
@@ -2214,6 +2214,8 @@ def retrieve_next_round(params, cur_group) -> dict:
             games_extended = []
 
             status_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
+            #DEBUG
+            demo_mdps = []
             
             # new round data
             if len(demo_mdps) > 0:
