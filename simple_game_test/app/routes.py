@@ -2214,9 +2214,8 @@ def retrieve_next_round(params, cur_group) -> dict:
             games_extended = []
 
             status_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
-            #DEBUG
-            demo_mdps = []
-            
+
+
             # new round data
             if len(demo_mdps) > 0:
                 games = list()
