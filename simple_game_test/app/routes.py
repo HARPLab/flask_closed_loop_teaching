@@ -154,10 +154,10 @@ def group_database_transaction(group_id, retries=5, base_delay=0.1):
                 yield db.session
                 db.session.flush()
                 db.session.commit()
-                log_print('Group:', group_id,'. Group db lock - process complete...')
+                log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group db lock - process complete...')
                 return
             except OperationalError as e:
-                log_print('Group:', group_id,'. Group lock is active...')
+                log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group lock is still active...')
                 if "database is locked" in str(e):
                     delay = base_delay * (2 ** attempt)  # exponential backoff
                     time.sleep(delay)
@@ -1192,7 +1192,7 @@ def advance_or_generate_round(
 
     while True:
         
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for teammates to advance next round...', 'Debug rand loop:', debug_rand_loop)
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Advance or generate round...', 'Debug rand loop:', debug_rand_loop)
 
         current_user.study_type = 'in_loop'
         
@@ -1285,9 +1285,12 @@ def _generate_first_round(current_group, params):
             ):
                 current_group.status = "gen_demos"
                 flag_modified(current_group, "status")
-                update_database(current_group, 'Generating first round...')
-                db.session.refresh(current_group)
+                # update_database(current_group, 'Generating first round...')  update automatically occurs when the group lock is released
+                # db.session.refresh(current_group)
                 start_round_generation = True
+        
+        db.session.refresh(current_group)
+
 
         ## Start round generation
         if start_round_generation:
@@ -1320,7 +1323,7 @@ def _generate_subsequent_round(current_group, current_round, params):
         current_group.members_EOR[member_idx] = True
         flag_modified(current_group, "members_EOR")
     
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Group db lock released...')
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Group db member EOR lock released...')
 
     db.session.refresh(current_group)
 
@@ -1349,11 +1352,12 @@ def _generate_subsequent_round(current_group, current_round, params):
 
                 flag_modified(current_group, "members_EOR")
                 flag_modified(current_group, "status")
-                update_database(current_group, f'Resetting EOR for user {current_user.id}. Generating next round...')
-                db.session.refresh(current_group)
+                # update_database(current_group, f'Resetting EOR for user {current_user.id}. Generating next round...')
+                # db.session.refresh(current_group)
                 start_round_generation = True
         
-        
+        db.session.refresh(current_group)
+
         if start_round_generation:
             
             log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating next round...', 'Debug rand loop:', debug_rand_loop)
@@ -1733,6 +1737,7 @@ def settings(data):
             with group_database_transaction(current_user.group):
                 current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress).order_by(Round.id.desc()).first()
                 current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+            
             next_kc_id = current_round.kc_id if current_round else -1
 
             log_print('Group:', current_user.group, 'User:', current_user.id, 'Current round:', current_round, 'Next KC id:', next_kc_id)
@@ -2478,7 +2483,7 @@ def update_learner_models_from_demos(params, cur_group, next_round) -> tuple:
                                     group_knowledge = next_round.group_knowledge
                                     )
     
-    update_database(current_round_demo_updated, 'Update learner models from demos')
+    update_database(current_round_demo_updated, 'Round db -Update learner models from demos')
        
     # log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating models to group')
     cur_group.ind_member_models = copy.deepcopy(ind_member_models)
@@ -2491,7 +2496,7 @@ def update_learner_models_from_demos(params, cur_group, next_round) -> tuple:
     flag_modified(cur_group, "group_intersection_model")   
     flag_modified(cur_group, "status")
 
-    update_database(cur_group, 'Update learner models from demos')
+    update_database(cur_group, 'Group db - Update learner models from demos')
 
 
     # return ind_member_models, group_union_model, group_intersection_model
