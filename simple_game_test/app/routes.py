@@ -1188,8 +1188,12 @@ def advance_or_generate_round(
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next movement. Current trial already completed?',
               curr_already_completed, '. Current user last iter in round?', current_user.last_iter_in_round, 'opt_response_flag:', opt_response_flag)
 
+    debug_rand_loop = random.random()
+
     while True:
         
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting for teammates to advance next round...', 'Debug rand loop:', debug_rand_loop)
+
         current_user.study_type = 'in_loop'
         
         with group_database_transaction(current_user.group):
@@ -1259,11 +1263,13 @@ def get_current_round(group_id, curr_progress, round_num):
 
 def _generate_first_round(current_group, params):
     
+    debug_rand_loop = random.random()
+
     while True:
         start_round_generation = False
         current_user.study_type = 'in_loop'
 
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating first round...')
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting to generate first round...', 'Debug rand loop:', debug_rand_loop)
         next_round = get_current_round(current_user.group, current_user.curr_progress, 1)
         
         if next_round is not None:
@@ -1285,6 +1291,8 @@ def _generate_first_round(current_group, params):
 
         ## Start round generation
         if start_round_generation:
+
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating first round...', 'Debug rand loop:', debug_rand_loop)
 
             retrieve_next_round(params, current_group)
             db.session.refresh(current_group)
@@ -1316,15 +1324,19 @@ def _generate_subsequent_round(current_group, current_round, params):
 
     db.session.refresh(current_group)
 
+    debug_rand_loop = random.random()
+
+
     while True:
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting to generate next round...')
+        log_print('Group:', current_user.group, 'User:', current_user.id,'Waiting to generate next round...', 'Debug rand loop:', debug_rand_loop)
+        
         current_user.study_type = 'in_loop'
         start_round_generation = False
             
         # Reset EOR for current user
         with group_database_transaction(current_user.group):
+            
             current_group, _ = refresh_group_and_check_active_members(current_user.group)    
-
 
             print('Group:', current_user.group, 'User:', current_user.id, 'Current group members EOR:', current_group.members_EOR, 'Group status:', check_member_and_group_status())
 
@@ -1341,7 +1353,11 @@ def _generate_subsequent_round(current_group, current_round, params):
                 db.session.refresh(current_group)
                 start_round_generation = True
         
+        
         if start_round_generation:
+            
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating next round...', 'Debug rand loop:', debug_rand_loop)
+            
             # Update PF learner models from tests
             update_learner_models_from_tests(params, current_group, current_round)
             db.session.refresh(current_group)
@@ -1356,6 +1372,8 @@ def _generate_subsequent_round(current_group, current_round, params):
             current_user.study_type = 'not_in_loop'
             return next_round
         else:
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Retrieving next round...', 'Debug rand loop:', debug_rand_loop)
+
             next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
             if next_round is not None:
                 current_user.study_type = 'not_in_loop'
