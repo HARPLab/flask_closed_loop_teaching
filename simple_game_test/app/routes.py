@@ -1325,6 +1325,9 @@ def _generate_subsequent_round(current_group, current_round, params):
         with group_database_transaction(current_user.group):
             current_group, _ = refresh_group_and_check_active_members(current_user.group)    
 
+
+            print('Group:', current_user.group, 'User:', current_user.id, 'Current group members EOR:', current_group.members_EOR, 'Group status:', check_member_and_group_status())
+
             if current_group.groups_all_EOR() and check_member_and_group_status():
                 log_print('Group:', current_user.group, 'User:', current_user.id, 'All members EOR and member and group domains match. Generating next round...')
                 member_idx = current_user.group_code
