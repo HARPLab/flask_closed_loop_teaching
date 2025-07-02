@@ -141,7 +141,7 @@ log_print('Global db lock: ', global_db_lock)
 
 
 @contextmanager
-def group_database_transaction(group_id, retries=5, base_delay=0.1):
+def group_database_transaction(group_id, context, retries=5, base_delay=0.1):
     """
     Context manager for group-specific database operations
     Only locks operations for the specific group
@@ -154,10 +154,10 @@ def group_database_transaction(group_id, retries=5, base_delay=0.1):
                 yield db.session
                 db.session.flush()
                 db.session.commit()
-                log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group db lock - process complete...')
+                log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group db lock - process complete. ', context)
                 return
             except OperationalError as e:
-                log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group lock is still active...')
+                log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group lock is still active... ', context, 'Error:', str(e))
                 if "database is locked" in str(e):
                     delay = base_delay * (2 ** attempt)  # exponential backoff
                     time.sleep(delay)
@@ -892,7 +892,7 @@ def remove_from_study(user_id):
         db.session.refresh(user)
         
         # Use group-specific lock since we're only modifying this group's data
-        with group_database_transaction(user.group):
+        with group_database_transaction(user.group, 'Removing user from group'):
             
             status_print(colored('Leaving group....', 'red'))
     
@@ -995,7 +995,7 @@ def check_member_and_group_status():
     db.session.refresh(current_user)
     group_id = current_user.group
     
-    with group_database_transaction(group_id):
+    with group_database_transaction(group_id, 'Checking member and group status'):
         current_group = db.session.query(Group).filter_by(id=group_id).order_by(Group.id.desc()).first()
         all_group_members = db.session.query(User).filter_by(group=group_id).all()
     
@@ -1046,7 +1046,7 @@ def setup_user_context(data):
 
 
     # get current group and round data
-    with group_database_transaction(current_user.group):
+    with group_database_transaction(current_user.group, 'Setting up user context'):
         current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
         current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=current_user.round).order_by(Round.id.desc()).first()
     
@@ -1196,7 +1196,7 @@ def advance_or_generate_round(
 
         current_user.study_type = 'in_loop'
         
-        with group_database_transaction(current_user.group):
+        with group_database_transaction(current_user.group, 'Refreshing group and checking active members in advance_or_generate_round'):
             current_group, _ = refresh_group_and_check_active_members(current_user.group)
 
         should_generate_new_round = (
@@ -1277,7 +1277,7 @@ def _generate_first_round(current_group, params):
             return next_round
 
 
-        with group_database_transaction(current_user.group):
+        with group_database_transaction(current_user.group, 'Updating group status for first round generation'):
             current_group, _ = refresh_group_and_check_active_members(current_user.group)
             if (
                 db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=1).count() == 0 and
@@ -1317,7 +1317,7 @@ def _generate_first_round(current_group, params):
 def _generate_subsequent_round(current_group, current_round, params):
     
     
-    with group_database_transaction(current_user.group):
+    with group_database_transaction(current_user.group, 'Refreshing group and checking active members in initial generate_subsequent_round'):
         current_group, _ = refresh_group_and_check_active_members(current_user.group)
         member_idx = current_group.members.index(current_user.username)
         current_group.members_EOR[member_idx] = True
@@ -1336,34 +1336,29 @@ def _generate_subsequent_round(current_group, current_round, params):
         current_user.study_type = 'in_loop'
         start_round_generation = False
             
-        # Reset EOR for current user
-        with group_database_transaction(current_user.group):
-            
-            current_group, _ = refresh_group_and_check_active_members(current_user.group)    
-
-            print('Group:', current_user.group, 'User:', current_user.id, 'Current group members EOR:', current_group.members_EOR, 'Group status:', check_member_and_group_status())
-
-            if current_group.groups_all_EOR() and check_member_and_group_status():
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'All members EOR and member and group domains match. Generating next round...')
-                member_idx = current_user.group_code
-
-                current_group.status = "gen_demos"
-                current_group.members_EOR[member_idx] = False
-
-                flag_modified(current_group, "members_EOR")
-                flag_modified(current_group, "status")
-                # update_database(current_group, f'Resetting EOR for user {current_user.id}. Generating next round...')
-                # db.session.refresh(current_group)
-                start_round_generation = True
+        with group_database_transaction(current_user.group, 'Refreshing group and checking active members in generate_subsequent_round'):
+            current_group, _ = refresh_group_and_check_active_members(current_user.group)
         
-        db.session.refresh(current_group)
+        if current_group.groups_all_EOR() and check_member_and_group_status():
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'All members EOR and member and group domains match. Generating next round...')
+            member_idx = current_user.group_code
+            
+            # Reset EOR for current user
+            with group_database_transaction(current_user.group, 'Resetting EOR for current user in generate_subsequent_round'):
+                current_group.members_EOR[member_idx] = False
+                flag_modified(current_group, "members_EOR")
+                # update_database(current_group, f'Resetting EOR for user {current_user.id}')
+            db.session.refresh(current_group)
 
-        if start_round_generation:
-            
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating next round...', 'Debug rand loop:', debug_rand_loop)
-            
             # Update PF learner models from tests
             update_learner_models_from_tests(params, current_group, current_round)
+            db.session.refresh(current_group)
+
+
+            with group_database_transaction(current_user.group, 'Setting group status for next round generation in generate_subsequent_round'):
+                current_group.status = "gen_demos"
+                flag_modified(current_group, "status")
+                # update_database(current_group, 'Generating next round...')
             db.session.refresh(current_group)
 
             retrieve_next_round(params, current_group)
@@ -1376,8 +1371,6 @@ def _generate_subsequent_round(current_group, current_round, params):
             current_user.study_type = 'not_in_loop'
             return next_round
         else:
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Retrieving next round...', 'Debug rand loop:', debug_rand_loop)
-
             next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
             if next_round is not None:
                 current_user.study_type = 'not_in_loop'
@@ -1651,7 +1644,7 @@ def _reset_eor_flags(current_group):
     Resets the current user's EOR and last test flags in the group
     after moving to a new round. Operates under group-level lock.
     """
-    with group_database_transaction(current_user.group):
+    with group_database_transaction(current_user.group, 'Resetting EOR and last test flags'):
         current_group = db.session.query(Group).filter_by(id=current_user.group).first()
 
         member_idx = current_user.group_code
@@ -1663,8 +1656,7 @@ def _reset_eor_flags(current_group):
         # Commit handled by context manager while exiting context
 
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Group db lock released...')
-    log_print('Group:', current_user.group, 'User:', current_user.id,
-              'Reset EOR and last test flags:', current_group.members_EOR)
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'Reset EOR and last test flags:', current_group.members_EOR)
     
     db.session.refresh(current_group)
 
@@ -1710,7 +1702,7 @@ def settings(data):
             opt_response_flag, curr_already_completed = process_activity_and_trial_data(data, domain)
 
             ## CHECK AND UPDATE DOMAIN
-            with group_database_transaction(current_user.group):
+            with group_database_transaction(current_user.group, 'Updating group before trial navigation'):
                 current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
             
             update_result = check_and_update_domain(data, current_group)
@@ -1734,7 +1726,7 @@ def settings(data):
             
             
             # Fetch recent available round
-            with group_database_transaction(current_user.group):
+            with group_database_transaction(current_user.group, 'Retrieving next round and updated group for next trial'):
                 current_round = db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress).order_by(Round.id.desc()).first()
                 current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
             
