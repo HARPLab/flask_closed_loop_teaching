@@ -1229,7 +1229,7 @@ def advance_or_generate_round(
             next_kc_id = current_round.kc_id
             break
 
-        time.sleep(0.2*ROUND_GENERATION_WAIT_TIME)  # Wait before checking again
+        time.sleep(0.2*ROUND_GENERATION_WAIT_TIME + random.random()*0.2*ROUND_GENERATION_WAIT_TIME)  # Random (2-4 s) Wait before checking again
         if not check_current_user_in_group():
             break
         
@@ -1258,10 +1258,9 @@ def get_current_round(group_id, curr_progress, round_num):
     )
 
 def _generate_first_round(current_group, params):
-    new_round_generation_started = False
     
     while True:
-        
+        start_round_generation = False
         current_user.study_type = 'in_loop'
 
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Generating first round...')
@@ -1271,17 +1270,21 @@ def _generate_first_round(current_group, params):
             current_user.study_type = 'not_in_loop'
             return next_round
 
-        if (
-            db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=1).count() == 0 and
-            current_group.status != "gen_demos" and not new_round_generation_started
-        ):
-            new_round_generation_started = True
-            
-            with group_database_transaction(current_user.group):
+
+        with group_database_transaction(current_user.group):
+            current_group, _ = refresh_group_and_check_active_members(current_user.group)
+            if (
+                db.session.query(Round).filter_by(group_id=current_user.group, domain_progress=current_user.curr_progress, round_num=1).count() == 0 and
+                current_group.status != "gen_demos"
+            ):
                 current_group.status = "gen_demos"
                 flag_modified(current_group, "status")
                 update_database(current_group, 'Generating first round...')
                 db.session.refresh(current_group)
+                start_round_generation = True
+
+        ## Start round generation
+        if start_round_generation:
 
             retrieve_next_round(params, current_group)
             db.session.refresh(current_group)
@@ -1293,7 +1296,8 @@ def _generate_first_round(current_group, params):
             current_user.study_type = 'not_in_loop'
             return next_round
 
-        time.sleep(2)
+        time.sleep(0.2*ROUND_GENERATION_WAIT_TIME + random.random()*0.2*ROUND_GENERATION_WAIT_TIME)  # Random (2-4 s) Wait before checking again
+
         if not check_current_user_in_group():
             current_user.study_type = 'not_in_loop'
             break
@@ -1307,37 +1311,37 @@ def _generate_subsequent_round(current_group, current_round, params):
         member_idx = current_group.members.index(current_user.username)
         current_group.members_EOR[member_idx] = True
         flag_modified(current_group, "members_EOR")
+    
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Group db lock released...')
 
     db.session.refresh(current_group)
 
     while True:
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Waiting to generate next round...')
-        
-        with group_database_transaction(current_user.group):
-            current_group, _ = refresh_group_and_check_active_members(current_user.group)
-        
-        if current_group.groups_all_EOR() and check_member_and_group_status():
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'All members EOR and member and group domains match. Generating next round...')
-            member_idx = current_user.group_code
+        current_user.study_type = 'in_loop'
+        start_round_generation = False
             
-            # Reset EOR for current user
-            with group_database_transaction(current_user.group):
-                current_group.members_EOR[member_idx] = False
-                flag_modified(current_group, "members_EOR")
-                update_database(current_group, f'Resetting EOR for user {current_user.id}')
-                db.session.refresh(current_group)
+        # Reset EOR for current user
+        with group_database_transaction(current_user.group):
+            current_group, _ = refresh_group_and_check_active_members(current_user.group)    
 
+            if current_group.groups_all_EOR() and check_member_and_group_status():
+                log_print('Group:', current_user.group, 'User:', current_user.id, 'All members EOR and member and group domains match. Generating next round...')
+                member_idx = current_user.group_code
+
+                current_group.status = "gen_demos"
+                current_group.members_EOR[member_idx] = False
+
+                flag_modified(current_group, "members_EOR")
+                flag_modified(current_group, "status")
+                update_database(current_group, f'Resetting EOR for user {current_user.id}. Generating next round...')
+                db.session.refresh(current_group)
+                start_round_generation = True
+        
+        if start_round_generation:
             # Update PF learner models from tests
             update_learner_models_from_tests(params, current_group, current_round)
             db.session.refresh(current_group)
-
-
-            with group_database_transaction(current_user.group):
-                current_group.status = "gen_demos"
-                flag_modified(current_group, "status")
-                update_database(current_group, 'Generating next round...')
-                db.session.refresh(current_group)
 
             retrieve_next_round(params, current_group)
             db.session.refresh(current_group)
@@ -1354,7 +1358,9 @@ def _generate_subsequent_round(current_group, current_round, params):
                 current_user.study_type = 'not_in_loop'
                 return next_round
 
-        time.sleep(ROUND_GENERATION_WAIT_TIME)  # Wait before checking again
+        time.sleep(0.2*ROUND_GENERATION_WAIT_TIME + random.random()*0.2*ROUND_GENERATION_WAIT_TIME)  # Random (2-4 s) Wait before checking again
+
+        # if user left group
         if not check_current_user_in_group():
             current_user.study_type = 'not_in_loop'
             break
@@ -2605,22 +2611,6 @@ def get_test_constraints(domain, trial, traj_record, traj_features_record) -> np
     return constraint
 
 
-# def update_database(updated_data, update_type, db_lock_status=False):
-
-#     log_print('Trying to update database for ', update_type)    
-#     with global_db_lock:
-#         try:
-#             db.session.add(updated_data)
-#             db.session.flush()
-#             db.session.commit()
-#             status_print(f"Database operation successful: {update_type}")
-#         except Exception as e:
-#             status_print(f"Error during commit: {e}.", update_type)
-#             db.session.rollback()
-
-#     db.session.refresh(updated_data) # refresh the object to get the updated data just in case; should automatically happen upon commit as instances automatically expire
-   
-
     
 def update_database(updated_data, update_type, max_retries=5):
     """
@@ -2651,63 +2641,13 @@ def update_database(updated_data, update_type, max_retries=5):
                 db.session.rollback()
                 if "User left study" not in update_type:
                     logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {str(e).lower()}")
-                lo
                 raise
         except Exception as e:
             db.session.rollback()
             if "User left study" not in update_type:
                 logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Unexpected error during {update_type}: {e}")
             raise
-   
-    
-# def update_database()
-    # # Check only for Group db; use Global db lock for all other dbs
-    # if not db_lock_status:
-    #     group_id = None
-    #     if hasattr(updated_data, 'id'):
-    #         group_id = updated_data.id
-        
-    #     log_print('Group id:', group_id)
-        
-    #     # Use appropriate lock
-    #     if group_id is not None:
-    #         db_lock = group_locks[group_id]
-    #     else:
-    #         db_lock = global_db_lock
-        
-    #     log_print('Db lock:', db_lock)
-    
-    
-    #     with db_lock:
-    #         try:
-    #             db.session.add(updated_data)
-    #             log_print('Added/Updated row...')
-    #             db.session.flush()
-    #             log_print('Flushed...')
-    #             db.session.commit()
-    #             status_print(f"Database operation successful: {update_type}")
-    #         except Exception as e:
-    #             status_print(f"Error during {update_type}: {e}")
-    #             db.session.rollback()
-    #             raise
-                
-    # else:
-    # # Don't use db lock if already locked
-    #     log_print('DB already locked....')
-    #     try:
-    #         db.session.add(updated_data)
-    #         log_print('Added/Updated row...')
-    #         db.session.flush()
-    #         log_print('Flushed...')
-    #         db.session.commit()
-    #         status_print(f"Database operation successful: {update_type}")
-    #     except Exception as e:
-    #         status_print(f"Error during {update_type}: {e}")
-    #         db.session.rollback()
-    #         raise
-        
-        
-    # db.session.refresh(updated_data)
+
 
 
 def get_domain():
