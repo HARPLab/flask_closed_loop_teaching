@@ -557,7 +557,6 @@
             // New
             localStorage.setItem("domain", data["domain"]);
             localStorage.setItem("iteration", data["iteration"]);
-            localStorage.setItem("iteration_in_category", data["iteration_in_category"]);
             localStorage.setItem("total iterations", data["total iterations"]);
             localStorage.setItem("lesson id", data["lesson id"]);
             localStorage.setItem("lesson string", data["lesson string"]);
@@ -652,7 +651,7 @@
         });
     
 
-        socket.on("all reached EOR", function (){
+        socket.on("new lesson available", function (){
             console.log("received all reached EOR message...");
 
             let EOR_start_time = Date.now();
@@ -756,7 +755,7 @@
             // change headers
             if (interaction_type == "final test") {
                 console.log("final test");
-                $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration_in_category"))).toString() + '/6)</h1>');
+                $jq("#header").html('<h1>Strategy assessment (' + (Number(localStorage.getItem("iteration"))).toString() + '/6)</h1>');
                 // cl, pl, open, wtcl
                 $jq("#info_main").html('<h3>Chip has finished teaching the game play strategy -- let\'s see how much you learned!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3><h4>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br>(We\'ll reveal which and how many of the six tests you answered correctly after the final one.)</h4>');
                 // wt
@@ -767,7 +766,7 @@
             } 
             else if (interaction_type == "diagnostic test") {
                 console.log("diagnostic test");
-                $jq("#header").html('<h1><b> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Check-in test (' + (Number(localStorage.getItem("iteration_in_category"))).toString() + '/' + localStorage.getItem("total iterations") + ')</b></h1>');
+                $jq("#header").html('<h1><b> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Check-in test (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</b></h1>');
                 if (localStorage.getItem("already completed") == 'true') {
                     $jq("#info_main").html('<h3>Let\'s see if you understood the previous demonstration(s)!<br>Please demonstrate how you would complete this game\'s task while minimizing Chips energy loss.</h3>You <b>may reset</b> at any time <b>before the game ends</b> if think you have made a mistake.<br><br><p><b>(Edit: You navigated back to this interaction so you may step through the answer using your space bar.)</b></p>');
                 }
@@ -779,11 +778,11 @@
             }
             else if (interaction_type == "demo"){
                 console.log("demo");
-                if (localStorage.getItem("iteration_in_category")==1){
-                    $jq("#header").html('<h1><i>' + localStorage.getItem("lesson string") + '<i/> <b> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration_in_category"))).toString() + '/' + localStorage.getItem("total iterations") + ')</b></h1>');
+                if (localStorage.getItem("iteration")==1){
+                    $jq("#header").html('<h1><i>' + localStorage.getItem("lesson string") + '<i/> <b> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</b></h1>');
                 }
                 else{
-                    $jq("#header").html('<h1></b> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration_in_category"))).toString() + '/' + localStorage.getItem("total iterations") + ')</b></h1>');
+                    $jq("#header").html('<h1></b> Lesson: ' + (Number(localStorage.getItem("lesson id"))).toString() + '/3.' + ' Demonstration of best strategy (' + (Number(localStorage.getItem("iteration"))).toString() + '/' + localStorage.getItem("total iterations") + ')</b></h1>');
                 }
                 $jq("#info_main").html('<h3>Step through the demonstration <u>using your space bar</u>.<br>Feel free to run through it as many times as you wish by resetting, and at least once to continue! You may revisit previous demos and tests as well until you start the tests for this lesson.</h3>');
                 headerElement.style.backgroundColor = colors["demo"];
@@ -1483,7 +1482,7 @@
 
                 var it = window.interaction_type
                 if(it == "final test") {
-                    sessionStorage.setItem('skateboard2_' + localStorage.getItem("iteration_in_category").toString(), same_traj)
+                    sessionStorage.setItem('skateboard2_' + localStorage.getItem("iteration").toString(), same_traj)
                 }
 
 
