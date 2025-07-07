@@ -1541,11 +1541,14 @@ def prepare_next_trial_data(data, domain, current_group, updated_round, next_kc_
     if interaction == "demo":
         iteration_id = current_user.iteration
         total = N_demos
-        lesson_string = (
-            "Starting with the first game lesson." if next_kc_id == 0 else
-            "Moving onto a new game lesson." if current_kc_id != next_kc_id else
-            "Repeating the previous game lesson."
-        )
+        if current_kc_id is not None:
+            lesson_string = (
+                "Starting with the first game lesson." if next_kc_id == 0 else
+                "Moving onto a new game lesson." if current_kc_id != next_kc_id else
+                "Repeating the previous game lesson."
+            )
+        else:
+            lesson_string = "Another game lesson."
     elif interaction == "diagnostic test":
         iteration_id = int((current_user.iteration - N_demos) / 2) + 1
         total = N_tests
@@ -1735,7 +1738,7 @@ def settings(data):
             log_print('Group:', current_user.group, 'User:', current_user.id, 'Current round:', current_round, 'Next KC id:', next_kc_id)
 
             if current_round:
-                response = prepare_next_trial_data(data, domain, current_group, current_round, next_kc_id, current_kc_id, opt_response_flag)
+                response = prepare_next_trial_data(data, domain, current_group, current_round, next_kc_id, None, opt_response_flag)
                 log_print('Group:', current_user.group, 'User:', current_user.id, 'Next trial response:', response)
             else:
                 log_error('No updated round found after trial navigation')
