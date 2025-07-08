@@ -694,8 +694,11 @@ def join_group():
     side effects: alters Groups database with added member in appropriate row   
     """ 
     
-    cond_list = ["individual_belief_low", "common_belief", "individual_belief_high", "joint_belief"]
-    domain_list = [["at", "sb"], ["sb", "at"]]
+    # cond_list = ["individual_belief_low", "common_belief", "individual_belief_high", "joint_belief"]
+    # domain_list = [["at", "sb"], ["sb", "at"]]
+
+    cond_list = ["common_belief"]
+    domain_list = [["at", "sb"]]
 
     if QUICK_DEBUG_FLAG:
         domain_list = [["at", "sb"]]
