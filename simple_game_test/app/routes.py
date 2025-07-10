@@ -700,7 +700,7 @@ def join_group():
     # domain_list = [["at", "sb"], ["sb", "at"]]
 
     cond_list = ["individual_belief_low"]
-    domain_list = [["at", "sb"]]
+    domain_list = [["sb", "at"]]
 
     if QUICK_DEBUG_FLAG:
         domain_list = [["sb", "at"]]
