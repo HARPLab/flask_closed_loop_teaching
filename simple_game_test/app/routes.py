@@ -154,10 +154,12 @@ def group_database_transaction(group_id, context, retries=5, base_delay=0.1):
                 yield db.session
                 db.session.flush()
                 db.session.commit()
-                log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group db lock - process complete. ', context)
+                if current_user.is_authenticated:
+                    log_print('Group:', group_id, '. Current user: ', current_user.id, 'Group db lock - process complete. ', context)
                 return
             except OperationalError as e:
-                log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group lock is still active... ', context, 'Error:', str(e))
+                if current_user.is_authenticated:
+                    log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group lock is still active... ', context, 'Error:', str(e))
                 if "database is locked" in str(e):
                     delay = base_delay * (2 ** attempt)  # exponential backoff
                     time.sleep(delay)
@@ -697,11 +699,11 @@ def join_group():
     # cond_list = ["individual_belief_low", "common_belief", "individual_belief_high", "joint_belief"]
     # domain_list = [["at", "sb"], ["sb", "at"]]
 
-    cond_list = ["common_belief"]
+    cond_list = ["individual_belief_low"]
     domain_list = [["at", "sb"]]
 
     if QUICK_DEBUG_FLAG:
-        domain_list = [["at", "sb"]]
+        domain_list = [["sb", "at"]]
 
     
     # cond_list = ["individual_belief_low"]
