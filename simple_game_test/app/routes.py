@@ -1213,7 +1213,7 @@ def advance_or_generate_round(
         next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
         
         should_generate_new_round = (
-            not next_round and 
+            not (next_round and curr_already_completed) and
                 (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
                 (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
         )
