@@ -1188,7 +1188,7 @@ def advance_or_generate_round(
     """
     new_round_generation_started = False
     next_round = None
-    
+    next_kc_id = -1
 
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Next movement. Current trial already completed?',
               curr_already_completed, '. Current user last iter in round?', current_user.last_iter_in_round, 'opt_response_flag:', opt_response_flag)
@@ -1204,11 +1204,18 @@ def advance_or_generate_round(
         with group_database_transaction(current_user.group, 'Refreshing group and checking active members in advance_or_generate_round'):
             current_group, _ = refresh_group_and_check_active_members(current_user.group)
 
+        # should_generate_new_round = (
+        #     not curr_already_completed and 
+        #         (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
+        #         (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
+        # )
+        
+        next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
+        
         should_generate_new_round = (
-            not curr_already_completed and (
-                current_user.last_iter_in_round or
-                (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")
-            ) and (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
+            not next_round and 
+                (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
+                (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
         )
 
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Should generate new round:', should_generate_new_round)
@@ -1235,6 +1242,7 @@ def advance_or_generate_round(
         # Else: Step to next trial in current round if available
         elif current_round and current_user.iteration < len(current_round.round_info):
             _step_forward_in_round(data, domain, current_round, curr_already_completed, opt_response_flag)
+            db.session.refresh(current_user)
             next_kc_id = current_round.kc_id
             break
 
@@ -1427,7 +1435,7 @@ def _step_forward_in_round(data, domain, current_round, curr_already_completed, 
             else:
                 current_user.iteration += 1
 
-    # Check if we’re now at the last iteration
+    # Check if we’re past the last iteration
     if current_user.iteration > len(current_round.round_info):
         current_user.last_iter_in_round = True
         log_print("User reached last iteration of the round.")
