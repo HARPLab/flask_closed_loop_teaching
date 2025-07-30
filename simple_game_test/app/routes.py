@@ -1242,7 +1242,6 @@ def advance_or_generate_round(
         # Else: Step to next trial in current round if available
         elif current_round and current_user.iteration < len(current_round.round_info):
             _step_forward_in_round(data, domain, current_round, curr_already_completed, opt_response_flag)
-            db.session.refresh(current_user)
             next_kc_id = current_round.kc_id
             break
 
@@ -1432,6 +1431,10 @@ def _step_forward_in_round(data, domain, current_round, curr_already_completed, 
     if current_user.iteration > len(current_round.round_info):
         current_user.last_iter_in_round = True
         log_print("User reached last iteration of the round.")
+
+    update_database(current_user, f"Set next iteration")
+
+
 
 
 
