@@ -1404,36 +1404,29 @@ def _step_forward_in_round(data, domain, current_round, curr_already_completed, 
     Handles regular, diagnostic, and repeated test logic.
     Updates `current_user.iteration` and `last_iter_in_round`.
     """
-    log_print('Group:', current_user.group, 'User:', current_user.id,
-              'Moving forward in current round. Iteration:', current_user.iteration)
+
 
     interaction_type = data.get("interaction type")
+
+    log_print('Group:', current_user.group, 'User:', current_user.id,
+            'Moving forward in current round. Iteration:', current_user.iteration, 'interaction_type:', interaction_type)
 
     if interaction_type != "diagnostic test":
         current_user.iteration += 1
 
     elif not curr_already_completed:
-        if interaction_type == "diagnostic test" and not opt_response_flag:
+        if not opt_response_flag:
             current_user.iteration += 1
-        elif interaction_type == "diagnostic test" and opt_response_flag:
+        else:
             current_user.iteration += 2  # Skip over feedback to next test
     else:
-        if interaction_type == "diagnostic test":
-            current_trial = (
-                db.session.query(Trial)
-                .filter_by(
-                    user_id=current_user.id,
-                    domain=domain,
-                    round=current_user.round,
-                    iteration=current_user.iteration
-                )
-                .order_by(Trial.id.desc())
-                .first()
-            )
-            if current_trial and current_trial.is_opt_response:
-                current_user.iteration += 2
-            else:
-                current_user.iteration += 1
+        current_trial = ( db.session.query(Trial).filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration)
+            .order_by(Trial.id.desc()).first()  )
+        
+        if current_trial and current_trial.is_opt_response:
+            current_user.iteration += 2
+        else:
+            current_user.iteration += 1
 
     # Check if we’re past the last iteration
     if current_user.iteration > len(current_round.round_info):
@@ -1716,6 +1709,8 @@ def settings(data):
 
             ## SAVE USER ACTIVITY DATA   
             opt_response_flag, curr_already_completed = process_activity_and_trial_data(data, domain)
+
+            print('Group:', current_user.group, 'User:', current_user.id, 'Processed trial data...', 'Opt response flag:', opt_response_flag, 'Current already completed:', curr_already_completed)
 
             ## CHECK AND UPDATE DOMAIN
             with group_database_transaction(current_user.group, 'Updating group before trial navigation'):
