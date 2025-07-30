@@ -172,11 +172,11 @@ def group_database_transaction(group_id, context, retries=5, base_delay=0.1):
         raise RuntimeError(f"Failed to complete transaction for group {group_id} after {retries} retries.")
 
 
-# with open(os.path.join(os.path.dirname(__file__), 'group_user_study_dict.json'), 'r') as f:
-#     default_rounds = json.load(f)
-
-with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') as f:
+with open(os.path.join(os.path.dirname(__file__), 'group_user_study_dict.json'), 'r') as f:
     default_rounds = json.load(f)
+
+# with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') as f:
+#     default_rounds = json.load(f)
 
 # print(default_rounds)
 
