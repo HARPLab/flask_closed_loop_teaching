@@ -154,11 +154,11 @@ def group_database_transaction(group_id, context, retries=5, base_delay=0.1):
                 yield db.session
                 db.session.flush()
                 db.session.commit()
-                if current_user is not None and current_user.is_authenticated:
+                if current_user and current_user.is_authenticated:
                     log_print('Group:', group_id, '. Current user: ', current_user.id, 'Group db lock - process complete. ', context)
                 return
             except OperationalError as e:
-                if current_user is not None and current_user.is_authenticated:
+                if current_user and current_user.is_authenticated:
                     log_print('Group:', group_id,'. Current user: ', current_user.id, 'Group lock is still active... ', context, 'Error:', str(e))
                 if "database is locked" in str(e):
                     delay = base_delay * (2 ** attempt)  # exponential backoff
@@ -1204,19 +1204,19 @@ def advance_or_generate_round(
         with group_database_transaction(current_user.group, 'Refreshing group and checking active members in advance_or_generate_round'):
             current_group, _ = refresh_group_and_check_active_members(current_user.group)
 
-        # should_generate_new_round = (
-        #     not curr_already_completed and 
-        #         (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
-        #         (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
-        # )
-        
-        next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
-        
         should_generate_new_round = (
-            not (next_round and curr_already_completed) and
+            not curr_already_completed and 
                 (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
                 (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
         )
+        
+        # next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
+        
+        # should_generate_new_round = (
+        #     not (next_round and curr_already_completed) and
+        #         (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
+        #         (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
+        # )
 
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Should generate new round:', should_generate_new_round)
 
