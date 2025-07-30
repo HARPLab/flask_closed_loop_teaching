@@ -172,28 +172,10 @@ def group_database_transaction(group_id, context, retries=5, base_delay=0.1):
         raise RuntimeError(f"Failed to complete transaction for group {group_id} after {retries} retries.")
 
 
-# @contextmanager
-# def global_database_transaction(retries=5, base_delay=0.1):
-#     with global_db_lock:
-#         attempt = 0
-#         while attempt < retries:
-#             try:
-#                 yield db.session
-#                 db.session.flush()
-#                 db.session.commit()
-#                 return
-#             except OperationalError as e:
-#                 if "database is locked" in str(e):
-#                     time.sleep(base_delay * (2 ** attempt))
-#                     attempt += 1
-#                     continue
-#                 else:
-#                     db.session.rollback()
-#                     raise
-#         db.session.rollback()
-#         raise RuntimeError("Failed to complete global transaction after retries.")
+# with open(os.path.join(os.path.dirname(__file__), 'group_user_study_dict.json'), 'r') as f:
+#     default_rounds = json.load(f)
 
-with open(os.path.join(os.path.dirname(__file__), 'group_user_study_dict.json'), 'r') as f:
+with open(os.path.join(os.path.dirname(__file__), 'user_study_dict.json'), 'r') as f:
     default_rounds = json.load(f)
 
 # print(default_rounds)
@@ -1447,6 +1429,8 @@ def move_to_previous_trial(domain):
 
     if current_user.iteration > 1:
         current_user.iteration -= 1
+        cur_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round)
+        next_kc_id = cur_round.kc_id
     else:
         # Move to previous round
         current_user.round -= 1
@@ -1458,6 +1442,8 @@ def move_to_previous_trial(domain):
         else:
             current_user.iteration = 1
 
+        next_kc_id = prev_round.kc_id
+
     # If no trial found for that iteration, skip back once more
     prev_trial = (
         db.session.query(Trial)
@@ -1467,6 +1453,8 @@ def move_to_previous_trial(domain):
     )
     if prev_trial is None and current_user.iteration > 1:
         current_user.iteration -= 1
+
+    return next_kc_id
 
 
 
@@ -1634,7 +1622,7 @@ def handle_trial_navigation(data, domain, domain_order, current_group, current_r
 
     elif movement == "prev":
         log_print('Group:', current_user.group, 'User:', current_user.id, 'User pressed Prev...')
-        move_to_previous_trial(domain)
+        next_kc_id = move_to_previous_trial(domain)
 
     # Re-fetch current round (in case it changed)
     updated_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round)
@@ -2318,21 +2306,20 @@ def retrieve_next_round(params, cur_group) -> dict:
             
             final_test_id = 1
             # final_tests_to_add = [3, 5, 8, 12, 15, 17] # indices of final tests to add (one for each difficulty level)
-            # final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
-            # final_tests_to_add = range(1,19)
+            final_tests_to_add = [1, 2, 3, 4, 5, 6] # indices of final tests to add (one for each difficulty level)
+
             # final_tests_to_add = [1, 2, 4, 8, 10, 12] # balances KCs from among the available tests
             
-            if domain == 'at':
-                final_tests_to_add = [6, 7, 8, 11, 14, 15]
-            elif domain == 'sb':
-                final_tests_to_add = [4, 7, 10, 12, 14, 16]
-            else:
-                RuntimeError('Unknown domain')
+            # if domain == 'at':
+            #     final_tests_to_add = [6, 7, 8, 11, 14, 15]
+            # elif domain == 'sb':
+            #     final_tests_to_add = [4, 7, 10, 12, 14, 16]
+            # else:
+            #     RuntimeError('Unknown domain')
                 
                 
             if QUICK_DEBUG_FLAG:
                 final_tests_to_add = [1, 3]
-                # final_tests_to_add = range(1,19)
             
             for td in test_difficulty:
                 for mdp_list in default_rounds[mdp_class]["final test"][td]:
