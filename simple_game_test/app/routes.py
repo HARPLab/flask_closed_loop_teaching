@@ -66,6 +66,12 @@ from .group_teaching.codes.params_utils import get_mdp_parameters
 # Define log file
 log_filename = os.path.join(os.path.dirname(__file__), "app_log.txt")
 
+# Create the log file if it doesn't exist
+if not os.path.exists(log_filename):
+
+    with open(log_filename, 'w') as f:
+        f.write("")  # create empty file
+
 # Set up logging to file and console
 logging.basicConfig(
     level=logging.DEBUG,  # Capture both INFO and ERROR logs
