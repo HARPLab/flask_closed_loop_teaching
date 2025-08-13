@@ -1207,19 +1207,27 @@ def advance_or_generate_round(
         with group_database_transaction(current_user.group, 'Refreshing group and checking active members in advance_or_generate_round'):
             current_group, _ = refresh_group_and_check_active_members(current_user.group)
 
-        should_generate_new_round = (
-            not curr_already_completed and 
-                (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
-                (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
-        )
+        # # presence of next roundis not checked
+        # should_generate_new_round = (
+        #     not curr_already_completed and 
+        #         (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
+        #         (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
+        # )
         
-        # next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
+        next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
         
         # should_generate_new_round = (
         #     not (next_round and curr_already_completed) and
         #         (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
         #         (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
         # )
+
+        should_generate_new_round = (
+            not (next_round) and
+                (current_user.last_iter_in_round or (current_user.last_test_in_round and opt_response_flag and current_user.interaction_type != "final test")) and 
+                (check_member_and_group_status() or (domain_order == '1' and current_user.round == 0))
+        )
+
 
         log_print('Group:', current_user.group, 'User:', current_user.id, 'Should generate new round:', should_generate_new_round)
 
@@ -2272,23 +2280,31 @@ def retrieve_next_round(params, cur_group) -> dict:
 
             status_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
 
+
+            # Check if demo_mpds provide full information intended for this lesson
             demo_constraints = []
+            reduced_demo_information_flag = False
+            ideal_lesson_constraints = ideal_kc_constraints[domain][kc_id] if domain in ideal_kc_constraints and kc_id < len(ideal_kc_constraints[domain]) else None
+            
             if len(demo_mdps) > 0:
                 for d_mdp in demo_mdps:
                     demo_constraints.extend(d_mdp.get('constraints'))
                 
                 min_demo_constraints = remove_redundant_constraints(demo_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
             
-            ideal_lesson_constraints = ideal_kc_constraints[domain][kc_id] if domain in ideal_kc_constraints and kc_id < len(ideal_kc_constraints[domain]) else None
+                if normalize_constraints(min_demo_constraints) != normalize_constraints(ideal_lesson_constraints):
+                    reduced_demo_information_flag = True
+                else:
+                    reduced_demo_information_flag = False
+                
 
-            if normalize_constraints(min_demo_constraints) != normalize_constraints(ideal_lesson_constraints):
-                reduced_demo_information_flag = True
-            else:
-                reduced_demo_information_flag = False
-
+            
+            # lesson
             log_print('Group:', current_user.group, 'User:', current_user.id, 'Reduced demo information flag:', reduced_demo_information_flag, 'min demo constraints:', min_demo_constraints, 'ideal_lesson_constraints:', ideal_lesson_constraints)
+            
             # new round data
             if len(demo_mdps) > 0 and not reduced_demo_information_flag:
+                
                 games = list()
                 for i in range(len(demo_mdps)):
                     games.append({"interaction type": "demo", "params": demo_mdps[i]})
