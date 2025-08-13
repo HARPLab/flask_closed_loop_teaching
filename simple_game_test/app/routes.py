@@ -135,6 +135,9 @@ def status_print(*args):
     # Also print to console directly (bypassing redirections)
     print(f"STATUS: {message}", file=sys.__stdout__)
 
+def normalize_constraints(lst):
+    return set(tuple(map(tuple, arr)) for arr in lst)
+
 ######################################
 
 
@@ -2270,7 +2273,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             
             ideal_lesson_constraints = ideal_kc_constraints[domain][kc_id] if domain in ideal_kc_constraints and kc_id < len(ideal_kc_constraints[domain]) else None
 
-            if set(min_demo_constraints) != set(ideal_lesson_constraints):
+            if normalize_constraints(min_demo_constraints) != normalize_constraints(ideal_lesson_constraints):
                 reduced_demo_information_flag = True
             else:
                 reduced_demo_information_flag = False
