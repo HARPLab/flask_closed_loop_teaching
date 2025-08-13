@@ -2264,7 +2264,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             demo_constraints = []
             if len(demo_mdps) > 0:
                 for d_mdp in demo_mdps:
-                    demo_constraints.extend(d_mdp['params'].get('constraints'))
+                    demo_constraints.extend(d_mdp.get('constraints'))
                 
                 min_demo_constraints = remove_redundant_constraints(demo_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
             
