@@ -102,6 +102,15 @@ sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
 sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
 
 
+ideal_kc_constraints = {'at': {}, 'sb': {}}
+ideal_kc_constraints['at'][1] = [np.array([[ 1,  0, -4]]), np.array([[-1,  0,  2]])]
+ideal_kc_constraints['at'][2] = [np.array([[ 0, -1, -4]]), np.array([[0, 1, 2]])]
+ideal_kc_constraints['at'][3] = [np.array([[ 1, 1, 0]])]
+
+ideal_kc_constraints['sb'][1] = [np.array([[ 0, -2, -1]]), np.array([[0, 5, 2]])]
+ideal_kc_constraints['sb'][2] = [np.array([[-6,  0, -5]]), np.array([[4, 0, 3]])]
+ideal_kc_constraints['sb'][3] = [np.array([[-6,  4, -3]]), np.array([[5, 2, 5]]), np.array([[ 3, -3,  1]])]
+
 
 #####################################
 
@@ -1434,7 +1443,7 @@ def move_to_previous_trial(domain):
     Handles the user pressing the 'Prev' button.
     Moves back one iteration or to the last iteration of the previous round.
     """
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'User pressed Prev')
+    log_print('Group:', current_user.group, 'User:', current_user.id, 'round:', current_user.round, 'iteration:', current_user.iteration, 'User pressed Prev')
 
     if current_user.iteration > 1:
         current_user.iteration -= 1
@@ -1453,13 +1462,15 @@ def move_to_previous_trial(domain):
 
         next_kc_id = prev_round.kc_id
 
-    # If no trial found for that iteration, skip back once more
+    
     prev_trial = (
         db.session.query(Trial)
         .filter_by(user_id=current_user.id, domain=domain, round=current_user.round, iteration=current_user.iteration)
         .order_by(Trial.id.desc())
         .first()
     )
+
+    # If no trial found for that iteration (likely because it was a feedback for a correct response in diagnostic test), skip back by one more iteration
     if prev_trial is None and current_user.iteration > 1:
         current_user.iteration -= 1
 
@@ -2250,9 +2261,21 @@ def retrieve_next_round(params, cur_group) -> dict:
 
             status_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
 
+            demo_constraints = []
+            if len(demo_mdps) > 0:
+                for d_mdp in demo_mdps:
+                    demo_constraints.extend(d_mdp['params'].get('constraints'))
+                
+                min_demo_constraints = remove_redundant_constraints(demo_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
+
+            if set(min_demo_constraints) != set(demo_constraints):
+                reduced_demo_information_flag = True
+            else:
+                reduced_demo_information_flag = False
+
 
             # new round data
-            if len(demo_mdps) > 0:
+            if len(demo_mdps) > 0 and not reduced_demo_information_flag:
                 games = list()
                 for i in range(len(demo_mdps)):
                     games.append({"interaction type": "demo", "params": demo_mdps[i]})
