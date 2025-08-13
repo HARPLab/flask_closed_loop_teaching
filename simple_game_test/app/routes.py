@@ -103,13 +103,13 @@ sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
 
 
 ideal_kc_constraints = {'at': {}, 'sb': {}}
-ideal_kc_constraints['at'][1] = [np.array([[ 1,  0, -4]]), np.array([[-1,  0,  2]])]
-ideal_kc_constraints['at'][2] = [np.array([[ 0, -1, -4]]), np.array([[0, 1, 2]])]
-ideal_kc_constraints['at'][3] = [np.array([[ 1, 1, 0]])]
+ideal_kc_constraints['at'][0] = [np.array([[ 1,  0, -4]]), np.array([[-1,  0,  2]])]
+ideal_kc_constraints['at'][1] = [np.array([[ 0, -1, -4]]), np.array([[0, 1, 2]])]
+ideal_kc_constraints['at'][2] = [np.array([[ 1, 1, 0]])]
 
-ideal_kc_constraints['sb'][1] = [np.array([[ 0, -2, -1]]), np.array([[0, 5, 2]])]
-ideal_kc_constraints['sb'][2] = [np.array([[-6,  0, -5]]), np.array([[4, 0, 3]])]
-ideal_kc_constraints['sb'][3] = [np.array([[-6,  4, -3]]), np.array([[5, 2, 5]]), np.array([[ 3, -3,  1]])]
+ideal_kc_constraints['sb'][0] = [np.array([[ 0, -2, -1]]), np.array([[0, 5, 2]])]
+ideal_kc_constraints['sb'][1] = [np.array([[-6,  0, -5]]), np.array([[4, 0, 3]])]
+ideal_kc_constraints['sb'][2] = [np.array([[-6,  4, -3]]), np.array([[5, 2, 5]]), np.array([[ 3, -3,  1]])]
 
 
 #####################################
