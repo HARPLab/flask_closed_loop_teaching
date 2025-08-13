@@ -1665,11 +1665,11 @@
                         console.log("same_traj: ", same_traj)
 
                         if (it == "diagnostic test") {
-                            if (localStorage.getItem("already completed") === "false"){
+                            if (localStorage.getItem("already completed") == 'false'){
                                 document.getElementById('message-container').style.display = 'block';
                             }
                             
-                            if (same_traj && localStorage.getItem("already completed") === "false") {
+                            if (same_traj && localStorage.getItem("already completed") == 'false') {
                                 // if the test was answered correctly or page wasn't already shown previously, show likert scale
                                 show_likert = true
 
@@ -1746,7 +1746,7 @@
                                 </button>` );
                             }
 
-                        } else if (localStorage.getItem("already completed") === "false") {
+                        } else if (localStorage.getItem("already completed") == 'false') {
                             show_likert = true
                         }
 
