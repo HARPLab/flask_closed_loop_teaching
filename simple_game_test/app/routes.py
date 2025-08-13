@@ -2267,13 +2267,15 @@ def retrieve_next_round(params, cur_group) -> dict:
                     demo_constraints.extend(d_mdp['params'].get('constraints'))
                 
                 min_demo_constraints = remove_redundant_constraints(demo_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
+            
+            ideal_lesson_constraints = ideal_kc_constraints[domain][kc_id] if domain in ideal_kc_constraints and kc_id < len(ideal_kc_constraints[domain]) else None
 
-            if set(min_demo_constraints) != set(demo_constraints):
+            if set(min_demo_constraints) != set(ideal_lesson_constraints):
                 reduced_demo_information_flag = True
             else:
                 reduced_demo_information_flag = False
 
-
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Reduced demo information flag:', reduced_demo_information_flag, 'min demo constraints:', min_demo_constraints, 'ideal_lesson_constraints:', ideal_lesson_constraints)
             # new round data
             if len(demo_mdps) > 0 and not reduced_demo_information_flag:
                 games = list()
