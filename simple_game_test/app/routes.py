@@ -1101,6 +1101,10 @@ def process_activity_and_trial_data(data, domain):
 
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Current trial:', current_trial, 'Current user iteration:', current_user.iteration, 'Current user round:', current_user.round, 'Interaction type:', interaction_type, 'Survey valid:', survey_valid)
 
+    # if (current_trial is None and data["movement"] == "prev"):
+    #     # do nothing
+    #     pass
+
     if current_user.interaction_type == "survey":
         log_print(colored("Adding survey data...", "red"))
         add_survey_data(domain, data)
@@ -1186,7 +1190,6 @@ def advance_or_generate_round(
     - Handles EOR and updates learner models
     Returns: updated current_group, current_round, next_round, next_kc_id
     """
-    new_round_generation_started = False
     next_round = None
     next_kc_id = -1
 
@@ -1376,10 +1379,13 @@ def _generate_subsequent_round(current_group, current_round, params):
                 # update_database(current_group, 'Generating next round...')
             db.session.refresh(current_group)
 
-            retrieve_next_round(params, current_group)
-            db.session.refresh(current_group)
-
             next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
+
+            # Generate new round if not already generated (for example when going to previous lesson and coming back to current lesson)
+            if next_round is None:
+                retrieve_next_round(params, current_group)
+                db.session.refresh(current_group)
+
             if next_round and current_group.status != "Domain teaching completed":
                 update_learner_models_from_demos(params, current_group, next_round)
 
@@ -1721,8 +1727,10 @@ def settings(data):
             log_print('Group:', current_user.group, 'User:', current_user.id, 'Room name:', room_name, 'Domain:', domain, 'Domain order:', domain_order, 'MDP class:', mdp_class, 'Params:', params, 'Current round:', current_round, 'Current KC id:', current_kc_id)
 
 
-            ## SAVE USER ACTIVITY DATA   
-            opt_response_flag, curr_already_completed = process_activity_and_trial_data(data, domain)
+            ## SAVE USER ACTIVITY DATA
+            if data.get("movement") == "next":
+                opt_response_flag, curr_already_completed = process_activity_and_trial_data(data, domain)
+                
 
             print('Group:', current_user.group, 'User:', current_user.id, 'Processed trial data...', 'Opt response flag:', opt_response_flag, 'Current already completed:', curr_already_completed)
 
@@ -1736,7 +1744,7 @@ def settings(data):
                 log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated Domain:', domain, 'Domain order:', domain_order, 'MDP class:', mdp_class, 'Params:', params)
             
             
-            # Step 4: Trial navigation + round generation + response
+            # Trial navigation + round generation + response
             current_group, response, next_kc_id = handle_trial_navigation( data, domain, domain_order, current_group, current_round,
                                                                                                         params, opt_response_flag, curr_already_completed, current_kc_id)
             
