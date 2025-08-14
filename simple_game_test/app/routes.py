@@ -1276,6 +1276,7 @@ def advance_or_generate_round(
             next_kc_id = next_round.kc_id
             # socketio.emit("new lesson available", to='room_'+ str(current_user.group)) 
             socketio.emit("new lesson available", to=request.sid)
+            break
 
         elif should_generate_new_round:
             time.sleep(random.random()*ROUND_GENERATION_WAIT_TIME/2)  # desync simultaneous generation (0-5s delay)
