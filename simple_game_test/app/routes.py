@@ -553,7 +553,7 @@ def handle_remove_user(data):
 @socketio.on("disconnect_user")
 def disconnect_user(data):
     status_print("User disconnecting due to inactivity....")
-    group_print('Group:', current_user.group, 'User: ', current_user.id, 'disconnecting due to inactivity.')
+    group_print(current_user.group, 'User: ', current_user.id, 'disconnecting due to inactivity.')
 
     # If user is still connected and authenticated, log them out
     if current_user.is_authenticated:
@@ -822,8 +822,8 @@ def join_group():
             flag_modified(new_group, "members_statuses")
             flag_modified(new_group, "num_active_members")
             flag_modified(new_group, "join_timestamps")
-            group_print('Group:', current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
-            group_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
+            group_print(current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
+            group_print(current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
             num_active_members = 1
 
             update_database(new_group, 'Member to new group')
@@ -833,7 +833,7 @@ def join_group():
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
             
             # log_print('Updated group data...')
-            group_print('Group:', current_user.group, 'member_user_ids:', open_group.member_user_ids, 'timestamps:', open_group.join_timestamps, 'Adding to existing group')
+            group_print(current_user.group, 'member_user_ids:', open_group.member_user_ids, 'timestamps:', open_group.join_timestamps, 'Adding to existing group')
 
 
             current_time = datetime.now()            
@@ -935,7 +935,7 @@ def remove_from_study(user_id):
                 
             current_group = db.session.query(Group).filter_by(id=user.group).order_by(Group.id.desc()).first()
     
-            group_print('Group:', user.group, 'User:', user.id, 'Before leaving study:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
+            group_print(user.group, 'User:', user.id, 'Before leaving study:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
     
             _ = current_group.groups_remove(user.username)
             
@@ -948,12 +948,12 @@ def remove_from_study(user_id):
         
         log_print('Group:', user.group, 'User:', user.id, 'Group db lock released...')
         
-        group_print('Group:', user.group, 'User:', user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
+        group_print(user.group, 'User:', user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
         log_print('Sending signal to members in group:', 'room_'+ str(user.group))
         
         db.session.refresh(current_group)
         group_EOR_status = current_group.groups_all_EOR()
-        group_print(f'Group {user.group} EOR status: {group_EOR_status}')
+        group_print(user.group, 'EOR status: ', group_EOR_status)
 
         socketio.emit("member left", {"member code": user.group_code}, to='room_'+ str(user.group))
         socketio.emit("force_remove_user", {"user_id": user_id})
@@ -1184,13 +1184,13 @@ def check_and_update_domain(data, current_group):
 
     # Update domain for group
     if current_user.curr_progress == current_group.curr_progress:
-        group_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of group...')
+        group_print(current_user.group, 'User:', current_user.id, 'Updating domain of group...')
         update_domain_group(current_group)
         db.session.refresh(current_group)
 
     # Update domain for user if their progress has not yet been synced
     if current_user.curr_progress != current_group.curr_progress:
-        group_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of user and reset vars...')
+        group_print(current_user.group, 'User:', current_user.id, 'Updating domain of user and reset vars...')
         update_domain_user(current_user, current_group)
         db.session.refresh(current_user)
 
@@ -2294,7 +2294,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 teaching_complete_flag = True
 
 
-        group_print('Group:', current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
+        group_print(current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
 
 
         # get demonstrations and tests for this round
@@ -2310,7 +2310,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             round_status = "demo_tests_generated"
             games_extended = []
 
-            group_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
+            group_print(current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
 
 
             # Check if demo_mpds provide full information intended for this lesson
@@ -2347,7 +2347,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             
             elif new_round_for_var_filter:
                 log_print(colored('No new demos generated for the new variable filter. Using default demos...', 'red'))
-                group_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated for the new variable filter. Using default demos...')
+                group_print(current_user.group, 'User:', current_user.id, 'No new demos generated for the new variable filter. Using default demos...')
                 
                 games = list()
                 if domain == 'at':
@@ -2367,7 +2367,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 # status_print('Games:', games)
 
             else:
-                group_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
+                group_print(current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
                 # repeat the same round if no demos are generated
                 prev_round_data = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, round_num=round).order_by(Round.id.desc()).first()
                 games_extended = prev_round_data.round_info
@@ -2386,7 +2386,7 @@ def retrieve_next_round(params, cur_group) -> dict:
         
         
         else:
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Adding final tests for this round...')
+            log_print(current_user.group, 'User:', current_user.id, 'Adding final tests for this round...')
             round_status = "final_tests_generated"
             round_generation_process = ''
             test_difficulty = ['low', 'medium', 'high']
@@ -2790,7 +2790,7 @@ def get_domain():
 
 
 def add_survey_data(domain, data):
-    group_print('Group:', current_user.group, 'User:', current_user.id, 'Survey data:', data)
+    group_print(current_user.group, 'User:', current_user.id, 'Survey data:', data)
     # add survey data to database
     dom = Domain(
             group_id = current_user.group,
@@ -2817,7 +2817,7 @@ def add_survey_data(domain, data):
 def add_trial_data(domain, data):
 
     # if len(data["user input"]) !=0:
-    group_print('Group:', current_user.group, 'User:', current_user.id, 'Adding trial data to database...', ' user id: ', current_user.id, 'round:', current_user.round, 'iteration:', current_user.iteration)
+    group_print(current_user.group, 'User:', current_user.id, 'Adding trial data to database...', ' user id: ', current_user.id, 'round:', current_user.round, 'iteration:', current_user.iteration)
 
     trial = Trial(
         user_id = current_user.id,
