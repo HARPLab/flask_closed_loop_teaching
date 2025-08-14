@@ -38,6 +38,8 @@ import logging
 import random
 # from flask import g
 from datetime import date, timedelta
+from itertools import cycle
+from termcolor import colored
 
 import pickle
 import numpy as np
@@ -100,6 +102,38 @@ class LoggerWriter:
 # Redirect stdout and stderr to logging
 sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
 sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
+
+
+
+
+# Rotate through these as new groups appear
+GROUP_COLORS = ['cyan', 'green', 'yellow', 'magenta', 'blue', 'red', 'white']
+_color_cycle = cycle(GROUP_COLORS)
+_group_to_color = {}  # group_id -> color
+
+def _color_for(group_id):
+    if group_id not in _group_to_color:
+        _group_to_color[group_id] = next(_color_cycle)
+    return _group_to_color[group_id]
+
+def group_print(group_id, *args, level=logging.INFO):
+    """
+    Log to file (plain) and print to console (colored) with a stable color per group_id.
+    Usage: group_print(group.id, "Starting round", round_idx)
+    """
+    msg = " ".join(map(str, args))
+    tag = f"[Group {group_id}] "
+    
+    # 1) File log: plain (respects your FileHandler)
+    logging.log(level, f"{tag}{msg}")
+    
+    # 2) Console pretty: colored (bypass redirected stdout)
+    color = _color_for(group_id)
+    pretty = colored(f"{tag}{msg}", color, attrs=['bold'])
+    print(pretty, file=sys.__stdout__)
+
+
+##########################################
 
 
 ideal_kc_constraints = {'at': {}, 'sb': {}}
@@ -297,7 +331,7 @@ def make_sandbox(data):
 @socketio.on("connect")
 def handle_connect(auth=None):
     """Handles user reconnection and removes them from disconnected_users if needed"""
-    # status_print('User: ', current_user.id, ' connected....')
+    status_print('User: ', current_user.id, ' connected....')
 
     if current_user.is_authenticated:
         log_print(f"User {current_user.id} connected with SID {request.sid}")
@@ -519,7 +553,7 @@ def handle_remove_user(data):
 @socketio.on("disconnect_user")
 def disconnect_user(data):
     status_print("User disconnecting due to inactivity....")
-    status_print('Group:', current_user.group, 'User: ', current_user.id, 'disconnecting due to inactivity.')
+    group_print('Group:', current_user.group, 'User: ', current_user.id, 'disconnecting due to inactivity.')
 
     # If user is still connected and authenticated, log them out
     if current_user.is_authenticated:
@@ -725,7 +759,7 @@ def join_group():
 
     if not current_user.group: # if no group yet, join one
 
-        status_print('Group:', current_user.group, 'User:', current_user.id, 'Join group function. Current user group: ', current_user.group)
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Join group function. Current user group: ', current_user.group)
         
         if open_group is not None:
             num_active_members = open_group.num_active_members
@@ -735,16 +769,16 @@ def join_group():
             current_time = datetime.now()
             create_new_group = False
 
-            status_print('New group flag initialized to false...')
+            log_print('New group flag initialized to false...')
 
             for timestamp_str in open_group.join_timestamps:
-                status_print('Timestamp: ', timestamp_str)
+                log_print('Timestamp: ', timestamp_str)
                 if timestamp_str is not None:
                     # Parse the timestamp string back to datetime
                     try:
                         timestamp = datetime.strptime(timestamp_str, "%y-%m-%d-%H-%M-%S")
                         time_diff = current_time - timestamp
-                        status_print('Timediff: ', time_diff)
+                        log_print('Timediff: ', time_diff)
                         if time_diff.total_seconds() > GROUP_JOIN_THRESHOLD:  # 30 minutes = 1800 seconds
                             create_new_group = True
                             break
@@ -788,24 +822,24 @@ def join_group():
             flag_modified(new_group, "members_statuses")
             flag_modified(new_group, "num_active_members")
             flag_modified(new_group, "join_timestamps")
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
+            group_print('Group:', current_user.group, 'User:', current_user.id, 'New group:', 'Group id:', new_group.id, 'Group members:', new_group.members, 'Active members:', new_group.num_active_members, 'Group mem ids:', new_group.member_user_ids, 'Group status:', new_group.members_statuses, 'Group experimental condition:', new_group.experimental_condition)
+            group_print('Group:', current_user.group, 'User:', current_user.id, 'Current user:', current_user.username, 'Current user group:', current_user.group, 'Current user group code:', current_user.group_code, 'Current user domain 1:', current_user.domain_1, 'Current user domain 2:', current_user.domain_2)
             num_active_members = 1
 
             update_database(new_group, 'Member to new group')
             
         else:
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'Group timestamps:', open_group.join_timestamps, 'Adding to existing group')
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'Group timestamps:', open_group.join_timestamps, 'Adding to existing group')
             _, current_user.group_code, current_user.domain_1, current_user.domain_2 = open_group.groups_push(current_user.username, current_user.id)
             
-            status_print('Updated group data...')
-            status_print('Group:', current_user.group, 'member_user_ids:', open_group.member_user_ids, 'timestamps:', open_group.join_timestamps, 'Adding to existing group')
+            # log_print('Updated group data...')
+            group_print('Group:', current_user.group, 'member_user_ids:', open_group.member_user_ids, 'timestamps:', open_group.join_timestamps, 'Adding to existing group')
 
 
             current_time = datetime.now()            
             open_group.join_timestamps[current_user.group_code] = current_time.strftime("%y-%m-%d-%H-%M-%S")
 
-            status_print('Timestamps added....')
+            # status_print('Timestamps added....')
             
             flag_modified(open_group, "members")
             flag_modified(open_group, "member_user_ids")
@@ -837,7 +871,7 @@ def join_group():
         join_room('room_'+ str(current_user.group))
 
         # if room is None then it gets sent to everyone
-        status_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Rooms for current user:', rooms())  # This will show the rooms the user is part of
         socketio.emit("group joined", {"num_members":num_active_members, "max_num_members": params['team_size'], "room_name": 'room_'+ str(current_user.group)}, to='room_'+ str(current_user.group))
         
 
@@ -898,12 +932,10 @@ def remove_from_study(user_id):
         
         # Use group-specific lock since we're only modifying this group's data
         with group_database_transaction(user.group, 'Removing user from group'):
-            
-            status_print(colored('Leaving group....', 'red'))
-    
+                
             current_group = db.session.query(Group).filter_by(id=user.group).order_by(Group.id.desc()).first()
     
-            log_print('Group:', user.group, 'User:', user.id, 'Before leaving study:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
+            group_print('Group:', user.group, 'User:', user.id, 'Before leaving study:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
     
             _ = current_group.groups_remove(user.username)
             
@@ -916,12 +948,12 @@ def remove_from_study(user_id):
         
         log_print('Group:', user.group, 'User:', user.id, 'Group db lock released...')
         
-        log_print('Group:', user.group, 'User:', user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
+        group_print('Group:', user.group, 'User:', user.id, 'After leaving group:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
         log_print('Sending signal to members in group:', 'room_'+ str(user.group))
         
         db.session.refresh(current_group)
         group_EOR_status = current_group.groups_all_EOR()
-        status_print(f'Group {user.group} EOR status: {group_EOR_status}')
+        group_print(f'Group {user.group} EOR status: {group_EOR_status}')
 
         socketio.emit("member left", {"member code": user.group_code}, to='room_'+ str(user.group))
         socketio.emit("force_remove_user", {"user_id": user_id})
@@ -958,7 +990,7 @@ def next_domain(data):
     # add survey data
     if (current_user.curr_progress == "domain_1" or current_user.curr_progress == "domain_2") :
         domain, _, _ = get_domain()
-        status_print(colored('Adding survey data...', 'red'))
+        log_print(colored('Adding survey data...', 'red'))
         add_survey_data(domain, data)
 
     log_print("current_user.curr_progress", current_user.curr_progress)
@@ -1147,18 +1179,18 @@ def check_and_update_domain(data, current_group):
     if not data.get("new_domain", False):
         return None, None, None, None, None  # No update needed
 
-    status_print('Updating domain in backend and database...')
+    log_print('Updating domain in backend and database...')
     db.session.refresh(current_group)
 
     # Update domain for group
     if current_user.curr_progress == current_group.curr_progress:
-        status_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of group...')
+        group_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of group...')
         update_domain_group(current_group)
         db.session.refresh(current_group)
 
     # Update domain for user if their progress has not yet been synced
     if current_user.curr_progress != current_group.curr_progress:
-        status_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of user and reset vars...')
+        group_print('Group:', current_user.group, 'User:', current_user.id, 'Updating domain of user and reset vars...')
         update_domain_user(current_user, current_group)
         db.session.refresh(current_user)
 
@@ -1814,7 +1846,7 @@ def pass_trajectories():
 @socketio.on("group comm")
 def group_comm(data):
     data["user"] = current_user.username
-    status_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
+    log_print('Rooms for current user:', rooms())  # This will show the rooms the user is part of
     socketio.emit("incoming group data", data, to='room_'+ str(current_user.group), include_self=False)
 
 
@@ -2225,7 +2257,7 @@ def retrieve_next_round(params, cur_group) -> dict:
         
         unique_keys = set((r.group_id, r.kc_id, r.round_num) for r in all_kc_rounds)  # replace with actual deduplication keys
         num_unique_rounds = len(unique_keys)
-        status_print('N KC rounds:', num_unique_rounds, 'Params max KC loops:', params['max_KC_loops'])
+        log_print('N KC rounds:', num_unique_rounds, 'Params max KC loops:', params['max_KC_loops'])
         
         if num_unique_rounds >= params['max_KC_loops']:
             unit_learning_goal_reached_flag = True
@@ -2262,7 +2294,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 teaching_complete_flag = True
 
 
-        status_print('Group:', current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
+        group_print('Group:', current_user.group, 'User:', current_user.id, 'Teaching complete flag before generating demos:', teaching_complete_flag)
 
 
         # get demonstrations and tests for this round
@@ -2278,7 +2310,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             round_status = "demo_tests_generated"
             games_extended = []
 
-            status_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
+            group_print('Group:', current_user.group, 'User:', current_user.id, 'N Demo mdps:', len(demo_mdps))
 
 
             # Check if demo_mpds provide full information intended for this lesson
@@ -2315,7 +2347,7 @@ def retrieve_next_round(params, cur_group) -> dict:
             
             elif new_round_for_var_filter:
                 log_print(colored('No new demos generated for the new variable filter. Using default demos...', 'red'))
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated for the new variable filter. Using default demos...')
+                group_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated for the new variable filter. Using default demos...')
                 
                 games = list()
                 if domain == 'at':
@@ -2332,10 +2364,10 @@ def retrieve_next_round(params, cur_group) -> dict:
                         if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
                             games.append({"interaction type": it, "params": mdp_dict}) 
 
-                status_print('Games:', games)
+                # status_print('Games:', games)
 
             else:
-                status_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
+                group_print('Group:', current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
                 # repeat the same round if no demos are generated
                 prev_round_data = db.session.query(Round).filter_by(group_id=cur_group.id, domain_progress=current_user.curr_progress, round_num=round).order_by(Round.id.desc()).first()
                 games_extended = prev_round_data.round_info
@@ -2386,7 +2418,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 for mdp_list in default_rounds[mdp_class]["final test"][td]:
                     for mdp_dict in mdp_list:
                         if final_test_id in final_tests_to_add:
-                            status_print('Adding final test:', final_test_id, 'Difficulty:', td)
+                            log_print('Adding final test:', final_test_id, 'Difficulty:', td)
                             games.append({"interaction type": "final test", "params": mdp_dict})
                         final_test_id += 1
 
@@ -2703,7 +2735,7 @@ def update_database(updated_data, update_type, max_retries=5):
             db.session.commit()
             db.session.refresh(updated_data)
             if "User left study" not in update_type:
-                logging.info(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
+                log_print(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation successful: {update_type}")
             
             return True
             
@@ -2714,18 +2746,18 @@ def update_database(updated_data, update_type, max_retries=5):
                 wait_time = (2 ** attempt) + random.uniform(0, 1)
                 db.session.rollback() # first rollback the session in case of lock errors before accessing any tables from the db (user, group, etc.)
                 if "User left study" not in update_type:
-                    logging.warning(f"Current Group: {current_user.group}, User: {current_user.id}, Database locked, retrying in {wait_time:.2f}s (attempt {attempt + 1}/{max_retries})")
+                    log_error(f"Current Group: {current_user.group}, User: {current_user.id}, Database locked, retrying in {wait_time:.2f}s (attempt {attempt + 1}/{max_retries})")
                 time.sleep(wait_time)
                 continue
             else:
                 db.session.rollback()
                 if "User left study" not in update_type:
-                    logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {str(e).lower()}")
+                    log_error(f"Current Group: {current_user.group}, User: {current_user.id}, Database operation failed: {update_type}, Error: {str(e).lower()}")
                 raise
         except Exception as e:
             db.session.rollback()
             if "User left study" not in update_type:
-                logging.error(f"Current Group: {current_user.group}, User: {current_user.id}, Unexpected error during {update_type}: {e}")
+                log_error(f"Current Group: {current_user.group}, User: {current_user.id}, Unexpected error during {update_type}: {e}")
             raise
 
 
@@ -2758,7 +2790,7 @@ def get_domain():
 
 
 def add_survey_data(domain, data):
-    log_print('Group:', current_user.group, 'User:', current_user.id, 'Survey data:', data)
+    group_print('Group:', current_user.group, 'User:', current_user.id, 'Survey data:', data)
     # add survey data to database
     dom = Domain(
             group_id = current_user.group,
@@ -2785,7 +2817,7 @@ def add_survey_data(domain, data):
 def add_trial_data(domain, data):
 
     # if len(data["user input"]) !=0:
-    status_print('Group:', current_user.group, 'User:', current_user.id, 'Adding trial data to database...', ' user id: ', current_user.id, 'round:', current_user.round, 'iteration:', current_user.iteration)
+    group_print('Group:', current_user.group, 'User:', current_user.id, 'Adding trial data to database...', ' user id: ', current_user.id, 'round:', current_user.round, 'iteration:', current_user.iteration)
 
     trial = Trial(
         user_id = current_user.id,
