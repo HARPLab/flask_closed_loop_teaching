@@ -53,6 +53,10 @@ from contextlib import contextmanager
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.exc import OperationalError
 
+from itertools import cycle
+import logging, os, sys
+from rich.console import Console
+
 
 
 print('Routes: Loaded python apps...')
@@ -103,36 +107,32 @@ sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
 sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
 
 
-# --- enable colored console output even on Windows ---
-try:
-    import colorama
-    from colorama import AnsiToWin32
-    colorama.init(autoreset=True)  # enable ANSI handling on Windows
-    _CONSOLE_STREAM = AnsiToWin32(sys.__stdout__).stream  # wrap the real console stream
-except Exception:
-    _CONSOLE_STREAM = sys.__stdout__  # fallback: raw console
+# --- console setup (bypass your stdout redirection) ---
+# force_terminal=True emits ANSI even if Python doesn't think it's a TTY;
+# if you're truly not on a TTY, you'll still just see escape codes in files.
+console = Console(file=sys.__stdout__, force_terminal=True, highlight=False, soft_wrap=False)
 
+GROUP_STYLES = ['cyan', 'green', 'yellow', 'magenta', 'blue', 'red', 'white']
+_style_cycle = cycle(GROUP_STYLES)
+_group_to_style = {}  # group_id -> rich color name
 
-GROUP_COLORS = ['cyan', 'green', 'yellow', 'magenta', 'blue', 'red']
-_color_cycle = cycle(GROUP_COLORS)
-_group_to_color = {}
-
-def _color_for(group_id):
-    if group_id not in _group_to_color:
-        _group_to_color[group_id] = next(_color_cycle)
-    return _group_to_color[group_id]
+def _style_for(group_id):
+    if group_id not in _group_to_style:
+        _group_to_style[group_id] = next(_style_cycle)
+    return _group_to_style[group_id]
 
 def group_print(group_id, *args, level=logging.INFO):
+    """
+    Log to file (plain) and print to console (colored) with a stable color per group_id.
+    Usage: group_print(group.id, "Starting round", round_idx)
+    """
     msg = " ".join(map(str, args))
     tag = f"[Group {group_id}] "
-
-    # 1) Log plain text to file
+    # file log: plain text
     logging.log(level, f"{tag}{msg}")
-
-    # 2) Pretty color to console (bypass your stdout redirection)
-    color = _color_for(group_id)
-    pretty = colored(f"{tag}{msg}", color, attrs=['bold'])
-    print(pretty, file=_CONSOLE_STREAM, flush=True)
+    # console: colored
+    style = _style_for(group_id)
+    console.print(f"{tag}{msg}", style=f"bold {style}", soft_wrap=False)
 
 ##########################################
 
