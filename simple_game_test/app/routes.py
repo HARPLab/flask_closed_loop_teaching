@@ -39,7 +39,6 @@ import random
 # from flask import g
 from datetime import date, timedelta
 from itertools import cycle
-from termcolor import colored
 
 import pickle
 import numpy as np
@@ -104,12 +103,19 @@ sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
 sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
 
 
+# --- enable colored console output even on Windows ---
+try:
+    import colorama
+    from colorama import AnsiToWin32
+    colorama.init(autoreset=True)  # enable ANSI handling on Windows
+    _CONSOLE_STREAM = AnsiToWin32(sys.__stdout__).stream  # wrap the real console stream
+except Exception:
+    _CONSOLE_STREAM = sys.__stdout__  # fallback: raw console
 
 
-# Rotate through these as new groups appear
-GROUP_COLORS = ['cyan', 'green', 'yellow', 'magenta', 'blue', 'red', 'white']
+GROUP_COLORS = ['cyan', 'green', 'yellow', 'magenta', 'blue', 'red']
 _color_cycle = cycle(GROUP_COLORS)
-_group_to_color = {}  # group_id -> color
+_group_to_color = {}
 
 def _color_for(group_id):
     if group_id not in _group_to_color:
@@ -117,21 +123,16 @@ def _color_for(group_id):
     return _group_to_color[group_id]
 
 def group_print(group_id, *args, level=logging.INFO):
-    """
-    Log to file (plain) and print to console (colored) with a stable color per group_id.
-    Usage: group_print(group.id, "Starting round", round_idx)
-    """
     msg = " ".join(map(str, args))
     tag = f"[Group {group_id}] "
-    
-    # 1) File log: plain (respects your FileHandler)
+
+    # 1) Log plain text to file
     logging.log(level, f"{tag}{msg}")
-    
-    # 2) Console pretty: colored (bypass redirected stdout)
+
+    # 2) Pretty color to console (bypass your stdout redirection)
     color = _color_for(group_id)
     pretty = colored(f"{tag}{msg}", color, attrs=['bold'])
-    print(pretty, file=sys.__stdout__)
-
+    print(pretty, file=_CONSOLE_STREAM, flush=True)
 
 ##########################################
 
