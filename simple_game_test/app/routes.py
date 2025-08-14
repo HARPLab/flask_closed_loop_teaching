@@ -107,33 +107,45 @@ sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
 sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
 
 
-# --- console setup (bypass your stdout redirection) ---
-# force_terminal=True emits ANSI even if Python doesn't think it's a TTY;
-# if you're truly not on a TTY, you'll still just see escape codes in files.
-console = Console(file=sys.__stdout__, force_terminal=True, highlight=False, soft_wrap=False)
+# --- ANSI color support ---
+ANSI_CODES = {'red':'31','green':'32','yellow':'33','blue':'34','magenta':'35','cyan':'36'}
 
-GROUP_STYLES = ['cyan', 'green', 'yellow', 'magenta', 'blue', 'red', 'white']
-_style_cycle = cycle(GROUP_STYLES)
-_group_to_style = {}  # group_id -> rich color name
+def _ansi_enabled():
+    # enable if real TTY and TERM not dumb, or FORCE_COLOR=1
+    if os.environ.get("FORCE_COLOR") == "1":
+        return True
+    s = getattr(sys, "__stdout__", None)
+    return bool(s and hasattr(s, "isatty") and s.isatty() and os.environ.get("TERM") not in ("", None, "dumb"))
 
-def _style_for(group_id):
-    if group_id not in _group_to_style:
-        _group_to_style[group_id] = next(_style_cycle)
-    return _group_to_style[group_id]
+def _colorize(text, color, bold=True):
+    if not _ansi_enabled():
+        return text
+    code = ANSI_CODES.get(color, '37')
+    return f"\033[{'1;' if bold else ''}{code}m{text}\033[0m"
+
+# --- stable per-group colors ---
+_GROUP_COLORS = ['cyan','green','yellow','magenta','blue','red','white']
+_color_cycle = cycle(_GROUP_COLORS)
+_group_to_color = {}  # group_id -> color
+def _color_for(group_id):
+    if group_id not in _group_to_color:
+        _group_to_color[group_id] = next(_color_cycle)
+    return _group_to_color[group_id]
 
 def group_print(group_id, *args, level=logging.INFO):
-    """
-    Log to file (plain) and print to console (colored) with a stable color per group_id.
-    Usage: group_print(group.id, "Starting round", round_idx)
-    """
+    """Log plain text to file; print colored to console (sys.__stdout__)."""
     msg = " ".join(map(str, args))
     tag = f"[Group {group_id}] "
-    # file log: plain text
+    # file log stays clean (no ANSI)
     logging.log(level, f"{tag}{msg}")
-    # console: colored
-    style = _style_for(group_id)
-    console.print(f"{tag}{msg}", style=f"bold {style}", soft_wrap=False)
-
+    # console pretty
+    try:
+        line = _colorize(f"{tag}{msg}", _color_for(group_id), bold=True)
+        sys.__stdout__.write(line + "\n")
+        sys.__stdout__.flush()
+    except Exception:
+        # never break app on console issues
+        pass
 ##########################################
 
 
