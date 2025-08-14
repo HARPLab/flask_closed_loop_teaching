@@ -32,9 +32,7 @@ from threading import Timer
 
 from datetime import datetime
 
-import sys, os
 from termcolor import colored
-import logging
 import random
 # from flask import g
 from datetime import date, timedelta
@@ -53,9 +51,7 @@ from contextlib import contextmanager
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.exc import OperationalError
 
-from itertools import cycle
 import logging, os, sys
-from rich.console import Console
 
 
 
