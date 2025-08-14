@@ -42,7 +42,7 @@ import pickle
 import numpy as np
 from datetime import date
 import matplotlib.pyplot as plt
-from threading import Lock
+from threading import RLock
 
 from collections import defaultdict
 from contextlib import contextmanager
@@ -189,14 +189,14 @@ log_print('Routes: Loaded group teaching apps...')
 # print("App url map:", app.url_map)
 
 # db_lock = Lock()
-disconnected_users_lock = Lock()
+disconnected_users_lock = RLock()
 # executor = ProcessPoolExecutor()
 
 # Dictionary to store locks per group - automatically creates locks as needed
-group_locks = defaultdict(Lock)
+group_locks = defaultdict(RLock)
 
 # Keep the global lock only for operations that affect multiple groups
-global_db_lock = Lock()
+global_db_lock = RLock()
 
 log_print('Global db lock: ', global_db_lock)
 
@@ -944,7 +944,7 @@ def remove_from_study(user_id):
                 
             current_group = db.session.query(Group).filter_by(id=user.group).order_by(Group.id.desc()).first()
     
-            group_print(user.group, 'User:', user.id, 'Before leaving study:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
+            # group_print(user.group, 'User:', user.id, 'Before leaving study:', 'Group id:', current_group.id, 'Group members:', current_group.members, 'Group mem ids:', current_group.member_user_ids, 'Group status:', current_group.members_statuses, 'Group experimental condition:', current_group.experimental_condition)
     
             _ = current_group.groups_remove(user.username)
             
@@ -1419,7 +1419,9 @@ def _generate_subsequent_round(current_group, current_round, params):
             # Reset EOR for current user
             with group_database_transaction(current_user.group, 'Resetting EOR for current user in generate_subsequent_round'):
                 current_group.members_EOR[member_idx] = False
+                current_group.status = "gen_demos"
                 flag_modified(current_group, "members_EOR")
+                flag_modified(current_group, "status")
                 # update_database(current_group, f'Resetting EOR for user {current_user.id}')
             db.session.refresh(current_group)
 
@@ -1428,11 +1430,6 @@ def _generate_subsequent_round(current_group, current_round, params):
             db.session.refresh(current_group)
 
 
-            with group_database_transaction(current_user.group, 'Setting group status for next round generation in generate_subsequent_round'):
-                current_group.status = "gen_demos"
-                flag_modified(current_group, "status")
-                # update_database(current_group, 'Generating next round...')
-            db.session.refresh(current_group)
 
             next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
 
