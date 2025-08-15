@@ -2327,6 +2327,7 @@ def retrieve_next_round(params, cur_group) -> dict:
 
             # Check if demo_mpds provide full information intended for this lesson
             demo_constraints = []
+            min_demo_constraints = []
             reduced_demo_information_flag = False
             ideal_lesson_constraints = ideal_kc_constraints[domain][kc_id] if domain in ideal_kc_constraints and kc_id < len(ideal_kc_constraints[domain]) else None
             
@@ -2341,10 +2342,11 @@ def retrieve_next_round(params, cur_group) -> dict:
                 else:
                     reduced_demo_information_flag = False
                 
+                
 
             
             # lesson
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Reduced demo information flag:', reduced_demo_information_flag, 'min demo constraints:', min_demo_constraints, 'ideal_lesson_constraints:', ideal_lesson_constraints)
+            log_print('Group:', current_user.group, 'User:', current_user.id, 'new_round_for_var_filter:', new_round_for_var_filter, 'Reduced demo information flag:', reduced_demo_information_flag, 'min demo constraints:', min_demo_constraints, 'ideal_lesson_constraints:', ideal_lesson_constraints)
             
             # new round data
             if len(demo_mdps) > 0 and not reduced_demo_information_flag:
