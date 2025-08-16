@@ -2388,9 +2388,10 @@ def retrieve_next_round(params, cur_group) -> dict:
                             if it == 'demo':
                                 KC_constraints.extend(np.array(mdp_dict['constraints']))
 
-                status_print('KC_constraints:', KC_constraints) 
                 min_KC_constraints = remove_redundant_constraints(KC_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
-                min_BEC_constraints_running = prior_min_BEC_constraints_running.extend(min_KC_constraints)
+                min_BEC_constraints_running = prior_min_BEC_constraints_running.copy()
+                min_BEC_constraints_running.extend(min_KC_constraints)
+
                 status_print('min_BEC_constraints_running not reduced:', min_BEC_constraints_running, 'min_KC_constraints:', min_KC_constraints)
                 min_BEC_constraints_running = remove_redundant_constraints(min_BEC_constraints_running, params['mdp_parameters']['weights'], params['step_cost_flag'])
                 status_print('min_BEC_constraints_running reduced:', min_BEC_constraints_running)
