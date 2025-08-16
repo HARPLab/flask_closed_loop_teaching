@@ -2382,7 +2382,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                         if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
                             games.append({"interaction type": it, "params": mdp_dict}) 
                             KC_constraints.extend(np.array(mdp_dict['constraints']))
-                            visited_env_traj_idxs.extend(tuple(mdp_dict['visited_env_traj_idxs']))
+                            visited_env_traj_idxs.extend(tuple(mdp_dict['env_traj_idxs']))
 
                 min_KC_constraints = remove_redundant_constraints(KC_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
                 min_BEC_constraints_running = prior_min_BEC_constraints_running.extend(min_KC_constraints)
