@@ -2382,7 +2382,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                         if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
                             games.append({"interaction type": it, "params": mdp_dict}) 
 
-                            visited_env_traj_idxs.extend(tuple(mdp_dict['env_traj_idxs']))
+                            visited_env_traj_idxs.extend(mdp_dict['env_traj_idxs'])
 
                             # only of demos
                             if it == 'demo':
@@ -2392,9 +2392,8 @@ def retrieve_next_round(params, cur_group) -> dict:
                 min_BEC_constraints_running = prior_min_BEC_constraints_running.copy()
                 min_BEC_constraints_running.extend(min_KC_constraints)
 
-                status_print('min_BEC_constraints_running not reduced:', min_BEC_constraints_running, 'min_KC_constraints:', min_KC_constraints)
+                status_print('visited_env_traj_idxs:', visited_env_traj_idxs)
                 min_BEC_constraints_running = remove_redundant_constraints(min_BEC_constraints_running, params['mdp_parameters']['weights'], params['step_cost_flag'])
-                status_print('min_BEC_constraints_running reduced:', min_BEC_constraints_running)
 
             else:
                 group_print(current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
