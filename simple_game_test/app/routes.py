@@ -2374,6 +2374,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                 interaction_types = ['demo', 'diagnostic test']
 
                 KC_constraints = []
+
                 for it in interaction_types:
                     for interaction_id in default_rounds[mdp_class][it].keys():
                         mdp_dict = default_rounds[mdp_class][it][interaction_id]
@@ -2381,9 +2382,12 @@ def retrieve_next_round(params, cur_group) -> dict:
                         if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
                             games.append({"interaction type": it, "params": mdp_dict}) 
                             KC_constraints.extend(np.array(mdp_dict['constraints']))
+                            visited_env_traj_idxs.extend(tuple(mdp_dict['visited_env_traj_idxs']))
 
                 min_KC_constraints = remove_redundant_constraints(KC_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
-            
+                min_BEC_constraints_running = prior_min_BEC_constraints_running.extend(min_KC_constraints)
+                min_BEC_constraints_running = remove_redundant_constraints(min_BEC_constraints_running, params['mdp_parameters']['weights'], params['step_cost_flag'])
+
             else:
                 group_print(current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
                 # repeat the same round if no demos are generated
