@@ -2382,7 +2382,7 @@ def retrieve_next_round(params, cur_group) -> dict:
                         if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
                             games.append({"interaction type": it, "params": mdp_dict}) 
 
-                            visited_env_traj_idxs.append(mdp_dict['env_traj_idxs'])
+                            visited_env_traj_idxs.append(tuple(mdp_dict['env_traj_idxs']))
 
                             # only of demos
                             if it == 'demo':
