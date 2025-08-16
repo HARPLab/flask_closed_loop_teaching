@@ -2049,12 +2049,13 @@ def update_learner_models_from_tests(params, cur_group, cur_round) -> tuple:
             for test in tests:
                 cur_test_constraints = get_test_constraints(domain, test, current_domain.traj_record, current_domain.traj_features_record)
                 test_constraints.extend(cur_test_constraints)
-                log_print('Group:', current_user.group, 'User:', current_user.id, 'Test constraints:', test_constraints)    
+                # log_print('Group:', current_user.group, 'User:', current_user.id, 'Test constraints:', test_constraints)    
+            
             group_test_constraints.append(test_constraints)
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Group test constraints so far:', group_test_constraints)
+            # log_print('Group:', current_user.group, 'User:', current_user.id, 'Group test constraints so far:', group_test_constraints)
 
             min_test_constraints = remove_redundant_constraints(test_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
-            log_print('Group:', current_user.group, 'User:', current_user.id, 'Min test constraints:', min_test_constraints)
+            # log_print('Group:', current_user.group, 'User:', current_user.id, 'Min test constraints:', min_test_constraints)
             
             # update learner models
             log_print('Group:', current_user.group, 'User:', current_user.id, 'Updating learner models for member:', group_code, 'with constraints:', min_test_constraints)
@@ -2342,7 +2343,8 @@ def retrieve_next_round(params, cur_group) -> dict:
                 else:
                     reduced_demo_information_flag = False
                 
-                
+            ### DEBUG:
+            demo_mdps = []
 
             
             # lesson
@@ -2371,15 +2373,17 @@ def retrieve_next_round(params, cur_group) -> dict:
 
                 interaction_types = ['demo', 'diagnostic test']
 
+                KC_constraints = []
                 for it in interaction_types:
                     for interaction_id in default_rounds[mdp_class][it].keys():
                         mdp_dict = default_rounds[mdp_class][it][interaction_id]
                         # # check if variable filter matches
                         if (np.array(mdp_dict['variable_filter']) == variable_filter).all():
                             games.append({"interaction type": it, "params": mdp_dict}) 
+                            KC_constraints.extend(np.array(mdp_dict['constraints']))
 
-                # status_print('Games:', games)
-
+                min_KC_constraints = remove_redundant_constraints(KC_constraints, params['mdp_parameters']['weights'], params['step_cost_flag']) # minimum constraints conveyed by the unit's demonstrations
+            
             else:
                 group_print(current_user.group, 'User:', current_user.id, 'No new demos generated. Repeating previous round...')
                 # repeat the same round if no demos are generated
