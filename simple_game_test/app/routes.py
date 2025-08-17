@@ -2343,8 +2343,6 @@ def retrieve_next_round(params, cur_group) -> dict:
                 else:
                     reduced_demo_information_flag = False
                 
-            ### DEBUG:
-            demo_mdps = []
 
             
             # lesson
