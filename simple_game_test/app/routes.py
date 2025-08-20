@@ -57,11 +57,6 @@ import logging, os, sys
 
 print('Routes: Loaded python apps...')
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'group_teaching'))
-from .group_teaching.codes.user_study.user_study_utils import generate_demos_test_interaction_round, initialize_teaching, obtain_constraint, normalize_trajectories
-from .group_teaching.codes.policy_summarization.BEC_helpers import remove_redundant_constraints, update_variable_filter
-from .group_teaching.codes.teams.teams_helpers import update_team_knowledge, check_unit_learning_goal_reached
-from .group_teaching.codes.params_utils import get_mdp_parameters
 
 #################################
 # Define log file
@@ -101,6 +96,18 @@ class LoggerWriter:
 # Redirect stdout and stderr to logging
 sys.stdout = LoggerWriter(logging.info)  # Redirect print() to logging (INFO)
 sys.stderr = LoggerWriter(logging.error)  # Redirect errors to logging (ERROR)
+
+##########################
+
+## Import functions
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'group_teaching'))
+from .group_teaching.codes.user_study.user_study_utils import generate_demos_test_interaction_round, initialize_teaching, obtain_constraint, normalize_trajectories
+from .group_teaching.codes.policy_summarization.BEC_helpers import remove_redundant_constraints, update_variable_filter
+from .group_teaching.codes.teams.teams_helpers import update_team_knowledge, check_unit_learning_goal_reached
+from .group_teaching.codes.params_utils import get_mdp_parameters
+
+########################
 
 
 # --- ANSI color support ---
@@ -340,7 +347,7 @@ def make_sandbox(data):
 @socketio.on("connect")
 def handle_connect(auth=None):
     """Handles user reconnection and removes them from disconnected_users if needed"""
-    status_print('User: ', current_user.id, ' connected....')
+    # status_print('User: ', current_user.id, ' connected....')
 
     if current_user.is_authenticated:
         log_print(f"User {current_user.id} connected with SID {request.sid}")
@@ -743,7 +750,7 @@ def join_group():
     # domain_list = [["at", "sb"], ["sb", "at"]]
 
     cond_list = ["individual_belief_low", "joint_belief"]
-    domain_list = [["at", "sb"]]
+    domain_list = [["sb", "at"]]
 
     if QUICK_DEBUG_FLAG:
         domain_list = [["at", "sb"]]
@@ -1430,7 +1437,7 @@ def _generate_subsequent_round(current_group, current_round, params):
             db.session.refresh(current_group)
 
 
-
+            # check if next round is available (from another player in the group)
             next_round = get_current_round(current_user.group, current_user.curr_progress, current_user.round + 1)
 
             # Generate new round if not already generated (for example when going to previous lesson and coming back to current lesson)
@@ -1539,7 +1546,7 @@ def move_to_previous_trial(domain):
 
 
 
-def prepare_next_trial_data(data, domain, current_group, updated_round, next_kc_id, current_kc_id, opt_response_flag):
+def prepare_next_trial_data(data, domain, updated_round, next_kc_id, current_kc_id, opt_response_flag):
     """
     Prepares the response dictionary for the next trial.
     Updates flags, interaction type, and teammate statuses.
@@ -1642,6 +1649,10 @@ def prepare_next_trial_data(data, domain, current_group, updated_round, next_kc_
 
     # Teammate progress strings
     round_type = "Strategy assessment" if interaction == "final test" else "Current lesson"
+
+    with group_database_transaction(current_user.group, 'Retrieving latest group info before trial navigation..'):
+        current_group = db.session.query(Group).filter_by(id=current_user.group).order_by(Group.id.desc()).first()
+
     group_user_ids = current_group.member_user_ids
 
     teammate_statuses = {}
@@ -1711,7 +1722,7 @@ def handle_trial_navigation(data, domain, domain_order, current_group, current_r
     log_print('Group:', current_user.group, 'User:', current_user.id, 'Updated round after navigation:', updated_round, 'next_kc_id:', next_kc_id)
     
     if updated_round:
-        response = prepare_next_trial_data(data, domain, current_group, updated_round, next_kc_id, current_kc_id, opt_response_flag)
+        response = prepare_next_trial_data(data, domain, updated_round, next_kc_id, current_kc_id, opt_response_flag)
     else:
         log_error('No updated round found after trial navigation')
         raise RuntimeError("No updated round found for user")
@@ -2258,8 +2269,10 @@ def retrieve_next_round(params, cur_group) -> dict:
 
     #check if unit knowledge is reached and update variable filter
     if round > 0:
-        log_print('Group:', current_user.group, 'User:', current_user.id, 'Round:', round, 'Group knowledge:', group_knowledge, 'min_KC_constraints:', min_KC_constraints, 'kc_id:', kc_id, 'active_member_ids:', active_member_ids)
         unit_learning_goal_reached_flag = check_unit_learning_goal_reached(params, group_knowledge, active_member_ids, min_KC_constraints, kc_id)
+        log_print('Group:', current_user.group, 'User:', current_user.id, 'Round:', round, 'unit_learning_goal_reached_flag:', unit_learning_goal_reached_flag, 'Group knowledge:', group_knowledge, 'min_KC_constraints:', min_KC_constraints, 
+                    'kc_id:', kc_id, 'active_member_ids:', active_member_ids)
+
     else:
         unit_learning_goal_reached_flag = False
         new_round_for_var_filter = True
@@ -2818,7 +2831,7 @@ def get_domain():
 
 
 def add_survey_data(domain, data):
-    group_print(current_user.group, 'User:', current_user.id, 'Survey data:', data)
+    
     # add survey data to database
     dom = Domain(
             group_id = current_user.group,
@@ -2838,8 +2851,11 @@ def add_survey_data(domain, data):
     # with global_db_lock:
         # db.session.add(dom)
         # db.session.commit()
+
+    group_print(current_user.group, 'User:', current_user.id, 'Survey data:', dom)
         
     update_database(dom, 'Adding survey data to database...')
+
 
 
 def add_trial_data(domain, data):
