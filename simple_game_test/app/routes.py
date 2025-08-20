@@ -2173,7 +2173,7 @@ def retrieve_next_round(params, cur_group) -> dict:
     members_statuses = cur_group.members_statuses
     active_member_ids = [idx for idx, status in enumerate(members_statuses) if status == 'joined']
     
-    vars_filename = date.today().strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
+    vars_filename = date.today().strftime("%Y-%m") + '_group_' + str(current_user.group)
     new_round_for_var_filter = False
 
 
@@ -2247,7 +2247,7 @@ def retrieve_next_round(params, cur_group) -> dict:
 
         if not os.path.exists(full_path_filename):
             # sometimes when date chanages at midnight
-            alternate_path_filename =  base_dir + '/ind_sim_trials/' + (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + '_group_' + str(current_user.group)
+            alternate_path_filename =  base_dir + '/ind_sim_trials/' + (date.today() - timedelta(days=1)).strftime("%Y-%m") + '_group_' + str(current_user.group)
             if os.path.exists(alternate_path_filename):
                 full_path_filename = alternate_path_filename
             
